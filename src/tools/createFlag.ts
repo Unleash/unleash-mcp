@@ -5,7 +5,7 @@ import { FeatureFlagType } from '../unleash/client.js';
 import { notifyProgress, createFlagResourceLink, formatFlagCreatedMessage } from '../utils/streaming.js';
 
 /**
- * Input schema for the feature_flag.create tool.
+ * Input schema for the create_flag tool.
  * Validates all required parameters using Zod.
  */
 const createFeatureFlagSchema = z.object({
@@ -20,7 +20,7 @@ const createFeatureFlagSchema = z.object({
 type CreateFeatureFlagInput = z.infer<typeof createFeatureFlagSchema>;
 
 /**
- * feature_flag.create tool implementation.
+ * create_flag tool implementation.
  * Creates a new feature flag in Unleash via the Admin API.
  *
  * Purpose:
@@ -35,7 +35,7 @@ type CreateFeatureFlagInput = z.infer<typeof createFeatureFlagSchema>;
  * - Document the flag's purpose and expected lifecycle
  * - Plan for flag cleanup after rollout is complete
  */
-export async function createFeatureFlag(
+export async function createFlag(
   context: ServerContext,
   args: unknown,
   progressToken?: string | number
@@ -131,15 +131,15 @@ export async function createFeatureFlag(
     };
   } catch (error) {
     // Handle errors consistently
-    return handleToolError(context, error, 'feature_flag.create');
+    return handleToolError(context, error, 'create_flag');
   }
 }
 
 /**
  * Tool definition for MCP server registration.
  */
-export const featureFlagCreateTool = {
-  name: 'feature_flag.create',
+export const createFlagTool = {
+  name: 'create_flag',
   description: `Create a new feature flag in Unleash.
 
 This tool creates a feature flag with the specified configuration. Choose the appropriate flag type:

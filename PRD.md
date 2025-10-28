@@ -37,7 +37,7 @@ Enable LLM-powered coding assistants to act as purpose-driven coding buddies tha
 
 ### Scope
 
-Build the foundation and implement the `feature_flag.create` tool.
+Build the foundation and implement the `create_flag` tool.
 
 ### What Was Delivered
 
@@ -222,7 +222,7 @@ Guide LLMs on when to create feature flags and what rollout strategy to use.
 - **Flag Type Suggestion**: Which type best fits this change?
 - **Rollout Strategy**: Suggested steps (dev enablement, percentage rollout, etc.)
 - **Risk Assessment**: Identified risks and mitigation strategies
-- **Next Action**: Which tool to call next (feature_flag.create or wrap_change)
+- **Next Action**: Which tool to call next (create_flag or wrap_change)
 - **Best Practice References**: Links to relevant Unleash documentation
 
 **Tone**: Proactive, authoritative, aligned with Unleash best practices
@@ -264,7 +264,7 @@ Guide LLMs on when to create feature flags and what rollout strategy to use.
   - [ ] Next action recommendations
 - [ ] Integrate with existing context
   - [ ] Access to best practices knowledge
-  - [ ] Link to feature_flag.create tool
+  - [ ] Link to create_flag tool
   - [ ] Link to wrap_change tool (Phase 3)
 - [ ] Add examples to README
 - [ ] Write tests for risk assessment logic
@@ -413,7 +413,7 @@ Generate language-specific code snippets that wrap changes behind feature flags,
 - [ ] Write unit tests for config loading
 - [ ] Write unit tests for error normalization
 - [ ] Write unit tests for Unleash client
-- [ ] Write integration tests for feature_flag.create
+- [ ] Write integration tests for create_flag
 - [ ] Add test coverage reporting
 - [ ] Set up CI/CD for automated testing
 
@@ -580,4 +580,4 @@ Generate language-specific code snippets that wrap changes behind feature flags,
 
 ## Version History
 
-- **v0.1.0** (2025-10-28) - Phase 1 complete: Foundation and feature_flag.create tool
+- **v0.1.0** (2025-10-28) - Phase 1 complete: Foundation and create_flag tool
