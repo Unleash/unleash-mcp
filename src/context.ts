@@ -1,7 +1,8 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { Config } from './config.js';
 import { UnleashClient } from './unleash/client.js';
-import { normalizeError, NormalizedError } from './utils/errors.js';
+import { normalizeError } from './utils/errors.js';
 
 /**
  * Shared runtime context available to all tools and prompts.
@@ -89,7 +90,7 @@ export function handleToolError(
   context: ServerContext,
   error: unknown,
   toolName: string
-): { error: NormalizedError } {
+): CallToolResult {
   const normalized = normalizeError(error);
 
   context.logger.error(`Error in ${toolName}:`, {
@@ -98,5 +99,19 @@ export function handleToolError(
     hint: normalized.hint,
   });
 
-  return { error: normalized };
+  const hintSuffix = normalized.hint ? `\n\nHint: ${normalized.hint}` : '';
+
+  return {
+    isError: true,
+    content: [
+      {
+        type: 'text',
+        text: `Error: ${normalized.message}${hintSuffix}`,
+      },
+    ],
+    structuredContent: {
+      success: false,
+      error: normalized,
+    },
+  };
 }
