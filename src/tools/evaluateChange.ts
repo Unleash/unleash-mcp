@@ -59,7 +59,9 @@ function buildEvaluationGuidance(input?: EvaluateChangeInput): string {
 
 4. **Provide JSON evaluation result**
 
-5. **Take appropriate next action** based on the result`,
+5. **Take appropriate next action** based on the result:
+   - If flag needed: Call ${pb.inlineCode('create_flag')} → then ${pb.inlineCode('wrap_change')} → then implement
+   - If no flag needed: Proceed with implementation`,
         'danger'
       ),
     },
@@ -332,24 +334,68 @@ function buildNextActionsSection(): string {
 
   content += pb.subsection(
     '✅ If needsFlag is TRUE (flag needed)',
-    'You MUST immediately perform these actions:\n\n' +
-    pb.workflow('Flag Creation Workflow', [
+    pb.alert(
+      'MANDATORY ACTION SEQUENCE',
+      'When a flag is needed, you MUST follow this exact sequence of tool calls:',
+      'danger'
+    ) + '\n\n' +
+    pb.workflow('Required Tool Call Sequence', [
       {
-        step: 'Determine Flag Name',
-        details: `If ${pb.inlineCode('recommendation')} is "use_existing": Use the flag name from ${pb.inlineCode('existingFlag.name')}\n\n` +
-          `If ${pb.inlineCode('recommendation')} is "create_new": Call ${pb.inlineCode('create_flag')} tool with the ${pb.inlineCode('suggestedFlag')} name`,
+        step: 'Step 1: Create the Flag',
+        details: `${pb.emphasis('IF recommendation is "create_new":', 'bold')}\n\n` +
+          `Call the ${pb.inlineCode('create_flag')} tool with:\n` +
+          pb.list([
+            `${pb.inlineCode('name')}: Use the ${pb.inlineCode('suggestedFlag')} value from your evaluation`,
+            `${pb.inlineCode('type')}: Choose based on the Flag Type Selection guidance below`,
+            `${pb.inlineCode('description')}: Clear explanation of what this flag controls and why`,
+          ], true) + '\n\n' +
+          `${pb.emphasis('IF recommendation is "use_existing":', 'bold')}\n` +
+          `Skip to Step 2 using the existing flag name from ${pb.inlineCode('existingFlag.name')}`,
       },
       {
-        step: 'Wrap the Code',
-        details: 'Analyze the codebase for existing flag usage patterns (use Grep to search for flag checks). ' +
-          'Then wrap your code changes to match the existing patterns in the codebase. ' +
-          'If no existing patterns found, use idiomatic patterns for the language.',
+        step: 'Step 2: Generate Wrapping Code',
+        details: `${pb.emphasis('MANDATORY:', 'bold')} Call the ${pb.inlineCode('wrap_change')} tool with:\n` +
+          pb.list([
+            `${pb.inlineCode('flagName')}: The flag name from Step 1 (or existing flag)`,
+            `${pb.inlineCode('fileName')}: The file you are modifying`,
+            `${pb.inlineCode('language')}: (optional) The programming language`,
+            `${pb.inlineCode('frameworkHint')}: (optional) Framework like "React", "Express", "Django"`,
+          ], true) + '\n\n' +
+          `The ${pb.inlineCode('wrap_change')} tool will return:\n` +
+          pb.list([
+            'Search instructions to find existing flag patterns in the codebase',
+            'Code templates for wrapping your changes',
+            'Framework-specific examples if applicable',
+            'Instructions on how to match existing conventions',
+          ], true) + '\n\n' +
+          `${pb.emphasis('Follow the guidance from wrap_change:', 'bold')} Search for existing patterns using Grep, then wrap your code to match those patterns.`,
       },
       {
-        step: 'Test and Verify',
-        details: 'Ensure the wrapped code compiles and follows project conventions.',
+        step: 'Step 3: Implement the Wrapped Code',
+        details: 'Use the templates and guidance from ' + pb.inlineCode('wrap_change') + ' to implement your changes:\n' +
+          pb.list([
+            'Add the import statement at the top of the file',
+            'Wrap your code changes with the flag check',
+            'Match the existing code style and conventions',
+            'Handle both enabled and disabled states appropriately',
+          ], true),
       },
-    ])
+      {
+        step: 'Step 4: Test and Verify',
+        details: pb.list([
+          'Ensure the code compiles without errors',
+          'Test with the flag enabled',
+          'Test with the flag disabled',
+          'Verify it follows project conventions',
+        ], true),
+      },
+    ]) + '\n\n' +
+    pb.alert(
+      'IMPORTANT',
+      `Do NOT manually write flag wrapping code without first calling ${pb.inlineCode('wrap_change')}. ` +
+      `The tool ensures you follow existing patterns and provides language-specific guidance.`,
+      'warning'
+    )
   );
 
   return content;
@@ -429,6 +475,7 @@ This tool returns detailed evaluation guidelines including:
 - Code type evaluation (test, config, feature, etc.)
 - Decision tree logic
 - Best practices from Unleash documentation
+- **MANDATORY next action instructions**: Explicit tool call sequence (create_flag → wrap_change → implement)
 
 Use this tool when:
 - Starting work on a new feature or change
@@ -436,7 +483,13 @@ Use this tool when:
 - Want guidance on rollout strategy
 - Need help choosing flag type
 
-The tool returns markdown-formatted guidance that helps you make informed decisions about feature flag usage.`,
+IMPORTANT WORKFLOW:
+When this tool determines a flag is needed, it provides explicit instructions to:
+1. Call 'create_flag' tool to create the feature flag in Unleash
+2. Call 'wrap_change' tool to get code wrapping guidance
+3. Implement the wrapped code following the patterns
+
+The tool returns markdown-formatted guidance that helps you make informed decisions and take the correct next actions.`,
   inputSchema: {
     type: 'object',
     properties: {
