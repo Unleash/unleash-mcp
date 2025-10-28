@@ -7,7 +7,7 @@
  * This server provides tools for creating feature flags while following Unleash best practices.
  *
  * Phase 1 implements:
- * - feature_flag.create: Create feature flags via the Unleash Admin API
+ * - create_flag: Create feature flags via the Unleash Admin API
  *
  * Future phases will add:
  * - evaluate_change: Prompt to guide when flags are needed
@@ -31,7 +31,7 @@ import {
 import { loadConfig } from './config.js';
 import { UnleashClient } from './unleash/client.js';
 import { ServerContext, createLogger } from './context.js';
-import { createFeatureFlag, featureFlagCreateTool } from './tools/featureFlagCreate.js';
+import { createFlag, createFlagTool } from './tools/createFlag.js';
 
 /**
  * Main entry point for the MCP server.
@@ -80,7 +80,7 @@ async function main(): Promise<void> {
   // Register tool handlers
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: [featureFlagCreateTool],
+      tools: [createFlagTool],
     };
   });
 
@@ -90,8 +90,8 @@ async function main(): Promise<void> {
     logger.debug(`Tool called: ${name}`, args);
 
     switch (name) {
-      case 'feature_flag.create':
-        return await createFeatureFlag(context, args, request.params._meta?.progressToken);
+      case 'create_flag':
+        return await createFlag(context, args, request.params._meta?.progressToken);
 
       default:
         throw new Error(`Unknown tool: ${name}`);
