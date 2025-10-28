@@ -1,0 +1,33 @@
+{
+  "name": "unleash-mcp",
+  "version": "0.1.0",
+  "description": "Purpose-driven MCP server that integrates with the Unleash Admin API.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "start": "node dist/index.js",
+    "lint": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Unleash/unleash-mcp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Unleash/unleash-mcp/issues"
+  },
+  "homepage": "https://github.com/Unleash/unleash-mcp#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.20.2",
+    "dotenv": "^16.4.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^24.9.1",
+    "typescript": "^5.6.3"
+  }
+}

@@ -1,0 +1,16 @@
+# Node.js build artifacts
+node_modules/
+dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Env files
+.env
+.env.local
+
+# Editor artifacts
+.DS_Store
+*.swp
