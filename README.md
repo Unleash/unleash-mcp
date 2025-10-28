@@ -13,7 +13,7 @@ This MCP server provides tools that integrate with the Unleash Admin API, allowi
 
 ### Phase 1: Feature Flag Creation
 
-This initial release focuses on the `feature_flag.create` tool. Future phases will add:
+This initial release focuses on the `create_flag` tool. Future phases will add:
 
 - **evaluate_change** (prompt): Guide LLMs on when to create flags and which rollout strategy to use
 - **wrap_change** (tool): Generate language-specific code snippets for flag usage
@@ -93,7 +93,7 @@ node dist/index.js --dry-run --log-level debug
 
 ### Available Tools
 
-#### `feature_flag.create`
+#### `create_flag`
 
 Creates a new feature flag in Unleash with comprehensive validation and progress tracking.
 
@@ -144,7 +144,7 @@ src/
 ├── unleash/
 │   └── client.ts         # Unleash Admin API client
 ├── tools/
-│   └── featureFlagCreate.ts  # feature_flag.create tool
+│   └── createFlag.ts  # create_flag tool
 └── utils/
     ├── errors.ts         # Error normalization
     └── streaming.ts      # Progress notifications
@@ -279,7 +279,7 @@ This is a purpose-driven project with a focused scope. Contributions should:
 ## Roadmap
 
 ### Phase 1: ✅ Feature Flag Creation
-- [x] `feature_flag.create` tool
+- [x] `create_flag` tool
 - [x] Unleash Admin API client
 - [x] Configuration and error handling
 - [x] Progress streaming

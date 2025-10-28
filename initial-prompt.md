@@ -12,7 +12,7 @@ Keep the codebase intentionally thin: one file per capability, shared helpers on
 For API reference, rely on the Unleash Admin API OpenAPI document (`https://app.unleash-hosted.com/hosted/docs/openapi.json`). Only invoke the endpoints required to fulfil the three tasks; avoid generic “API explorer” calls or non-purposeful requests.
 
 ## Required Surfaces
-1. `feature_flag.create` (tool)  
+1. `create_flag` (tool)  
    - Inputs: project id (optional if default set), flag name, type, description.  
    - Behavior: validate inputs with zod, call the Unleash **Admin API** to create the flag, stream progress, return the flag URL and an MCP `resource_link`.  
    - Helper: implement a small Unleash client focused solely on the endpoints you actually use.
@@ -42,7 +42,7 @@ For API reference, rely on the Unleash Admin API OpenAPI document (`https://app.
 2. Implement config loading + validation.  
 3. Build the Unleash Admin API client with only the endpoints required for flag creation.  
 4. Add the shared runtime context and streaming helper.  
-5. Implement each capability module (`tools/featureFlagCreate.ts`, `prompts/evaluateChange.ts`, `tools/wrapChange.ts`).  
+5. Implement each capability module (`tools/createFlag.ts`, `prompts/evaluateChange.ts`, `tools/wrapChange.ts`).  
 6. Wire them up in `index.ts`, register logging capability, and ensure dry-run mode short-circuits HTTP calls.  
 7. Write a concise `README.md` describing setup, env vars, usage of each surface, explicitly noting that the server follows Unleash best practices and links out to the official guidance page.  
 8. Provide a `docs/purpose-driven-design.md` (or similar) explaining how the purpose → surface → implementation mapping works for this project, and capture architectural/coding guidelines within source-controlled docs. Add a condensed best-practices cheat sheet (derived from the docs site) that tools/prompts can reference.
