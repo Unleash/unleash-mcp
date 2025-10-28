@@ -12,7 +12,7 @@
  * Phase 2 implements:
  * - evaluate_change: Prompt to guide when flags are needed
  *
- * Future phases will add:
+ * Phase 3 implements:
  * - wrap_change: Generate code snippets for flag usage
  *
  * Architecture principles:
@@ -32,9 +32,10 @@ import {
 
 import { loadConfig } from './config.js';
 import { UnleashClient } from './unleash/client.js';
-import { ServerContext, createLogger } from './context.js';
+import { ServerContext, createLogger, handleToolError } from './context.js';
 import { createFlag, createFlagTool } from './tools/createFlag.js';
 import { evaluateChange, evaluateChangeTool } from './tools/evaluateChange.js';
+import { wrapChange, wrapChangeTool } from './tools/wrapChange.js';
 
 /**
  * Main entry point for the MCP server.
@@ -83,24 +84,32 @@ async function main(): Promise<void> {
   // Register tool handlers
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: [createFlagTool, evaluateChangeTool],
+      tools: [createFlagTool, evaluateChangeTool, wrapChangeTool],
     };
   });
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
-    const { name, arguments: args } = request.params;
+    try {
+      const { name, arguments: args } = request.params;
 
-    logger.debug(`Tool called: ${name}`, args);
+      logger.debug(`Tool called: ${name}`, args);
 
-    switch (name) {
-      case 'create_flag':
-        return await createFlag(context, args, request.params._meta?.progressToken);
+      switch (name) {
+        case 'create_flag':
+          return await createFlag(context, args, request.params._meta?.progressToken);
 
-      case 'evaluate_change':
-        return await evaluateChange(context, args);
+        case 'evaluate_change':
+          return await evaluateChange(context, args);
 
-      default:
-        throw new Error(`Unknown tool: ${name}`);
+        case 'wrap_change':
+          return await wrapChange(context, args);
+
+        default:
+          throw new Error(`Unknown tool: ${name}`);
+      }
+    } catch (error) {
+      const toolName = request.params.name || 'unknown';
+      return handleToolError(context, error, toolName);
     }
   });
 
