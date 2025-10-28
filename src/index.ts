@@ -9,8 +9,10 @@
  * Phase 1 implements:
  * - create_flag: Create feature flags via the Unleash Admin API
  *
- * Future phases will add:
+ * Phase 2 implements:
  * - evaluate_change: Prompt to guide when flags are needed
+ *
+ * Future phases will add:
  * - wrap_change: Generate code snippets for flag usage
  *
  * Architecture principles:
@@ -32,6 +34,7 @@ import { loadConfig } from './config.js';
 import { UnleashClient } from './unleash/client.js';
 import { ServerContext, createLogger } from './context.js';
 import { createFlag, createFlagTool } from './tools/createFlag.js';
+import { evaluateChange, evaluateChangeTool } from './tools/evaluateChange.js';
 
 /**
  * Main entry point for the MCP server.
@@ -80,7 +83,7 @@ async function main(): Promise<void> {
   // Register tool handlers
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: [createFlagTool],
+      tools: [createFlagTool, evaluateChangeTool],
     };
   });
 
@@ -92,6 +95,9 @@ async function main(): Promise<void> {
     switch (name) {
       case 'create_flag':
         return await createFlag(context, args, request.params._meta?.progressToken);
+
+      case 'evaluate_change':
+        return await evaluateChange(context, args);
 
       default:
         throw new Error(`Unknown tool: ${name}`);
