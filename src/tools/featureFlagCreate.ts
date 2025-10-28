@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { ServerContext, ensureProjectId, handleToolError } from '../context.js';
 import { FeatureFlagType } from '../unleash/client.js';
 import { notifyProgress, createFlagResourceLink, formatFlagCreatedMessage } from '../utils/streaming.js';
@@ -38,7 +39,7 @@ export async function createFeatureFlag(
   context: ServerContext,
   args: unknown,
   progressToken?: string | number
-): Promise<{ content: Array<{ type: string; text: string }> }> {
+): Promise<CallToolResult> {
   try {
     // Validate input
     const input: CreateFeatureFlagInput = createFeatureFlagSchema.parse(args);
@@ -91,31 +92,46 @@ export async function createFeatureFlag(
 
     context.logger.info(message);
 
+    const apiUrl = `${context.config.unleash.baseUrl}/api/admin/projects/${projectId}/features/${response.name}`;
+
+    const structuredContent = {
+      success: true,
+      dryRun: context.config.server.dryRun,
+      feature: {
+        name: response.name,
+        project: projectId,
+        type: response.type,
+        description: response.description,
+        impressionData: response.impressionData,
+        createdAt: response.createdAt,
+      },
+      links: {
+        ui: url,
+        api: apiUrl,
+        resourceUri: resource.uri,
+      },
+    };
+
     // Return response with both text and resource link
     return {
       content: [
         {
           type: 'text',
-          text: message,
+          text: `${message}\nAdmin API: ${apiUrl}`,
         },
         {
-          type: 'text',
-          text: `Resource URI: ${resource.uri}`,
+          type: 'resource_link',
+          name: response.name,
+          uri: resource.uri,
+          mimeType: resource.mimeType,
+          text: resource.text,
         },
       ],
+      structuredContent,
     };
   } catch (error) {
     // Handle errors consistently
-    const errorResult = handleToolError(context, error, 'feature_flag.create');
-
-    return {
-      content: [
-        {
-          type: 'text',
-          text: `Error: ${errorResult.error.message}${errorResult.error.hint ? `\n\nHint: ${errorResult.error.hint}` : ''}`,
-        },
-      ],
-    };
+    return handleToolError(context, error, 'feature_flag.create');
   }
 }
 
