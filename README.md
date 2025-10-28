@@ -7,16 +7,21 @@ A purpose-driven [Model Context Protocol](https://modelcontextprotocol.io) (MCP)
 This MCP server provides tools that integrate with the Unleash Admin API, allowing AI coding assistants to:
 
 - ✅ **Create feature flags** with proper validation and typing
+- 🧭 **Evaluate changes** to determine if feature flags are needed
 - 🔄 **Stream progress** for visibility during operations
 - 🛡️ **Handle errors** gracefully with helpful hints
 - 🏗️ **Follow best practices** from [Unleash documentation](https://docs.getunleash.io/topics/feature-flags/best-practices-using-feature-flags-at-scale)
 
-### Phase 1: Feature Flag Creation
+### Current Implementation
 
-This initial release focuses on the `create_flag` tool. Future phases will add:
+**Phase 1: Feature Flag Creation (Complete)**
+- `create_flag` tool for creating flags via Admin API
 
-- **evaluate_change** (prompt): Guide LLMs on when to create flags and which rollout strategy to use
-- **wrap_change** (tool): Generate language-specific code snippets for flag usage
+**Phase 2: Evaluation Guidance (Complete)**
+- `evaluate_change` tool for determining when flags are needed
+
+**Phase 3: Code Generation (Planned)**
+- `wrap_change` tool for generating language-specific code snippets
 
 ## Installation
 
@@ -91,9 +96,9 @@ node dist/index.js --log-level debug
 node dist/index.js --dry-run --log-level debug
 ```
 
-### Available Tools
+### Available Capabilities
 
-#### `create_flag`
+#### Tool: `create_flag`
 
 Creates a new feature flag in Unleash with comprehensive validation and progress tracking.
 
@@ -130,6 +135,123 @@ Returns a success message with:
 - MCP resource link for programmatic access
 - Creation timestamp and configuration details
 
+---
+
+#### Tool: `evaluate_change`
+
+Provides comprehensive guidance for evaluating whether code changes require feature flags. This tool returns detailed markdown guidance to help make informed decisions.
+
+**When to use:**
+- Starting work on a new feature or change
+- Unsure if a feature flag is needed
+- Want guidance on rollout strategy
+- Need help choosing the right flag type
+
+**Optional Parameters:**
+
+- `repository` (string): Repository name or path
+- `branch` (string): Current branch name
+- `files` (array): List of files being changed
+- `description` (string): Description of the change
+- `riskLevel` (enum): User-assessed risk level (low, medium, high, critical)
+- `codeContext` (string): Surrounding code for parent flag detection
+
+**What it provides:**
+
+The tool returns guidance covering:
+
+1. **Parent Flag Detection**: Checks if code is already protected by existing flags (avoiding nesting)
+2. **Risk Assessment**: Analyzes code patterns to identify risky operations
+3. **Code Type Evaluation**: Determines if change is a test, config, feature, bug fix, etc.
+4. **Recommendation**: Suggests whether to create a flag, use existing flag, or skip flag
+5. **Next Actions**: Provides specific instructions on what to do next
+
+**Evaluation Process:**
+
+```
+Step 1: Gather code changes (git diff, read files)
+        ↓
+Step 2: Check for parent flags (avoid nesting)
+        ↓
+Step 3: Assess code type (test? config? feature?)
+        ↓
+Step 4: Evaluate risk (auth? payments? API changes?)
+        ↓
+Step 5: Calculate risk score
+        ↓
+Step 6: Make recommendation
+        ↓
+Step 7: Take action (create flag or proceed without)
+```
+
+**Risk Assessment:**
+
+The tool provides language-agnostic patterns to detect:
+
+- 🔴 **Critical Risk** (Score +5): Auth, payments, security, database operations
+- 🟠 **High Risk** (Score +3): API changes, external services, new classes
+- 🟡 **Medium Risk** (Score +2): Async operations, state management
+- 🟢 **Low Risk** (Score +1): Bug fixes, refactors, small changes
+
+**Parent Flag Detection:**
+
+Detects existing flag checks across languages:
+- **Conditionals**: `if (isEnabled('flag'))`, `if client.is_enabled('flag'):`
+- **Assignments**: `const enabled = useFlag('flag')`
+- **Hooks**: `const enabled = useFlag('flag')` → `{enabled && <Component />}`
+- **Guards**: `if (!isEnabled('flag')) return;`
+- **Wrappers**: `withFeatureFlag('flag', () => {...})`
+
+**Output Format:**
+
+Returns JSON evaluation result:
+
+```json
+{
+  "needsFlag": true,
+  "reason": "new_feature",
+  "recommendation": "create_new",
+  "suggestedFlag": "stripe-payment-integration",
+  "riskLevel": "critical",
+  "riskScore": 5,
+  "explanation": "This change integrates Stripe payments, which is critical risk...",
+  "confidence": 0.9
+}
+```
+
+**Best Practices Included:**
+
+The tool includes Unleash best practices:
+- Flag type selection criteria
+- Rollout sequencing strategies (dev → staging → production)
+- Anti-patterns to avoid (flag sprawl, nesting, long-lived flags)
+- Cleanup and lifecycle guidance
+
+**Example Usage in Claude Desktop:**
+
+```
+// Simple usage - let Claude gather context
+Use evaluate_change to help me determine if I need a feature flag
+
+// With explicit context
+Use evaluate_change with:
+- description: "Add Stripe payment processing"
+- riskLevel: "high"
+```
+
+**Tool Parameters (all optional):**
+
+```json
+{
+  "repository": "my-app",
+  "branch": "feature/stripe-integration",
+  "files": ["src/payments/stripe.ts"],
+  "description": "Add Stripe payment processing",
+  "riskLevel": "high",
+  "codeContext": "surrounding code for parent flag detection"
+}
+```
+
 ## Architecture
 
 This server follows a purpose-driven design philosophy:
@@ -138,16 +260,24 @@ This server follows a purpose-driven design philosophy:
 
 ```
 src/
-├── index.ts              # Main server entry point
-├── config.ts             # Configuration loading and validation
-├── context.ts            # Shared runtime context
+├── index.ts                     # Main server entry point
+├── config.ts                    # Configuration loading and validation
+├── context.ts                   # Shared runtime context
 ├── unleash/
-│   └── client.ts         # Unleash Admin API client
+│   └── client.ts                # Unleash Admin API client
 ├── tools/
-│   └── createFlag.ts  # create_flag tool
+│   ├── createFlag.ts            # create_flag tool
+│   └── evaluateChange.ts        # evaluate_change tool
+├── prompts/
+│   └── promptBuilder.ts         # Markdown formatting utilities
+├── evaluation/
+│   ├── riskPatterns.ts          # Risk assessment patterns
+│   └── flagDetectionPatterns.ts # Parent flag detection patterns
+├── knowledge/
+│   └── unleashBestPractices.ts  # Best practices knowledge base
 └── utils/
-    ├── errors.ts         # Error normalization
-    └── streaming.ts      # Progress notifications
+    ├── errors.ts                # Error normalization
+    └── streaming.ts             # Progress notifications
 ```
 
 ### Design Principles
@@ -278,17 +408,20 @@ This is a purpose-driven project with a focused scope. Contributions should:
 
 ## Roadmap
 
-### Phase 1: ✅ Feature Flag Creation
+### Phase 1: ✅ Feature Flag Creation (Complete)
 - [x] `create_flag` tool
 - [x] Unleash Admin API client
 - [x] Configuration and error handling
 - [x] Progress streaming
 
-### Phase 2: Evaluation Guidance (Planned)
-- [ ] `evaluate_change` prompt
-- [ ] Risk assessment logic
-- [ ] Rollout strategy recommendations
-- [ ] Best practices integration
+### Phase 2: ✅ Evaluation Guidance (Complete)
+- [x] `evaluate_change` tool
+- [x] Risk assessment patterns (language-agnostic)
+- [x] Parent flag detection (cross-language)
+- [x] Rollout strategy recommendations
+- [x] Best practices knowledge base
+- [x] Systematic evaluation workflow
+- [x] Markdown-formatted guidance output
 
 ### Phase 3: Code Generation (Planned)
 - [ ] `wrap_change` tool
