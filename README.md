@@ -27,6 +27,19 @@ This initial release focuses on the `feature_flag.create` tool. Future phases wi
 - An Unleash instance (hosted or self-hosted)
 - A Personal Access Token (PAT) from Unleash
 
+### Quick start (npx)
+
+You can run the MCP server without cloning the repository by installing it on the fly with `npx`. Provide your configuration as environment variables or via a local `.env` file in the directory where you run the command:
+
+```bash
+UNLEASH_BASE_URL=https://app.unleash-hosted.com/your-instance \
+UNLEASH_PAT=your-personal-access-token \
+UNLEASH_DEFAULT_PROJECT=default \
+npx unleash-mcp --log-level debug
+```
+
+The CLI supports the same flags as the local build (`--dry-run`, `--log-level`).
+
 ### Setup
 
 1. **Clone and install dependencies:**

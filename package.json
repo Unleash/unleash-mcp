@@ -4,11 +4,16 @@
   "description": "MCP server for managing Unleash feature flags",
   "type": "module",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "unleash-mcp": "dist/index.js"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "lint": "tsc --noEmit",
-    "test": "vitest"
+    "test": "vitest",
+    "prepack": "npm run build"
   },
   "keywords": [
     "mcp",
@@ -27,6 +32,12 @@
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "engines": {
     "node": ">=18.0.0"
