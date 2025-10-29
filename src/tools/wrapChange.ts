@@ -500,7 +500,7 @@ function escapeRegExp(value: string): string {
  */
 export const wrapChangeTool = {
   name: 'wrap_change',
-  description: `Generate code snippets and guidance for wrapping changes with feature flags.
+  description: `Generate code snippets and guidance for wrapping local changes with feature flags.
 
 This tool provides language-specific templates and instructions for protecting code changes with feature flags. It helps you:
 - Find existing feature flag patterns in your codebase
@@ -521,12 +521,18 @@ Supported languages:
 The tool uses a prompt-based approach: it provides detailed instructions for searching your codebase for existing patterns and matching their conventions. If no patterns are found, it provides sensible defaults based on Unleash SDK documentation.
 
 Usage:
-1. Call this tool with the flag name after creating a flag
-2. Follow the search instructions to find existing patterns
-3. Use the recommended template or match detected patterns
+1. Call this tool with the flag name right after \`create_flag\` (or when reusing an existing flag)
+2. Follow the search instructions to find existing patterns in this repository
+3. Use the recommended template or match detected patterns locally
 4. Test your implementation
 
 Best suited for use after evaluate_change recommends a flag and create_flag creates it.`,
+  annotations: {
+    title: '04 Wrap Change',
+    readOnlyHint: true,
+    idempotentHint: true,
+    openWorldHint: false,
+  },
   inputSchema: {
     type: 'object',
     properties: {

@@ -466,7 +466,11 @@ export async function evaluateChange(
  */
 export const evaluateChangeTool = {
   name: 'evaluate_change',
-  description: `Provides comprehensive guidance for evaluating whether code changes require feature flags.
+  description: `Provides comprehensive guidance for evaluating whether local code changes require feature flags.
+
+Call this right after \`prepare_local_change\` so the server can judge risk and orchestrate follow-up tool calls automatically.
+
+Even when you only have a plan (from a small safety refactor to a full architectural overhaul), provide that description here—the tool will guide you to gather diffs, inspect context, and decide how to stage the work with feature flags before you start modifying files.
 
 This tool returns detailed evaluation guidelines including:
 - Workflow for systematic evaluation
@@ -479,6 +483,7 @@ This tool returns detailed evaluation guidelines including:
 
 Use this tool when:
 - Starting work on a new feature or change
+- Before editing local files for a refactor, cleanup, or risk-prone fix
 - Unsure if a feature flag is needed
 - Want guidance on rollout strategy
 - Need help choosing flag type
@@ -490,6 +495,12 @@ When this tool determines a flag is needed, it provides explicit instructions to
 3. Implement the wrapped code following the patterns
 
 The tool returns markdown-formatted guidance that helps you make informed decisions and take the correct next actions.`,
+  annotations: {
+    title: '02 Evaluate Change',
+    readOnlyHint: true,
+    idempotentHint: true,
+    openWorldHint: false,
+  },
   inputSchema: {
     type: 'object',
     properties: {
