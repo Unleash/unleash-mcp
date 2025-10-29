@@ -17,10 +17,13 @@ export function buildFeatureDevelopmentWorkflowDocument(config: Config): string 
     '',
     'Use this workflow whenever you begin a product change. It keeps work safely gated behind Unleash feature flags and tells the LLM which tool to call next.',
     '',
+    '> Planning anything from a small safety refactor to a platform-wide initiative? Capture the intent and known touchpoints in **`prepare_local_change`** and **`evaluate_change`** before writing code so you can outline discovery steps, flag needs, and rollout strategy up front—even if diff files are not ready yet.',
+    '',
     '## 1. Assess the change first',
     '',
-    '- Call **`evaluate_change`** as soon as a new feature or risky modification is mentioned.',
-    '- Provide repo, branch, files, and any risk notes so the tool can score the change.',
+    '- Call **`prepare_local_change`** with the task summary to gather guardrails, repo commands, and suggested next steps.',
+    '- Follow up with **`evaluate_change`** as soon as a new feature or risky modification is mentioned.',
+    '- Provide repo, branch, files, and any risk notes so the evaluation can score the change.',
     '- Follow the JSON result. When it says a flag is needed, move to creation immediately.',
     '',
     '## 2. Create the flag if required',
@@ -52,7 +55,7 @@ export function buildFeatureDevelopmentWorkflowDocument(config: Config): string 
     '2. Do we understand rollout impact? → The evaluation guidance cites Unleash best practices.',
     '3. Are we mirroring existing code conventions? → `wrap_change` detects patterns when you pass code context.',
     '',
-    'Keep this workflow in mind: **evaluate → create → wrap → verify**. The LLM should reach for these tools without waiting for the user to ask.',
+    'Keep this workflow in mind: **prepare → evaluate → create → wrap → verify**. The LLM should reach for these tools without waiting for the user to ask.',
   ];
 
   return lines.filter((line): line is string => Boolean(line)).join('\n');
