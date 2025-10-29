@@ -27,12 +27,19 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
   CallToolRequestSchema,
+  ListResourcesRequestSchema,
+  ReadResourceRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
 import { loadConfig } from './config.js';
 import { UnleashClient } from './unleash/client.js';
 import { ServerContext, createLogger, handleToolError } from './context.js';
+import {
+  buildFeatureDevelopmentWorkflowDocument,
+  featureDevelopmentWorkflowResource,
+  isFeatureDevelopmentWorkflowUri,
+} from './resources/featureDevelopmentWorkflow.js';
 import { createFlag, createFlagTool } from './tools/createFlag.js';
 import { evaluateChange, evaluateChangeTool } from './tools/evaluateChange.js';
 import { wrapChange, wrapChangeTool } from './tools/wrapChange.js';
@@ -69,6 +76,7 @@ async function main(): Promise<void> {
     {
       capabilities: {
         tools: {},
+        resources: {},
       },
     }
   );
@@ -111,6 +119,42 @@ async function main(): Promise<void> {
       const toolName = request.params.name || 'unknown';
       return handleToolError(context, error, toolName);
     }
+  });
+
+  // Register proactive guidance resource handlers
+  server.setRequestHandler(ListResourcesRequestSchema, async () => {
+    return {
+      resources: [featureDevelopmentWorkflowResource],
+    };
+  });
+
+  server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+    const { uri } = request.params;
+
+    if (isFeatureDevelopmentWorkflowUri(uri)) {
+      logger.debug(`Reading resource: ${uri}`);
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: featureDevelopmentWorkflowResource.mimeType,
+            text: buildFeatureDevelopmentWorkflowDocument(config),
+          },
+        ],
+      };
+    }
+
+    logger.warn(`Unknown resource requested: ${uri}`);
+
+    return {
+      contents: [
+        {
+          uri,
+          mimeType: 'text/plain',
+          text: `Resource not found: ${uri}`,
+        },
+      ],
+    };
   });
 
   // Start server with stdio transport
