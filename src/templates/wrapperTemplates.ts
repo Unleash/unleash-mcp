@@ -17,7 +17,7 @@ export interface CodeTemplate {
 }
 
 /**
- * TypeScript/JavaScript Templates
+ * TypeScript Templates
  */
 const typescriptTemplates = (flagName: string): CodeTemplate[] => [
   {
@@ -67,6 +67,70 @@ const typescriptTemplates = (flagName: string): CodeTemplate[] => [
   ? newBehavior()
   : oldBehavior();`,
     explanation: 'Ternary operator for simple conditional logic',
+  },
+];
+
+/**
+ * JavaScript Templates
+ */
+const javascriptTemplates = (flagName: string): CodeTemplate[] => [
+  {
+    language: 'javascript',
+    pattern: 'if-block',
+    import: "import { unleash } from './unleash-client.js';",
+    usage: `if (unleash.isEnabled('${flagName}')) {
+  // Your new feature code here
+}`,
+    explanation: 'Standard if-block pattern for conditional feature execution',
+  },
+  {
+    language: 'javascript',
+    pattern: 'guard',
+    framework: 'Express/Node',
+    import: "import { unleash } from './unleash-client.js';",
+    usage: `async function handler(req, res) {
+  if (!unleash.isEnabled('${flagName}')) {
+    return res.status(404).json({ error: 'Feature not available' });
+  }
+
+  // Your handler code here
+}`,
+    explanation: 'Guard clause pattern for early return when feature is disabled',
+  },
+  {
+    language: 'javascript',
+    pattern: 'hook',
+    framework: 'React',
+    import: "import { useFlag } from '@/hooks/useFlag.js';",
+    usage: `function Component() {
+  const enabled = useFlag('${flagName}');
+
+  return (
+    <div>
+      {enabled && <NewFeature />}
+    </div>
+  );
+}`,
+    explanation: 'React hook pattern with JSX conditional rendering',
+  },
+  {
+    language: 'javascript',
+    pattern: 'ternary',
+    import: "import { unleash } from './unleash-client.js';",
+    usage: `const result = unleash.isEnabled('${flagName}')
+  ? newBehavior()
+  : oldBehavior();`,
+    explanation: 'Ternary operator for simple conditional logic',
+  },
+  {
+    language: 'javascript',
+    pattern: 'if-block',
+    framework: 'CommonJS',
+    import: "const { unleash } = require('./unleash-client');",
+    usage: `if (unleash.isEnabled('${flagName}')) {
+  // Your new feature code here
+}`,
+    explanation: 'CommonJS require pattern for Node.js modules',
   },
 ];
 
@@ -331,7 +395,7 @@ export function getTemplatesForLanguage(
 ): CodeTemplate[] {
   const templateMap: Record<SupportedLanguage, (flagName: string) => CodeTemplate[]> = {
     typescript: typescriptTemplates,
-    javascript: typescriptTemplates,
+    javascript: javascriptTemplates,
     python: pythonTemplates,
     go: goTemplates,
     ruby: rubyTemplates,

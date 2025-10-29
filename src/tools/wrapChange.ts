@@ -10,11 +10,13 @@ import {
 import {
   getTemplatesForLanguage,
   getDefaultTemplate,
+  CodeTemplate,
 } from '../templates/wrapperTemplates.js';
 import {
   generateSearchInstructions,
   generateWrappingInstructions,
 } from '../templates/searchGuidance.js';
+import { detectPatterns, DetectedPatterns } from '../templates/patternDetection.js';
 
 /**
  * Input schema for the wrap_change tool.
@@ -70,6 +72,12 @@ export async function wrapChange(
 
     context.logger.debug(`Detected language: ${metadata.displayName}`);
 
+    // Detect conventions from provided code context
+    const detectedPatterns = detectPatterns(language, input.codeContext);
+    if (detectedPatterns) {
+      context.logger.debug('Detected code patterns', detectedPatterns);
+    }
+
     // Generate search instructions for finding existing patterns
     const searchInstructions = generateSearchInstructions(language, input.flagName);
 
@@ -79,27 +87,24 @@ export async function wrapChange(
     // Get all templates for this language
     const allTemplates = getTemplatesForLanguage(language, input.flagName);
 
-    // Try to get framework-specific template if hint provided
-    let recommendedTemplate = getDefaultTemplate(language, input.flagName);
-    if (input.frameworkHint) {
-      const frameworkTemplate = allTemplates.find(
-        t =>
-          t.framework?.toLowerCase().includes(input.frameworkHint!.toLowerCase())
-      );
-      if (frameworkTemplate) {
-        recommendedTemplate = frameworkTemplate;
-        context.logger.debug(`Found framework-specific template: ${input.frameworkHint}`);
-      }
-    }
+    // Determine recommended template based on framework hint and detected patterns
+    const recommendedTemplate = selectRecommendedTemplate(
+      allTemplates,
+      language,
+      input.flagName,
+      input.frameworkHint
+    );
 
     // Format templates for output
-    const formattedTemplates = allTemplates.map(t => ({
-      pattern: t.pattern,
-      framework: t.framework,
-      import: t.import,
-      usage: t.usage,
-      explanation: t.explanation,
-    }));
+    const formattedTemplates = allTemplates.map(t =>
+      formatTemplate(t, language, input.flagName, detectedPatterns)
+    );
+    const recommendedFormatted = formatTemplate(
+      recommendedTemplate,
+      language,
+      input.flagName,
+      detectedPatterns
+    );
 
     // Build comprehensive guidance document
     const guidanceDocument = buildGuidanceDocument({
@@ -107,10 +112,11 @@ export async function wrapChange(
       language: metadata.displayName,
       searchInstructions,
       wrappingInstructions,
-      recommendedTemplate,
+      recommendedTemplate: recommendedFormatted,
       allTemplates: formattedTemplates,
       sdkDocs: metadata.unleashSdk.docsUrl,
       frameworkHint: input.frameworkHint,
+      detectedPatterns,
     });
 
     context.logger.info(
@@ -131,14 +137,10 @@ export async function wrapChange(
         detectedLanguage: language,
         languageDisplayName: metadata.displayName,
         templates: formattedTemplates,
-        recommendedTemplate: {
-          pattern: recommendedTemplate.pattern,
-          framework: recommendedTemplate.framework,
-          import: recommendedTemplate.import,
-          usage: recommendedTemplate.usage,
-        },
+        recommendedTemplate: recommendedFormatted,
         supportedPatterns: allTemplates.map(t => t.pattern),
         sdkDocumentation: metadata.unleashSdk.docsUrl,
+        detectedPatterns,
       },
     };
   } catch (error) {
@@ -154,10 +156,11 @@ function buildGuidanceDocument(params: {
   language: string;
   searchInstructions: string;
   wrappingInstructions: string;
-  recommendedTemplate: any;
-  allTemplates: any[];
+  recommendedTemplate: FormattedTemplate;
+  allTemplates: FormattedTemplate[];
   sdkDocs: string;
   frameworkHint?: string;
+  detectedPatterns?: DetectedPatterns;
 }): string {
   const sections = [
     `# Feature Flag Wrapping Guide: "${params.flagName}"`,
@@ -165,6 +168,8 @@ function buildGuidanceDocument(params: {
     `**Language:** ${params.language}`,
     params.frameworkHint ? `**Framework:** ${params.frameworkHint}` : '',
     `**SDK Documentation:** ${params.sdkDocs}`,
+    '',
+    renderDetectedPatterns(params.detectedPatterns),
     '',
     '---',
     '',
@@ -270,6 +275,224 @@ function getLanguageCodeFence(language: string): string {
  */
 function capitalizeFirst(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+interface FormattedTemplate {
+  pattern: string;
+  framework?: string;
+  import: string;
+  usage: string;
+  explanation: string;
+}
+
+function selectRecommendedTemplate(
+  templates: CodeTemplate[],
+  language: SupportedLanguage,
+  flagName: string,
+  frameworkHint?: string
+) {
+  if (frameworkHint) {
+    const match = templates.find(
+      t => t.framework?.toLowerCase().includes(frameworkHint.toLowerCase())
+    );
+    if (match) {
+      return match;
+    }
+  }
+
+  return getDefaultTemplate(language, flagName);
+}
+
+function formatTemplate(
+  template: CodeTemplate,
+  language: SupportedLanguage,
+  flagName: string,
+  detectedPatterns?: DetectedPatterns
+): FormattedTemplate {
+  const initialParts: SnippetParts = {
+    importCode: template.import,
+    usageCode: template.usage,
+  };
+
+  const withClient = applyClientName(initialParts, detectedPatterns);
+  const withHelper = applyHelperMethod(withClient, detectedPatterns);
+  const withHook = applyHookName(withHelper, template.pattern, detectedPatterns);
+  const withQuotes = applyQuoteStyle(withHook, flagName, detectedPatterns);
+  const withImportStyle = applyImportStyle(withQuotes, language, template, detectedPatterns);
+  const finalParts = applySemicolonPreference(withImportStyle, detectedPatterns);
+
+  return {
+    pattern: template.pattern,
+    framework: template.framework,
+    import: finalParts.importCode,
+    usage: finalParts.usageCode,
+    explanation: template.explanation,
+  };
+}
+
+interface SnippetParts {
+  importCode: string;
+  usageCode: string;
+}
+
+function applyClientName(parts: SnippetParts, patterns?: DetectedPatterns): SnippetParts {
+  if (!patterns?.clientName) {
+    return parts;
+  }
+
+  const clientRegex = /\bunleash\b/g;
+  return {
+    importCode: parts.importCode.replace(clientRegex, patterns.clientName),
+    usageCode: parts.usageCode.replace(clientRegex, patterns.clientName),
+  };
+}
+
+function applyHelperMethod(parts: SnippetParts, patterns?: DetectedPatterns): SnippetParts {
+  if (!patterns?.helperMethod || patterns.helperMethod === 'isEnabled') {
+    return parts;
+  }
+
+  const method = patterns.helperMethod;
+  return {
+    importCode: parts.importCode.replace(/\.isEnabled/g, `.${method}`).replace(/\.is_enabled/g, `.${method}`),
+    usageCode: parts.usageCode.replace(/\.isEnabled/g, `.${method}`).replace(/\.is_enabled/g, `.${method}`),
+  };
+}
+
+function applyHookName(
+  parts: SnippetParts,
+  pattern: CodeTemplate['pattern'],
+  patterns?: DetectedPatterns
+): SnippetParts {
+  if (pattern !== 'hook' || !patterns?.hookName) {
+    return parts;
+  }
+
+  const hook = patterns.hookName;
+  return {
+    importCode: parts.importCode.replace(/useFlag/g, hook),
+    usageCode: parts.usageCode.replace(/useFlag/g, hook),
+  };
+}
+
+function applyQuoteStyle(
+  parts: SnippetParts,
+  flagName: string,
+  patterns?: DetectedPatterns
+): SnippetParts {
+  if (!patterns?.quoteChar) {
+    return parts;
+  }
+
+  const quote = patterns.quoteChar;
+  return {
+    importCode: swapQuoteLiteral(parts.importCode, flagName, quote),
+    usageCode: swapQuoteLiteral(parts.usageCode, flagName, quote),
+  };
+}
+
+function applyImportStyle(
+  parts: SnippetParts,
+  language: SupportedLanguage,
+  template: CodeTemplate,
+  patterns?: DetectedPatterns
+): SnippetParts {
+  if (!patterns?.importStyle) {
+    return parts;
+  }
+
+  let importCode = parts.importCode;
+
+  if (patterns.importStyle === 'commonjs' && template.import.startsWith('import ')) {
+    importCode = convertToCommonJs(importCode, patterns.clientName);
+  } else if (
+    patterns.importStyle === 'esm' &&
+    language === 'javascript' &&
+    template.import.startsWith('const ')
+  ) {
+    importCode = convertToEsm(importCode, patterns.clientName);
+  }
+
+  return {
+    importCode,
+    usageCode: parts.usageCode,
+  };
+}
+
+function applySemicolonPreference(parts: SnippetParts, patterns?: DetectedPatterns): SnippetParts {
+  if (patterns?.usesSemicolons === false) {
+    return {
+      importCode: stripSemicolons(parts.importCode),
+      usageCode: stripSemicolons(parts.usageCode),
+    };
+  }
+
+  return parts;
+}
+
+function convertToCommonJs(importCode: string, clientName?: string): string {
+  const match = importCode.match(/import\s+\{\s*([A-Za-z0-9_]+)\s*\}\s+from\s+['"]([^'"]+)['"]/);
+  if (match) {
+    const helper = clientName ?? match[1];
+    return `const { ${helper} } = require('${match[2]}')`;
+  }
+  return importCode;
+}
+
+function convertToEsm(importCode: string, clientName?: string): string {
+  const match = importCode.match(/const\s+\{\s*([A-Za-z0-9_]+)\s*\}\s*=\s*require\(['"]([^'"]+)['"]\)/);
+  if (match) {
+    const helper = clientName ?? match[1];
+    const path = match[2].endsWith('.js') ? match[2] : `${match[2]}.js`;
+    return `import { ${helper} } from '${path}'`;
+  }
+  return importCode;
+}
+
+function stripSemicolons(value: string): string {
+  return value.replace(/;\s*(\n|$)/g, '$1');
+}
+
+function swapQuoteLiteral(value: string, flagName: string, quote: '\'' | '"'): string {
+  const escaped = escapeRegExp(flagName);
+  return value.replace(new RegExp(`['"]${escaped}['"]`, 'g'), `${quote}${flagName}${quote}`);
+}
+
+function renderDetectedPatterns(patterns?: DetectedPatterns): string | null {
+  if (!patterns) {
+    return null;
+  }
+
+  const lines: string[] = ['## Detected Patterns'];
+
+  if (patterns.importStyle) {
+    lines.push(`- **Import style:** ${patterns.importStyle}`);
+  }
+  if (patterns.clientName) {
+    lines.push(`- **Client variable:** ${patterns.clientName}`);
+  }
+  if (patterns.helperMethod) {
+    lines.push(`- **Helper method:** ${patterns.helperMethod}()`);
+  }
+  if (patterns.hookName) {
+    lines.push(`- **Hook:** ${patterns.hookName}()`);
+  }
+  if (typeof patterns.usesSemicolons === 'boolean') {
+    lines.push(`- **Semicolons:** ${patterns.usesSemicolons ? 'present' : 'omitted'}`);
+  }
+  if (patterns.quoteChar) {
+    lines.push(`- **Preferred quotes:** ${patterns.quoteChar}`);
+  }
+
+  if (lines.length === 1) {
+    return null;
+  }
+
+  return lines.join('\n');
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /**
