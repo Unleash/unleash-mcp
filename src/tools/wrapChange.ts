@@ -521,7 +521,7 @@ Supported languages:
 The tool uses a prompt-based approach: it provides detailed instructions for searching your codebase for existing patterns and matching their conventions. If no patterns are found, it provides sensible defaults based on Unleash SDK documentation.
 
 Usage:
-1. Call this tool with the flag name after creating a flag
+1. Call this tool with the flag name right after \`create_flag\` (or when reusing an existing flag)
 2. Follow the search instructions to find existing patterns
 3. Use the recommended template or match detected patterns
 4. Test your implementation

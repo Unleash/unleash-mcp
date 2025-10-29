@@ -142,6 +142,8 @@ export const createFlagTool = {
   name: 'create_flag',
   description: `Create a new feature flag in Unleash.
 
+Call this immediately when \`evaluate_change\` recommends a new flag so the workflow can continue into \`wrap_change\`.
+
 This tool creates a feature flag with the specified configuration. Choose the appropriate flag type:
 - release: For gradual feature rollouts to users
 - experiment: For A/B tests and experiments

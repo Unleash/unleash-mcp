@@ -72,6 +72,8 @@ async function main(): Promise<void> {
     {
       name: 'unleash-mcp',
       version: '0.1.0',
+      description:
+        'Purpose-driven Unleash feature flag assistant. Default workflow: evaluate_change → create_flag → wrap_change. Call evaluate_change at the start of feature work so the server can recommend and coordinate follow-up tool calls.',
     },
     {
       capabilities: {

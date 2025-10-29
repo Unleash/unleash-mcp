@@ -468,6 +468,8 @@ export const evaluateChangeTool = {
   name: 'evaluate_change',
   description: `Provides comprehensive guidance for evaluating whether code changes require feature flags.
 
+Call this at the very beginning of feature development so the server can judge risk and orchestrate follow-up tool calls automatically.
+
 This tool returns detailed evaluation guidelines including:
 - Workflow for systematic evaluation
 - Parent flag detection patterns (avoid nesting)
