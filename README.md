@@ -20,7 +20,7 @@ This MCP server provides tools that integrate with the Unleash Admin API, allowi
 **Phase 2: Evaluation Guidance (Complete)**
 - `evaluate_change` tool for determining when flags are needed
 
-**Phase 3: Code Generation (Planned)**
+**Phase 3: Code Generation (Complete)**
 - `wrap_change` tool for generating language-specific code snippets
 
 ## Installation
@@ -240,6 +240,14 @@ The tool includes Unleash best practices:
 - Anti-patterns to avoid (flag sprawl, nesting, long-lived flags)
 - Cleanup and lifecycle guidance
 
+**Automatic Workflow:**
+
+When `evaluate_change` determines a flag is needed, it provides **explicit instructions** to:
+
+1. Call `create_flag` tool to create the feature flag
+2. Call `wrap_change` tool to get language-specific code wrapping guidance
+3. Implement the wrapped code following the detected patterns
+
 **Example Usage in Claude Desktop:**
 
 ```
@@ -251,6 +259,8 @@ Use evaluate_change with:
 - description: "Add Stripe payment processing"
 - riskLevel: "high"
 ```
+
+The tool will automatically guide you through the complete workflow: evaluate → create → wrap → implement.
 
 **Tool Parameters (all optional):**
 
@@ -339,6 +349,103 @@ yarn build
 ```
 
 Output will be in the `dist/` directory.
+
+## Best Practices
+
+---
+
+#### Tool: `wrap_change`
+
+Generates language-specific code snippets and guidance for wrapping code changes with feature flags. This tool helps you implement feature flags correctly by finding existing patterns and matching your codebase's conventions.
+
+**When to use:**
+- After creating a feature flag with `create_flag`
+- When you need to wrap code with a feature flag
+- Want to follow existing codebase patterns
+- Need framework-specific examples (React, Django, etc.)
+
+**Parameters:**
+
+- `flagName` (required): Feature flag name to wrap the code with
+  - Example: `"new-checkout-flow"`, `"stripe-integration"`
+- `language` (optional): Programming language (auto-detected from fileName if not provided)
+  - Supported: `typescript`, `javascript`, `python`, `go`, `ruby`, `php`, `csharp`, `java`, `rust`
+- `fileName` (optional): File name being modified (helps detect language)
+  - Example: `"checkout.ts"`, `"payment.py"`, `"handler.go"`
+- `codeContext` (optional): Surrounding code to help detect existing patterns
+- `frameworkHint` (optional): Framework for specialized templates
+  - Examples: `"React"`, `"Express"`, `"Django"`, `"Rails"`, `"Spring Boot"`
+
+**What it provides:**
+
+1. **Search Instructions**: Step-by-step guide for finding existing flag patterns in your codebase using Grep
+2. **Pattern Detection**: Identifies common patterns (imports, client variable names, method names, wrapping styles)
+3. **Default Templates**: Fallback code snippets if no patterns are found
+4. **Framework-Specific Examples**: Specialized patterns for React, Express, Django, etc.
+5. **Multiple Patterns**: If-blocks, guard clauses, hooks, decorators, middleware, etc.
+
+**Supported Languages & Frameworks:**
+
+- **TypeScript/JavaScript**: Node.js, React hooks, Express middleware
+- **Python**: FastAPI, Django, Flask decorators
+- **Go**: Standard if-blocks, HTTP middleware
+- **Ruby**: Rails controllers
+- **PHP**: Laravel controllers
+- **C#**: .NET/ASP.NET controllers
+- **Java**: Spring Boot
+- **Rust**: Actix/Rocket handlers
+
+**Example Usage:**
+
+```json
+{
+  "flagName": "new-checkout-flow",
+  "fileName": "checkout.ts",
+  "frameworkHint": "React"
+}
+```
+
+**Response:**
+
+Returns comprehensive guidance including:
+- Quick start with recommended pattern
+- Search instructions for finding existing patterns
+- Wrapping instructions with placeholders
+- All available templates for the language
+- SDK documentation links
+
+**Workflow:**
+
+```
+evaluate_change → create_flag → wrap_change
+```
+
+1. `evaluate_change` determines if flag is needed
+2. `create_flag` creates the flag in Unleash
+3. `wrap_change` generates code to use the flag
+
+**Example Output Structure:**
+
+```markdown
+# Feature Flag Wrapping Guide: "new-checkout-flow"
+
+**Language:** TypeScript
+**Framework:** React
+
+## Quick Start
+[Recommended pattern with import and usage]
+
+## How to Search for Existing Flag Patterns
+[Step-by-step Grep instructions]
+
+## How to Wrap Code with Feature Flag
+[Wrapping instructions with examples]
+
+## All Available Templates
+[If-block, guard clause, hooks, ternary, etc.]
+```
+
+---
 
 ## Best Practices
 
@@ -436,11 +543,12 @@ This is a purpose-driven project with a focused scope. Contributions should:
 - [x] Systematic evaluation workflow
 - [x] Markdown-formatted guidance output
 
-### Phase 3: Code Generation (Planned)
-- [ ] `wrap_change` tool
-- [ ] Multi-language snippet templates
-- [ ] Pattern detection from existing code
-- [ ] Convention awareness
+### Phase 3: ✅ Code Generation (Complete)
+- [x] `wrap_change` tool
+- [x] Multi-language snippet templates (8 languages)
+- [x] Pattern detection guidance (via search instructions)
+- [x] Convention awareness (match existing patterns)
+- [x] Framework-specific templates (React, Django, Rails, etc.)
 
 ## Resources
 
