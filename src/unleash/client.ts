@@ -1,4 +1,5 @@
 import { CustomError } from '../utils/errors.js';
+import { VERSION } from '../version.js';
 
 /**
  * Feature flag types supported by Unleash.
@@ -76,10 +77,7 @@ export class UnleashClient {
     try {
       const response = await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': this.pat,
-        },
+        headers: this.buildRequestHeaders(),
         body: JSON.stringify(request),
       });
 
@@ -135,5 +133,19 @@ export class UnleashClient {
     // TODO: Implement project validation if needed
     // For now, we'll rely on the create endpoint to fail if project doesn't exist
     return true;
+  }
+
+  /**
+   * Build default headers for outbound Unleash Admin API calls.
+   * Adds identity metadata so Unleash can attribute MCP traffic.
+   */
+  private buildRequestHeaders(): Record<string, string> {
+    return {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': this.pat.trim(),
+      'X-Unleash-AppName': 'unleash-mcp',
+      'User-Agent': `unleash-mcp/${VERSION} (MCP Server)`,
+    };
   }
 }
