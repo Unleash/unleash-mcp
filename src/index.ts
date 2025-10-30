@@ -60,16 +60,30 @@ async function main(): Promise<void> {
     config.server.dryRun
   );
 
+  const instructions = [
+    'Use this tool for local development to increase confidence by decoupling the change from deployments:',
+    '1) Call evaluate_change to get a risk assessment on the current code change.',
+    '2) If the code change is risky, create a feature flag to protect it with create_flag.',
+    '3) Use wrap_change to guarde code with an Unleash flag.',
+  ].join('\n');
+
   // Create MCP server
   const server = new Server(
     {
       name: 'unleash-mcp',
       version: '0.1.0',
+      description:
+        'Local development assistant. After making a code change follow this workflow: evaluate_change → create_flag → wrap_change to score risk and steer next steps.',
     },
     {
       capabilities: {
         tools: {},
+        logging: {},
+        notifications: {},
+        resources: {},
+        instructions,
       },
+      
     }
   );
 
