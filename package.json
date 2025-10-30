@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "@unleash/mcp": "dist/index.js"
+    "unleash-mcp": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",

@@ -15,24 +15,29 @@ export async function notifyProgress(
     return;
   }
 
-  await server.notification({
-    method: 'notifications/progress',
-    params: {
-      progressToken,
-      progress,
-      total,
-    },
-  });
+  try {
+    await server.notification({
+      method: 'notifications/progress',
+      params: {
+        progressToken,
+        progress,
+        total,
+      },
+    });
 
-  // Also send a message notification for visibility
-  await server.notification({
-    method: 'notifications/message',
-    params: {
-      level: 'info',
-      logger: 'unleash-mcp',
-      data: message,
-    },
-  });
+    // Also send a message notification for visibility
+    await server.notification({
+      method: 'notifications/message',
+      params: {
+        level: 'info',
+        logger: 'unleash-mcp',
+        data: message,
+      },
+    });
+  } catch (error) {
+    // Silently ignore notification errors - the client may not support them
+    // The operation will continue successfully regardless
+  }
 }
 
 /**
