@@ -36,6 +36,7 @@ import { ServerContext, createLogger, handleToolError } from './context.js';
 import { createFlag, createFlagTool } from './tools/createFlag.js';
 import { evaluateChange, evaluateChangeTool } from './tools/evaluateChange.js';
 import { wrapChange, wrapChangeTool } from './tools/wrapChange.js';
+import { VERSION } from './version.js';
 
 /**
  * Main entry point for the MCP server.
@@ -45,7 +46,7 @@ async function main(): Promise<void> {
   const config = loadConfig();
   const logger = createLogger(config.server.logLevel);
 
-  logger.info('Starting Unleash MCP Server');
+  logger.info(`Starting Unleash MCP Server ${VERSION}`);
   logger.info(`Base URL: ${config.unleash.baseUrl}`);
   logger.info(`Dry run: ${config.server.dryRun}`);
 
