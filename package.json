@@ -1,12 +1,12 @@
 {
-  "name": "unleash-mcp",
-  "version": "0.1.0",
+  "name": "@unleash/mcp",
+  "version": "0.0.1",
   "description": "MCP server for managing Unleash feature flags",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "unleash-mcp": "dist/index.js"
+    "@unleash/mcp": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -20,7 +20,6 @@
     "unleash",
     "feature-flags"
   ],
-  "author": "",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
