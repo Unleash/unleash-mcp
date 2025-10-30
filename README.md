@@ -14,16 +14,24 @@ This MCP server provides tools that integrate with the Unleash Admin API, allowi
 
 ### Current Implementation
 
-**Phase 1: Feature Flag Creation (Complete)**
 - `create_flag` tool for creating flags via Admin API
-
-**Phase 2: Evaluation Guidance (Complete)**
 - `evaluate_change` tool for determining when flags are needed
-
-**Phase 3: Code Generation (Complete)**
-- `wrap_change` tool for generating language-specific code snippets
+- `wrap_change` tool for instructing the LLM how to wrap the change based on current code base patterns
 
 ## Installation
+
+### Claude & Codex
+```
+claude mcp add unleash \
+    --env UNLEASH_BASE_URL=URL \
+    --env UNLEASH_PAT=PAT \
+    -- npx -y @unleash/mcp@latest --log-level error
+
+codex mcp add unleash \
+    --env UNLEASH_BASE_URL=URL \
+    --env UNLEASH_PAT=PAT \
+    -- npx -y @unleash/mcp@latest --log-level error
+```
 
 ### Prerequisites
 
