@@ -42,11 +42,13 @@ import { wrapChange, wrapChangeTool } from './tools/wrapChange.js';
 import { detectFlag, detectFlagTool } from './tools/detectFlag.js';
 import { VERSION } from './version.js';
 import {
-  PROJECTS_RESOURCE_URI,
+  isProjectsUri,
+  parseProjectsResourceOptions,
   extractProjectIdFromFeatureUri,
   isFeatureFlagsUri,
   listResourceTemplates,
   listStaticResources,
+  parseFeatureFlagsResourceOptions,
   readFeatureFlagsResource,
   readProjectsResource,
 } from './resources/unleashResources.js';
@@ -128,26 +130,31 @@ async function main(): Promise<void> {
 
     logger.debug(`Resource read requested: ${uri}`);
 
-    switch (uri) {
-      case PROJECTS_RESOURCE_URI:
-        return {
-          contents: [await readProjectsResource(context)],
-        };
-
-      default:
-        if (isFeatureFlagsUri(uri)) {
-          const projectId = extractProjectIdFromFeatureUri(uri);
-          if (!projectId) {
-            throw new Error('Project ID missing from feature flags URI');
-          }
-
-          return {
-            contents: [await readFeatureFlagsResource(context, projectId)],
-          };
-        }
-
-        throw new Error(`Unknown resource: ${uri}`);
+    if (isProjectsUri(uri)) {
+      const options = parseProjectsResourceOptions(uri);
+      return {
+        contents: [await readProjectsResource(context, options)],
+      };
     }
+
+    if (isFeatureFlagsUri(uri)) {
+      const projectId = extractProjectIdFromFeatureUri(uri);
+      if (!projectId) {
+        throw new Error('Project ID missing from feature flags URI');
+      }
+
+      return {
+        contents: [
+          await readFeatureFlagsResource(
+            context,
+            projectId,
+            parseFeatureFlagsResourceOptions(uri)
+          ),
+        ],
+      };
+    }
+
+    throw new Error(`Unknown resource: ${uri}`);
   });
 
   server.setRequestHandler(ListResourceTemplatesRequestSchema, async () => {

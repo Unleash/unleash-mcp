@@ -35,6 +35,8 @@ export interface UnleashProjectSummary {
   name: string;
   description?: string;
   mode?: string;
+  createdAt: string;
+  url: string;
 }
 
 export interface FeatureFlagSummary {
@@ -45,6 +47,7 @@ export interface FeatureFlagSummary {
   archived?: boolean;
   impressionData?: boolean;
   createdAt?: string;
+  url: string;
 }
 
 /**
@@ -89,57 +92,16 @@ export class UnleashClient {
       };
     }
 
-    const url = `${this.baseUrl}/api/admin/projects/${projectId}/features`;
-
-    try {
-      const response = await fetch(url, {
+    return this.requestJson<CreateFeatureFlagResponse>(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/features`,
+      {
         method: 'POST',
-        headers: this.buildRequestHeaders(),
         body: JSON.stringify(request),
-      });
-
-      if (!response.ok) {
-        const errorBody = await response.text();
-        let errorMessage = `Failed to create feature flag: ${response.status} ${response.statusText}`;
-
-        // Try to parse error details from response body
-        try {
-          const errorJson = JSON.parse(errorBody);
-          if (errorJson.message) {
-            errorMessage = errorJson.message;
-          } else if (errorJson.details && Array.isArray(errorJson.details)) {
-            errorMessage = errorJson.details.map((d: { message: string }) => d.message).join(', ');
-          }
-        } catch {
-          // If parsing fails, use the raw error body if it's short
-          if (errorBody.length < 200) {
-            errorMessage += `: ${errorBody}`;
-          }
-        }
-
-        throw new CustomError(`HTTP_${response.status}`, errorMessage);
+      },
+      {
+        errorMessage: 'Failed to create feature flag',
       }
-
-      const data = await response.json() as CreateFeatureFlagResponse;
-      return data;
-    } catch (error) {
-      // Re-throw CustomError as-is
-      if (error instanceof CustomError) {
-        throw error;
-      }
-
-      // Handle network errors
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        throw new CustomError(
-          'NETWORK_ERROR',
-          'Failed to connect to Unleash API',
-          `Check that UNLEASH_BASE_URL (${this.baseUrl}) is correct and accessible.`
-        );
-      }
-
-      // Re-throw other errors
-      throw error;
-    }
+    );
   }
 
   async listProjects(): Promise<UnleashProjectSummary[]> {
@@ -150,177 +112,104 @@ export class UnleashClient {
           name: 'Default (dry run)',
           description:
             'Dry-run mode placeholder. Set UNLEASH_BASE_URL and UNLEASH_PAT to fetch real projects.',
+          createdAt: new Date().toISOString(),
+          url: `${this.baseUrl}/projects/default`,
         },
       ];
     }
 
-    const url = `${this.baseUrl}/api/admin/projects`;
-
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: this.buildRequestHeaders(),
-      });
-
-      if (!response.ok) {
-        const errorBody = await response.text();
-        let errorMessage = `Failed to list projects: ${response.status} ${response.statusText}`;
-
-        try {
-          const errorJson = JSON.parse(errorBody);
-          if (errorJson.message) {
-            errorMessage = errorJson.message;
-          }
-        } catch {
-          if (errorBody.length < 200) {
-            errorMessage += `: ${errorBody}`;
-          }
-        }
-
-        throw new CustomError(`HTTP_${response.status}`, errorMessage);
+    const data = await this.requestJson<{
+      projects?: Array<{
+        id?: string;
+        name?: string;
+        description?: string;
+        mode?: string;
+        createdAt?: string;
+        url?: string;
+      }>;
+    }>(
+      '/api/admin/projects',
+      { method: 'GET' },
+      {
+        errorMessage: 'Failed to list projects',
+        networkErrorMessage: 'Failed to connect to Unleash API while listing projects',
       }
+    );
 
-      const data = (await response.json()) as {
-        projects?: Array<{
-          id?: string;
-          name?: string;
-          description?: string;
-          mode?: string;
-        }>;
-      };
+    if (!Array.isArray(data.projects)) {
+      return [];
+    }
 
-      if (!Array.isArray(data.projects)) {
-        return [];
-      }
-
-      return data.projects.map((project) => ({
-        id: project.id ?? project.name ?? 'unknown-project',
+    return data.projects.map((project) => {
+      const id = project.id ?? project.name ?? 'unknown-project';
+      return {
+        id,
         name: project.name ?? project.id ?? 'Unnamed project',
         description: project.description,
         mode: project.mode,
-      }));
-    } catch (error) {
-      if (error instanceof CustomError) {
-        throw error;
-      }
-
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        throw new CustomError(
-          'NETWORK_ERROR',
-          'Failed to connect to Unleash API while listing projects',
-          `Check that UNLEASH_BASE_URL (${this.baseUrl}) is reachable.`
-        );
-      }
-
-      throw error;
-    }
+        createdAt: project.createdAt ?? new Date(0).toISOString(),
+        url: project.url ?? `${this.baseUrl}/projects/${encodeURIComponent(id)}`,
+      };
+    });
   }
 
-  async listFeatureFlags(projectId?: string): Promise<FeatureFlagSummary[]> {
+  async listFeatureFlags(projectId: string): Promise<FeatureFlagSummary[]> {
     if (this.dryRun) {
       return [
         {
           name: 'dry-run-placeholder-flag',
           description:
             'Dry-run mode placeholder. Set UNLEASH_BASE_URL and UNLEASH_PAT to fetch real feature flags.',
-          project: projectId ?? 'default',
+          project: projectId,
           type: 'release',
           archived: false,
           impressionData: false,
+          url: `${this.baseUrl}/projects/${encodeURIComponent(projectId)}/features/dry-run-placeholder-flag`,
         },
       ];
     }
 
-    if (projectId) {
-      return this.fetchProjectFeatureFlags(projectId);
-    }
-
-    const projects = await this.listProjects();
-
-    const featureCollections = await Promise.all(
-      projects.map(async (project) => {
-        try {
-          return await this.fetchProjectFeatureFlags(project.id);
-        } catch (error) {
-          // Allow other projects to succeed even if one fails.
-          if (error instanceof CustomError) {
-            throw error;
-          }
-          throw error;
-        }
-      })
-    );
-
-    return featureCollections.flat();
+    return this.fetchProjectFeatureFlags(projectId);
   }
 
   private async fetchProjectFeatureFlags(
     projectId: string
   ): Promise<FeatureFlagSummary[]> {
-    const url = `${this.baseUrl}/api/admin/projects/${encodeURIComponent(projectId)}/features`;
-
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: this.buildRequestHeaders(),
-      });
-
-      if (!response.ok) {
-        const errorBody = await response.text();
-        let errorMessage = `Failed to list feature flags for project ${projectId}: ${response.status} ${response.statusText}`;
-
-        try {
-          const errorJson = JSON.parse(errorBody);
-          if (errorJson.message) {
-            errorMessage = errorJson.message;
-          }
-        } catch {
-          if (errorBody.length < 200) {
-            errorMessage += `: ${errorBody}`;
-          }
-        }
-
-        throw new CustomError(`HTTP_${response.status}`, errorMessage);
+    const data = await this.requestJson<{
+      features?: Array<{
+        name?: string;
+        description?: string;
+        type?: FeatureFlagType;
+        archived?: boolean;
+        impressionData?: boolean;
+        createdAt?: string;
+        project?: string;
+      }>;
+    }>(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/features`,
+      { method: 'GET' },
+      {
+        errorMessage: `Failed to list feature flags for project ${projectId}`,
+        networkErrorMessage: `Failed to connect to Unleash API while listing flags for project ${projectId}`,
       }
+    );
 
-      const data = (await response.json()) as {
-        features?: Array<{
-          name?: string;
-          description?: string;
-          type?: FeatureFlagType;
-          archived?: boolean;
-          impressionData?: boolean;
-          createdAt?: string;
-          project?: string;
-        }>;
-      };
-
-      return (data.features ?? [])
-        .filter((f) => f.name)
-        .map((feature) => ({
-          name: feature.name!,
+    return (data.features ?? [])
+      .filter((f) => f.name)
+      .map((feature) => {
+        const name = feature.name!;
+        const project = feature.project ?? projectId;
+        return {
+          name,
           description: feature.description,
-          project: feature.project ?? projectId,
+          project,
           type: feature.type,
           archived: feature.archived,
           impressionData: feature.impressionData,
           createdAt: feature.createdAt,
-        }));
-    } catch (error) {
-      if (error instanceof CustomError) {
-        throw error;
-      }
-
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        throw new CustomError(
-          'NETWORK_ERROR',
-          `Failed to connect to Unleash API while listing flags for project ${projectId}`,
-          `Check that UNLEASH_BASE_URL (${this.baseUrl}) is reachable.`
-        );
-      }
-
-      throw error;
-    }
+          url: `${this.baseUrl}/projects/${encodeURIComponent(project)}/features/${encodeURIComponent(name)}`,
+        };
+      });
   }
 
   /**
@@ -345,5 +234,75 @@ export class UnleashClient {
       'X-Unleash-AppName': 'unleash-mcp',
       'User-Agent': `unleash-mcp/${VERSION} (MCP Server)`,
     };
+  }
+
+  private async requestJson<T>(
+    path: string,
+    init: RequestInit,
+    options: {
+      errorMessage: string;
+      networkErrorMessage?: string;
+    }
+  ): Promise<T> {
+    const url = `${this.baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
+    const headers = {
+      ...this.buildRequestHeaders(),
+      ...(init.headers ? (init.headers as Record<string, string>) : {}),
+    };
+
+    try {
+      const response = await fetch(url, {
+        ...init,
+        headers,
+      });
+
+      if (!response.ok) {
+        const rawBody = await response.text();
+        let message = `${options.errorMessage}: ${response.status} ${response.statusText}`;
+
+        try {
+          const parsed = JSON.parse(rawBody) as {
+            message?: string;
+            details?: Array<{ message?: string }>;
+          };
+
+          if (parsed.message) {
+            message = parsed.message;
+          } else if (parsed.details && Array.isArray(parsed.details)) {
+            const detailMessages = parsed.details
+              .map((detail) => detail.message)
+              .filter((detail): detail is string => Boolean(detail));
+
+            if (detailMessages.length > 0) {
+              message = detailMessages.join(', ');
+            }
+          }
+        } catch {
+          if (rawBody && rawBody.length < 200) {
+            message += `: ${rawBody}`;
+          }
+        }
+
+        throw new CustomError(`HTTP_${response.status}`, message);
+      }
+
+      return (await response.json()) as T;
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        const hint = `Check that UNLEASH_BASE_URL (${this.baseUrl}) is reachable.`;
+
+        throw new CustomError(
+          'NETWORK_ERROR',
+          options.networkErrorMessage ?? 'Failed to connect to Unleash API',
+          hint
+        );
+      }
+
+      throw error;
+    }
   }
 }
