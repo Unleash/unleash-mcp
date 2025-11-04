@@ -7,6 +7,7 @@ A purpose-driven [Model Context Protocol](https://modelcontextprotocol.io) (MCP)
 This MCP server provides tools that integrate with the Unleash Admin API, allowing AI coding assistants to:
 
 - ✅ **Create feature flags** with proper validation and typing
+- 🔍 **Detect existing flags** to prevent duplicates and encourage reuse
 - 🧭 **Evaluate changes** to determine if feature flags are needed
 - 🔄 **Stream progress** for visibility during operations
 - 🛡️ **Handle errors** gracefully with helpful hints
@@ -16,6 +17,7 @@ This MCP server provides tools that integrate with the Unleash Admin API, allowi
 
 - `create_flag` tool for creating flags via Admin API
 - `evaluate_change` tool for determining when flags are needed
+- `detect_flag` tool for discovering existing flags to prevent duplicates
 - `wrap_change` tool for instructing the LLM how to wrap the change based on current code base patterns
 
 ## Installation
@@ -268,7 +270,7 @@ Use evaluate_change with:
 - riskLevel: "high"
 ```
 
-The tool will automatically guide you through the complete workflow: evaluate → create → wrap → implement.
+The tool will automatically guide you through the complete workflow: evaluate → detect → (create OR use existing) → wrap → implement.
 
 **Tool Parameters (all optional):**
 
@@ -282,6 +284,113 @@ The tool will automatically guide you through the complete workflow: evaluate �
   "codeContext": "surrounding code for parent flag detection"
 }
 ```
+
+---
+
+#### Tool: `detect_flag`
+
+Intelligently discovers existing feature flags in the codebase to prevent duplicates and encourage flag reuse.
+
+**When to use:**
+- Before creating a new feature flag
+- During code evaluation to check for existing flags
+- When you want to prevent duplicate flag creation
+- To find flags that might already cover your use case
+
+**Parameters:**
+
+- `description` (required): Description of the change or feature
+  - Example: `"payment processing with Stripe"`, `"new checkout flow"`
+- `files` (optional): List of files being modified to search in same area
+  - Example: `["src/payments/stripe.ts", "src/checkout/flow.ts"]`
+- `codeContext` (optional): Code context to analyze for nearby flags
+  - Useful when you have surrounding code to check
+
+**Example:**
+
+```json
+{
+  "description": "payment processing with Stripe",
+  "files": ["src/payments/stripe.ts"]
+}
+```
+
+**What it provides:**
+
+The tool returns comprehensive search instructions for discovering flags through multiple detection strategies:
+
+1. **File-based Detection**: Search in files you're modifying for existing flags
+2. **Git History Analysis**: Find recently added flags in commit history
+3. **Semantic Name Matching**: Match your description to existing flag names
+4. **Code Context Analysis**: Find flags near your modification point
+
+**Detection Process:**
+
+```
+Step 1: Execute file-based search (Grep for flag patterns in target files)
+        ↓
+Step 2: Search git history (recent flag additions)
+        ↓
+Step 3: Perform semantic matching (description → flag names)
+        ↓
+Step 4: Analyze code context (if provided)
+        ↓
+Step 5: Combine scores from all methods
+        ↓
+Step 6: Return best candidate with confidence score
+```
+
+**Confidence Levels:**
+
+The tool returns candidates with confidence scores:
+
+- **High (≥0.7)**: Strong match - strongly recommend reusing this flag
+- **Medium (0.4-0.7)**: Possible match - review and decide
+- **Low (<0.4)**: Weak match - better to create new flag
+
+**Output Format:**
+
+```json
+{
+  "flagFound": true,
+  "candidate": {
+    "name": "stripe-payment-integration",
+    "location": "src/payments/stripe.ts:42",
+    "context": "if (client.isEnabled('stripe-payment-integration')) {",
+    "confidence": 0.85,
+    "reasoning": "Found in same file you're modifying, added 2 days ago",
+    "detectionMethod": "file-based"
+  }
+}
+```
+
+Or if no match found:
+
+```json
+{
+  "flagFound": false,
+  "candidate": null
+}
+```
+
+**Automatic Integration:**
+
+The `detect_flag` tool is automatically integrated into the `evaluate_change` workflow:
+- When evaluate_change runs, it calls detect_flag
+- If high-confidence match found: Recommend using existing flag
+- If no match: Continue with risk assessment and suggest create_flag
+
+**Example Usage in Claude Desktop:**
+
+```
+// Check for existing flags before creating
+Use detect_flag with description "payment processing with Stripe"
+
+// Integrated automatically in evaluation
+Use evaluate_change - it will automatically search for existing flags
+```
+
+---
 
 ## Architecture
 
@@ -298,14 +407,23 @@ src/
 │   └── client.ts                # Unleash Admin API client
 ├── tools/
 │   ├── createFlag.ts            # create_flag tool
-│   └── evaluateChange.ts        # evaluate_change tool
+│   ├── evaluateChange.ts        # evaluate_change tool
+│   ├── detectFlag.ts            # detect_flag tool
+│   └── wrapChange.ts            # wrap_change tool
 ├── prompts/
 │   └── promptBuilder.ts         # Markdown formatting utilities
 ├── evaluation/
 │   ├── riskPatterns.ts          # Risk assessment patterns
 │   └── flagDetectionPatterns.ts # Parent flag detection patterns
+├── detection/
+│   ├── flagDiscovery.ts         # Flag discovery strategies
+│   └── flagScoring.ts           # Scoring and ranking logic
 ├── knowledge/
 │   └── unleashBestPractices.ts  # Best practices knowledge base
+├── templates/
+│   ├── languages.ts             # Language detection and metadata
+│   ├── wrapperTemplates.ts      # Code wrapping templates
+│   └── searchGuidance.ts        # Pattern search instructions
 └── utils/
     ├── errors.ts                # Error normalization
     └── streaming.ts             # Progress notifications

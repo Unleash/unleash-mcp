@@ -51,15 +51,23 @@ function buildEvaluationGuidance(input?: EvaluateChangeInput): string {
    - Use ${pb.inlineCode('Bash')} tool: ${pb.inlineCode('git diff')} or ${pb.inlineCode('git diff --staged')}
    - Use ${pb.inlineCode('Read')} tool to examine changed files
 
-2. **Read surrounding code** for context:
+2. **Detect existing flags** (CRITICAL - prevents duplicates):
+   - Call ${pb.inlineCode('detect_flag')} with your change description
+   - Follow the search instructions to find existing flags
+   - If high-confidence match found (≥0.7): Use that flag, skip to wrap_change
+   - If medium-confidence match (0.4-0.7): Present both options to user
+   - If low-confidence (<0.4): Continue with evaluation
+
+3. **Read surrounding code** for context:
    - Get full file contents to check for parent flags
    - Look for existing feature flag patterns
 
-3. **Apply the evaluation guidelines below**
+4. **Apply the evaluation guidelines below**
 
-4. **Provide JSON evaluation result**
+5. **Provide JSON evaluation result**
 
-5. **Take appropriate next action** based on the result:
+6. **Take appropriate next action** based on the result:
+   - If existing flag found: Call ${pb.inlineCode('wrap_change')} with existing flag → then implement
    - If flag needed: Call ${pb.inlineCode('create_flag')} → then ${pb.inlineCode('wrap_change')} → then implement
    - If no flag needed: Proceed with implementation`,
         'danger'
@@ -144,6 +152,10 @@ function buildWorkflowSection(): string {
       details: 'Use git commands or ask the user to identify what code is being changed. Read the files to get full context.',
     },
     {
+      step: 'Detect Existing Flags (NEW)',
+      details: 'Call detect_flag tool with description of the change. Execute search instructions to find existing flags that might already cover this functionality. If high-confidence match found (≥0.7), recommend using that flag.',
+    },
+    {
       step: 'Check Parent Flag Coverage',
       details: 'Scan surrounding code for existing feature flag checks. If found and covering the change location, STOP - no new flag needed.',
     },
@@ -157,7 +169,7 @@ function buildWorkflowSection(): string {
     },
     {
       step: 'Make Recommendation',
-      details: 'Decide: create new flag, use existing flag, or no flag needed.',
+      details: 'Decide: use existing flag (from detect_flag), create new flag, or no flag needed.',
     },
     {
       step: 'Take Action',
@@ -281,12 +293,14 @@ function buildRiskAssessmentSection(): string {
 function buildOutputFormatSection(): string {
   const schema = {
     needsFlag: 'boolean',
-    reason: 'already_covered | new_feature | configuration_change | bug_fix | refactor | test_code | low_risk_change',
+    reason: 'already_covered | existing_flag_found | new_feature | configuration_change | bug_fix | refactor | test_code | low_risk_change',
     recommendation: 'use_existing | create_new | no_flag_needed',
     existingFlag: {
       name: 'string (flag name)',
       location: 'string (file:line)',
-      coverageScope: 'entire_module | parent_function | ancestor_block',
+      coverageScope: 'entire_module | parent_function | ancestor_block | detected_in_codebase',
+      detectionMethod: 'parent_coverage | detect_flag_tool',
+      confidence: 'number (0.0 to 1.0, only for detect_flag_tool)',
     },
     suggestedFlag: 'string (descriptive flag name) | null',
     riskLevel: 'low | medium | high | critical',
@@ -301,10 +315,10 @@ function buildOutputFormatSection(): string {
   content += pb.subsection(
     'Field Descriptions',
     pb.list([
-      `${pb.inlineCode('needsFlag')}: Boolean indicating if a feature flag is needed`,
-      `${pb.inlineCode('reason')}: Why you made this decision`,
-      `${pb.inlineCode('recommendation')}: What action to take next`,
-      `${pb.inlineCode('existingFlag')}: If covered by parent flag, provide details`,
+      `${pb.inlineCode('needsFlag')}: Boolean indicating if a feature flag is needed (true even if using existing flag)`,
+      `${pb.inlineCode('reason')}: Why you made this decision (use "existing_flag_found" if detect_flag found a match)`,
+      `${pb.inlineCode('recommendation')}: What action to take next (use_existing, create_new, or no_flag_needed)`,
+      `${pb.inlineCode('existingFlag')}: If covered by parent flag OR found by detect_flag, provide details including detectionMethod`,
       `${pb.inlineCode('suggestedFlag')}: If new flag needed, suggest a descriptive name`,
       `${pb.inlineCode('riskLevel')}: Assessed risk level`,
       `${pb.inlineCode('riskScore')}: Numerical risk score you calculated`,
@@ -341,16 +355,17 @@ function buildNextActionsSection(): string {
     ) + '\n\n' +
     pb.workflow('Required Tool Call Sequence', [
       {
-        step: 'Step 1: Create the Flag',
-        details: `${pb.emphasis('IF recommendation is "create_new":', 'bold')}\n\n` +
+        step: 'Step 1: Determine Flag to Use',
+        details: `${pb.emphasis('IF recommendation is "use_existing":', 'bold')}\n` +
+          `An existing flag was found (either by detect_flag or parent coverage). Use the flag name from ${pb.inlineCode('existingFlag.name')} and skip to Step 2.\n\n` +
+          `${pb.emphasis('IF recommendation is "create_new":', 'bold')}\n\n` +
           `Call the ${pb.inlineCode('create_flag')} tool with:\n` +
           pb.list([
             `${pb.inlineCode('name')}: Use the ${pb.inlineCode('suggestedFlag')} value from your evaluation`,
             `${pb.inlineCode('type')}: Choose based on the Flag Type Selection guidance below`,
             `${pb.inlineCode('description')}: Clear explanation of what this flag controls and why`,
           ], true) + '\n\n' +
-          `${pb.emphasis('IF recommendation is "use_existing":', 'bold')}\n` +
-          `Skip to Step 2 using the existing flag name from ${pb.inlineCode('existingFlag.name')}`,
+          `Then proceed to Step 2 with the newly created flag name.`,
       },
       {
         step: 'Step 2: Generate Wrapping Code',
