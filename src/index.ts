@@ -36,6 +36,7 @@ import { ServerContext, createLogger, handleToolError } from './context.js';
 import { createFlag, createFlagTool } from './tools/createFlag.js';
 import { evaluateChange, evaluateChangeTool } from './tools/evaluateChange.js';
 import { wrapChange, wrapChangeTool } from './tools/wrapChange.js';
+import { detectFlag, detectFlagTool } from './tools/detectFlag.js';
 import { VERSION } from './version.js';
 
 /**
@@ -64,8 +65,9 @@ async function main(): Promise<void> {
   const instructions = [
     'Use this tool for local development to increase confidence by decoupling the change from deployments:',
     '1) Call evaluate_change to get a risk assessment on the current code change.',
-    '2) If the code change is risky, create a feature flag to protect it with create_flag.',
-    '3) Use wrap_change to guarde code with an Unleash flag.',
+    '2) The evaluate_change tool will automatically call detect_flag to search for existing flags to prevent duplicates.',
+    '3) If an existing flag is found, use it. If the code change is risky and no flag exists, create a feature flag with create_flag.',
+    '4) Use wrap_change to guard code with an Unleash flag.',
   ].join('\n');
 
   // Create MCP server
@@ -99,7 +101,7 @@ async function main(): Promise<void> {
   // Register tool handlers
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: [createFlagTool, evaluateChangeTool, wrapChangeTool],
+      tools: [createFlagTool, evaluateChangeTool, detectFlagTool, wrapChangeTool],
     };
   });
 
@@ -115,6 +117,9 @@ async function main(): Promise<void> {
 
         case 'evaluate_change':
           return await evaluateChange(context, args);
+
+        case 'detect_flag':
+          return await detectFlag(context, args);
 
         case 'wrap_change':
           return await wrapChange(context, args);
