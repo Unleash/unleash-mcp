@@ -30,6 +30,23 @@ export interface CreateFeatureFlagResponse {
   impressionData: boolean;
 }
 
+export interface UnleashProjectSummary {
+  id: string;
+  name: string;
+  description?: string;
+  mode?: string;
+}
+
+export interface FeatureFlagSummary {
+  name: string;
+  description?: string;
+  project: string;
+  type?: FeatureFlagType;
+  archived?: boolean;
+  impressionData?: boolean;
+  createdAt?: string;
+}
+
 /**
  * Minimal Unleash Admin API client focused on feature flag creation.
  * Uses native fetch (Node 18+) for HTTP requests.
@@ -121,6 +138,187 @@ export class UnleashClient {
       }
 
       // Re-throw other errors
+      throw error;
+    }
+  }
+
+  async listProjects(): Promise<UnleashProjectSummary[]> {
+    if (this.dryRun) {
+      return [
+        {
+          id: 'default',
+          name: 'Default (dry run)',
+          description:
+            'Dry-run mode placeholder. Set UNLEASH_BASE_URL and UNLEASH_PAT to fetch real projects.',
+        },
+      ];
+    }
+
+    const url = `${this.baseUrl}/api/admin/projects`;
+
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.buildRequestHeaders(),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        let errorMessage = `Failed to list projects: ${response.status} ${response.statusText}`;
+
+        try {
+          const errorJson = JSON.parse(errorBody);
+          if (errorJson.message) {
+            errorMessage = errorJson.message;
+          }
+        } catch {
+          if (errorBody.length < 200) {
+            errorMessage += `: ${errorBody}`;
+          }
+        }
+
+        throw new CustomError(`HTTP_${response.status}`, errorMessage);
+      }
+
+      const data = (await response.json()) as {
+        projects?: Array<{
+          id?: string;
+          name?: string;
+          description?: string;
+          mode?: string;
+        }>;
+      };
+
+      if (!Array.isArray(data.projects)) {
+        return [];
+      }
+
+      return data.projects.map((project) => ({
+        id: project.id ?? project.name ?? 'unknown-project',
+        name: project.name ?? project.id ?? 'Unnamed project',
+        description: project.description,
+        mode: project.mode,
+      }));
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new CustomError(
+          'NETWORK_ERROR',
+          'Failed to connect to Unleash API while listing projects',
+          `Check that UNLEASH_BASE_URL (${this.baseUrl}) is reachable.`
+        );
+      }
+
+      throw error;
+    }
+  }
+
+  async listFeatureFlags(projectId?: string): Promise<FeatureFlagSummary[]> {
+    if (this.dryRun) {
+      return [
+        {
+          name: 'dry-run-placeholder-flag',
+          description:
+            'Dry-run mode placeholder. Set UNLEASH_BASE_URL and UNLEASH_PAT to fetch real feature flags.',
+          project: projectId ?? 'default',
+          type: 'release',
+          archived: false,
+          impressionData: false,
+        },
+      ];
+    }
+
+    if (projectId) {
+      return this.fetchProjectFeatureFlags(projectId);
+    }
+
+    const projects = await this.listProjects();
+
+    const featureCollections = await Promise.all(
+      projects.map(async (project) => {
+        try {
+          return await this.fetchProjectFeatureFlags(project.id);
+        } catch (error) {
+          // Allow other projects to succeed even if one fails.
+          if (error instanceof CustomError) {
+            throw error;
+          }
+          throw error;
+        }
+      })
+    );
+
+    return featureCollections.flat();
+  }
+
+  private async fetchProjectFeatureFlags(
+    projectId: string
+  ): Promise<FeatureFlagSummary[]> {
+    const url = `${this.baseUrl}/api/admin/projects/${encodeURIComponent(projectId)}/features`;
+
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.buildRequestHeaders(),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        let errorMessage = `Failed to list feature flags for project ${projectId}: ${response.status} ${response.statusText}`;
+
+        try {
+          const errorJson = JSON.parse(errorBody);
+          if (errorJson.message) {
+            errorMessage = errorJson.message;
+          }
+        } catch {
+          if (errorBody.length < 200) {
+            errorMessage += `: ${errorBody}`;
+          }
+        }
+
+        throw new CustomError(`HTTP_${response.status}`, errorMessage);
+      }
+
+      const data = (await response.json()) as {
+        features?: Array<{
+          name?: string;
+          description?: string;
+          type?: FeatureFlagType;
+          archived?: boolean;
+          impressionData?: boolean;
+          createdAt?: string;
+          project?: string;
+        }>;
+      };
+
+      return (data.features ?? [])
+        .filter((f) => f.name)
+        .map((feature) => ({
+          name: feature.name!,
+          description: feature.description,
+          project: feature.project ?? projectId,
+          type: feature.type,
+          archived: feature.archived,
+          impressionData: feature.impressionData,
+          createdAt: feature.createdAt,
+        }));
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new CustomError(
+          'NETWORK_ERROR',
+          `Failed to connect to Unleash API while listing flags for project ${projectId}`,
+          `Check that UNLEASH_BASE_URL (${this.baseUrl}) is reachable.`
+        );
+      }
+
       throw error;
     }
   }

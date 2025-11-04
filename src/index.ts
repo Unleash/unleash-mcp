@@ -28,6 +28,9 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
+  ListResourcesRequestSchema,
+  ListResourceTemplatesRequestSchema,
+  ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
 import { loadConfig } from './config.js';
@@ -38,6 +41,15 @@ import { evaluateChange, evaluateChangeTool } from './tools/evaluateChange.js';
 import { wrapChange, wrapChangeTool } from './tools/wrapChange.js';
 import { detectFlag, detectFlagTool } from './tools/detectFlag.js';
 import { VERSION } from './version.js';
+import {
+  PROJECTS_RESOURCE_URI,
+  extractProjectIdFromFeatureUri,
+  isFeatureFlagsUri,
+  listResourceTemplates,
+  listStaticResources,
+  readFeatureFlagsResource,
+  readProjectsResource,
+} from './resources/unleashResources.js';
 
 /**
  * Main entry point for the MCP server.
@@ -102,6 +114,45 @@ async function main(): Promise<void> {
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
       tools: [createFlagTool, evaluateChangeTool, detectFlagTool, wrapChangeTool],
+    };
+  });
+
+  server.setRequestHandler(ListResourcesRequestSchema, async () => {
+    return {
+      resources: listStaticResources(),
+    };
+  });
+
+  server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+    const { uri } = request.params;
+
+    logger.debug(`Resource read requested: ${uri}`);
+
+    switch (uri) {
+      case PROJECTS_RESOURCE_URI:
+        return {
+          contents: [await readProjectsResource(context)],
+        };
+
+      default:
+        if (isFeatureFlagsUri(uri)) {
+          const projectId = extractProjectIdFromFeatureUri(uri);
+          if (!projectId) {
+            throw new Error('Project ID missing from feature flags URI');
+          }
+
+          return {
+            contents: [await readFeatureFlagsResource(context, projectId)],
+          };
+        }
+
+        throw new Error(`Unknown resource: ${uri}`);
+    }
+  });
+
+  server.setRequestHandler(ListResourceTemplatesRequestSchema, async () => {
+    return {
+      resourceTemplates: listResourceTemplates(),
     };
   });
 
