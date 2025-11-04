@@ -69,6 +69,26 @@ async function handler(req: Request, res: Response) {
   : oldBehavior();`,
     explanation: 'Ternary operator for simple conditional logic',
   },
+  {
+    language: 'typescript',
+    pattern: 'middleware',
+    framework: 'Express',
+    import: "import { unleash } from './unleash-client';",
+    usage: `// ✅ CORRECT: Always mount router, check flag on every request
+app.use('/api/resource', (req, res, next) => {
+  if (!unleash.isEnabled('${flagName}')) {
+    return res.status(404).json({ error: 'Feature not available' });
+  }
+  // Forward to controller/router
+  resourceController.router(req, res, next);
+});
+
+// ❌ WRONG: DO NOT wrap the mounting itself
+// if (unleash.isEnabled('${flagName}')) {
+//   app.use('/api/resource', resourceController.router); // NOT runtime controllable!
+// }`,
+    explanation: 'Runtime-controllable router wrapping - ALWAYS mount the router, check flag inside the middleware',
+  },
 ];
 
 /**

@@ -162,6 +162,33 @@ function buildGuidanceDocument(params: {
   const sections = [
     `# Feature Flag Wrapping Guide: "${params.flagName}"`,
     '',
+    '# 🛑 STOP - READ THIS FIRST',
+    '',
+    '## ❌ DO NOT WRAP ROUTE REGISTRATIONS, MIDDLEWARE MOUNTING, OR CONTROLLER REGISTRATION',
+    '',
+    '**This is WRONG and will NOT work:**',
+    '```typescript',
+    '// ❌ WRONG - Route only registered at startup, flag toggle requires redeploy',
+    `if (unleash.isEnabled('${params.flagName}')) {`,
+    '  app.use(\'/api/endpoint\', controller.router);',
+    '}',
+    '```',
+    '',
+    '**This is CORRECT and runtime controllable:**',
+    '```typescript',
+    '// ✅ CORRECT - Route always registered, flag checked on every request',
+    'app.use(\'/api/endpoint\', (req, res, next) => {',
+    `  if (!unleash.isEnabled('${params.flagName}')) {`,
+    '    return res.status(404).json({ error: \'Feature not available\' });',
+    '  }',
+    '  controller.router(req, res, next);',
+    '});',
+    '```',
+    '',
+    '**Rule:** Flag checks must be INSIDE the execution path (handler/function), NOT wrapping the registration.',
+    '',
+    '---',
+    '',
     `**Language:** ${params.language}`,
     params.frameworkHint ? `**Framework:** ${params.frameworkHint}` : '',
     `**SDK Documentation:** ${params.sdkDocs}`,
@@ -169,8 +196,6 @@ function buildGuidanceDocument(params: {
     '---',
     '',
     '## Quick Start',
-    '',
-    '⚠️ **IMPORTANT**: Place flag checks INSIDE execution paths (handlers, functions), NOT wrapping registrations or mounting.',
     '',
     params.frameworkHint
       ? `You indicated you are using **${params.frameworkHint}**. Here is the recommended pattern:`
@@ -292,11 +317,14 @@ export const wrapChangeTool = {
   name: 'wrap_change',
   description: `Generate code snippets and guidance for wrapping changes with feature flags.
 
+⚠️ CRITICAL: This tool enforces RUNTIME-CONTROLLABLE feature flags. You MUST place flag checks INSIDE execution paths (handlers, functions), NOT wrapping route registrations, middleware mounting, or controller registration.
+
 This tool provides language-specific templates and instructions for protecting code changes with feature flags. It helps you:
 - Find existing feature flag patterns in your codebase
 - Match detected conventions (imports, method names, wrapping styles)
 - Generate appropriate code snippets for your language/framework
 - Follow Unleash SDK best practices
+- Ensure flags are runtime controllable (toggle without redeploy)
 
 Supported languages:
 - TypeScript/JavaScript (Node, React, Vue, Angular)

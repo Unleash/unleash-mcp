@@ -411,6 +411,14 @@ app.post('/api/checkout', async (req, res) => {
   // New checkout logic here
 });
 
+// ✅ Wrapping entire router - ALWAYS mount, check flag inside
+app.use('/workspaces', (req, res, next) => {
+  if (!unleash.isEnabled('${flagName}')) {
+    return res.status(404).json({ error: 'Feature not available' });
+  }
+  workspaceController.router(req, res, next);
+});
+
 // ✅ Flag check inside scheduled function - runtime controllable
 cron.schedule('0 0 * * *', () => {
   if (!unleash.isEnabled('${flagName}')) return;
@@ -516,6 +524,11 @@ function generateNonRuntimeControllableAntiPatterns(language: SupportedLanguage,
 // ❌ WRONG: Wrapping route registration - NOT runtime controllable
 if (unleash.isEnabled('${flagName}')) {
   app.post('/api/checkout', checkoutHandler);  // Only registered at startup!
+}
+
+// ❌ WRONG: Wrapping router/controller mounting - NOT runtime controllable
+if (unleash.isEnabled('${flagName}')) {
+  app.use('/workspaces', workspaceController.router);  // Only mounted at startup!
 }
 
 // ❌ WRONG: Wrapping middleware registration - NOT runtime controllable
