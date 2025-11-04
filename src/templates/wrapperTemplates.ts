@@ -34,14 +34,15 @@ const typescriptTemplates = (flagName: string): CodeTemplate[] => [
     pattern: 'guard',
     framework: 'Express/Node',
     import: "import { unleash } from './unleash-client';",
-    usage: `async function handler(req: Request, res: Response) {
+    usage: `// ✅ Runtime controllable: Flag checked on every request
+async function handler(req: Request, res: Response) {
   if (!unleash.isEnabled('${flagName}')) {
     return res.status(404).json({ error: 'Feature not available' });
   }
 
   // Your handler code here
 }`,
-    explanation: 'Guard clause pattern for early return when feature is disabled',
+    explanation: 'Runtime-controllable guard clause - checks flag on every request (NOT wrapping route registration)',
   },
   {
     language: 'typescript',
@@ -104,6 +105,7 @@ unleash_client = UnleashClient(...)`,
 from functools import wraps
 
 def feature_flag(flag_name):
+    """Runtime-controllable decorator - checks flag on every call"""
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -112,11 +114,13 @@ def feature_flag(flag_name):
             return func(*args, **kwargs)
         return wrapper
     return decorator`,
-    usage: `@feature_flag("${flagName}")
+    usage: `# ✅ Runtime controllable: Decorator applied at import, flag checked at runtime
+@app.route('/api/endpoint')  # Route ALWAYS registered
+@feature_flag("${flagName}")  # Flag checked on every request
 def my_view(request):
     # Your handler code here
     pass`,
-    explanation: 'Decorator pattern for protecting entire functions',
+    explanation: 'Runtime-controllable decorator that checks flag on every function call (NOT conditionally applied)',
   },
 ];
 
@@ -152,7 +156,8 @@ const goTemplates = (flagName: string): CodeTemplate[] => [
     pattern: 'middleware',
     framework: 'Echo/Gin',
     import: 'import "github.com/Unleash/unleash-client-go/v3"',
-    usage: `func FeatureFlagMiddleware(flagName string) gin.HandlerFunc {
+    usage: `// ✅ Runtime controllable: Middleware ALWAYS registered, checks flag at runtime
+func FeatureFlagMiddleware(flagName string) gin.HandlerFunc {
     return func(c *gin.Context) {
         if !unleash.IsEnabled(flagName) {
             c.JSON(404, gin.H{"error": "Feature not available"})
@@ -163,9 +168,11 @@ const goTemplates = (flagName: string): CodeTemplate[] => [
     }
 }
 
-// Usage:
-router.Use(FeatureFlagMiddleware("${flagName}"))`,
-    explanation: 'Middleware pattern for protecting entire routes',
+// ALWAYS register the middleware (not wrapped in if-block)
+router.Use(FeatureFlagMiddleware("${flagName}"))
+
+// The flag check happens at runtime on every request`,
+    explanation: 'Runtime-controllable middleware that checks flag on every request (NOT conditionally registered)',
   },
 ];
 
