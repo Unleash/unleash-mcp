@@ -86,6 +86,39 @@ export interface FeatureStrategy {
   parameters: Record<string, string>;
 }
 
+export interface FeatureEnvironment {
+  name: string;
+  enabled: boolean;
+  environment?: string;
+  type?: string;
+  featureName?: string;
+  sortOrder?: number;
+  variantCount?: number;
+  strategies?: FeatureStrategy[];
+  variants?: StrategyVariant[];
+  lastSeenAt?: string | null;
+  hasStrategies?: boolean;
+  hasEnabledStrategies?: boolean;
+}
+
+export interface FeatureDetails {
+  name: string;
+  description?: string | null;
+  project?: string;
+  type?: FeatureFlagType | string;
+  archived?: boolean;
+  enabled?: boolean;
+  stale?: boolean;
+  favorite?: boolean;
+  impressionData?: boolean;
+  createdAt?: string | null;
+  archivedAt?: string | null;
+  environments?: FeatureEnvironment[];
+  tags?: Array<{ type?: string; value?: string }>;
+  links?: Array<{ id: string; url: string; title?: string | null }>;
+  [key: string]: unknown;
+}
+
 /**
  * Minimal Unleash Admin API client focused on feature flag creation.
  * Uses native fetch (Node 18+) for HTTP requests.
@@ -252,6 +285,48 @@ export class UnleashClient {
       {
         errorMessage: `Failed to configure flexibleRollout strategy for feature ${featureName} in ${environment}`,
         networkErrorMessage: `Failed to connect to Unleash API while configuring strategy for feature ${featureName}`,
+      }
+    );
+  }
+
+  async getFeature(
+    projectId: string,
+    featureName: string
+  ): Promise<FeatureDetails> {
+    if (this.dryRun) {
+      return {
+        name: featureName,
+        project: projectId,
+        type: 'release',
+        description: `Dry-run feature summary for ${featureName}`,
+        enabled: false,
+        archived: false,
+        impressionData: false,
+        stale: false,
+        createdAt: new Date().toISOString(),
+        environments: [
+          {
+            name: 'development',
+            environment: 'development',
+            featureName,
+            enabled: false,
+            strategies: [],
+            variants: [],
+            hasStrategies: false,
+            hasEnabledStrategies: false,
+          },
+        ],
+      };
+    }
+
+    return this.requestJson<FeatureDetails>(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/features/${encodeURIComponent(featureName)}`,
+      {
+        method: 'GET',
+      },
+      {
+        errorMessage: `Failed to fetch feature ${featureName} in project ${projectId}`,
+        networkErrorMessage: `Failed to connect to Unleash API while fetching feature ${featureName}`,
       }
     );
   }
