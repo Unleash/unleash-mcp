@@ -15,10 +15,15 @@ This MCP server provides tools that integrate with the Unleash Admin API, allowi
 
 ### Current Implementation
 
-- `create_flag` tool for creating flags via Admin API
-- `evaluate_change` tool for determining when flags are needed
-- `detect_flag` tool for discovering existing flags to prevent duplicates
-- `wrap_change` tool for instructing the LLM how to wrap the change based on current code base patterns
+- `create_flag` creates flags via the Admin API
+- `evaluate_change` scores risk and recommends flag usage
+- `detect_flag` discovers existing flags to prevent duplicates
+- `wrap_change` guides the LLM on how to guard code paths
+- `set_flag_rollout` configures flexible rollouts (does not enable environments)
+- `get_flag_state` surfaces feature metadata and environment strategies
+- `toggle_flag_environment` enables or disables environments on demand
+- `remove_flag_strategy` deletes strategies from an environment
+- `cleanup_flag` generates guided instructions for safely removing flagged code paths
 
 ## Installation
 
