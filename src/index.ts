@@ -40,6 +40,7 @@ import { createFlag, createFlagTool } from './tools/createFlag.js';
 import { evaluateChange, evaluateChangeTool } from './tools/evaluateChange.js';
 import { wrapChange, wrapChangeTool } from './tools/wrapChange.js';
 import { detectFlag, detectFlagTool } from './tools/detectFlag.js';
+import { setFlagRollout, setFlagRolloutTool } from './tools/setFlagRollout.js';
 import { VERSION } from './version.js';
 import {
   isProjectsUri,
@@ -115,7 +116,13 @@ async function main(): Promise<void> {
   // Register tool handlers
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: [createFlagTool, evaluateChangeTool, detectFlagTool, wrapChangeTool],
+      tools: [
+        createFlagTool,
+        evaluateChangeTool,
+        detectFlagTool,
+        wrapChangeTool,
+        setFlagRolloutTool,
+      ],
     };
   });
 
@@ -181,6 +188,9 @@ async function main(): Promise<void> {
 
         case 'wrap_change':
           return await wrapChange(context, args);
+
+        case 'set_flag_rollout':
+          return await setFlagRollout(context, args, request.params._meta?.progressToken);
 
         default:
           throw new Error(`Unknown tool: ${name}`);

@@ -50,6 +50,42 @@ export interface FeatureFlagSummary {
   url: string;
 }
 
+export interface StrategyVariantPayload {
+  type: 'json' | 'csv' | 'string' | 'number';
+  value: string;
+}
+
+export interface StrategyVariant {
+  name: string;
+  weight: number;
+  weightType?: 'variable' | 'fix';
+  stickiness?: string;
+  payload?: StrategyVariantPayload;
+  [key: string]: unknown;
+}
+
+export interface SetFlagRolloutOptions {
+  rolloutPercentage: number;
+  groupId?: string;
+  stickiness?: string;
+  title?: string;
+  disabled?: boolean;
+  variants?: StrategyVariant[];
+}
+
+export interface FeatureStrategy {
+  id: string;
+  name: string;
+  title?: string | null;
+  disabled?: boolean | null;
+  featureName?: string;
+  sortOrder?: number;
+  segments?: number[];
+  constraints?: Array<Record<string, unknown>>;
+  variants?: StrategyVariant[];
+  parameters: Record<string, string>;
+}
+
 /**
  * Minimal Unleash Admin API client focused on feature flag creation.
  * Uses native fetch (Node 18+) for HTTP requests.
@@ -170,6 +206,54 @@ export class UnleashClient {
     }
 
     return this.fetchProjectFeatureFlags(projectId);
+  }
+
+  async setFlexibleRolloutStrategy(
+    projectId: string,
+    featureName: string,
+    environment: string,
+    options: SetFlagRolloutOptions
+  ): Promise<FeatureStrategy> {
+    const rollout = Math.min(100, Math.max(0, options.rolloutPercentage));
+    const parameters: Record<string, string> = {
+      rollout: rollout.toString(),
+      groupId: options.groupId ?? featureName,
+      stickiness: options.stickiness ?? 'default',
+    };
+
+    const payload = {
+      name: 'flexibleRollout',
+      title: options.title,
+      disabled: options.disabled,
+      parameters,
+      ...(options.variants && options.variants.length > 0
+        ? { variants: options.variants }
+        : {}),
+    };
+
+    if (this.dryRun) {
+      return {
+        id: 'dry-run-strategy',
+        name: payload.name,
+        title: payload.title ?? null,
+        disabled: payload.disabled ?? false,
+        featureName,
+        parameters,
+        variants: payload.variants ?? [],
+      };
+    }
+
+    return this.requestJson<FeatureStrategy>(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/features/${encodeURIComponent(featureName)}/environments/${encodeURIComponent(environment)}/strategies`,
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      },
+      {
+        errorMessage: `Failed to configure flexibleRollout strategy for feature ${featureName} in ${environment}`,
+        networkErrorMessage: `Failed to connect to Unleash API while configuring strategy for feature ${featureName}`,
+      }
+    );
   }
 
   private async fetchProjectFeatureFlags(
