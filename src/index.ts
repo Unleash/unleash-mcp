@@ -40,6 +40,7 @@ import { createFlag, createFlagTool } from './tools/createFlag.js';
 import { evaluateChange, evaluateChangeTool } from './tools/evaluateChange.js';
 import { wrapChange, wrapChangeTool } from './tools/wrapChange.js';
 import { detectFlag, detectFlagTool } from './tools/detectFlag.js';
+import { cleanupFlag, cleanupFlagTool } from './tools/cleanupFlag.js';
 import { VERSION } from './version.js';
 import {
   isProjectsUri,
@@ -82,6 +83,7 @@ async function main(): Promise<void> {
     '2) The evaluate_change tool will automatically call detect_flag to search for existing flags to prevent duplicates.',
     '3) If an existing flag is found, use it. If the code change is risky and no flag exists, create a feature flag with create_flag.',
     '4) Use wrap_change to guard code with an Unleash flag.',
+    '5) When a flag is rolled out and ready to be removed, use cleanup_flag to safely remove the flag code while preserving the desired path.',
   ].join('\n');
 
   // Create MCP server
@@ -115,7 +117,7 @@ async function main(): Promise<void> {
   // Register tool handlers
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: [createFlagTool, evaluateChangeTool, detectFlagTool, wrapChangeTool],
+      tools: [createFlagTool, evaluateChangeTool, detectFlagTool, wrapChangeTool, cleanupFlagTool],
     };
   });
 
@@ -181,6 +183,9 @@ async function main(): Promise<void> {
 
         case 'wrap_change':
           return await wrapChange(context, args);
+
+        case 'cleanup_flag':
+          return await cleanupFlag(context, args);
 
         default:
           throw new Error(`Unknown tool: ${name}`);
