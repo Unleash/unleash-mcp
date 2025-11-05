@@ -28,9 +28,10 @@ export interface DetectionResult {
  * Weights for combining detection method scores
  */
 export const DETECTION_WEIGHTS = {
-  'file-based': 0.4,
-  'git-history': 0.2,
-  'semantic': 0.3,
+  'unleash-inventory': 0.25,
+  'file-based': 0.3,
+  'git-history': 0.15,
+  'semantic': 0.2,
   'code-context': 0.1,
 } as const;
 
@@ -95,7 +96,7 @@ export function formatDetectionResult(result: DetectionResult): string {
 
 **Recommendation**: Proceed with creating a new feature flag.
 
-**Reasoning**: After searching the codebase (file-based, git history, semantic matching), no existing flags were found that match your use case well enough to reuse.
+**Reasoning**: After searching Unleash projects, code references (file-based, git history, semantic matching), and nearby context, no existing flags were found that match your use case well enough to reuse.
 `.trim();
   }
 
@@ -199,19 +200,24 @@ export function getScoringGuidance(): string {
 
 When scoring flag candidates, use these weights to calculate the final score:
 
-- **File-based detection**: ${DETECTION_WEIGHTS['file-based']} (0.4)
+- **Unleash inventory**: ${DETECTION_WEIGHTS['unleash-inventory']} (0.25)
+  - Same project with strong name/description alignment: 1.0
+  - Related project or partial alignment: 0.7
+  - Archived or weakly related flag: 0.4
+
+- **File-based detection**: ${DETECTION_WEIGHTS['file-based']} (0.3)
   - Same file as modification: 0.8
   - Same directory: 0.6
   - Same module/package: 0.4
   - Other location: 0.2
 
-- **Git history detection**: ${DETECTION_WEIGHTS['git-history']} (0.2)
+- **Git history detection**: ${DETECTION_WEIGHTS['git-history']} (0.15)
   - Last week: 0.8
   - Last month: 0.6
   - Last 3 months: 0.4
   - Older: 0.2
 
-- **Semantic matching**: ${DETECTION_WEIGHTS['semantic']} (0.3)
+- **Semantic matching**: ${DETECTION_WEIGHTS['semantic']} (0.2)
   - Exact match: 1.0
   - Contains all words: 0.8
   - Contains some words: 0.6
@@ -225,7 +231,11 @@ When scoring flag candidates, use these weights to calculate the final score:
 
 **Final Score Calculation**:
 \`\`\`
-final_score = (file_score × 0.4) + (git_score × 0.2) + (semantic_score × 0.3) + (context_score × 0.1)
+final_score = (unleash_score × 0.25)
+            + (file_score × 0.30)
+            + (git_score × 0.15)
+            + (semantic_score × 0.20)
+            + (context_score × 0.10)
 \`\`\`
 
 **Confidence Levels**:

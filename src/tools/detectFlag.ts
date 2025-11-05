@@ -59,6 +59,7 @@ export async function detectFlag(
       description: input.description,
       files: input.files,
       codeContext: input.codeContext,
+      defaultProject: context.config.unleash.defaultProject,
     };
 
     // Generate comprehensive search instructions
