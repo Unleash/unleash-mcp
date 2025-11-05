@@ -43,6 +43,7 @@ import { detectFlag, detectFlagTool } from './tools/detectFlag.js';
 import { setFlagRollout, setFlagRolloutTool } from './tools/setFlagRollout.js';
 import { getFlagState, getFlagStateTool } from './tools/getFlagState.js';
 import { toggleFlagEnvironment, toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
+import { removeFlagStrategy, removeFlagStrategyTool } from './tools/removeFlagStrategy.js';
 import { VERSION } from './version.js';
 import {
   isProjectsUri,
@@ -126,6 +127,7 @@ async function main(): Promise<void> {
         setFlagRolloutTool,
         getFlagStateTool,
         toggleFlagEnvironmentTool,
+        removeFlagStrategyTool,
       ],
     };
   });
@@ -205,6 +207,9 @@ async function main(): Promise<void> {
             args,
             request.params._meta?.progressToken
           );
+
+        case 'remove_flag_strategy':
+          return await removeFlagStrategy(context, args, request.params._meta?.progressToken);
 
         default:
           throw new Error(`Unknown tool: ${name}`);

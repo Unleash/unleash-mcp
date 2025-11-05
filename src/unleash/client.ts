@@ -331,6 +331,74 @@ export class UnleashClient {
     );
   }
 
+  async deleteFeatureStrategy(
+    projectId: string,
+    featureName: string,
+    environment: string,
+    strategyId: string
+  ): Promise<void> {
+    if (this.dryRun) {
+      return;
+    }
+
+    const path = `/api/admin/projects/${encodeURIComponent(projectId)}/features/${encodeURIComponent(featureName)}/environments/${encodeURIComponent(environment)}/strategies/${encodeURIComponent(strategyId)}`;
+    const url = `${this.baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
+    const headers = this.buildRequestHeaders();
+
+    try {
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers,
+      });
+
+      if (!response.ok) {
+        const rawBody = await response.text();
+        let message = `Failed to delete strategy ${strategyId} from feature ${featureName} in ${environment}: ${response.status} ${response.statusText}`;
+
+        try {
+          const parsed = JSON.parse(rawBody) as {
+            message?: string;
+            details?: Array<{ message?: string }>;
+          };
+
+          if (parsed.message) {
+            message = parsed.message;
+          } else if (parsed.details && Array.isArray(parsed.details)) {
+            const detailMessages = parsed.details
+              .map((detail) => detail.message)
+              .filter((detail): detail is string => Boolean(detail));
+
+            if (detailMessages.length > 0) {
+              message = detailMessages.join(', ');
+            }
+          }
+        } catch {
+          if (rawBody && rawBody.length < 200) {
+            message += `: ${rawBody}`;
+          }
+        }
+
+        throw new CustomError(`HTTP_${response.status}`, message);
+      }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        const hint = `Check that UNLEASH_BASE_URL (${this.baseUrl}) is reachable.`;
+
+        throw new CustomError(
+          'NETWORK_ERROR',
+          `Failed to connect to Unleash API while deleting strategy for feature ${featureName}`,
+          hint
+        );
+      }
+
+      throw error;
+    }
+  }
+
   async toggleFeatureEnvironment(
     projectId: string,
     featureName: string,
