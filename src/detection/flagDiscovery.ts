@@ -21,7 +21,7 @@ export interface FlagCandidate {
   location: string;      // file:line
   context: string;       // code snippet
   score: number;         // 0.0 to 1.0
-  detectionMethod: 'file-based' | 'git-history' | 'semantic' | 'code-context';
+  detectionMethod: 'file-based' | 'git-history' | 'semantic' | 'code-context' | 'unleash-inventory';
   reasoning: string;
 }
 
@@ -32,6 +32,69 @@ export interface DiscoveryInput {
   description: string;
   files?: string[];
   codeContext?: string;
+  defaultProject?: string;
+}
+
+/**
+ * Build instructions for leveraging Unleash inventory resources.
+ */
+export function buildUnleashInventoryInstructions(
+  description: string,
+  defaultProject?: string
+): string {
+  const baseNote =
+    '> You cannot open the Unleash UI yourself. Ask the user to review the relevant project/flag in the Unleash console if human confirmation is required.';
+
+  const sharedSteps = `
+**Step 3**: Evaluate matches.
+- Consider semantic similarity between your change description and each flag's name/description.
+- Prefer non-archived flags. Note if a flag is archived and adjust scoring accordingly.
+- Record promising matches with the project ID and the flag URL so they can be reviewed quickly.
+
+**Step 4**: Score and report.
+- Assign an \`unleash-inventory\` score (0.0 - 1.0) based on how well the existing flag aligns with the proposed change.
+- Provide reasoning that references project and flag metadata (name, description, type, URL).
+
+${baseNote}`.trim();
+
+  if (defaultProject) {
+    const encodedProjectId = encodeURIComponent(defaultProject);
+    return `
+## Unleash Inventory Analysis
+
+Use the MCP resources to discover existing flags already defined in Unleash so you can reuse them instead of creating duplicates.
+
+**Step 1**: Focus on the configured default project **${defaultProject}**.
+- Optionally call \`resources/read\` with \`unleash://projects?order=desc&limit=200\` to confirm its metadata (filter to the entry whose 'id' matches "${defaultProject}").
+- Do not evaluate other projects unless the default project clearly does not align with the change. If uncertain, ask the user for guidance before proceeding.
+
+**Step 2**: Inspect feature flags for the default project.
+- Call \`resources/read\` with \`unleash://projects/${encodedProjectId}/feature-flags?order=asc&limit=200\`.
+- Review the returned flag names, descriptions, types, archived status and URLs.
+- Pay close attention to flags whose descriptions, rollout intent, or ownership align with "${description}".
+
+${sharedSteps}
+`.trim();
+  }
+
+  return `
+## Unleash Inventory Analysis
+
+Use the MCP resources to discover existing flags already defined in Unleash so you can reuse them instead of creating duplicates.
+
+**Step 1**: List available projects.
+- Call \`resources/read\` with \`unleash://projects?order=desc&limit=200\` to retrieve project metadata (names, descriptions, URLs).
+- Identify the project whose name or description best aligns with the feature description for "${description}".
+- If multiple projects seem relevant, shortlist up to 3 and justify your selection.
+- If you cannot determine a suitable project, explicitly ask the user which project to target before proceeding.
+
+**Step 2**: Inspect feature flags for each shortlisted project.
+- For each candidate project, call \`resources/read\` with \`unleash://projects/<projectId>/feature-flags?order=asc&limit=200\`.
+- Review the returned flag names, descriptions, types, archived status and URLs.
+- Pay close attention to flags whose descriptions, rollout intent, or ownership align with "${description}".
+
+${sharedSteps}
+`.trim();
 }
 
 /**
@@ -235,30 +298,38 @@ export function generateDiscoveryInstructions(input: DiscoveryInput): string {
 **Goal**: Find the most relevant existing flag to avoid creating duplicates.
 
 **Detection Methods**:
-1. File-based detection (search in modified files)
-2. Git history analysis (recent flag additions)
-3. Semantic name matching (description → flag names)
-${input.codeContext ? '4. Code context analysis (flags near modification point)' : ''}
+1. Unleash inventory analysis (projects & existing flags)
+2. File-based detection (search in modified files)
+3. Git history analysis (recent flag additions)
+4. Semantic name matching (description → flag names)
+${input.codeContext ? '5. Code context analysis (flags near modification point)' : ''}
 
 **Instructions**: Execute ALL applicable detection methods below, then combine results to find the best candidate.`,
     },
     {
-      title: '1. File-Based Detection',
+      title: '1. Unleash Inventory Analysis',
+      content: buildUnleashInventoryInstructions(
+        input.description,
+        input.defaultProject
+      ),
+    },
+    {
+      title: '2. File-Based Detection',
       content: buildFileBasedSearchInstructions(input.files),
     },
     {
-      title: '2. Git History Detection',
+      title: '3. Git History Detection',
       content: buildGitHistorySearchInstructions(),
     },
     {
-      title: '3. Semantic Name Matching',
+      title: '4. Semantic Name Matching',
       content: buildSemanticMatchingInstructions(input.description),
     },
   ];
 
   if (input.codeContext) {
     sections.push({
-      title: '4. Code Context Analysis',
+      title: '5. Code Context Analysis',
       content: buildCodeContextInstructions(input.codeContext),
     });
   }
@@ -271,10 +342,11 @@ ${input.codeContext ? '4. Code context analysis (flags near modification point)'
 After executing all detection methods, you will have multiple flag candidates with scores.
 
 **Step 1**: Calculate weighted final score for each candidate:
-- File-based score × 0.4
-- Git history score × 0.2
-- Semantic matching score × 0.3
-- Code context score × 0.1
+- Unleash inventory score × 0.25
+- File-based score × 0.30
+- Git history score × 0.15
+- Semantic matching score × 0.20
+- Code context score × 0.10
 
 **Step 2**: Select the candidate with the highest weighted score.
 
@@ -290,11 +362,11 @@ After executing all detection methods, you will have multiple flag candidates wi
   "flagFound": true,
   "candidate": {
     "name": "stripe-payment-integration",
-    "location": "src/payments/stripe.ts:42",
+    "location": "src/payments/stripe.ts:42" | "unleash:project-id/flag-name",
     "context": "if (client.isEnabled('stripe-payment-integration')) {",
     "confidence": 0.85,
     "reasoning": "Found in the same file you're modifying, added 2 days ago, name matches 'payment' from your description",
-    "detectionMethod": "file-based"
+    "detectionMethod": "file-based" | "unleash-inventory" | ...
   }
 }
 \`\`\`
