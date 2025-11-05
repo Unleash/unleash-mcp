@@ -42,6 +42,7 @@ import { wrapChange, wrapChangeTool } from './tools/wrapChange.js';
 import { detectFlag, detectFlagTool } from './tools/detectFlag.js';
 import { setFlagRollout, setFlagRolloutTool } from './tools/setFlagRollout.js';
 import { getFlagState, getFlagStateTool } from './tools/getFlagState.js';
+import { toggleFlagEnvironment, toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
 import { VERSION } from './version.js';
 import {
   isProjectsUri,
@@ -124,6 +125,7 @@ async function main(): Promise<void> {
         wrapChangeTool,
         setFlagRolloutTool,
         getFlagStateTool,
+        toggleFlagEnvironmentTool,
       ],
     };
   });
@@ -196,6 +198,13 @@ async function main(): Promise<void> {
 
         case 'get_flag_state':
           return await getFlagState(context, args, request.params._meta?.progressToken);
+
+        case 'toggle_flag_environment':
+          return await toggleFlagEnvironment(
+            context,
+            args,
+            request.params._meta?.progressToken
+          );
 
         default:
           throw new Error(`Unknown tool: ${name}`);

@@ -331,6 +331,47 @@ export class UnleashClient {
     );
   }
 
+  async toggleFeatureEnvironment(
+    projectId: string,
+    featureName: string,
+    environment: string,
+    enabled: boolean
+  ): Promise<FeatureDetails> {
+    if (this.dryRun) {
+      const feature = await this.getFeature(projectId, featureName);
+      const environments = feature.environments ?? [];
+      const updatedEnvironments = environments.map((env) =>
+        env.environment?.toLowerCase() === environment.toLowerCase() ||
+        env.name.toLowerCase() === environment.toLowerCase()
+          ? {
+              ...env,
+              enabled,
+              hasEnabledStrategies: enabled ? env.hasEnabledStrategies ?? true : false,
+            }
+          : env
+      );
+
+      return {
+        ...feature,
+        enabled: feature.enabled ?? enabled,
+        environments: updatedEnvironments,
+      };
+    }
+
+    const path = `/api/admin/projects/${encodeURIComponent(projectId)}/features/${encodeURIComponent(featureName)}/environments/${encodeURIComponent(environment)}/${enabled ? 'on' : 'off'}`;
+
+    return this.requestJson<FeatureDetails>(
+      path,
+      {
+        method: 'POST',
+      },
+      {
+        errorMessage: `Failed to turn ${enabled ? 'on' : 'off'} feature ${featureName} in ${environment}`,
+        networkErrorMessage: `Failed to connect to Unleash API while toggling feature ${featureName}`,
+      }
+    );
+  }
+
   private async fetchProjectFeatureFlags(
     projectId: string
   ): Promise<FeatureFlagSummary[]> {
