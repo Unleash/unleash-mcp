@@ -2,73 +2,109 @@
 
 A purpose-driven [Model Context Protocol](https://modelcontextprotocol.io) (MCP) server for managing [Unleash](https://www.getunleash.io/) feature flags. This server enables LLM-powered coding assistants to create and manage feature flags following Unleash best practices.
 
+> **Experimental feature**
+>
+> The Unleash MCP server is an experimental feature. Functionality may change, and we do not yet recommend using it in production environments.
+>
+> To share feedback, join our [community Slack](https://www.getunleash.io/unleash-community), open an [issue on GitHub](https://github.com/Unleash/unleash-mcp/issues), or email us at
+> **beta@getunleash.io**.
+
 ## Overview
 
-This MCP server provides tools that integrate with the Unleash Admin API, allowing AI coding assistants to:
+This MCP server provides tools that integrate with the [Unleash Admin API](https://docs.getunleash.io/understanding-unleash/unleash-overview#admin-api), allowing AI coding assistants to:
 
-- ✅ **Create feature flags** with proper validation and typing
-- 🔍 **Detect existing flags** to prevent duplicates and encourage reuse
-- 🧭 **Evaluate changes** to determine if feature flags are needed
-- 🔄 **Stream progress** for visibility during operations
-- 🛡️ **Handle errors** gracefully with helpful hints
-- 🏗️ **Follow best practices** from [Unleash documentation](https://docs.getunleash.io/topics/feature-flags/best-practices-using-feature-flags-at-scale)
+- **Create feature flags** with proper validation and typing.
+- **Detect existing flags** to prevent duplicates or encourage reuse.
+- **Evaluate changes** to decide when a feature flag is needed.
+- **Stream progress** for visibility during operations.
+- **Handle errors** gracefully with helpful hints.
+- **Follow best practices** from the [Unleash documentation](https://docs.getunleash.io/topics/feature-flags/best-practices-using-feature-flags-at-scale).
 
-### Current Implementation
+### Available tools
 
-- `create_flag` creates flags via the Admin API
-- `evaluate_change` scores risk and recommends flag usage
-- `detect_flag` discovers existing flags to prevent duplicates
-- `wrap_change` guides the LLM on how to guard code paths
-- `set_flag_rollout` configures flexible rollouts (does not enable environments)
-- `get_flag_state` surfaces feature metadata and environment strategies
-- `toggle_flag_environment` enables or disables environments on demand
-- `remove_flag_strategy` deletes strategies from an environment
-- `cleanup_flag` generates guided instructions for safely removing flagged code paths
+The MCP server exposes the following tools:
 
-## Installation
+- `create_flag`: Creates flags via the Admin API.
+- `evaluate_change`: Scores risk and recommends feature flag usage.
+- `detect_flag`: Discovers existing flags to avoid duplicates.
+- `wrap_change`: Guides the LLM on how to guard code paths.
+- `set_flag_rollout`: Configures rollout strategies (does not enable environments).
+- `get_flag_state`: Surfaces feature metadata and environment strategies.
+- `toggle_flag_environment`: Enables or disables environments on demand.
+- `remove_flag_strategy`: Deletes strategies from an environment.
+- `cleanup_flag`: Generates instructions for safely removing flagged code paths.
 
-### Claude & Codex
+### Core workflow
+
+The core workflow for an AI assistant is designed to be:
+1. `evaluate_change`: First, assess a code change to see if a flag is needed.
+2. `detect_flag`: This is often called automatically by `evaluate_change` to prevent creating duplicate flags.
+3. `create_flag`: If a new flag is required, this tool creates it in Unleash.
+4. `wrap_change`: Finally, this tool provides the language-specific code to implement the new flag.
+
+See more information on the core workflow tools in the [Tool reference](#tool-reference) section.
+
+## Prerequisites
+
+Before you can run the server, you need the following:
+- Node.js 18 or higher
+- Yarn package manager or npm
+- An Unleash instance (hosted or self-hosted)
+- A [personal access token](https://docs.getunleash.io/reference/api-tokens-and-client-keys#personal-access-tokens) with permissions to create feature flags
+
+## Get started
+
+This section covers the different ways to install and run the Unleash MCP server. You can either follow a setup for [agents](#agent-setup) (such as Claude Code and Codex), run the MCP as a [standalone process](#quickstart-with-npx) using npx, or use a [local development](#local-development-setup) setup.
+
+### Agent setup
+
+You can add the MCP server directly to Claude Code or Codex. Agent configurations are path-specific. You must run the following command from the root directory of the project where you want to use the MCP.
+
+For Claude Code:
+
 ```
 claude mcp add unleash \
-    --env UNLEASH_BASE_URL=URL \
-    --env UNLEASH_PAT=PAT \
-    -- npx -y @unleash/mcp@latest --log-level error
-
-codex mcp add unleash \
-    --env UNLEASH_BASE_URL=URL \
-    --env UNLEASH_PAT=PAT \
+    --env UNLEASH_BASE_URL={{your-instance-url}} \
+    --env UNLEASH_PAT={{your-personal-access-token}} \
     -- npx -y @unleash/mcp@latest --log-level error
 ```
 
-### Prerequisites
+For Codex:
+```
+codex mcp add unleash \
+    --env UNLEASH_BASE_URL={{your-instance-url}} \
+    --env UNLEASH_PAT={{your-personal-access-token}} \
+    -- npx -y @unleash/mcp@latest --log-level error
+```
 
-- Node.js 18 or higher
-- Yarn package manager
-- An Unleash instance (hosted or self-hosted)
-- A Personal Access Token (PAT) from Unleash
+### Quickstart with npx
 
-### Quick start (npx)
-
-You can run the MCP server without cloning the repository by installing it on the fly with `npx`. Provide your configuration as environment variables or via a local `.env` file in the directory where you run the command:
+You can run the MCP server as a standalone process without cloning the repository using `npx`. Provide configuration through environment variables or a local `.env` file in the directory where you run the command:
 
 ```bash
-UNLEASH_BASE_URL=https://app.unleash-hosted.com/your-instance \
-UNLEASH_PAT=your-personal-access-token \
-UNLEASH_DEFAULT_PROJECT=default \
+UNLEASH_BASE_URL={{your-instance-url}} \
+UNLEASH_PAT={{your-personal-access-token}} \
+UNLEASH_DEFAULT_PROJECT={{default_project_id}} \
 npx unleash-mcp --log-level debug
 ```
 
-The CLI supports the same flags as the local build (`--dry-run`, `--log-level`).
+The CLI supports the same flags as the local build (for example, `--dry-run`, `--log-level`).
 
-### Setup
+### Local development setup
 
-1. **Clone and install dependencies:**
+Follow these steps to set up the project for local development.
+
+1. **Install dependencies**
+
+Clone the repository and install dependencies using Yarn.
 
 ```bash
+git clone https://github.com/Unleash/unleash-mcp.git
+cd unleash-mcp
 yarn install
 ```
 
-2. **Configure environment variables:**
+2. **Configure environment variables**
 
 Copy `.env.example` to `.env` and fill in your Unleash credentials:
 
@@ -79,39 +115,46 @@ cp .env.example .env
 Edit `.env`:
 
 ```env
-UNLEASH_BASE_URL=https://app.unleash-hosted.com/your-instance
-UNLEASH_PAT=your-personal-access-token
-UNLEASH_DEFAULT_PROJECT=default  # Optional: set a default project
+UNLEASH_BASE_URL={{your-instance-url}}
+UNLEASH_PAT={{your-personal-access-token}}
+UNLEASH_DEFAULT_PROJECT={{default_project_id}}  # Optional: the project the MCP should use by default
 ```
 
-To generate a Personal Access Token:
-1. Log into your Unleash instance
-2. Go to Profile → Personal Access Tokens
-3. Create a new token with permissions to create feature flags
-
-3. **Build the project:**
+3. **Build the project**
 
 ```bash
 yarn build
 ```
 
-## Usage
+Output will be in the `dist/` directory.
 
-### Running the Server
+4. **(Optional) Run checks**
 
-**Development mode (with hot reload):**
+Run type checking, linting, and tests:
+
+```
+# Type checking and linting
+yarn lint
+
+# Run tests (the Vitest framework is configured, but no test suites yet)
+yarn test
+```
+
+#### Running the server
+
+**Development mode with hot reload**
 
 ```bash
 yarn dev
 ```
 
-**Production mode:**
+**Production mode**
 
 ```bash
 node dist/index.js
 ```
 
-**With CLI flags:**
+**With CLI flags**
 
 ```bash
 # Dry run mode (simulates API calls without actually creating flags)
@@ -124,28 +167,45 @@ node dist/index.js --log-level debug
 node dist/index.js --dry-run --log-level debug
 ```
 
-### Available Capabilities
+## Tool reference
 
-#### Tool: `create_flag`
+This section describes each of the core tools in detail, including its purpose, parameters, and output.
 
-Creates a new feature flag in Unleash with comprehensive validation and progress tracking.
+### Create flag
 
-**Parameters:**
+The `create_flag` tool creates a new feature flag in Unleash with comprehensive validation and progress tracking. 
 
-- `name` (required): Unique feature flag name within the project
-  - Use descriptive names like `new-checkout-flow` or `enable-dark-mode`
-- `type` (required): Feature flag type indicating lifecycle and intent
-  - `release`: Gradual feature rollouts to users
-  - `experiment`: A/B tests and experiments
-  - `operational`: System behavior and operational toggles
-  - `kill-switch`: Emergency shutdowns or circuit breakers
-  - `permission`: Role-based access control
-- `description` (required): Clear explanation of what the flag controls and why
-- `projectId` (optional): Target project (defaults to `UNLEASH_DEFAULT_PROJECT`)
-- `impressionData` (optional): Enable analytics tracking (defaults to false)
+#### When to use
 
-**Example:**
+Use this tool when you have already determined that a feature flag is required (for example, after running `evaluate_change`) and you are ready to create it with the correct type and metadata.
 
+#### Parameters
+
+The tool accepts the following parameters:
+- `name` (required): Unique feature flag name within the project.
+- `type` (required): Feature flag type indicating lifecycle and intent.
+  - `release`: Gradual feature rollouts to users.
+  - `experiment`: A/B tests and experiments.
+  - `operational`: System behavior and operational toggles.
+  - `kill-switch`: Emergency shutdowns or circuit breakers.
+  - `permission`: Control feature access based on user roles or entitlements.
+- `description` (required): Clear explanation of what the flag controls and why it exists.
+- `projectId` (optional): Target project (defaults to `UNLEASH_DEFAULT_PROJECT`).
+- `impressionData` (optional): Enable analytics tracking (defaults to false).
+
+#### Usage example
+
+**Agent prompt**
+
+```
+Use create_flag with:
+- name: "new-checkout-flow"
+- type: "release"
+- description: "Gradual rollout of the redesigned checkout experience"
+- projectId: "ecommerce"
+```
+
+**Tool payload**
 ```json
 {
   "name": "new-checkout-flow",
@@ -156,50 +216,42 @@ Creates a new feature flag in Unleash with comprehensive validation and progress
 }
 ```
 
-**Response:**
+**Tool output**
 
-Returns a success message with:
-- Feature flag URL in the Unleash Admin UI
-- MCP resource link for programmatic access
-- Creation timestamp and configuration details
+On success, the tool returns a JSON object containing the new feature flag's URL in the Unleash Admin UI, an MCP resource link for programmatic access, creation timestamp, and configuration details.
 
----
+### Evaluate change
 
-#### Tool: `evaluate_change`
+The `evaluate_change` tool evaluates whether a code change should be behind a feature flag. It examines the structure, context, and potential risk of the change and returns a recommendation with an explanation and next steps.
 
-Provides comprehensive guidance for evaluating whether code changes require feature flags. This tool returns detailed markdown guidance to help make informed decisions.
+#### When to use
 
-**When to use:**
-- Starting work on a new feature or change
-- Unsure if a feature flag is needed
-- Want guidance on rollout strategy
-- Need help choosing the right flag type
+Use `evaluate_change` at the beginning of a feature or modification when you want to understand whether the work requires a feature flag. This tool is also helpful when you are unsure which flag type to use or want guidance on rollout planning.
 
-**Optional Parameters:**
+#### How it works
+The tool returns detailed, markdown-formatted guidance for the LLM assistant based on [Unleash best practices](https://docs.getunleash.io/topics/feature-flags/best-practices-using-feature-flags-at-scale).
 
-- `repository` (string): Repository name or path
-- `branch` (string): Current branch name
-- `files` (array): List of files being changed
-- `description` (string): Description of the change
-- `riskLevel` (enum): User-assessed risk level (low, medium, high, critical)
-- `codeContext` (string): Surrounding code for parent flag detection
+The guidance includes:
+- **Parent flag detection**: Checks if code is already protected by existing flags.
+- **Risk assessment**: Analyzes code patterns to identify risky operations.
+- **Code type evaluation**: Classifies the change (for example, test, config, feature, or bug fix).
+- **Recommendation**: Suggests whether to create a flag, use an existing flag, or skip the flag.
+- **Next actions**: Provides specific instructions on what to do next.
 
-**What it provides:**
+When `evaluate_change` determines a flag is needed, it provides explicit instructions to:
 
-The tool returns guidance covering:
+1. Call `create_flag` tool to create the feature flag.
+2. Call `wrap_change` tool to get language-specific code wrapping guidance.
+3. Implement the wrapped code following the detected patterns.
 
-1. **Parent Flag Detection**: Checks if code is already protected by existing flags (avoiding nesting)
-2. **Risk Assessment**: Analyzes code patterns to identify risky operations
-3. **Code Type Evaluation**: Determines if change is a test, config, feature, bug fix, etc.
-4. **Recommendation**: Suggests whether to create a flag, use existing flag, or skip flag
-5. **Next Actions**: Provides specific instructions on what to do next
+**The evaluation process**
 
-**Evaluation Process:**
+The tool follows a clear evaluation process:
 
 ```
 Step 1: Gather code changes (git diff, read files)
         ↓
-Step 2: Check for parent flags (avoid nesting)
+Step 2: Check for parent flags (avoiding nesting)
         ↓
 Step 3: Assess code type (test? config? feature?)
         ↓
@@ -212,27 +264,65 @@ Step 6: Make recommendation
 Step 7: Take action (create flag or proceed without)
 ```
 
-**Risk Assessment:**
+**Risk assessment**
 
-The tool provides language-agnostic patterns to detect:
+The tool uses language-agnostic patterns to score risk:
+- **Critical risk** (Score +5): For example, auth, payments, security, and database operations.
+- **High risk** (Score +3): For example, API changes, external services, or new classes.
+- **Medium risk** (Score +2): For example, async operations or state management.
+- **Low risk** (Score +1): For example, bug fixes, refactors, or small changes.
 
-- 🔴 **Critical Risk** (Score +5): Auth, payments, security, database operations
-- 🟠 **High Risk** (Score +3): API changes, external services, new classes
-- 🟡 **Medium Risk** (Score +2): Async operations, state management
-- 🟢 **Low Risk** (Score +1): Bug fixes, refactors, small changes
+**Parent flag detection**
 
-**Parent Flag Detection:**
-
-Detects existing flag checks across languages:
+The tool looks for common patterns across languages, such as:
 - **Conditionals**: `if (isEnabled('flag'))`, `if client.is_enabled('flag'):`
 - **Assignments**: `const enabled = useFlag('flag')`
 - **Hooks**: `const enabled = useFlag('flag')` → `{enabled && <Component />}`
 - **Guards**: `if (!isEnabled('flag')) return;`
 - **Wrappers**: `withFeatureFlag('flag', () => {...})`
 
-**Output Format:**
+#### Parameters
 
-Returns JSON evaluation result:
+All parameters are optional, but more context leads to better recommendations:
+- `repository` (string): Repository name or path.
+- `branch` (string): Current branch name.
+- `files` (array): List of files being changed.
+- `description` (string): Description of the change.
+- `riskLevel` (enum): `low`, `medium`, `high`, or `critical`, as assessed by the user.
+- `codeContext` (string): Surrounding code for parent flag detection.
+
+#### Usage example
+
+**Agent prompt**
+
+Simple usage where you let the agent gather context:
+```
+Use evaluate_change to help me determine if I need a feature flag
+```
+
+Explicit instructions:
+```
+Use evaluate_change with:
+- description: "Add Stripe payment processing"
+- riskLevel: "high"
+```
+
+**Tool payload**
+
+```json
+{
+  "repository": "my-app",
+  "branch": "feature/stripe-integration",
+  "files": ["src/payments/stripe.ts"],
+  "description": "Add Stripe payment processing",
+  "riskLevel": "high",
+  "codeContext": "surrounding code for parent flag detection"
+}
+```
+
+**Tool output**
+
+Returns a JSON object with the evaluation result, including a `needsFlag` boolean, a `recommendation` (e.g., "create_new"), a suggested flag name, risk level, and a detailed `explanation`.
 
 ```json
 {
@@ -247,94 +337,28 @@ Returns JSON evaluation result:
 }
 ```
 
-**Best Practices Included:**
+### Detect flag
 
-The tool includes Unleash best practices:
-- Flag type selection criteria
-- Rollout sequencing strategies (dev → staging → production)
-- Anti-patterns to avoid (flag sprawl, nesting, long-lived flags)
-- Cleanup and lifecycle guidance
+The `detect_flag` tool finds existing feature flags in the codebase so you can reuse them instead of creating duplicates. This tool is automatically integrated into the `evaluate_change` workflow but can also be used manually.
 
-**Automatic Workflow:**
+#### When to use
 
-When `evaluate_change` determines a flag is needed, it provides **explicit instructions** to:
+Use this tool before creating a new feature flag or during code evaluation to check for existing flags that might already cover your use case. This helps prevent flag duplication.
 
-1. Call `create_flag` tool to create the feature flag
-2. Call `wrap_change` tool to get language-specific code wrapping guidance
-3. Implement the wrapped code following the detected patterns
+#### How it works
 
-**Example Usage in Claude Desktop:**
+The tool returns comprehensive search instructions and uses multiple detection strategies:
+- **File-based detection**: Search in files you're modifying for existing flags.
+- **Git history analysis**: Look for recently added flags in commit history.
+- **Semantic name matching**: Match descriptions to existing flag names.
+- **Code context analysis**: Inspect code around the change.
 
-```
-// Simple usage - let Claude gather context
-Use evaluate_change to help me determine if I need a feature flag
-
-// With explicit context
-Use evaluate_change with:
-- description: "Add Stripe payment processing"
-- riskLevel: "high"
-```
-
-The tool will automatically guide you through the complete workflow: evaluate → detect → (create OR use existing) → wrap → implement.
-
-**Tool Parameters (all optional):**
-
-```json
-{
-  "repository": "my-app",
-  "branch": "feature/stripe-integration",
-  "files": ["src/payments/stripe.ts"],
-  "description": "Add Stripe payment processing",
-  "riskLevel": "high",
-  "codeContext": "surrounding code for parent flag detection"
-}
-```
-
----
-
-#### Tool: `detect_flag`
-
-Intelligently discovers existing feature flags in the codebase to prevent duplicates and encourage flag reuse.
-
-**When to use:**
-- Before creating a new feature flag
-- During code evaluation to check for existing flags
-- When you want to prevent duplicate flag creation
-- To find flags that might already cover your use case
-
-**Parameters:**
-
-- `description` (required): Description of the change or feature
-  - Example: `"payment processing with Stripe"`, `"new checkout flow"`
-- `files` (optional): List of files being modified to search in same area
-  - Example: `["src/payments/stripe.ts", "src/checkout/flow.ts"]`
-- `codeContext` (optional): Code context to analyze for nearby flags
-  - Useful when you have surrounding code to check
-
-**Example:**
-
-```json
-{
-  "description": "payment processing with Stripe",
-  "files": ["src/payments/stripe.ts"]
-}
-```
-
-**What it provides:**
-
-The tool returns comprehensive search instructions for discovering flags through multiple detection strategies:
-
-1. **File-based Detection**: Search in files you're modifying for existing flags
-2. **Git History Analysis**: Find recently added flags in commit history
-3. **Semantic Name Matching**: Match your description to existing flag names
-4. **Code Context Analysis**: Find flags near your modification point
-
-**Detection Process:**
+The tool then follows a scoring process:
 
 ```
-Step 1: Execute file-based search (Grep for flag patterns in target files)
+Step 1: Execute file-based search (grep for flag patterns in target files)
         ↓
-Step 2: Search git history (recent flag additions)
+Step 2: Search git history for recent flag additions
         ↓
 Step 3: Perform semantic matching (description → flag names)
         ↓
@@ -345,16 +369,48 @@ Step 5: Combine scores from all methods
 Step 6: Return best candidate with confidence score
 ```
 
-**Confidence Levels:**
+**Confidence levels**
 
 The tool returns candidates with confidence scores:
 
-- **High (≥0.7)**: Strong match - strongly recommend reusing this flag
-- **Medium (0.4-0.7)**: Possible match - review and decide
-- **Low (<0.4)**: Weak match - better to create new flag
+- High `≥0.7`: Strong match; reuse is recommended.
+- Medium `0.4-0.7`: Possible match; review manually.
+- Low `<0.4`: Weak match; likely create a new flag.
 
-**Output Format:**
+#### Parameters
 
+- `description` (required): Description of the change or feature. For example, `"payment processing with Stripe"`, `"new checkout flow"`.
+- `files` (optional): Files being modified. For example, `["src/payments/stripe.ts", "src/checkout/flow.ts"]`.
+- `codeContext` (optional): Nearby code to scan for flags.
+
+#### Usage example
+
+**Agent prompt**
+
+Check for existing flags before creating a flag:
+```
+Use detect_flag with description "payment processing with Stripe"
+```
+
+Integrated automatically in evaluation:
+```
+Use evaluate_change - automatically searches for existing flags
+```
+
+**Tool payload**
+
+```json
+{
+  "description": "payment processing with Stripe",
+  "files": ["src/payments/stripe.ts"]
+}
+```
+
+**Tool output**
+
+Returns a JSON object indicating if a flag was found. If `flagFound` is true, it includes a `candidate` object with the flag's name, location, confidence score, and the reason for the match.
+
+Match found:
 ```json
 {
   "flagFound": true,
@@ -369,7 +425,7 @@ The tool returns candidates with confidence scores:
 }
 ```
 
-Or if no match found:
+No match found:
 
 ```json
 {
@@ -378,28 +434,91 @@ Or if no match found:
 }
 ```
 
-**Automatic Integration:**
+### Wrap change
 
-The `detect_flag` tool is automatically integrated into the `evaluate_change` workflow:
-- When evaluate_change runs, it calls detect_flag
-- If high-confidence match found: Recommend using existing flag
-- If no match: Continue with risk assessment and suggest create_flag
+The tool `wrap_change` generates language-specific code snippets and guidance for wrapping code with feature flags. It helps LLMs and developers follow existing patterns in the codebase and use flags correctly.
 
-**Example Usage in Claude Desktop:**
+#### When to use
+Use this tool after you have created a feature flag (with `create_flag`) and need to implement it in your code. It's especially useful when you want to ensure you are following existing codebase patterns or need framework-specific examples (e.g., React, Django).
+
+#### How it works
+
+This tool is the final step in the `evaluate_change` → `create_flag` → `wrap_change` workflow.
+
+The tool provides the following guidance in its response:
+1. **Search instructions**: Step-by-step guide for finding existing flag patterns in your codebase using grep.
+2. **Pattern detection**: Identifies common patterns (for example, imports, client variable names, method names, or wrapping styles).
+3. **Default templates**: Fallback code snippets if no patterns are found.
+4. **Framework-specific examples**: Specialized patterns for React, Express, Django, and others.
+5. **Multiple patterns**: If-blocks, guard clauses, hooks, decorators, middleware, and more.
+
+**Supported languages and frameworks:**
+
+- **TypeScript/JavaScript**: Node.js, React Hooks, Express middleware.
+- **Python**: FastAPI, Django, Flask decorators.
+- **Go**: Standard if-blocks, HTTP middleware.
+- **Ruby**: Rails controllers.
+- **PHP**: Laravel controllers.
+- **C#**: .NET/ASP.NET controllers.
+- **Java**: Spring Boot.
+- **Rust**: Actix/Rocket handlers.
+
+#### Parameters
+
+- `flagName` (required): Feature flag name to wrap the code with. For example: `"new-checkout-flow"`, or `"stripe-integration"`.
+- `language` (optional): Programming language (auto-detected from `fileName` if not provided). Supported: `typescript`, `javascript`, `python`, `go`, `ruby`, `php`, `csharp`, `java`, `rust`
+- `fileName` (optional): File name being modified (helps detect language), For example: `"checkout.ts"`, `"payment.py"`, or `"handler.go"`.
+- `codeContext` (optional): Surrounding code to help detect existing patterns.
+- `frameworkHint` (optional): Framework for specialized templates. For example, `"React"`, `"Express"`, `"Django"`, `"Rails"`, or `"Spring Boot"`.
+
+
+#### Usage example
+
+**Agent prompt**
 
 ```
-// Check for existing flags before creating
-Use detect_flag with description "payment processing with Stripe"
-
-// Integrated automatically in evaluation
-Use evaluate_change - it will automatically search for existing flags
+Use wrap_change with:
+- flagName: "new-checkout-flow"
+- fileName: "src/components/checkout.ts"
+- frameworkHint: "React"
 ```
 
----
+**Tool payload**
+
+```json
+{
+  "flagName": "new-checkout-flow",
+  "fileName": "checkout.ts",
+  "frameworkHint": "React"
+}
+```
+
+**Tool output**
+
+Returns a comprehensive, markdown-formatted string that guides the user on how to wrap their code. This includes a quickstart, search instructions, wrapping instructions with placeholders, all available templates for the language, and links to SDK documentation.
+
+```markdown
+# Feature Flag Wrapping Guide: "new-checkout-flow"
+
+**Language:** TypeScript
+**Framework:** React
+
+## Quick Start
+[Recommended pattern with import and usage]
+
+## How to Search for Existing Flag Patterns
+[Step-by-step Grep instructions]
+
+## How to Wrap Code with Feature Flag
+[Wrapping instructions with examples]
+
+## All Available Templates
+[If-block, guard clause, hooks, ternary, etc.]
+```
 
 ## Architecture
 
-This server follows a purpose-driven design philosophy:
+The server follows a focused, purpose-driven design.
 
 ### Structure
 
@@ -434,215 +553,81 @@ src/
     └── streaming.ts             # Progress notifications
 ```
 
-### Design Principles
+### Design principles
 
-1. **Thin surface area**: Only the endpoints needed for the three core capabilities
-2. **Purpose-driven**: Each module serves a specific, well-defined purpose
-3. **Explicit validation**: Zod schemas validate all inputs before API calls
-4. **Error normalization**: All errors converted to `{code, message, hint}` format
-5. **Progress streaming**: Long-running operations provide visibility
-6. **Best practices integration**: Guidance from Unleash docs embedded in tool descriptions
+- **Thin surface area**: Only the endpoints needed for the core capabilities.
+- **Purpose-driven**: Each module serves a specific, well-defined purpose.
+- **Explicit validation**: Zod schemas validate all inputs before API calls.
+- **Error normalization**: All errors converted to `{code, message, hint}` format.
+- **Progress streaming**: Long-running operations provide visibility.
+- **Best practices integration**: Guidance from Unleash docs embedded in tool descriptions.
 
-### Configuration
+## Configuration
 
-Environment variables:
+This section provides a quick reference for all configuration options.
 
-- `UNLEASH_BASE_URL`: Your Unleash instance URL (required)
-- `UNLEASH_PAT`: Personal Access Token (required)
-- `UNLEASH_DEFAULT_PROJECT`: Default project ID (optional)
-- `UNLEASH_DEFAULT_ENVIRONMENT`: Default environment (reserved for future use)
+**Environment variables:**
+- `UNLEASH_BASE_URL`: Your Unleash instance URL (required).
+- `UNLEASH_PAT`: Personal access token (required).
+- `UNLEASH_DEFAULT_PROJECT`: The default project ID the MCP should use (optional).
 
-CLI flags:
+**CLI flags:**
+- `--dry-run`: Simulate operations without making actual API calls.
+- `--log-level`: Set logging verbosity (debug, info, warn, error).
 
-- `--dry-run`: Simulate operations without making actual API calls
-- `--log-level`: Set logging verbosity (debug, info, warn, error)
-
-## Development
-
-### Type Checking
-
-```bash
-yarn lint
-```
-
-### Testing
-
-The testing framework (Vitest) is configured but tests are not yet implemented:
-
-```bash
-yarn test
-```
-
-### Building
-
-```bash
-yarn build
-```
-
-Output will be in the `dist/` directory.
-
-## Best Practices
-
----
-
-#### Tool: `wrap_change`
-
-Generates language-specific code snippets and guidance for wrapping code changes with feature flags. This tool helps you implement feature flags correctly by finding existing patterns and matching your codebase's conventions.
-
-**When to use:**
-- After creating a feature flag with `create_flag`
-- When you need to wrap code with a feature flag
-- Want to follow existing codebase patterns
-- Need framework-specific examples (React, Django, etc.)
-
-**Parameters:**
-
-- `flagName` (required): Feature flag name to wrap the code with
-  - Example: `"new-checkout-flow"`, `"stripe-integration"`
-- `language` (optional): Programming language (auto-detected from fileName if not provided)
-  - Supported: `typescript`, `javascript`, `python`, `go`, `ruby`, `php`, `csharp`, `java`, `rust`
-- `fileName` (optional): File name being modified (helps detect language)
-  - Example: `"checkout.ts"`, `"payment.py"`, `"handler.go"`
-- `codeContext` (optional): Surrounding code to help detect existing patterns
-- `frameworkHint` (optional): Framework for specialized templates
-  - Examples: `"React"`, `"Express"`, `"Django"`, `"Rails"`, `"Spring Boot"`
-
-**What it provides:**
-
-1. **Search Instructions**: Step-by-step guide for finding existing flag patterns in your codebase using Grep
-2. **Pattern Detection**: Identifies common patterns (imports, client variable names, method names, wrapping styles)
-3. **Default Templates**: Fallback code snippets if no patterns are found
-4. **Framework-Specific Examples**: Specialized patterns for React, Express, Django, etc.
-5. **Multiple Patterns**: If-blocks, guard clauses, hooks, decorators, middleware, etc.
-
-**Supported Languages & Frameworks:**
-
-- **TypeScript/JavaScript**: Node.js, React hooks, Express middleware
-- **Python**: FastAPI, Django, Flask decorators
-- **Go**: Standard if-blocks, HTTP middleware
-- **Ruby**: Rails controllers
-- **PHP**: Laravel controllers
-- **C#**: .NET/ASP.NET controllers
-- **Java**: Spring Boot
-- **Rust**: Actix/Rocket handlers
-
-**Example Usage:**
-
-```json
-{
-  "flagName": "new-checkout-flow",
-  "fileName": "checkout.ts",
-  "frameworkHint": "React"
-}
-```
-
-**Response:**
-
-Returns comprehensive guidance including:
-- Quick start with recommended pattern
-- Search instructions for finding existing patterns
-- Wrapping instructions with placeholders
-- All available templates for the language
-- SDK documentation links
-
-**Workflow:**
-
-```
-evaluate_change → create_flag → wrap_change
-```
-
-1. `evaluate_change` determines if flag is needed
-2. `create_flag` creates the flag in Unleash
-3. `wrap_change` generates code to use the flag
-
-**Example Output Structure:**
-
-```markdown
-# Feature Flag Wrapping Guide: "new-checkout-flow"
-
-**Language:** TypeScript
-**Framework:** React
-
-## Quick Start
-[Recommended pattern with import and usage]
-
-## How to Search for Existing Flag Patterns
-[Step-by-step Grep instructions]
-
-## How to Wrap Code with Feature Flag
-[Wrapping instructions with examples]
-
-## All Available Templates
-[If-block, guard clause, hooks, ternary, etc.]
-```
-
----
-
-## Best Practices
+## Best practices
 
 This server encourages Unleash best practices from the [official documentation](https://docs.getunleash.io/topics/feature-flags/best-practices-using-feature-flags-at-scale):
 
-### Flag Lifecycle
+### Flag lifecycle
 
-1. **Create with intent**: Choose the right flag type to signal purpose
-2. **Document clearly**: Write descriptions that explain the "why"
-3. **Plan for cleanup**: Feature flags are temporary - plan their removal
-4. **Monitor usage**: Enable impression data for important flags
+1. **Create with intent**: Choose the right flag type to signal purpose.
+2. **Document clearly**: Write descriptions that explain the "why".
+3. **Plan for cleanup**: Feature flags are temporary; plan their removal.
+4. **Monitor usage**: Enable impression data for important flags.
 
-### Flag Types
+### Flag types
 
-- **Release flags**: For gradual feature rollouts (remove after full rollout)
-- **Experiment flags**: For A/B tests (remove after analysis)
-- **Operational flags**: For system behavior (longer-lived, review periodically)
-- **Kill switches**: For emergency controls (maintain until feature is stable)
-- **Permission flags**: For access control (longer-lived, review permissions)
+- **Release flags**: For gradual feature rollouts (remove after full rollout).
+- **Experiment flags**: For A/B tests (remove after analysis).
+- **Operational flags**: For system behavior (longer-lived, review periodically).
+- **Kill switches**: For emergency controls (maintain until feature is stable).
+- **Permission flags**: For access control (longer-lived, review permissions).
 
-### Naming Conventions
+### Naming conventions
 
 - Use kebab-case: `new-checkout-flow`
-- Be descriptive: `enable-ai-recommendations` not `flag1`
-- Include scope when needed: `mobile-push-notifications`
+- Be descriptive: `enable-ai-recommendations` not `flag1`.
+- Include scope when needed: `mobile-push-notifications`.
 
-## API Reference
+## API reference
 
 This server uses the Unleash Admin API. For complete API documentation, see:
 
 - [Unleash Admin API OpenAPI Spec](https://app.unleash-hosted.com/hosted/docs/openapi.json)
 - [Unleash API Documentation](https://docs.getunleash.io/reference/api/unleash)
 
-### Endpoints Used
+### Endpoints used
 
 - `POST /api/admin/projects/{projectId}/features` - Create feature flag
 
 ## Troubleshooting
 
-### Configuration Issues
+### Configuration issues
 
-**Error: "UNLEASH_BASE_URL must be a valid URL"**
-- Ensure your base URL is complete, including protocol: `https://app.unleash-hosted.com/instance`
-- Remove trailing slashes
+**Error: "UNLEASH_BASE_URL must be a valid URL"**: Ensure your base URL is complete, including protocol. For example, `https://app.unleash-hosted.com/instance`. Remove any trailing slashes.
 
-**Error: "UNLEASH_PAT is required"**
-- Check that your `.env` file exists and contains `UNLEASH_PAT=...`
-- Verify the token hasn't expired in Unleash
+**Error: "UNLEASH_PAT is required"**: Check that your `.env` file exists and contains `UNLEASH_PAT={{your-personal-access-token}}`. Verify that the token is valid in Unleash.
 
-### API Issues
+### API issues
 
-**Error: "HTTP_401"**
-- Your Personal Access Token may be invalid or expired
-- Generate a new token from Unleash Profile → Personal Access Tokens
+**Error: "HTTP_401"**: Your personal access token may be invalid or expired. Generate a new token under **Profile > View Profile settings > Personal API tokens > New token**.
 
-**Error: "HTTP_403"**
-- Your token doesn't have permission to create flags in this project
-- Check your role permissions in Unleash
+**Error: "HTTP_403"**: Your token doesn't have permission to create flags in this project. Review your role and permissions in Unleash.
 
-**Error: "HTTP_404"**
-- The project ID doesn't exist
-- Verify the project name in Unleash Admin UI
+**Error: "HTTP_404"**: The project ID doesn't exist. Confirm the project ID in Unleash Admin UI.
 
-**Error: "HTTP_409"**
-- A flag with this name already exists in the project
-- Choose a different name or check existing flags
+**Error: "HTTP_409"**: A flag with this name already exists in the project. Use a different name or reuse the existing flag.
 
 ## License
 
@@ -652,38 +637,7 @@ MIT
 
 This is a purpose-driven project with a focused scope. Contributions should:
 
-1. Align with the three core capabilities (create, evaluate, wrap)
-2. Maintain the thin, purpose-driven architecture
-3. Follow Unleash best practices
-4. Include clear documentation
-
-## Roadmap
-
-### Phase 1: ✅ Feature Flag Creation (Complete)
-- [x] `create_flag` tool
-- [x] Unleash Admin API client
-- [x] Configuration and error handling
-- [x] Progress streaming
-
-### Phase 2: ✅ Evaluation Guidance (Complete)
-- [x] `evaluate_change` tool
-- [x] Risk assessment patterns (language-agnostic)
-- [x] Parent flag detection (cross-language)
-- [x] Rollout strategy recommendations
-- [x] Best practices knowledge base
-- [x] Systematic evaluation workflow
-- [x] Markdown-formatted guidance output
-
-### Phase 3: ✅ Code Generation (Complete)
-- [x] `wrap_change` tool
-- [x] Multi-language snippet templates (8 languages)
-- [x] Pattern detection guidance (via search instructions)
-- [x] Convention awareness (match existing patterns)
-- [x] Framework-specific templates (React, Django, Rails, etc.)
-
-## Resources
-
-- [Unleash Documentation](https://docs.getunleash.io/)
-- [Feature Flag Best Practices](https://docs.getunleash.io/topics/feature-flags/best-practices-using-feature-flags-at-scale)
-- [Model Context Protocol](https://modelcontextprotocol.io)
-- [Unleash Admin API](https://docs.getunleash.io/reference/api/unleash)
+- Align with the three core capabilities (create, evaluate, wrap).
+- Maintain the thin, purpose-driven architecture.
+- Follow Unleash best practices.
+- Include clear documentation.
