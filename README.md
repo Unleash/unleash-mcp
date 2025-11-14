@@ -93,7 +93,7 @@ The CLI supports the same flags as the local build (for example, `--dry-run`, `-
 
 Follow these steps to set up the project for local development.
 
-1. **Install dependencies:**
+1. **Install dependencies**
 
 Clone the repository and install dependencies using Yarn.
 
@@ -103,7 +103,7 @@ cd unleash-mcp
 yarn install
 ```
 
-2. **Configure environment variables:**
+2. **Configure environment variables**
 
 Copy `.env.example` to `.env` and fill in your Unleash credentials:
 
@@ -119,7 +119,7 @@ UNLEASH_PAT={{your-personal-access-token}}
 UNLEASH_DEFAULT_PROJECT={{default_project_id}}  # Optional: the project the MCP should use by default
 ```
 
-3. **Build the project:**
+3. **Build the project**
 
 ```bash
 yarn build
@@ -127,7 +127,7 @@ yarn build
 
 Output will be in the `dist/` directory.
 
-4. **(Optional) Run checks:**
+4. **(Optional) Run checks**
 
 Run type checking, linting, and tests:
 
@@ -141,19 +141,19 @@ yarn test
 
 #### Running the server
 
-**Development mode with hot reload:**
+**Development mode with hot reload**
 
 ```bash
 yarn dev
 ```
 
-**Production mode:**
+**Production mode**
 
 ```bash
 node dist/index.js
 ```
 
-**With CLI flags:**
+**With CLI flags**
 
 ```bash
 # Dry run mode (simulates API calls without actually creating flags)
@@ -194,7 +194,7 @@ The tool accepts the following parameters:
 
 #### Usage example
 
-**Agent prompt**:
+**Agent prompt**
 
 ```
 Use create_flag with:
@@ -204,7 +204,7 @@ Use create_flag with:
 - projectId: "ecommerce"
 ```
 
-**Tool payload**:
+**Tool payload**
 ```json
 {
   "name": "new-checkout-flow",
@@ -215,7 +215,8 @@ Use create_flag with:
 }
 ```
 
-**Tool output**:
+**Tool output**
+
 On success, the tool returns a JSON object containing the new feature flag's URL in the Unleash Admin UI, an MCP resource link for programmatic access, creation timestamp, and configuration details.
 
 ### Evaluate change
@@ -243,6 +244,7 @@ When `evaluate_change` determines a flag is needed, it provides explicit instruc
 3. Implement the wrapped code following the detected patterns.
 
 **The evaluation process**
+
 The tool follows a clear evaluation process:
 
 ```
@@ -262,6 +264,7 @@ Step 7: Take action (create flag or proceed without)
 ```
 
 **Risk assessment**
+
 The tool uses language-agnostic patterns to score risk:
 - **Critical risk** (Score +5): For example, auth, payments, security, and database operations.
 - **High risk** (Score +3): For example, API changes, external services, or new classes.
@@ -269,6 +272,7 @@ The tool uses language-agnostic patterns to score risk:
 - **Low risk** (Score +1): For example, bug fixes, refactors, or small changes.
 
 **Parent flag detection**
+
 The tool looks for common patterns across languages, such as:
 - **Conditionals**: `if (isEnabled('flag'))`, `if client.is_enabled('flag'):`
 - **Assignments**: `const enabled = useFlag('flag')`
@@ -288,7 +292,7 @@ All parameters are optional, but more context leads to better recommendations:
 
 #### Usage example
 
-**Agent prompt**:
+**Agent prompt**
 
 Simple usage where you let the agent gather context:
 ```
@@ -302,7 +306,8 @@ Use evaluate_change with:
 - riskLevel: "high"
 ```
 
-**Tool payload**:
+**Tool payload**
+
 ```json
 {
   "repository": "my-app",
@@ -314,7 +319,7 @@ Use evaluate_change with:
 }
 ```
 
-**Tool output**:
+**Tool output**
 
 Returns a JSON object with the evaluation result, including a `needsFlag` boolean, a `recommendation` (e.g., "create_new"), a suggested flag name, risk level, and a detailed `explanation`.
 
@@ -363,7 +368,7 @@ Step 5: Combine scores from all methods
 Step 6: Return best candidate with confidence score
 ```
 
-**Confidence levels:**
+**Confidence levels**
 
 The tool returns candidates with confidence scores:
 
@@ -379,7 +384,7 @@ The tool returns candidates with confidence scores:
 
 #### Usage example
 
-**Agent prompt**:
+**Agent prompt**
 
 Check for existing flags before creating a flag:
 ```
@@ -391,7 +396,8 @@ Integrated automatically in evaluation:
 Use evaluate_change - automatically searches for existing flags
 ```
 
-**Tool payload**:
+**Tool payload**
+
 ```json
 {
   "description": "payment processing with Stripe",
@@ -399,7 +405,7 @@ Use evaluate_change - automatically searches for existing flags
 }
 ```
 
-**Tool output**:
+**Tool output**
 
 Returns a JSON object indicating if a flag was found. If `flagFound` is true, it includes a `candidate` object with the flag's name, location, confidence score, and the reason for the match.
 
@@ -467,7 +473,7 @@ The tool provides the following guidance in its response:
 
 #### Usage example
 
-**Agent prompt:**
+**Agent prompt**
 
 ```
 Use wrap_change with:
@@ -476,7 +482,8 @@ Use wrap_change with:
 - frameworkHint: "React"
 ```
 
-**Tool payload:**
+**Tool payload**
+
 ```json
 {
   "flagName": "new-checkout-flow",
@@ -485,7 +492,7 @@ Use wrap_change with:
 }
 ```
 
-**Tool output:**
+**Tool output**
 
 Returns a comprehensive, markdown-formatted string that guides the user on how to wrap their code. This includes a quickstart, search instructions, wrapping instructions with placeholders, all available templates for the language, and links to SDK documentation.
 
