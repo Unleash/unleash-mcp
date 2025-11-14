@@ -20,7 +20,7 @@ This MCP server provides tools that integrate with the [Unleash Admin API](https
 - **Handle errors** gracefully with helpful hints.
 - **Follow best practices** from the [Unleash documentation](https://docs.getunleash.io/topics/feature-flags/best-practices-using-feature-flags-at-scale).
 
-## Tools overview
+### Available tools
 
 The MCP server exposes the following tools:
 
@@ -139,7 +139,7 @@ yarn lint
 yarn test
 ```
 
-### Running the server
+#### Running the server
 
 **Development mode with hot reload:**
 
