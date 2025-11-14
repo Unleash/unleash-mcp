@@ -64,7 +64,7 @@ For Claude Code:
 
 ```
 claude mcp add unleash \
-    --env UNLEASH_BASE_URL=https://app.unleash-hosted.com/{{your-instance}} \
+    --env UNLEASH_BASE_URL={{your-instance-url}} \
     --env UNLEASH_PAT={{your-personal-access-token}} \
     -- npx -y @unleash/mcp@latest --log-level error
 ```
@@ -72,7 +72,7 @@ claude mcp add unleash \
 For Codex:
 ```
 codex mcp add unleash \
-    --env UNLEASH_BASE_URL=https://app.unleash-hosted.com/{{your-instance}} \
+    --env UNLEASH_BASE_URL={{your-instance-url}} \
     --env UNLEASH_PAT={{your-personal-access-token}} \
     -- npx -y @unleash/mcp@latest --log-level error
 ```
@@ -82,7 +82,7 @@ codex mcp add unleash \
 You can run the MCP server as a standalone process without cloning the repository using `npx`. Provide configuration through environment variables or a local `.env` file in the directory where you run the command:
 
 ```bash
-UNLEASH_BASE_URL=https://app.unleash-hosted.com/{{your-instance}} \
+UNLEASH_BASE_URL={{your-instance-url}} \
 UNLEASH_PAT={{your-personal-access-token}} \
 UNLEASH_DEFAULT_PROJECT={{default_project_id}} \
 npx unleash-mcp --log-level debug
@@ -115,7 +115,7 @@ cp .env.example .env
 Edit `.env`:
 
 ```env
-UNLEASH_BASE_URL=https://app.unleash-hosted.com/{{your-instance}}
+UNLEASH_BASE_URL={{your-instance-url}}
 UNLEASH_PAT={{your-personal-access-token}}
 UNLEASH_DEFAULT_PROJECT={{default_project_id}}  # Optional: the project the MCP should use by default
 ```
@@ -615,7 +615,7 @@ This server uses the Unleash Admin API. For complete API documentation, see:
 
 ### Configuration issues
 
-**Error: "UNLEASH_BASE_URL must be a valid URL"**: Ensure your base URL is complete, including protocol: `https://app.unleash-hosted.com/instance`. Remove any trailing slashes.
+**Error: "UNLEASH_BASE_URL must be a valid URL"**: Ensure your base URL is complete, including protocol. For example, `https://app.unleash-hosted.com/instance`. Remove any trailing slashes.
 
 **Error: "UNLEASH_PAT is required"**: Check that your `.env` file exists and contains `UNLEASH_PAT={{your-personal-access-token}}`. Verify that the token is valid in Unleash.
 
