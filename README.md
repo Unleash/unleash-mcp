@@ -48,19 +48,20 @@ See more information on the core workflow tools in the [Tool reference](#tool-re
 
 Before you can run the server, you need the following:
 - Node.js 18 or higher
-- Yarn package manager
+- Yarn package manager or npm
 - An Unleash instance (hosted or self-hosted)
 - A [personal access token](https://docs.getunleash.io/reference/api-tokens-and-client-keys#personal-access-tokens) with permissions to create feature flags
 
 ## Get started
 
-This section covers the different ways to install and run the Unleash MCP server. You can either follow a setup for [agents](#agent-setup) (such as Claude Desktop and Codex), run the MCP as a [standalone process](#quickstart-with-npx) using npx, or use a [local development](#local-development-setup) setup.
+This section covers the different ways to install and run the Unleash MCP server. You can either follow a setup for [agents](#agent-setup) (such as Claude Code and Codex), run the MCP as a [standalone process](#quickstart-with-npx) using npx, or use a [local development](#local-development-setup) setup.
 
 ### Agent setup
 
-To add the server directly to Claude Desktop or Codex, run the following command in your terminal:
+You can add the MCP server directly to Claude Code or Codex. Agent configurations are path-specific. You must run the following command from the root directory of the project where you want to use the MCP.
 
-For Claude Desktop:
+For Claude Code:
+
 ```
 claude mcp add unleash \
     --env UNLEASH_BASE_URL=https://app.unleash-hosted.com/{{your-instance}} \
@@ -372,9 +373,9 @@ Step 6: Return best candidate with confidence score
 
 The tool returns candidates with confidence scores:
 
-- **High (≥0.7)**: Strong match; reuse is recommended.
-- **Medium (0.4-0.7)**: Possible match; review manually.
-- **Low (<0.4)**: Weak match; likely create a new flag.
+- High `≥0.7`: Strong match; reuse is recommended.
+- Medium `0.4-0.7`: Possible match; review manually.
+- Low `<0.4`: Weak match; likely create a new flag.
 
 #### Parameters
 
@@ -640,10 +641,3 @@ This is a purpose-driven project with a focused scope. Contributions should:
 - Maintain the thin, purpose-driven architecture.
 - Follow Unleash best practices.
 - Include clear documentation.
-
-## Resources
-
-- [Unleash Documentation](https://docs.getunleash.io/)
-- [Feature Flag Best Practices](https://docs.getunleash.io/topics/feature-flags/best-practices-using-feature-flags-at-scale)
-- [Model Context Protocol](https://modelcontextprotocol.io)
-- [Unleash Admin API](https://docs.getunleash.io/reference/api/unleash)
