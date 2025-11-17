@@ -567,13 +567,13 @@ Returns a comprehensive markdown document containing:
 
 ## Version History
 
-- **v1.0.0** (2025-10-28) - Phase 3 complete: Full feature set
-  - All three core capabilities implemented: create_flag, evaluate_change, wrap_change
+- **v0.1.1** (2025-11-18) - Support GitHub MCP registry
+- **v0.1.0** (2025-11-17) - Beta release
+  - All core capabilities implemented: create_flag, detect_flag, evaluate_change, wrap_change
   - 9 programming languages supported
   - 20+ code templates across multiple frameworks
   - Comprehensive pattern detection guidance
-- **v0.2.0** (2025-10-28) - Phase 2 complete: Evaluation and guidance
-  - evaluate_change tool with risk assessment
-  - Parent flag detection
-  - Best practices knowledge base
-- **v0.1.0** (2025-10-28) - Phase 1 complete: Foundation and create_flag tool
+- **v0.0.4** (2025-11-05) - new tools (detect-flag, cleanup_flag, set_flag_rollout, etc.)
+- **v0.0.3** (2025-10-30) - minor logging improvements
+- **v0.0.2** (2025-10-30) - minor code improvements
+- **v0.0.1** (2025-10-30) - Phase 1 complete: Foundation and create_flag tool

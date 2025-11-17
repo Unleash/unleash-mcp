@@ -94,7 +94,7 @@ async function main(): Promise<void> {
   const server = new Server(
     {
       name: 'unleash-mcp',
-      version: '0.1.0',
+      version: VERSION,
       description:
         'Local development assistant. After making a code change follow this workflow: evaluate_change → create_flag → wrap_change to score risk and steer next steps.',
     },
