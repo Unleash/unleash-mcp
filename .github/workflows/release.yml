@@ -23,3 +23,21 @@ jobs:
       NPM_ACCESS_TOKEN: ${{ secrets.NPM_TOKEN }}
       UNLEASH_BOT_APP_ID: ${{ secrets.UNLEASH_BOT_APP_ID }}
       UNLEASH_BOT_PRIVATE_KEY: ${{ secrets.UNLEASH_BOT_PRIVATE_KEY }}
+
+  mcp-registry-publish:
+    # official guide here: https://github.com/modelcontextprotocol/registry/blob/main/docs/guides/publishing/github-actions.md
+    # the steps below are simplified because we are already publishing to npm
+    runs-on: ubuntu-latest
+    needs: release # publish to npm first
+    steps:
+      - name: Install MCP Publisher
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+      # the guide suggests using --private-key-file but that isn't supported, so I'm using --private-key
+      # official publishing guide: https://github.com/modelcontextprotocol/registry/blob/main/docs/guides/publishing/publish-server.md
+      - name: Login to MCP Registry
+        run: |
+          echo "${{ secrets.MCP_PRIVATE_KEY }}" > key.pem
+          mcp-publisher login dns --domain getunleash.io --private-key $(openssl pkey -in key.pem -noout -text | grep -A3 "priv:" | tail -n +2 | tr -d ' :\n')
+      - name: Publish to MCP Registry
+        run: ./mcp-publisher publish
