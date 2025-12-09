@@ -55,7 +55,7 @@ export function createFlagResourceLink(
   return {
     url,
     resource: {
-      uri: `unleash://feature-flag/${projectId}/${flagName}`,
+      uri: `unleash://projects/${projectId}/feature-flags/${flagName}`,
       mimeType: 'application/json',
       text: `Feature flag: ${flagName}`,
     },
