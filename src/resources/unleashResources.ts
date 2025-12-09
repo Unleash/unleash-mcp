@@ -8,6 +8,7 @@ import type { ServerContext } from '../context.js';
 import type { FeatureFlagSummary, UnleashProjectSummary } from '../unleash/client.js';
 
 export const PROJECTS_RESOURCE_URI = 'unleash://projects';
+export const FEATURE_FLAG_RESOURCE_URI = 'unleash://projects/{projectId}/feature-flags/{flagName}';
 export const PROJECTS_RESOURCE_TEMPLATE = 'unleash://projects{?limit,order,offset}';
 export const FEATURE_FLAGS_RESOURCE_TEMPLATE =
   'unleash://projects/{projectId}/feature-flags{?limit,order,offset}';
@@ -114,8 +115,45 @@ export async function readFeatureFlagsResource(
   }
 }
 
+export async function readFeatureFlagResource(
+  context: ServerContext,
+  projectId: string,
+  flagName: string,
+): Promise<TextResourceContents> {
+  try {
+    const { flags, fetchedAt, fromCache } = await getCachedFeatureFlags(context, projectId);
+    const flag = flags.find(f => f.name === flagName);
+    if (!flag) {
+      throw new Error(`Feature flag not found: ${flagName}`);
+    }
+
+    return {
+      uri: buildFeatureFlagUri(projectId, flagName),
+      mimeType: 'application/json',
+      text: JSON.stringify(
+        {
+          fetchedAt: new Date(fetchedAt).toISOString(),
+          cached: fromCache,
+          dryRun: context.config.server.dryRun,
+          projectId,
+          flag,
+        },
+        null,
+        2
+      ),
+    };
+  } catch (error) {
+    context.logger.error('Failed to read Unleash feature flag resource', error);
+    throw error;
+  }
+}
+
 export function isFeatureFlagsUri(uri: string): boolean {
   return /^unleash:\/\/projects\/[^/]+\/feature-flags(?:\?.*)?$/.test(uri);
+}
+
+export function isFeatureFlagUri(uri: string): boolean {
+  return /^unleash:\/\/projects\/[^/]+\/feature-flags\/[^/]+(?:\?.*)?$/.test(uri);
 }
 
 export function isProjectsUri(uri: string): boolean {
@@ -154,7 +192,23 @@ export function parseProjectsResourceOptions(
 
 export function extractProjectIdFromFeatureUri(uri: string): string | undefined {
   const baseUri = uri.split('?')[0];
-  const match = baseUri.match(/^unleash:\/\/projects\/([^/]+)\/feature-flags$/);
+  // match unleash://projects/{projectId}/feature-flags or unleash://projects/{projectId}/feature-flags/{flagName}
+  const match = baseUri.match(/^unleash:\/\/projects\/([^/]+)\/feature-flags(?:\/[^/]+)?$/);
+  if (!match) {
+    return undefined;
+  }
+
+  try {
+    return decodeURIComponent(match[1]);
+  } catch {
+    return match[1];
+  }
+}
+
+export function extractFlagNameFromFeatureUri(uri: string): string | undefined {
+  const baseUri = uri.split('?')[0];
+  // match unleash://projects/{projectId}/feature-flags/{flagName}
+  const match = baseUri.match(/^unleash:\/\/projects\/[^/]+\/feature-flags\/([^/]+)$/);
   if (!match) {
     return undefined;
   }
@@ -217,6 +271,13 @@ export function buildFeatureFlagsUri(
 
   const query = params.toString();
   return query ? `${base}?${query}` : base;
+}
+
+export function buildFeatureFlagUri(
+  projectId: string,
+  flagName: string,
+): string {
+  return `unleash://projects/${encodeURIComponent(projectId)}/feature-flags/${encodeURIComponent(flagName)}`;
 }
 
 function buildProjectsUri(options: { limit?: number; order?: 'asc' | 'desc'; offset?: number }): string {

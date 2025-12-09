@@ -1,4 +1,5 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { buildFeatureFlagUri } from '../resources/unleashResources.js';
 
 /**
  * Helper to emit progress notifications during tool execution.
@@ -55,7 +56,7 @@ export function createFlagResourceLink(
   return {
     url,
     resource: {
-      uri: `unleash://feature-flag/${projectId}/${flagName}`,
+      uri: buildFeatureFlagUri(projectId, flagName),
       mimeType: 'application/json',
       text: `Feature flag: ${flagName}`,
     },

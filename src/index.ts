@@ -48,12 +48,15 @@ import { removeFlagStrategy, removeFlagStrategyTool } from './tools/removeFlagSt
 import { VERSION } from './version.js';
 import {
   isProjectsUri,
+  isFeatureFlagUri,
+  extractFlagNameFromFeatureUri,
   parseProjectsResourceOptions,
   extractProjectIdFromFeatureUri,
   isFeatureFlagsUri,
   listResourceTemplates,
   listStaticResources,
   parseFeatureFlagsResourceOptions,
+  readFeatureFlagResource,
   readFeatureFlagsResource,
   readProjectsResource,
 } from './resources/unleashResources.js';
@@ -146,13 +149,30 @@ async function main(): Promise<void> {
 
     logger.debug(`Resource read requested: ${uri}`);
 
-    if (isProjectsUri(uri)) {
-      const options = parseProjectsResourceOptions(uri);
+    // only one feature flag
+    if (isFeatureFlagUri(uri)) {
+      const projectId = extractProjectIdFromFeatureUri(uri);
+      if (!projectId) {
+        throw new Error('Project ID missing from feature flag URI');
+      }
+
+      const flagName = extractFlagNameFromFeatureUri(uri);
+      if (!flagName) {
+        throw new Error('Flag name missing from feature flag URI');
+      }
+
       return {
-        contents: [await readProjectsResource(context, options)],
+        contents: [
+          await readFeatureFlagResource(
+            context,
+            projectId,
+            flagName,
+          ),
+        ],
       };
     }
 
+    // list of feature flags of a project
     if (isFeatureFlagsUri(uri)) {
       const projectId = extractProjectIdFromFeatureUri(uri);
       if (!projectId) {
@@ -167,6 +187,14 @@ async function main(): Promise<void> {
             parseFeatureFlagsResourceOptions(uri)
           ),
         ],
+      };
+    }
+
+    // list of projects
+    if (isProjectsUri(uri)) {
+      const options = parseProjectsResourceOptions(uri);
+      return {
+        contents: [await readProjectsResource(context, options)],
       };
     }
 
