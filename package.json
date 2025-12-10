@@ -1,6 +1,6 @@
 {
   "name": "@unleash/mcp",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "mcpName": "io.getunleash/unleash-mcp",
   "description": "MCP server for managing Unleash feature flags",
   "type": "module",
