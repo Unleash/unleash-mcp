@@ -8,12 +8,11 @@ const getFlagStateSchema = z.object({
   projectId: z
     .string()
     .optional()
-    .describe('Project ID (optional if UNLEASH_DEFAULT_PROJECT is configured)'),
+    .describe(
+      'Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set)',
+    ),
   featureName: z.string().min(1).describe('Feature flag name'),
-  environment: z
-    .string()
-    .optional()
-    .describe('Optional environment filter to focus on a single environment'),
+  environment: z.string().optional().describe('Optional environment filter (case-insensitive)'),
 });
 
 type GetFlagStateInput = z.infer<typeof getFlagStateSchema>;
@@ -119,7 +118,7 @@ export async function getFlagState(
           name: feature.name,
           uri: resource.uri,
           mimeType: resource.mimeType,
-          text: resource.text,
+          title: resource.text,
         },
       ],
       structuredContent,
@@ -133,23 +132,6 @@ export const getFlagStateTool = {
   name: 'get_flag_state',
   description:
     'Fetch the current feature flag metadata and environment strategies from the Unleash Admin API.',
-  inputSchema: {
-    type: 'object',
-    properties: {
-      projectId: {
-        type: 'string',
-        description:
-          'Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set)',
-      },
-      featureName: {
-        type: 'string',
-        description: 'Feature flag name',
-      },
-      environment: {
-        type: 'string',
-        description: 'Optional environment filter (case-insensitive)',
-      },
-    },
-    required: ['featureName'],
-  },
+  inputSchema: getFlagStateSchema,
+  implementation: getFlagState,
 };

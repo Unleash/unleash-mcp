@@ -23,41 +23,29 @@
  * - Progress streaming for visibility
  */
 
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import {
-  CallToolRequestSchema,
-  ListResourcesRequestSchema,
-  ListResourceTemplatesRequestSchema,
-  ListToolsRequestSchema,
-  ReadResourceRequestSchema,
-} from '@modelcontextprotocol/sdk/types.js';
-
 import { loadConfig } from './config.js';
-import { createLogger, handleToolError, type ServerContext } from './context.js';
+import { createLogger, type ServerContext } from './context.js';
 import {
-  extractFlagNameFromFeatureUri,
-  extractProjectIdFromFeatureUri,
-  isFeatureFlagsUri,
-  isFeatureFlagUri,
-  isProjectsUri,
-  listResourceTemplates,
-  listStaticResources,
+  FEATURE_FLAG_RESOURCE_URI,
+  FEATURE_FLAGS_RESOURCE_TEMPLATE,
+  PROJECTS_RESOURCE_TEMPLATE,
   parseFeatureFlagsResourceOptions,
   parseProjectsResourceOptions,
   readFeatureFlagResource,
   readFeatureFlagsResource,
   readProjectsResource,
 } from './resources/unleashResources.js';
-import { cleanupFlag, cleanupFlagTool } from './tools/cleanupFlag.js';
-import { createFlag, createFlagTool } from './tools/createFlag.js';
-import { detectFlag, detectFlagTool } from './tools/detectFlag.js';
-import { evaluateChange, evaluateChangeTool } from './tools/evaluateChange.js';
-import { getFlagState, getFlagStateTool } from './tools/getFlagState.js';
-import { removeFlagStrategy, removeFlagStrategyTool } from './tools/removeFlagStrategy.js';
-import { setFlagRollout, setFlagRolloutTool } from './tools/setFlagRollout.js';
-import { toggleFlagEnvironment, toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
-import { wrapChange, wrapChangeTool } from './tools/wrapChange.js';
+import { cleanupFlagTool } from './tools/cleanupFlag.js';
+import { createFlagTool } from './tools/createFlag.js';
+import { detectFlagTool } from './tools/detectFlag.js';
+import { evaluateChangeTool } from './tools/evaluateChange.js';
+import { getFlagStateTool } from './tools/getFlagState.js';
+import { removeFlagStrategyTool } from './tools/removeFlagStrategy.js';
+import { setFlagRolloutTool } from './tools/setFlagRollout.js';
+import { toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
+import { wrapChangeTool } from './tools/wrapChange.js';
 import { UnleashClient } from './unleash/client.js';
 import { VERSION } from './version.js';
 
@@ -94,21 +82,20 @@ async function main(): Promise<void> {
   ].join('\n');
 
   // Create MCP server
-  const server = new Server(
+  const server = new McpServer(
     {
       name: 'unleash-mcp',
       version: VERSION,
-      description:
+      title:
         'Local development assistant. After making a code change follow this workflow: evaluate_change → create_flag → wrap_change to score risk and steer next steps.',
     },
     {
       capabilities: {
         tools: {},
         logging: {},
-        notifications: {},
         resources: {},
-        instructions,
       },
+      instructions,
     },
   );
 
@@ -120,124 +107,32 @@ async function main(): Promise<void> {
     logger,
   };
 
-  // Register tool handlers
-  server.setRequestHandler(ListToolsRequestSchema, async () => {
-    return {
-      tools: [
-        createFlagTool,
-        evaluateChangeTool,
-        detectFlagTool,
-        wrapChangeTool,
-        cleanupFlagTool,
-        setFlagRolloutTool,
-        getFlagStateTool,
-        toggleFlagEnvironmentTool,
-        removeFlagStrategyTool,
-      ],
-    };
+  type ProgressExtra = { _meta?: { progressToken?: string | number } };
+
+  const tools = [
+    createFlagTool,
+    evaluateChangeTool,
+    detectFlagTool,
+    wrapChangeTool,
+    cleanupFlagTool,
+    setFlagRolloutTool,
+    getFlagStateTool,
+    toggleFlagEnvironmentTool,
+    removeFlagStrategyTool,
+  ];
+
+  tools.forEach((tool) => {
+    server.registerTool(
+      tool.name,
+      {
+        description: tool.description,
+        inputSchema: tool.inputSchema,
+      },
+      (args: unknown, extra: ProgressExtra) =>
+        tool.implementation(context, args, extra._meta?.progressToken),
+    );
   });
-
-  server.setRequestHandler(ListResourcesRequestSchema, async () => {
-    return {
-      resources: listStaticResources(),
-    };
-  });
-
-  server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
-    const { uri } = request.params;
-
-    logger.debug(`Resource read requested: ${uri}`);
-
-    // only one feature flag
-    if (isFeatureFlagUri(uri)) {
-      const projectId = extractProjectIdFromFeatureUri(uri);
-      if (!projectId) {
-        throw new Error('Project ID missing from feature flag URI');
-      }
-
-      const flagName = extractFlagNameFromFeatureUri(uri);
-      if (!flagName) {
-        throw new Error('Flag name missing from feature flag URI');
-      }
-
-      return {
-        contents: [await readFeatureFlagResource(context, projectId, flagName)],
-      };
-    }
-
-    // list of feature flags of a project
-    if (isFeatureFlagsUri(uri)) {
-      const projectId = extractProjectIdFromFeatureUri(uri);
-      if (!projectId) {
-        throw new Error('Project ID missing from feature flags URI');
-      }
-
-      return {
-        contents: [
-          await readFeatureFlagsResource(context, projectId, parseFeatureFlagsResourceOptions(uri)),
-        ],
-      };
-    }
-
-    // list of projects
-    if (isProjectsUri(uri)) {
-      const options = parseProjectsResourceOptions(uri);
-      return {
-        contents: [await readProjectsResource(context, options)],
-      };
-    }
-
-    throw new Error(`Unknown resource: ${uri}`);
-  });
-
-  server.setRequestHandler(ListResourceTemplatesRequestSchema, async () => {
-    return {
-      resourceTemplates: listResourceTemplates(),
-    };
-  });
-
-  server.setRequestHandler(CallToolRequestSchema, async (request) => {
-    try {
-      const { name, arguments: args } = request.params;
-
-      logger.debug(`Tool called: ${name}`, args);
-
-      switch (name) {
-        case 'create_flag':
-          return await createFlag(context, args, request.params._meta?.progressToken);
-
-        case 'evaluate_change':
-          return await evaluateChange(context, args);
-
-        case 'detect_flag':
-          return await detectFlag(context, args);
-
-        case 'wrap_change':
-          return await wrapChange(context, args);
-
-        case 'cleanup_flag':
-          return await cleanupFlag(context, args);
-
-        case 'set_flag_rollout':
-          return await setFlagRollout(context, args, request.params._meta?.progressToken);
-
-        case 'get_flag_state':
-          return await getFlagState(context, args, request.params._meta?.progressToken);
-
-        case 'toggle_flag_environment':
-          return await toggleFlagEnvironment(context, args, request.params._meta?.progressToken);
-
-        case 'remove_flag_strategy':
-          return await removeFlagStrategy(context, args, request.params._meta?.progressToken);
-
-        default:
-          throw new Error(`Unknown tool: ${name}`);
-      }
-    } catch (error) {
-      const toolName = request.params.name || 'unknown';
-      return handleToolError(context, error, toolName);
-    }
-  });
+  registerResources(context);
 
   // Start server with stdio transport
   const transport = new StdioServerTransport();
@@ -251,3 +146,78 @@ main().catch((error) => {
   console.error('Fatal error starting server:', error);
   process.exit(1);
 });
+
+function registerResources(context: ServerContext): void {
+  const projectsTemplate = new ResourceTemplate(PROJECTS_RESOURCE_TEMPLATE, {
+    list: undefined,
+  });
+
+  context.server.registerResource(
+    'unleash-projects-filtered',
+    projectsTemplate,
+    {
+      mimeType: 'application/json',
+      description:
+        'Unleash projects with optional query parameters. Use limit to control page size, order=asc|desc to sort by creation time, and offset to paginate.',
+    },
+    async (uri: URL, _variables: unknown, _extra: unknown) => ({
+      contents: [await readProjectsResource(context, parseProjectsResourceOptions(uri.toString()))],
+    }),
+  );
+
+  const featureFlagsTemplate = new ResourceTemplate(FEATURE_FLAGS_RESOURCE_TEMPLATE, {
+    list: undefined,
+  });
+
+  context.server.registerResource(
+    'unleash-feature-flags-by-project',
+    featureFlagsTemplate,
+    {
+      mimeType: 'application/json',
+      description:
+        'Feature flags for a specific Unleash project. Replace {projectId}; optional limit/order/offset parameters help paginate flags alphabetically.',
+    },
+    async (uri: URL, variables: any, _extra: unknown) => {
+      const projectId = variables.projectId;
+      if (!projectId) {
+        throw new Error('Project ID missing from feature flags URI');
+      }
+
+      return {
+        contents: [
+          await readFeatureFlagsResource(
+            context,
+            projectId,
+            parseFeatureFlagsResourceOptions(uri.toString()),
+          ),
+        ],
+      };
+    },
+  );
+
+  const featureFlagTemplate = new ResourceTemplate(FEATURE_FLAG_RESOURCE_URI, {
+    list: undefined,
+  });
+
+  context.server.registerResource(
+    'unleash-feature-flag',
+    featureFlagTemplate,
+    {
+      mimeType: 'application/json',
+      description: 'Single feature flag resource.',
+    },
+    async (_uri: URL, variables: any, _extra: unknown) => {
+      const { projectId, flagName } = variables;
+      if (!projectId) {
+        throw new Error('Project ID missing from feature flag URI');
+      }
+      if (!flagName) {
+        throw new Error('Flag name missing from feature flag URI');
+      }
+
+      return {
+        contents: [await readFeatureFlagResource(context, projectId, flagName)],
+      };
+    },
+  );
+}

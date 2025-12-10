@@ -110,7 +110,7 @@ export async function removeFlagStrategy(
           name: feature.name,
           uri: resource.uri,
           mimeType: resource.mimeType,
-          text: resource.text,
+          title: resource.text,
         },
       ],
       structuredContent,
@@ -124,27 +124,6 @@ export const removeFlagStrategyTool = {
   name: 'remove_flag_strategy',
   description:
     'Delete a strategy configuration from a feature flag environment. Use get_flag_state to discover strategy IDs before removal.',
-  inputSchema: {
-    type: 'object',
-    properties: {
-      projectId: {
-        type: 'string',
-        description:
-          'Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set)',
-      },
-      featureName: {
-        type: 'string',
-        description: 'Feature flag name',
-      },
-      environment: {
-        type: 'string',
-        description: 'Environment from which to remove the strategy',
-      },
-      strategyId: {
-        type: 'string',
-        description: 'ID of the strategy to remove',
-      },
-    },
-    required: ['featureName', 'environment', 'strategyId'],
-  },
+  inputSchema: removeFlagStrategySchema,
+  implementation: removeFlagStrategy,
 };

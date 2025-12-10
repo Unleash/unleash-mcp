@@ -1,4 +1,4 @@
-import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { buildFeatureFlagUri } from '../resources/unleashResources.js';
 
 /**
@@ -6,7 +6,7 @@ import { buildFeatureFlagUri } from '../resources/unleashResources.js';
  * Provides visibility into long-running operations for the LLM.
  */
 export async function notifyProgress(
-  server: Server,
+  server: McpServer,
   progressToken: string | number | undefined,
   progress: number,
   total: number,
@@ -17,7 +17,7 @@ export async function notifyProgress(
   }
 
   try {
-    await server.notification({
+    await server.server.notification({
       method: 'notifications/progress',
       params: {
         progressToken,
@@ -27,7 +27,7 @@ export async function notifyProgress(
     });
 
     // Also send a message notification for visibility
-    await server.notification({
+    await server.server.notification({
       method: 'notifications/message',
       params: {
         level: 'info',
@@ -49,7 +49,7 @@ export function createFlagResourceLink(
   baseUrl: string,
   projectId: string,
   flagName: string,
-): { url: string; resource: { uri: string; mimeType?: string; text?: string } } {
+): { url: string; resource: { uri: string; mimeType?: string; text: string } } {
   // Unleash Admin UI URL for the feature flag
   const url = `${baseUrl}/projects/${projectId}/features/${flagName}`;
 

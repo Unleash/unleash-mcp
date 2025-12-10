@@ -28,22 +28,27 @@ import { detectLanguage, type SupportedLanguage } from '../templates/languages.j
  * Input schema for the cleanup_flag tool
  */
 const cleanupFlagInputSchema = z.object({
-  flagName: z.string().min(1).describe('Name of the feature flag to remove from the codebase'),
+  flagName: z
+    .string()
+    .min(1)
+    .describe('Name of the feature flag to remove (e.g., "new-checkout-flow")'),
   preservePath: z
     .enum(['enabled', 'disabled'])
     .optional()
     .describe(
-      'Which code path to preserve: "enabled" keeps the code that runs when flag is true, "disabled" keeps the code that runs when flag is false. If not provided, instructions will guide you to ask the user.',
+      'Optional: Which code path to preserve: "enabled" = keep code that runs when flag is true (typical for rollouts), "disabled" = keep code that runs when flag is false (for removed features). If not provided, you will be instructed to ask the user.',
     ),
   files: z
     .array(z.string())
     .optional()
-    .describe('Optional: Specific files to clean up. If not provided, searches entire codebase'),
+    .describe(
+      'Optional: Specific files to clean up. If not provided, searches entire codebase. Useful for partial cleanup or when you already know which files contain the flag.',
+    ),
   language: z
     .string()
     .optional()
     .describe(
-      'Optional: Programming language hint for language-specific guidance (auto-detected from files if not provided)',
+      'Optional: Programming language for specialized guidance (e.g., "typescript", "python", "go"). Auto-detected from files if not provided.',
     ),
 });
 
@@ -296,31 +301,6 @@ It guides you through:
 
 This tool is inspired by the Unleash AI flag cleanup workflow used in production.
 See: https://github.com/Unleash/unleash/blob/main/.github/workflows/ai-flag-cleanup-pr.yml`,
-  inputSchema: {
-    type: 'object',
-    properties: {
-      flagName: {
-        type: 'string',
-        description: 'Name of the feature flag to remove (e.g., "new-checkout-flow")',
-      },
-      preservePath: {
-        type: 'string',
-        enum: ['enabled', 'disabled'],
-        description:
-          'Optional: Which code path to preserve: "enabled" = keep code that runs when flag is true (typical for rollouts), "disabled" = keep code that runs when flag is false (for removed features). If not provided, you will be instructed to ask the user.',
-      },
-      files: {
-        type: 'array',
-        items: { type: 'string' },
-        description:
-          'Optional: Specific files to clean up. If not provided, searches entire codebase. Useful for partial cleanup or when you already know which files contain the flag.',
-      },
-      language: {
-        type: 'string',
-        description:
-          'Optional: Programming language for specialized guidance (e.g., "typescript", "python", "go"). Auto-detected from files if not provided.',
-      },
-    },
-    required: ['flagName'],
-  },
+  inputSchema: cleanupFlagInputSchema,
+  implementation: cleanupFlag,
 };

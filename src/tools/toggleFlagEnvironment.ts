@@ -108,7 +108,7 @@ export async function toggleFlagEnvironment(
           name: feature.name,
           uri: resource.uri,
           mimeType: resource.mimeType,
-          text: resource.text,
+          title: resource.text,
         },
       ],
       structuredContent,
@@ -122,27 +122,6 @@ export const toggleFlagEnvironmentTool = {
   name: 'toggle_flag_environment',
   description:
     'Enable or disable a feature flag in a specific environment using the Unleash Admin API. For gradual rollouts, configure a flexibleRollout strategy first via set_flag_rollout.',
-  inputSchema: {
-    type: 'object',
-    properties: {
-      projectId: {
-        type: 'string',
-        description:
-          'Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set)',
-      },
-      featureName: {
-        type: 'string',
-        description: 'Feature flag name',
-      },
-      environment: {
-        type: 'string',
-        description: 'Environment to toggle',
-      },
-      enabled: {
-        type: 'boolean',
-        description: 'Set to true to enable the flag, or false to disable it',
-      },
-    },
-    required: ['featureName', 'environment', 'enabled'],
-  },
+  inputSchema: toggleFlagEnvironmentSchema,
+  implementation: toggleFlagEnvironment,
 };

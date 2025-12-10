@@ -27,21 +27,19 @@ const setFlagRolloutSchema = z.object({
   projectId: z
     .string()
     .optional()
-    .describe('Project ID (optional if UNLEASH_DEFAULT_PROJECT is configured)'),
+    .describe(
+      'Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set)',
+    ),
   featureName: z.string().min(1).describe('Feature flag name'),
-  environment: z.string().min(1).describe('Environment name'),
-  rolloutPercentage: z
-    .number()
-    .min(0)
-    .max(100)
-    .describe('Rollout percentage (0-100) for the flexibleRollout strategy'),
+  environment: z.string().min(1).describe('Target environment'),
+  rolloutPercentage: z.number().min(0).max(100).describe('Rollout percentage (0-100)'),
   groupId: z
     .string()
     .optional()
-    .describe('Group ID for stickiness bucketing (defaults to feature name)'),
+    .describe('Group ID for stickiness bucketing (defaults to the feature name)'),
   stickiness: z.string().optional().describe('Stickiness field (defaults to "default")'),
   title: z.string().optional().describe('Optional descriptive title for the strategy'),
-  disabled: z.boolean().optional().describe('Whether to disable the strategy (defaults to false)'),
+  disabled: z.boolean().optional().describe('Disable the strategy (defaults to false)'),
   variants: z.array(variantSchema).optional().describe('Optional list of strategy-level variants'),
 });
 
@@ -127,7 +125,7 @@ export async function setFlagRollout(
           name: input.featureName,
           uri: resource.uri,
           mimeType: resource.mimeType,
-          text: resource.text,
+          title: resource.text,
         },
       ],
       structuredContent: {
@@ -153,68 +151,6 @@ export async function setFlagRollout(
 export const setFlagRolloutTool = {
   name: 'set_flag_rollout',
   description: `Configure or update a flexibleRollout strategy for a feature flag environment with an optional rollout percentage and variants. This does NOT enable the feature; call toggle_flag_environment to turn environments on or off.`,
-  inputSchema: {
-    type: 'object',
-    properties: {
-      projectId: {
-        type: 'string',
-        description:
-          'Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set)',
-      },
-      featureName: {
-        type: 'string',
-        description: 'Feature flag name',
-      },
-      environment: {
-        type: 'string',
-        description: 'Target environment',
-      },
-      rolloutPercentage: {
-        type: 'number',
-        description: 'Rollout percentage (0-100)',
-      },
-      groupId: {
-        type: 'string',
-        description: 'Group ID for stickiness bucketing (defaults to the feature name)',
-      },
-      stickiness: {
-        type: 'string',
-        description: 'Stickiness field (defaults to "default")',
-      },
-      title: {
-        type: 'string',
-        description: 'Optional descriptive title for the strategy',
-      },
-      disabled: {
-        type: 'boolean',
-        description: 'Disable the strategy (defaults to false)',
-      },
-      variants: {
-        type: 'array',
-        description: 'Optional list of strategy-level variants',
-        items: {
-          type: 'object',
-          properties: {
-            name: { type: 'string' },
-            weight: { type: 'number' },
-            weightType: {
-              type: 'string',
-              enum: ['variable', 'fix'],
-            },
-            stickiness: { type: 'string' },
-            payload: {
-              type: 'object',
-              properties: {
-                type: { type: 'string', enum: ['json', 'csv', 'string', 'number'] },
-                value: { type: 'string' },
-              },
-              required: ['type', 'value'],
-            },
-          },
-          required: ['name', 'weight'],
-        },
-      },
-    },
-    required: ['featureName', 'environment', 'rolloutPercentage'],
-  },
+  inputSchema: setFlagRolloutSchema,
+  implementation: setFlagRollout,
 };

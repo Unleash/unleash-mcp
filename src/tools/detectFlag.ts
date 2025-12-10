@@ -26,9 +26,20 @@ import { getScoringGuidance } from '../detection/flagScoring.js';
  * Input schema for the detect_flag tool
  */
 const detectFlagInputSchema = z.object({
-  description: z.string().min(1).describe('Description of the change or feature to find flags for'),
-  files: z.array(z.string()).optional().describe('Optional list of files being modified'),
-  codeContext: z.string().optional().describe('Optional code context to analyze for nearby flags'),
+  description: z
+    .string()
+    .min(1)
+    .describe(
+      'Description of the change or feature you want to find flags for (e.g., "payment processing with Stripe")',
+    ),
+  files: z
+    .array(z.string())
+    .optional()
+    .describe('Optional: List of files being modified to search for flags in the same area'),
+  codeContext: z
+    .string()
+    .optional()
+    .describe('Optional: Code context around the modification point to analyze for nearby flags'),
 });
 
 type DetectFlagInput = z.infer<typeof detectFlagInputSchema>;
@@ -185,25 +196,6 @@ Returns markdown guidance with:
 
 After following the instructions and finding results, you should return a JSON object
 indicating whether a flag was found and, if so, its details with a confidence score.`,
-  inputSchema: {
-    type: 'object',
-    properties: {
-      description: {
-        type: 'string',
-        description:
-          'Description of the change or feature you want to find flags for (e.g., "payment processing with Stripe")',
-      },
-      files: {
-        type: 'array',
-        items: { type: 'string' },
-        description: 'Optional: List of files being modified to search for flags in the same area',
-      },
-      codeContext: {
-        type: 'string',
-        description:
-          'Optional: Code context around the modification point to analyze for nearby flags',
-      },
-    },
-    required: ['description'],
-  },
+  inputSchema: detectFlagInputSchema,
+  implementation: detectFlag,
 };

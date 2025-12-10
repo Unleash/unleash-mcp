@@ -16,19 +16,28 @@ const createFeatureFlagSchema = z.object({
   projectId: z
     .string()
     .optional()
-    .describe('Project ID where the flag will be created (optional if default is set)'),
-  name: z.string().min(1).describe('Feature flag name (must be unique within the project)'),
+    .describe(
+      'Project ID where the flag will be created (optional if UNLEASH_DEFAULT_PROJECT is set)',
+    ),
+  name: z
+    .string()
+    .min(1)
+    .describe(
+      'Feature flag name (must be unique within the project). Use descriptive names like "new-checkout-flow"',
+    ),
   type: z
     .enum(['release', 'experiment', 'operational', 'kill-switch', 'permission'])
     .describe('Feature flag type - determines the lifecycle and usage pattern'),
   description: z
     .string()
     .min(1)
-    .describe('Clear description of what this flag controls and why it exists'),
+    .describe(
+      'Clear description of what this flag controls, why it exists, and when it should be removed',
+    ),
   impressionData: z
     .boolean()
     .optional()
-    .describe('Enable impression data collection for analytics (optional)'),
+    .describe('Enable impression data collection for analytics (optional, defaults to false)'),
 });
 
 type CreateFeatureFlagInput = z.infer<typeof createFeatureFlagSchema>;
@@ -138,7 +147,7 @@ export async function createFlag(
           name: response.name,
           uri: resource.uri,
           mimeType: resource.mimeType,
-          text: resource.text,
+          title: resource.text,
         },
       ],
       structuredContent,
@@ -170,35 +179,6 @@ Best practices:
 4. Plan for flag removal after successful rollout
 
 See: https://docs.getunleash.io/topics/feature-flags/best-practices-using-feature-flags-at-scale`,
-  inputSchema: {
-    type: 'object',
-    properties: {
-      projectId: {
-        type: 'string',
-        description:
-          'Project ID where the flag will be created (optional if UNLEASH_DEFAULT_PROJECT is set)',
-      },
-      name: {
-        type: 'string',
-        description:
-          'Feature flag name (must be unique within the project). Use descriptive names like "new-checkout-flow"',
-      },
-      type: {
-        type: 'string',
-        enum: ['release', 'experiment', 'operational', 'kill-switch', 'permission'],
-        description: 'Feature flag type - determines the lifecycle and usage pattern',
-      },
-      description: {
-        type: 'string',
-        description:
-          'Clear description of what this flag controls, why it exists, and when it should be removed',
-      },
-      impressionData: {
-        type: 'boolean',
-        description:
-          'Enable impression data collection for analytics (optional, defaults to false)',
-      },
-    },
-    required: ['name', 'type', 'description'],
-  },
+  inputSchema: createFeatureFlagSchema,
+  implementation: createFlag,
 };

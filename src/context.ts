@@ -1,4 +1,4 @@
-import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { Config } from './config.js';
 import type { UnleashClient } from './unleash/client.js';
@@ -9,7 +9,7 @@ import { normalizeError } from './utils/errors.js';
  * Provides centralized access to configuration, clients, and utilities.
  */
 export interface ServerContext {
-  server: Server;
+  server: McpServer;
   config: Config;
   unleashClient: UnleashClient;
   logger: Logger;

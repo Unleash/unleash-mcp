@@ -17,20 +17,30 @@ import { getDefaultTemplate, getTemplatesForLanguage } from '../templates/wrappe
  * Input schema for the wrap_change tool.
  */
 const wrapChangeSchema = z.object({
-  flagName: z.string().min(1).describe('Feature flag name to wrap the code with'),
+  flagName: z
+    .string()
+    .min(1)
+    .describe('Feature flag name to wrap the code with (e.g., "new-checkout-flow")'),
   language: z
     .string()
     .optional()
-    .describe('Programming language (auto-detected from fileName if not provided)'),
-  fileName: z.string().optional().describe('File name to help detect language and patterns'),
+    .describe(
+      `Programming language (optional, auto-detected from fileName). Supported: ${getSupportedLanguages().join(', ')}`,
+    ),
+  fileName: z
+    .string()
+    .optional()
+    .describe('File name being modified (helps detect language, e.g., "checkout.ts")'),
   codeContext: z
     .string()
     .optional()
-    .describe('Optional code context for detecting existing patterns'),
+    .describe('Optional: surrounding code to help detect existing patterns'),
   frameworkHint: z
     .string()
     .optional()
-    .describe('Framework hint (React, Express, Django, etc.) for specialized templates'),
+    .describe(
+      'Optional: framework hint for specialized templates (React, Express, Django, Rails, etc.)',
+    ),
 });
 
 type WrapChangeInput = z.infer<typeof wrapChangeSchema>;
@@ -76,9 +86,8 @@ export async function wrapChange(context: ServerContext, args: unknown): Promise
     // Try to get framework-specific template if hint provided
     let recommendedTemplate = getDefaultTemplate(language, input.flagName);
     if (input.frameworkHint) {
-      const frameworkTemplate = allTemplates.find((t) =>
-        t.framework?.toLowerCase().includes(input.frameworkHint?.toLowerCase()),
-      );
+      const hint = input.frameworkHint.toLowerCase();
+      const frameworkTemplate = allTemplates.find((t) => t.framework?.toLowerCase().includes(hint));
       if (frameworkTemplate) {
         recommendedTemplate = frameworkTemplate;
         context.logger.debug(`Found framework-specific template: ${input.frameworkHint}`);
@@ -338,31 +347,6 @@ Usage:
 4. Test your implementation
 
 Best suited for use after evaluate_change recommends a flag and create_flag creates it.`,
-  inputSchema: {
-    type: 'object',
-    properties: {
-      flagName: {
-        type: 'string',
-        description: 'Feature flag name to wrap the code with (e.g., "new-checkout-flow")',
-      },
-      language: {
-        type: 'string',
-        description: `Programming language (optional, auto-detected from fileName). Supported: ${getSupportedLanguages().join(', ')}`,
-      },
-      fileName: {
-        type: 'string',
-        description: 'File name being modified (helps detect language, e.g., "checkout.ts")',
-      },
-      codeContext: {
-        type: 'string',
-        description: 'Optional: surrounding code to help detect existing patterns',
-      },
-      frameworkHint: {
-        type: 'string',
-        description:
-          'Optional: framework hint for specialized templates (React, Express, Django, Rails, etc.)',
-      },
-    },
-    required: ['flagName'],
-  },
+  inputSchema: wrapChangeSchema,
+  implementation: wrapChange,
 };

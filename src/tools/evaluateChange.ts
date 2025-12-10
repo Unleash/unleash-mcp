@@ -23,15 +23,18 @@ import * as pb from '../prompts/promptBuilder.js';
  * All fields are optional to allow flexible usage.
  */
 const evaluateChangeInputSchema = z.object({
-  repository: z.string().optional().describe('Repository name or path'),
-  branch: z.string().optional().describe('Current branch name'),
-  files: z.array(z.string()).optional().describe('List of files changed'),
-  description: z.string().optional().describe('Description of the change'),
+  repository: z.string().optional().describe('Repository name or path (optional)'),
+  branch: z.string().optional().describe('Current branch name (optional)'),
+  files: z.array(z.string()).optional().describe('List of files changed (optional)'),
+  description: z.string().optional().describe('Description of the change (optional)'),
   riskLevel: z
     .enum(['low', 'medium', 'high', 'critical'])
     .optional()
-    .describe('User-assessed risk level'),
-  codeContext: z.string().optional().describe('Surrounding code context for parent flag detection'),
+    .describe('User-assessed risk level (optional)'),
+  codeContext: z
+    .string()
+    .optional()
+    .describe('Surrounding code context for parent flag detection (optional)'),
 });
 
 type EvaluateChangeInput = z.infer<typeof evaluateChangeInputSchema>;
@@ -264,7 +267,8 @@ function buildCodeCharacteristicsSection(): string {
 function buildRiskAssessmentSection(): string {
   let content = pb.subsection(
     'Risk Patterns',
-    `Use these patterns to identify risky code and calculate a risk score:\n\n${getRiskPatternGuidance()}`,
+    'Use these patterns to identify risky code and calculate a risk score:\n\n' +
+      getRiskPatternGuidance(),
   );
 
   content += pb.subsection(
@@ -538,35 +542,6 @@ When this tool determines a flag is needed, it provides explicit instructions to
 3. Implement the wrapped code following the patterns
 
 The tool returns markdown-formatted guidance that helps you make informed decisions and take the correct next actions.`,
-  inputSchema: {
-    type: 'object',
-    properties: {
-      repository: {
-        type: 'string',
-        description: 'Repository name or path (optional)',
-      },
-      branch: {
-        type: 'string',
-        description: 'Current branch name (optional)',
-      },
-      files: {
-        type: 'array',
-        items: { type: 'string' },
-        description: 'List of files changed (optional)',
-      },
-      description: {
-        type: 'string',
-        description: 'Description of the change (optional)',
-      },
-      riskLevel: {
-        type: 'string',
-        enum: ['low', 'medium', 'high', 'critical'],
-        description: 'User-assessed risk level (optional)',
-      },
-      codeContext: {
-        type: 'string',
-        description: 'Surrounding code context for parent flag detection (optional)',
-      },
-    },
-  },
+  inputSchema: evaluateChangeInputSchema,
+  implementation: evaluateChange,
 };
