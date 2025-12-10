@@ -16,10 +16,10 @@
  * 5. Tool integrates result into evaluation workflow
  */
 
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { ServerContext, handleToolError } from '../context.js';
-import { generateDiscoveryInstructions, DiscoveryInput } from '../detection/flagDiscovery.js';
+import { handleToolError, type ServerContext } from '../context.js';
+import { type DiscoveryInput, generateDiscoveryInstructions } from '../detection/flagDiscovery.js';
 import { getScoringGuidance } from '../detection/flagScoring.js';
 
 /**
@@ -40,10 +40,7 @@ type DetectFlagInput = z.infer<typeof detectFlagInputSchema>;
  * in the codebase. The LLM will execute these instructions and return
  * the best candidate flag.
  */
-export async function detectFlag(
-  context: ServerContext,
-  args: unknown
-): Promise<CallToolResult> {
+export async function detectFlag(context: ServerContext, args: unknown): Promise<CallToolResult> {
   try {
     // Validate input
     const input: DetectFlagInput = detectFlagInputSchema.parse(args);
@@ -88,7 +85,7 @@ export async function detectFlag(
 function buildDetectionGuidance(
   instructions: string,
   scoringGuidance: string,
-  description: string
+  description: string,
 ): string {
   return `
 # Existing Flag Detection
@@ -193,7 +190,8 @@ indicating whether a flag was found and, if so, its details with a confidence sc
     properties: {
       description: {
         type: 'string',
-        description: 'Description of the change or feature you want to find flags for (e.g., "payment processing with Stripe")',
+        description:
+          'Description of the change or feature you want to find flags for (e.g., "payment processing with Stripe")',
       },
       files: {
         type: 'array',
@@ -202,7 +200,8 @@ indicating whether a flag was found and, if so, its details with a confidence sc
       },
       codeContext: {
         type: 'string',
-        description: 'Optional: Code context around the modification point to analyze for nearby flags',
+        description:
+          'Optional: Code context around the modification point to analyze for nearby flags',
       },
     },
     required: ['description'],

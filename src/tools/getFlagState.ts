@@ -1,8 +1,8 @@
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { ServerContext, ensureProjectId, handleToolError } from '../context.js';
-import { notifyProgress, createFlagResourceLink } from '../utils/streaming.js';
-import { FeatureDetails, FeatureEnvironment } from '../unleash/client.js';
+import { ensureProjectId, handleToolError, type ServerContext } from '../context.js';
+import type { FeatureDetails, FeatureEnvironment } from '../unleash/client.js';
+import { createFlagResourceLink, notifyProgress } from '../utils/streaming.js';
 
 const getFlagStateSchema = z.object({
   projectId: z
@@ -29,7 +29,7 @@ function summarizeEnvironment(env: FeatureEnvironment): string {
 export async function getFlagState(
   context: ServerContext,
   args: unknown,
-  progressToken?: string | number
+  progressToken?: string | number,
 ): Promise<CallToolResult> {
   try {
     const input: GetFlagStateInput = getFlagStateSchema.parse(args);
@@ -41,7 +41,7 @@ export async function getFlagState(
       progressToken,
       0,
       100,
-      `Fetching feature "${input.featureName}" in project "${projectId}"...`
+      `Fetching feature "${input.featureName}" in project "${projectId}"...`,
     );
 
     const feature = await context.unleashClient.getFeature(projectId, input.featureName);
@@ -51,8 +51,8 @@ export async function getFlagState(
     if (input.environment) {
       environments = environments.filter(
         (env) =>
-          env.environment?.toLowerCase() === input.environment!.toLowerCase() ||
-          env.name.toLowerCase() === input.environment!.toLowerCase()
+          env.environment?.toLowerCase() === input.environment?.toLowerCase() ||
+          env.name.toLowerCase() === input.environment?.toLowerCase(),
       );
     }
 
@@ -61,17 +61,17 @@ export async function getFlagState(
       progressToken,
       100,
       100,
-      `Fetched feature "${input.featureName}" (${environments.length} environment${environments.length === 1 ? '' : 's'} considered)`
+      `Fetched feature "${input.featureName}" (${environments.length} environment${environments.length === 1 ? '' : 's'} considered)`,
     );
 
     const { url, resource } = createFlagResourceLink(
       context.config.unleash.baseUrl,
       projectId,
-      input.featureName
+      input.featureName,
     );
 
     const apiUrl = `${context.config.unleash.baseUrl}/api/admin/projects/${encodeURIComponent(
-      projectId
+      projectId,
     )}/features/${encodeURIComponent(input.featureName)}`;
 
     const environmentSummaries =
@@ -91,7 +91,7 @@ export async function getFlagState(
     const summaryText = messageLines.join('\n');
 
     context.logger.info(
-      `Retrieved feature state for "${input.featureName}"${input.environment ? ` (filtered to "${input.environment}")` : ''}`
+      `Retrieved feature state for "${input.featureName}"${input.environment ? ` (filtered to "${input.environment}")` : ''}`,
     );
 
     const structuredContent = {

@@ -24,10 +24,12 @@ export function subsection(title: string, content: string, level: number = 3): s
  * Create a formatted list
  */
 export function list(items: string[], ordered: boolean = false): string {
-  return items.map((item, index) => {
-    const prefix = ordered ? `${index + 1}.` : '-';
-    return `${prefix} ${item}`;
-  }).join('\n') + '\n\n';
+  return `${items
+    .map((item, index) => {
+      const prefix = ordered ? `${index + 1}.` : '-';
+      return `${prefix} ${item}`;
+    })
+    .join('\n')}\n\n`;
 }
 
 /**
@@ -47,7 +49,11 @@ export function inlineCode(text: string): string {
 /**
  * Create a formatted alert box
  */
-export function alert(title: string, content: string, type: 'info' | 'warning' | 'danger' | 'success' = 'info'): string {
+export function alert(
+  title: string,
+  content: string,
+  type: 'info' | 'warning' | 'danger' | 'success' = 'info',
+): string {
   const emoji = {
     info: 'ℹ️',
     warning: '⚠️',
@@ -71,7 +77,7 @@ export function divider(): string {
 export function table(headers: string[], rows: string[][]): string {
   const headerRow = `| ${headers.join(' | ')} |`;
   const separatorRow = `| ${headers.map(() => '---').join(' | ')} |`;
-  const dataRows = rows.map(row => `| ${row.join(' | ')} |`).join('\n');
+  const dataRows = rows.map((row) => `| ${row.join(' | ')} |`).join('\n');
 
   return `${headerRow}\n${separatorRow}\n${dataRows}\n\n`;
 }
@@ -79,17 +85,24 @@ export function table(headers: string[], rows: string[][]): string {
 /**
  * Create a formatted example with code and explanation
  */
-export function example(scenario: string, code: string, explanation: string, language: string = ''): string {
+export function example(
+  scenario: string,
+  code: string,
+  explanation: string,
+  language: string = '',
+): string {
   return `**Scenario**: ${scenario}\n\n${codeBlock(code, language)}**Explanation**: ${explanation}\n\n`;
 }
 
 /**
  * Create a formatted decision tree
  */
-export function decisionTree(decisions: Array<{ condition: string; result: string; reasoning: string }>): string {
-  return decisions.map(d =>
-    `**IF** ${d.condition}\n→ **THEN** ${d.result}\n*Reasoning*: ${d.reasoning}\n`
-  ).join('\n') + '\n';
+export function decisionTree(
+  decisions: Array<{ condition: string; result: string; reasoning: string }>,
+): string {
+  return `${decisions
+    .map((d) => `**IF** ${d.condition}\n→ **THEN** ${d.result}\n*Reasoning*: ${d.reasoning}\n`)
+    .join('\n')}\n`;
 }
 
 /**
@@ -126,10 +139,13 @@ export function link(text: string, url: string): string {
 /**
  * Create a formatted emphasis block
  */
-export function emphasis(content: string, type: 'bold' | 'italic' | 'bold-italic' = 'bold'): string {
+export function emphasis(
+  content: string,
+  type: 'bold' | 'italic' | 'bold-italic' = 'bold',
+): string {
   const markers = {
-    'bold': '**',
-    'italic': '*',
+    bold: '**',
+    italic: '*',
     'bold-italic': '***',
   }[type];
 
@@ -140,7 +156,10 @@ export function emphasis(content: string, type: 'bold' | 'italic' | 'bold-italic
  * Create a formatted blockquote
  */
 export function blockquote(content: string): string {
-  return content.split('\n').map(line => `> ${line}`).join('\n') + '\n\n';
+  return `${content
+    .split('\n')
+    .map((line) => `> ${line}`)
+    .join('\n')}\n\n`;
 }
 
 /**
@@ -158,10 +177,12 @@ ${content}
  * Create a formatted checklist
  */
 export function checklist(items: Array<{ text: string; checked?: boolean }>): string {
-  return items.map(item => {
-    const checkbox = item.checked ? '[x]' : '[ ]';
-    return `- ${checkbox} ${item.text}`;
-  }).join('\n') + '\n\n';
+  return `${items
+    .map((item) => {
+      const checkbox = item.checked ? '[x]' : '[ ]';
+      return `- ${checkbox} ${item.text}`;
+    })
+    .join('\n')}\n\n`;
 }
 
 /**
@@ -175,10 +196,12 @@ export function hr(): string {
  * Build a complete prompt from sections
  */
 export function buildPrompt(sections: Array<{ title?: string; content: string }>): string {
-  return sections.map(s => {
-    if (s.title) {
-      return `${section(s.title, 2)}${s.content}`;
-    }
-    return s.content;
-  }).join('\n');
+  return sections
+    .map((s) => {
+      if (s.title) {
+        return `${section(s.title, 2)}${s.content}`;
+      }
+      return s.content;
+    })
+    .join('\n');
 }

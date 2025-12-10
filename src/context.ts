@@ -1,7 +1,7 @@
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { Config } from './config.js';
-import { UnleashClient } from './unleash/client.js';
+import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import type { Config } from './config.js';
+import type { UnleashClient } from './unleash/client.js';
 import { normalizeError } from './utils/errors.js';
 
 /**
@@ -67,7 +67,7 @@ export function createLogger(logLevel: string): Logger {
  */
 export function ensureProjectId(
   providedProjectId: string | undefined,
-  defaultProjectId: string | undefined
+  defaultProjectId: string | undefined,
 ): string {
   if (providedProjectId) {
     return providedProjectId;
@@ -78,7 +78,7 @@ export function ensureProjectId(
   }
 
   throw new Error(
-    'Project ID is required. Either provide it as a parameter or set UNLEASH_DEFAULT_PROJECT in your .env file.'
+    'Project ID is required. Either provide it as a parameter or set UNLEASH_DEFAULT_PROJECT in your .env file.',
   );
 }
 
@@ -89,7 +89,7 @@ export function ensureProjectId(
 export function handleToolError(
   context: ServerContext,
   error: unknown,
-  toolName: string
+  toolName: string,
 ): CallToolResult {
   const normalized = normalizeError(error);
 

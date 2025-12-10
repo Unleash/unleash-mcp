@@ -12,8 +12,9 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
-    "lint": "tsc --noEmit",
-    "test": "vitest",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "test": "vitest run --passWithNoTests",
     "prepack": "npm run build"
   },
   "keywords": [
@@ -28,6 +29,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.3.8",
     "@types/node": "^22.10.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",

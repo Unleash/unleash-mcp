@@ -1,8 +1,8 @@
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { ServerContext, ensureProjectId, handleToolError } from '../context.js';
-import { notifyProgress, createFlagResourceLink } from '../utils/streaming.js';
-import { StrategyVariant, StrategyVariantPayload } from '../unleash/client.js';
+import { ensureProjectId, handleToolError, type ServerContext } from '../context.js';
+import type { StrategyVariant, StrategyVariantPayload } from '../unleash/client.js';
+import { createFlagResourceLink, notifyProgress } from '../utils/streaming.js';
 
 const variantPayloadSchema = z.object({
   type: z.enum(['json', 'csv', 'string', 'number']).describe('Payload type'),
@@ -39,22 +39,10 @@ const setFlagRolloutSchema = z.object({
     .string()
     .optional()
     .describe('Group ID for stickiness bucketing (defaults to feature name)'),
-  stickiness: z
-    .string()
-    .optional()
-    .describe('Stickiness field (defaults to "default")'),
-  title: z
-    .string()
-    .optional()
-    .describe('Optional descriptive title for the strategy'),
-  disabled: z
-    .boolean()
-    .optional()
-    .describe('Whether to disable the strategy (defaults to false)'),
-  variants: z
-    .array(variantSchema)
-    .optional()
-    .describe('Optional list of strategy-level variants'),
+  stickiness: z.string().optional().describe('Stickiness field (defaults to "default")'),
+  title: z.string().optional().describe('Optional descriptive title for the strategy'),
+  disabled: z.boolean().optional().describe('Whether to disable the strategy (defaults to false)'),
+  variants: z.array(variantSchema).optional().describe('Optional list of strategy-level variants'),
 });
 
 type SetFlagRolloutInput = z.infer<typeof setFlagRolloutSchema>;
@@ -62,7 +50,7 @@ type SetFlagRolloutInput = z.infer<typeof setFlagRolloutSchema>;
 export async function setFlagRollout(
   context: ServerContext,
   args: unknown,
-  progressToken?: string | number
+  progressToken?: string | number,
 ): Promise<CallToolResult> {
   try {
     const input: SetFlagRolloutInput = setFlagRolloutSchema.parse(args);
@@ -77,7 +65,7 @@ export async function setFlagRollout(
       progressToken,
       0,
       100,
-      `${mode}Configuring flexibleRollout strategy for "${input.featureName}" (${rolloutDisplay})...`
+      `${mode}Configuring flexibleRollout strategy for "${input.featureName}" (${rolloutDisplay})...`,
     );
 
     const variants: StrategyVariant[] | undefined = input.variants?.map((variant) => ({
@@ -99,7 +87,7 @@ export async function setFlagRollout(
         title: input.title,
         disabled: input.disabled,
         variants,
-      }
+      },
     );
 
     await notifyProgress(
@@ -107,28 +95,26 @@ export async function setFlagRollout(
       progressToken,
       100,
       100,
-      `${mode}Strategy configured for "${input.featureName}" in "${input.environment}"`
+      `${mode}Strategy configured for "${input.featureName}" in "${input.environment}"`,
     );
 
     const { url, resource } = createFlagResourceLink(
       context.config.unleash.baseUrl,
       projectId,
-      input.featureName
+      input.featureName,
     );
 
     const apiUrl = `${context.config.unleash.baseUrl}/api/admin/projects/${encodeURIComponent(
-      projectId
+      projectId,
     )}/features/${encodeURIComponent(input.featureName)}/environments/${encodeURIComponent(
-      input.environment
+      input.environment,
     )}/strategies`;
 
     const message = context.config.server.dryRun
       ? `[DRY RUN] Would configure flexibleRollout strategy for "${input.featureName}" in "${input.environment}" at ${rolloutDisplay}.`
       : `Configured flexibleRollout strategy for "${input.featureName}" in "${input.environment}" at ${rolloutDisplay}.`;
 
-    context.logger.info(
-      `${message}${input.disabled ? ' Strategy is marked as disabled.' : ''}`
-    );
+    context.logger.info(`${message}${input.disabled ? ' Strategy is marked as disabled.' : ''}`);
 
     return {
       content: [

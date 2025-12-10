@@ -1,14 +1,16 @@
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { ServerContext, ensureProjectId, handleToolError } from '../context.js';
-import { notifyProgress, createFlagResourceLink } from '../utils/streaming.js';
-import { FeatureDetails } from '../unleash/client.js';
+import { ensureProjectId, handleToolError, type ServerContext } from '../context.js';
+import type { FeatureDetails } from '../unleash/client.js';
+import { createFlagResourceLink, notifyProgress } from '../utils/streaming.js';
 
 const toggleFlagEnvironmentSchema = z.object({
   projectId: z
     .string()
     .optional()
-    .describe('Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set)'),
+    .describe(
+      'Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set)',
+    ),
   featureName: z.string().min(1).describe('Feature flag name'),
   environment: z.string().min(1).describe('Environment to toggle'),
   enabled: z.boolean().describe('Set to true to enable the flag, or false to disable it'),
@@ -19,7 +21,7 @@ type ToggleFlagEnvironmentInput = z.infer<typeof toggleFlagEnvironmentSchema>;
 export async function toggleFlagEnvironment(
   context: ServerContext,
   args: unknown,
-  progressToken?: string | number
+  progressToken?: string | number,
 ): Promise<CallToolResult> {
   try {
     const input: ToggleFlagEnvironmentInput = toggleFlagEnvironmentSchema.parse(args);
@@ -32,14 +34,14 @@ export async function toggleFlagEnvironment(
       progressToken,
       0,
       100,
-      `${action} "${input.featureName}" in "${input.environment}"...`
+      `${action} "${input.featureName}" in "${input.environment}"...`,
     );
 
     const feature: FeatureDetails = await context.unleashClient.toggleFeatureEnvironment(
       projectId,
       input.featureName,
       input.environment,
-      input.enabled
+      input.enabled,
     );
 
     await notifyProgress(
@@ -47,28 +49,26 @@ export async function toggleFlagEnvironment(
       progressToken,
       100,
       100,
-      `${input.enabled ? 'Enabled' : 'Disabled'} "${input.featureName}" in "${input.environment}"`
+      `${input.enabled ? 'Enabled' : 'Disabled'} "${input.featureName}" in "${input.environment}"`,
     );
 
     const { url, resource } = createFlagResourceLink(
       context.config.unleash.baseUrl,
       projectId,
-      input.featureName
+      input.featureName,
     );
 
     const apiBase = `${context.config.unleash.baseUrl}/api/admin/projects/${encodeURIComponent(
-      projectId
+      projectId,
     )}/features/${encodeURIComponent(input.featureName)}/environments/${encodeURIComponent(
-      input.environment
+      input.environment,
     )}`;
     const apiUrl = `${apiBase}/${input.enabled ? 'on' : 'off'}`;
 
     const environmentState =
       feature.environments?.find((env) => {
         const target = input.environment.toLowerCase();
-        return (
-          env.environment?.toLowerCase() === target || env.name.toLowerCase() === target
-        );
+        return env.environment?.toLowerCase() === target || env.name.toLowerCase() === target;
       }) ?? null;
 
     const messageLines = [

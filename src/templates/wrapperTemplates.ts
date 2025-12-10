@@ -5,7 +5,7 @@
  * across multiple programming languages and frameworks.
  */
 
-import { SupportedLanguage } from './languages.js';
+import type { SupportedLanguage } from './languages.js';
 
 export interface CodeTemplate {
   language: SupportedLanguage;
@@ -42,7 +42,8 @@ async function handler(req: Request, res: Response) {
 
   // Your handler code here
 }`,
-    explanation: 'Runtime-controllable guard clause - checks flag on every request (NOT wrapping route registration)',
+    explanation:
+      'Runtime-controllable guard clause - checks flag on every request (NOT wrapping route registration)',
   },
   {
     language: 'typescript',
@@ -87,7 +88,8 @@ app.use('/api/resource', (req, res, next) => {
 // if (unleash.isEnabled('${flagName}')) {
 //   app.use('/api/resource', resourceController.router); // NOT runtime controllable!
 // }`,
-    explanation: 'Runtime-controllable router wrapping - ALWAYS mount the router, check flag inside the middleware',
+    explanation:
+      'Runtime-controllable router wrapping - ALWAYS mount the router, check flag inside the middleware',
   },
 ];
 
@@ -140,7 +142,8 @@ def feature_flag(flag_name):
 def my_view(request):
     # Your handler code here
     pass`,
-    explanation: 'Runtime-controllable decorator that checks flag on every function call (NOT conditionally applied)',
+    explanation:
+      'Runtime-controllable decorator that checks flag on every function call (NOT conditionally applied)',
   },
 ];
 
@@ -192,7 +195,8 @@ func FeatureFlagMiddleware(flagName string) gin.HandlerFunc {
 router.Use(FeatureFlagMiddleware("${flagName}"))
 
 // The flag check happens at runtime on every request`,
-    explanation: 'Runtime-controllable middleware that checks flag on every request (NOT conditionally registered)',
+    explanation:
+      'Runtime-controllable middleware that checks flag on every request (NOT conditionally registered)',
   },
 ];
 
@@ -233,7 +237,7 @@ const phpTemplates = (flagName: string): CodeTemplate[] => [
   {
     language: 'php',
     pattern: 'if-block',
-    import: "use Unleash\\Client\\UnleashBuilder;\n$unleash = UnleashBuilder::create()->build();",
+    import: 'use Unleash\\Client\\UnleashBuilder;\n$unleash = UnleashBuilder::create()->build();',
     usage: `if ($unleash->isEnabled('${flagName}')) {
     // Your new feature code here
 }`,
@@ -243,7 +247,7 @@ const phpTemplates = (flagName: string): CodeTemplate[] => [
     language: 'php',
     pattern: 'guard',
     framework: 'Laravel',
-    import: "use Unleash\\Client\\UnleashBuilder;",
+    import: 'use Unleash\\Client\\UnleashBuilder;',
     usage: `public function show(Request $request) {
     if (!$unleash->isEnabled('${flagName}')) {
         return response()->json(['error' => 'Feature not available'], 404);
@@ -354,7 +358,7 @@ const rustTemplates = (flagName: string): CodeTemplate[] => [
  */
 export function getTemplatesForLanguage(
   language: SupportedLanguage,
-  flagName: string
+  flagName: string,
 ): CodeTemplate[] {
   const templateMap: Record<SupportedLanguage, (flagName: string) => CodeTemplate[]> = {
     typescript: typescriptTemplates,
@@ -378,26 +382,24 @@ export function getTemplateByPattern(
   language: SupportedLanguage,
   flagName: string,
   pattern: CodeTemplate['pattern'],
-  framework?: string
+  framework?: string,
 ): CodeTemplate | undefined {
   const templates = getTemplatesForLanguage(language, flagName);
 
   if (framework) {
-    return templates.find(t => t.pattern === pattern && t.framework === framework);
+    return templates.find((t) => t.pattern === pattern && t.framework === framework);
   }
 
-  return templates.find(t => t.pattern === pattern && !t.framework);
+  return templates.find((t) => t.pattern === pattern && !t.framework);
 }
 
 /**
  * Get default template for a language (if-block without framework)
  */
-export function getDefaultTemplate(
-  language: SupportedLanguage,
-  flagName: string
-): CodeTemplate {
+export function getDefaultTemplate(language: SupportedLanguage, flagName: string): CodeTemplate {
   const templates = getTemplatesForLanguage(language, flagName);
-  const defaultTemplate = templates.find(t => t.pattern === 'if-block' && !t.framework) || templates[0];
+  const defaultTemplate =
+    templates.find((t) => t.pattern === 'if-block' && !t.framework) || templates[0];
 
   if (!defaultTemplate) {
     throw new Error(`No templates available for language: ${language}`);

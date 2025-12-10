@@ -1,20 +1,17 @@
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { ServerContext, handleToolError } from '../context.js';
+import { handleToolError, type ServerContext } from '../context.js';
 import {
   detectLanguage,
   getLanguageMetadata,
   getSupportedLanguages,
-  SupportedLanguage,
+  type SupportedLanguage,
 } from '../templates/languages.js';
-import {
-  getTemplatesForLanguage,
-  getDefaultTemplate,
-} from '../templates/wrapperTemplates.js';
 import {
   generateSearchInstructions,
   generateWrappingInstructions,
 } from '../templates/searchGuidance.js';
+import { getDefaultTemplate, getTemplatesForLanguage } from '../templates/wrapperTemplates.js';
 
 /**
  * Input schema for the wrap_change tool.
@@ -54,10 +51,7 @@ type WrapChangeInput = z.infer<typeof wrapChangeSchema>;
  * - No network calls: pure template/guidance generation
  * - Convention-aware: detect and match existing code styles
  */
-export async function wrapChange(
-  context: ServerContext,
-  args: unknown
-): Promise<CallToolResult> {
+export async function wrapChange(context: ServerContext, args: unknown): Promise<CallToolResult> {
   try {
     // Validate input
     const input: WrapChangeInput = wrapChangeSchema.parse(args);
@@ -82,9 +76,8 @@ export async function wrapChange(
     // Try to get framework-specific template if hint provided
     let recommendedTemplate = getDefaultTemplate(language, input.flagName);
     if (input.frameworkHint) {
-      const frameworkTemplate = allTemplates.find(
-        t =>
-          t.framework?.toLowerCase().includes(input.frameworkHint!.toLowerCase())
+      const frameworkTemplate = allTemplates.find((t) =>
+        t.framework?.toLowerCase().includes(input.frameworkHint?.toLowerCase()),
       );
       if (frameworkTemplate) {
         recommendedTemplate = frameworkTemplate;
@@ -93,7 +86,7 @@ export async function wrapChange(
     }
 
     // Format templates for output
-    const formattedTemplates = allTemplates.map(t => ({
+    const formattedTemplates = allTemplates.map((t) => ({
       pattern: t.pattern,
       framework: t.framework,
       import: t.import,
@@ -114,7 +107,7 @@ export async function wrapChange(
     });
 
     context.logger.info(
-      `Generated wrapping guidance for ${metadata.displayName} with ${allTemplates.length} templates`
+      `Generated wrapping guidance for ${metadata.displayName} with ${allTemplates.length} templates`,
     );
 
     // Return response with comprehensive guidance
@@ -137,7 +130,7 @@ export async function wrapChange(
           import: recommendedTemplate.import,
           usage: recommendedTemplate.usage,
         },
-        supportedPatterns: allTemplates.map(t => t.pattern),
+        supportedPatterns: allTemplates.map((t) => t.pattern),
         sdkDocumentation: metadata.unleashSdk.docsUrl,
       },
     };
@@ -170,16 +163,16 @@ function buildGuidanceDocument(params: {
     '```typescript',
     '// ❌ WRONG - Route only registered at startup, flag toggle requires redeploy',
     `if (unleash.isEnabled('${params.flagName}')) {`,
-    '  app.use(\'/api/endpoint\', controller.router);',
+    "  app.use('/api/endpoint', controller.router);",
     '}',
     '```',
     '',
     '**This is CORRECT and runtime controllable:**',
     '```typescript',
     '// ✅ CORRECT - Route always registered, flag checked on every request',
-    'app.use(\'/api/endpoint\', (req, res, next) => {',
+    "app.use('/api/endpoint', (req, res, next) => {",
     `  if (!unleash.isEnabled('${params.flagName}')) {`,
-    '    return res.status(404).json({ error: \'Feature not available\' });',
+    "    return res.status(404).json({ error: 'Feature not available' });",
     '  }',
     '  controller.router(req, res, next);',
     '});',
@@ -202,12 +195,12 @@ function buildGuidanceDocument(params: {
       : 'Here is the recommended default pattern:',
     '',
     '### Import',
-    '```' + getLanguageCodeFence(params.language),
+    `\`\`\`${getLanguageCodeFence(params.language)}`,
     params.recommendedTemplate.import,
     '```',
     '',
     '### Usage',
-    '```' + getLanguageCodeFence(params.language),
+    `\`\`\`${getLanguageCodeFence(params.language)}`,
     params.recommendedTemplate.usage,
     '```',
     '',
@@ -280,7 +273,7 @@ ${t.usage}
     `For more information, see: ${params.sdkDocs}`,
   ];
 
-  return sections.filter(s => s !== null && s !== undefined).join('\n');
+  return sections.filter((s) => s !== null && s !== undefined).join('\n');
 }
 
 /**
@@ -350,8 +343,7 @@ Best suited for use after evaluate_change recommends a flag and create_flag crea
     properties: {
       flagName: {
         type: 'string',
-        description:
-          'Feature flag name to wrap the code with (e.g., "new-checkout-flow")',
+        description: 'Feature flag name to wrap the code with (e.g., "new-checkout-flow")',
       },
       language: {
         type: 'string',
@@ -359,13 +351,11 @@ Best suited for use after evaluate_change recommends a flag and create_flag crea
       },
       fileName: {
         type: 'string',
-        description:
-          'File name being modified (helps detect language, e.g., "checkout.ts")',
+        description: 'File name being modified (helps detect language, e.g., "checkout.ts")',
       },
       codeContext: {
         type: 'string',
-        description:
-          'Optional: surrounding code to help detect existing patterns',
+        description: 'Optional: surrounding code to help detect existing patterns',
       },
       frameworkHint: {
         type: 'string',

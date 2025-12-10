@@ -18,9 +18,9 @@ import { allFlagPatterns } from '../evaluation/flagDetectionPatterns.js';
  */
 export interface FlagCandidate {
   name: string;
-  location: string;      // file:line
-  context: string;       // code snippet
-  score: number;         // 0.0 to 1.0
+  location: string; // file:line
+  context: string; // code snippet
+  score: number; // 0.0 to 1.0
   detectionMethod: 'file-based' | 'git-history' | 'semantic' | 'code-context' | 'unleash-inventory';
   reasoning: string;
 }
@@ -40,7 +40,7 @@ export interface DiscoveryInput {
  */
 export function buildUnleashInventoryInstructions(
   description: string,
-  defaultProject?: string
+  defaultProject?: string,
 ): string {
   const baseNote =
     '> You cannot open the Unleash UI yourself. Ask the user to review the relevant project/flag in the Unleash console if human confirmation is required.';
@@ -103,9 +103,10 @@ ${sharedSteps}
  * Returns guidance for the LLM to search files for existing flags
  */
 export function buildFileBasedSearchInstructions(files?: string[]): string {
-  const searchArea = files && files.length > 0
-    ? `the following files:\n${files.map(f => `  - ${f}`).join('\n')}`
-    : 'the files you are modifying';
+  const searchArea =
+    files && files.length > 0
+      ? `the following files:\n${files.map((f) => `  - ${f}`).join('\n')}`
+      : 'the files you are modifying';
 
   const patterns = [
     ...allFlagPatterns.conditionals,
@@ -114,9 +115,7 @@ export function buildFileBasedSearchInstructions(files?: string[]): string {
     ...allFlagPatterns.guards,
   ];
 
-  const regexPatterns = patterns
-    .flatMap(p => p.regexPatterns)
-    .slice(0, 10); // Top 10 most common patterns
+  const regexPatterns = patterns.flatMap((p) => p.regexPatterns).slice(0, 10); // Top 10 most common patterns
 
   return `
 ## File-Based Flag Detection
@@ -125,8 +124,12 @@ Search for existing feature flags in ${searchArea}.
 
 **Step 1**: Use the \`Grep\` tool with these patterns to find flag checks:
 
-${regexPatterns.map((pattern, i) => `${i + 1}. Pattern: \`${pattern}\`
-   Command: Grep with pattern="${pattern}" and output_mode="content" and -n=true`).join('\n\n')}
+${regexPatterns
+  .map(
+    (pattern, i) => `${i + 1}. Pattern: \`${pattern}\`
+   Command: Grep with pattern="${pattern}" and output_mode="content" and -n=true`,
+  )
+  .join('\n\n')}
 
 **Step 2**: For each match found:
 - Extract the flag name from the match
@@ -186,16 +189,19 @@ git log --all --grep="flag\\|feature\\|toggle" -n 20 --pretty=format:"%H|%an|%ad
  */
 export function buildSemanticMatchingInstructions(description: string): string {
   // Generate potential flag names from description
-  const words = description.toLowerCase()
+  const words = description
+    .toLowerCase()
     .replace(/[^\w\s-]/g, '') // Remove special chars
     .split(/\s+/)
-    .filter(w => w.length > 3); // Filter short words
+    .filter((w) => w.length > 3); // Filter short words
 
   // Common flag name patterns
   const potentialNames = new Set<string>();
 
   // Add individual words
-  words.forEach(w => potentialNames.add(w));
+  words.forEach((w) => {
+    potentialNames.add(w);
+  });
 
   // Add common combinations
   if (words.length >= 2) {
@@ -204,7 +210,7 @@ export function buildSemanticMatchingInstructions(description: string): string {
   }
 
   // Add common prefixes/suffixes
-  words.forEach(w => {
+  words.forEach((w) => {
     potentialNames.add(`enable-${w}`);
     potentialNames.add(`new-${w}`);
     potentialNames.add(`${w}-feature`);
@@ -212,7 +218,7 @@ export function buildSemanticMatchingInstructions(description: string): string {
   });
 
   const searchPatterns = Array.from(potentialNames)
-    .filter(n => n.length >= 4)
+    .filter((n) => n.length >= 4)
     .slice(0, 15); // Top 15 patterns
 
   return `
@@ -223,7 +229,7 @@ Based on your description: "${description}"
 Search the codebase for flags with semantically similar names.
 
 **Step 1**: Potential flag names to search for:
-${searchPatterns.map(p => `  - "${p}"`).join('\n')}
+${searchPatterns.map((p) => `  - "${p}"`).join('\n')}
 
 **Step 2**: For each potential name, use \`Grep\` to search:
 
@@ -265,9 +271,10 @@ Analyze the provided code context for existing feature flag patterns.
 **Step 1**: Scan the code context for flag patterns:
 
 ${allFlagPatterns.conditionals
-    .flatMap(p => p.regexPatterns)
-    .slice(0, 5)
-    .map((pattern, i) => `${i + 1}. Look for: \`${pattern}\``).join('\n')}
+  .flatMap((p) => p.regexPatterns)
+  .slice(0, 5)
+  .map((pattern, i) => `${i + 1}. Look for: \`${pattern}\``)
+  .join('\n')}
 
 **Step 2**: For any flags found:
 - Extract the flag name
@@ -308,10 +315,7 @@ ${input.codeContext ? '5. Code context analysis (flags near modification point)'
     },
     {
       title: '1. Unleash Inventory Analysis',
-      content: buildUnleashInventoryInstructions(
-        input.description,
-        input.defaultProject
-      ),
+      content: buildUnleashInventoryInstructions(input.description, input.defaultProject),
     },
     {
       title: '2. File-Based Detection',
@@ -383,7 +387,5 @@ Or if no good match:
   });
 
   // Build complete markdown document
-  return sections
-    .map(section => `# ${section.title}\n\n${section.content}`)
-    .join('\n\n---\n\n');
+  return sections.map((section) => `# ${section.title}\n\n${section.content}`).join('\n\n---\n\n');
 }

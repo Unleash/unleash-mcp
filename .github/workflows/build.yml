@@ -1,0 +1,25 @@
+name: Build and test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: yarn
+      - name: Yarn
+        run: yarn
+      - name: Lint validation
+        run: yarn lint
+      - name: Test
+        run: yarn test

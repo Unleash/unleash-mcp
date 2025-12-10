@@ -1,14 +1,16 @@
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { ServerContext, ensureProjectId, handleToolError } from '../context.js';
-import { notifyProgress, createFlagResourceLink } from '../utils/streaming.js';
-import { FeatureDetails } from '../unleash/client.js';
+import { ensureProjectId, handleToolError, type ServerContext } from '../context.js';
+import type { FeatureDetails } from '../unleash/client.js';
+import { createFlagResourceLink, notifyProgress } from '../utils/streaming.js';
 
 const removeFlagStrategySchema = z.object({
   projectId: z
     .string()
     .optional()
-    .describe('Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set)'),
+    .describe(
+      'Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set)',
+    ),
   featureName: z.string().min(1).describe('Feature flag name'),
   environment: z.string().min(1).describe('Environment from which to remove the strategy'),
   strategyId: z.string().min(1).describe('ID of the strategy to remove'),
@@ -19,7 +21,7 @@ type RemoveFlagStrategyInput = z.infer<typeof removeFlagStrategySchema>;
 export async function removeFlagStrategy(
   context: ServerContext,
   args: unknown,
-  progressToken?: string | number
+  progressToken?: string | number,
 ): Promise<CallToolResult> {
   try {
     const input: RemoveFlagStrategyInput = removeFlagStrategySchema.parse(args);
@@ -31,19 +33,19 @@ export async function removeFlagStrategy(
       progressToken,
       0,
       100,
-      `Removing strategy "${input.strategyId}" from "${input.featureName}" in "${input.environment}"...`
+      `Removing strategy "${input.strategyId}" from "${input.featureName}" in "${input.environment}"...`,
     );
 
     await context.unleashClient.deleteFeatureStrategy(
       projectId,
       input.featureName,
       input.environment,
-      input.strategyId
+      input.strategyId,
     );
 
     const feature: FeatureDetails = await context.unleashClient.getFeature(
       projectId,
-      input.featureName
+      input.featureName,
     );
 
     await notifyProgress(
@@ -51,15 +53,13 @@ export async function removeFlagStrategy(
       progressToken,
       100,
       100,
-      `Removed strategy "${input.strategyId}" from "${input.featureName}" in "${input.environment}".`
+      `Removed strategy "${input.strategyId}" from "${input.featureName}" in "${input.environment}".`,
     );
 
     const matchingEnvironment =
       feature.environments?.find((env) => {
         const target = input.environment.toLowerCase();
-        return (
-          env.environment?.toLowerCase() === target || env.name.toLowerCase() === target
-        );
+        return env.environment?.toLowerCase() === target || env.name.toLowerCase() === target;
       }) ?? null;
 
     const remainingStrategies = matchingEnvironment?.strategies?.length ?? 0;
@@ -67,13 +67,13 @@ export async function removeFlagStrategy(
     const { url, resource } = createFlagResourceLink(
       context.config.unleash.baseUrl,
       projectId,
-      input.featureName
+      input.featureName,
     );
 
     const apiUrl = `${context.config.unleash.baseUrl}/api/admin/projects/${encodeURIComponent(
-      projectId
+      projectId,
     )}/features/${encodeURIComponent(input.featureName)}/environments/${encodeURIComponent(
-      input.environment
+      input.environment,
     )}/strategies/${encodeURIComponent(input.strategyId)}`;
 
     const messageLines = [

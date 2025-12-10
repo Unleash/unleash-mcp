@@ -5,16 +5,16 @@
  * feature flag patterns and match detected conventions.
  */
 
-import { SupportedLanguage, getLanguageMetadata, LanguageMetadata } from './languages.js';
 import {
-  conditionalPatterns,
   assignmentPatterns,
-  hookPatterns,
+  conditionalPatterns,
+  type FlagPattern,
   guardPatterns,
+  hookPatterns,
   ternaryPatterns,
   wrapperPatterns,
-  FlagPattern,
 } from '../evaluation/flagDetectionPatterns.js';
+import { getLanguageMetadata, type LanguageMetadata, type SupportedLanguage } from './languages.js';
 import {
   getDefaultTemplate,
   getTemplateByPattern,
@@ -24,10 +24,7 @@ import {
 /**
  * Generate search instructions for finding existing flag patterns
  */
-export function generateSearchInstructions(
-  language: SupportedLanguage,
-  flagName: string
-): string {
+export function generateSearchInstructions(language: SupportedLanguage, flagName: string): string {
   const metadata = getLanguageMetadata(language);
   const relevantPatterns = getRelevantPatterns(language);
 
@@ -153,7 +150,7 @@ ${generatePatternDetails(relevantPatterns)}
  */
 export function generateWrappingInstructions(
   language: SupportedLanguage,
-  flagName: string
+  flagName: string,
 ): string {
   const metadata = getLanguageMetadata(language);
 
@@ -250,7 +247,7 @@ function getRelevantPatterns(language: SupportedLanguage) {
     ...wrapperPatterns,
   ];
 
-  return allPatterns.filter(p => p.language.includes(language));
+  return allPatterns.filter((p) => p.language.includes(language));
 }
 
 /**
@@ -262,7 +259,7 @@ function generateGrepCommands(metadata: LanguageMetadata): string {
     (method: string) =>
       `\`\`\`bash
 Grep pattern: "${method}" output_mode: "content" -n: true head_limit: 5
-\`\`\``
+\`\`\``,
   );
 
   return `Search for these patterns (try each one):
@@ -277,7 +274,7 @@ ${examples.join('\n')}`;
  */
 function generateImportExamples(language: SupportedLanguage): string {
   const templates = getTemplatesForLanguage(language, 'placeholder');
-  const uniqueImports = [...new Set(templates.map(t => t.import))];
+  const uniqueImports = [...new Set(templates.map((t) => t.import))];
   const codeFence = getCodeFence(language);
 
   return `\`\`\`${codeFence}\n${uniqueImports.join('\n')}\n\`\`\``;
@@ -318,7 +315,7 @@ function generateWrappingStyleExamples(language: SupportedLanguage): string {
 ${t.usage}
 \`\`\`
 *${t.pattern} pattern${t.framework ? ` for ${t.framework}` : ''}*
-`
+`,
     )
     .join('\n');
 }
@@ -329,7 +326,7 @@ ${t.usage}
 function generatePatternDetails(patterns: FlagPattern[]): string {
   return patterns
     .map(
-      p => `
+      (p) => `
 ### ${p.description}
 **Pattern Type:** ${p.patternType}
 
@@ -338,7 +335,7 @@ ${p.regexPatterns.map((r: string) => `- \`${r}\``).join('\n')}
 
 **Scope Detection:**
 ${p.scopeRules.instructions}
-`
+`,
     )
     .join('\n---\n');
 }
@@ -518,7 +515,10 @@ async fn handler(client: web::Data<Client>) -> Result<HttpResponse> {
 /**
  * Generate non-runtime controllable anti-patterns
  */
-function generateNonRuntimeControllableAntiPatterns(language: SupportedLanguage, flagName: string): string {
+function generateNonRuntimeControllableAntiPatterns(
+  language: SupportedLanguage,
+  flagName: string,
+): string {
   const antiPatterns: Record<SupportedLanguage, string> = {
     typescript: `\`\`\`typescript
 // ❌ WRONG: Wrapping route registration - NOT runtime controllable

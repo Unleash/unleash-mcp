@@ -14,41 +14,36 @@
  * 4. LLM reports back with summary of changes
  */
 
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { ServerContext, handleToolError } from '../context.js';
+import { handleToolError, type ServerContext } from '../context.js';
 import {
   generateCleanupInstructions,
   generateImportCleanupGuidance,
-  PreservePath,
+  type PreservePath,
 } from '../templates/cleanupGuidance.js';
-import { detectLanguage, SupportedLanguage } from '../templates/languages.js';
+import { detectLanguage, type SupportedLanguage } from '../templates/languages.js';
 
 /**
  * Input schema for the cleanup_flag tool
  */
 const cleanupFlagInputSchema = z.object({
-  flagName: z
-    .string()
-    .min(1)
-    .describe('Name of the feature flag to remove from the codebase'),
+  flagName: z.string().min(1).describe('Name of the feature flag to remove from the codebase'),
   preservePath: z
     .enum(['enabled', 'disabled'])
     .optional()
     .describe(
-      'Which code path to preserve: "enabled" keeps the code that runs when flag is true, "disabled" keeps the code that runs when flag is false. If not provided, instructions will guide you to ask the user.'
+      'Which code path to preserve: "enabled" keeps the code that runs when flag is true, "disabled" keeps the code that runs when flag is false. If not provided, instructions will guide you to ask the user.',
     ),
   files: z
     .array(z.string())
     .optional()
-    .describe(
-      'Optional: Specific files to clean up. If not provided, searches entire codebase'
-    ),
+    .describe('Optional: Specific files to clean up. If not provided, searches entire codebase'),
   language: z
     .string()
     .optional()
     .describe(
-      'Optional: Programming language hint for language-specific guidance (auto-detected from files if not provided)'
+      'Optional: Programming language hint for language-specific guidance (auto-detected from files if not provided)',
     ),
 });
 
@@ -61,10 +56,7 @@ type CleanupFlagInput = z.infer<typeof cleanupFlagInputSchema>;
  * preserving the desired code path. The LLM follows these instructions to
  * autonomously clean up the flag.
  */
-export async function cleanupFlag(
-  context: ServerContext,
-  args: unknown
-): Promise<CallToolResult> {
+export async function cleanupFlag(context: ServerContext, args: unknown): Promise<CallToolResult> {
   try {
     // Validate input
     const input: CleanupFlagInput = cleanupFlagInputSchema.parse(args);
@@ -95,7 +87,7 @@ export async function cleanupFlag(
     const cleanupInstructions = generateCleanupInstructions(
       input.flagName,
       input.preservePath as PreservePath,
-      input.files
+      input.files,
     );
 
     // Add language-specific import cleanup guidance if language detected
@@ -110,11 +102,11 @@ export async function cleanupFlag(
       input.preservePath as PreservePath,
       cleanupInstructions,
       importGuidance,
-      input.files
+      input.files,
     );
 
     context.logger.info(
-      `Generated cleanup guidance for flag "${input.flagName}" (preserve: ${input.preservePath})`
+      `Generated cleanup guidance for flag "${input.flagName}" (preserve: ${input.preservePath})`,
     );
 
     return {
@@ -141,9 +133,8 @@ export async function cleanupFlag(
  * Build guidance that instructs the LLM to ask the user which path to preserve
  */
 function buildAskUserGuidance(flagName: string, files?: string[]): CallToolResult {
-  const scope = files && files.length > 0
-    ? `in ${files.length} specific file(s)`
-    : 'across the codebase';
+  const scope =
+    files && files.length > 0 ? `in ${files.length} specific file(s)` : 'across the codebase';
 
   const guidance = `# Feature Flag Cleanup: "${flagName}"
 
@@ -220,16 +211,16 @@ function buildCleanupGuidance(
   preservePath: PreservePath,
   cleanupInstructions: string,
   importGuidance: string,
-  files?: string[]
+  files?: string[],
 ): string {
-  const scope = files && files.length > 0
-    ? `in ${files.length} specific file(s)`
-    : 'across the codebase';
+  const scope =
+    files && files.length > 0 ? `in ${files.length} specific file(s)` : 'across the codebase';
 
   const pathEmoji = preservePath === 'enabled' ? '✅' : '❌';
-  const preserveDescription = preservePath === 'enabled'
-    ? 'the code runs as if the flag is **always enabled**'
-    : 'the code runs as if the flag is **always disabled**';
+  const preserveDescription =
+    preservePath === 'enabled'
+      ? 'the code runs as if the flag is **always enabled**'
+      : 'the code runs as if the flag is **always disabled**';
 
   return `# Feature Flag Cleanup: "${flagName}"
 

@@ -7,7 +7,7 @@
  * the type definitions and validation logic.
  */
 
-import { FlagCandidate } from './flagDiscovery.js';
+import type { FlagCandidate } from './flagDiscovery.js';
 
 /**
  * Confidence level for flag matches
@@ -31,7 +31,7 @@ export const DETECTION_WEIGHTS = {
   'unleash-inventory': 0.25,
   'file-based': 0.3,
   'git-history': 0.15,
-  'semantic': 0.2,
+  semantic: 0.2,
   'code-context': 0.1,
 } as const;
 
@@ -59,7 +59,9 @@ export function calculateConfidenceLevel(score: number): ConfidenceLevel {
 /**
  * Determine recommendation based on confidence level
  */
-export function determineRecommendation(confidenceLevel: ConfidenceLevel): 'use_existing' | 'ask_user' | 'create_new' {
+export function determineRecommendation(
+  confidenceLevel: ConfidenceLevel,
+): 'use_existing' | 'ask_user' | 'create_new' {
   switch (confidenceLevel) {
     case 'high':
       return 'use_existing';
@@ -80,7 +82,7 @@ export function getConfidenceExplanation(confidenceLevel: ConfidenceLevel): stri
     case 'medium':
       return 'Possible match found. This flag might cover your use case, but you should verify. Consider reusing or creating a new flag.';
     case 'low':
-      return 'Weak or no match found. The existing flags don\'t appear to cover your use case. Recommend creating a new flag.';
+      return "Weak or no match found. The existing flags don't appear to cover your use case. Recommend creating a new flag.";
   }
 }
 
@@ -126,8 +128,8 @@ ${candidate.context}
     result.recommendation === 'use_existing'
       ? `Reuse the existing flag \`${candidate.name}\` instead of creating a new one.`
       : result.recommendation === 'ask_user'
-      ? `Review the flag \`${candidate.name}\` to determine if it fits your use case. You can either reuse it or create a new flag if it doesn't match.`
-      : 'The confidence is too low. Consider creating a new flag instead.'
+        ? `Review the flag \`${candidate.name}\` to determine if it fits your use case. You can either reuse it or create a new flag if it doesn't match.`
+        : 'The confidence is too low. Consider creating a new flag instead.'
   }
 `.trim();
 }
@@ -217,7 +219,7 @@ When scoring flag candidates, use these weights to calculate the final score:
   - Last 3 months: 0.4
   - Older: 0.2
 
-- **Semantic matching**: ${DETECTION_WEIGHTS['semantic']} (0.2)
+- **Semantic matching**: ${DETECTION_WEIGHTS.semantic} (0.2)
   - Exact match: 1.0
   - Contains all words: 0.8
   - Contains some words: 0.6

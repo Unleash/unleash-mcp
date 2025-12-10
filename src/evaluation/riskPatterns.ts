@@ -54,7 +54,8 @@ export const criticalRiskPatterns: RiskPattern[] = [
       'authorize(',
     ],
     description: 'Authentication and authorization changes',
-    reasoning: 'Auth failures can lock users out, cause security breaches, or expose sensitive data. Must be rolled out carefully.',
+    reasoning:
+      'Auth failures can lock users out, cause security breaches, or expose sensitive data. Must be rolled out carefully.',
     examples: [
       'Implementing OAuth login',
       'Changing session management',
@@ -76,14 +77,10 @@ export const criticalRiskPatterns: RiskPattern[] = [
       'card',
       'checkout',
     ],
-    codePatterns: [
-      'stripe.charges',
-      'createPaymentIntent',
-      'processPayment',
-      'chargeCustomer',
-    ],
+    codePatterns: ['stripe.charges', 'createPaymentIntent', 'processPayment', 'chargeCustomer'],
     description: 'Payment processing and billing changes',
-    reasoning: 'Payment bugs can cause financial loss, duplicate charges, or failed transactions. Extremely high risk.',
+    reasoning:
+      'Payment bugs can cause financial loss, duplicate charges, or failed transactions. Extremely high risk.',
     examples: [
       'Integrating new payment provider',
       'Changing payment flow',
@@ -105,15 +102,10 @@ export const criticalRiskPatterns: RiskPattern[] = [
       'sanitize',
       'escape',
     ],
-    codePatterns: [
-      'crypto.createCipher',
-      'sanitize(',
-      'escape(',
-      'exec(',
-      'eval(',
-    ],
+    codePatterns: ['crypto.createCipher', 'sanitize(', 'escape(', 'exec(', 'eval('],
     description: 'Security-sensitive operations',
-    reasoning: 'Security changes can introduce vulnerabilities, data exposure, or bypass protections. Must be tested thoroughly.',
+    reasoning:
+      'Security changes can introduce vulnerabilities, data exposure, or bypass protections. Must be tested thoroughly.',
     examples: [
       'Implementing data encryption',
       'Adding input sanitization',
@@ -143,7 +135,8 @@ export const criticalRiskPatterns: RiskPattern[] = [
       '.drop(',
     ],
     description: 'Database schema changes and destructive operations',
-    reasoning: 'Database changes can cause data loss, corruption, or application crashes. Require careful migration strategy.',
+    reasoning:
+      'Database changes can cause data loss, corruption, or application crashes. Require careful migration strategy.',
     examples: [
       'Adding/removing database columns',
       'Changing table schemas',
@@ -161,15 +154,7 @@ export const criticalRiskPatterns: RiskPattern[] = [
 export const highRiskPatterns: RiskPattern[] = [
   {
     category: 'high',
-    keywords: [
-      'API',
-      'endpoint',
-      'route',
-      'REST',
-      'GraphQL',
-      'webhook',
-      'integration',
-    ],
+    keywords: ['API', 'endpoint', 'route', 'REST', 'GraphQL', 'webhook', 'integration'],
     codePatterns: [
       'app.post(',
       'app.get(',
@@ -181,7 +166,8 @@ export const highRiskPatterns: RiskPattern[] = [
     ],
     filePatterns: ['**/routes/**', '**/api/**', '**/controllers/**'],
     description: 'API endpoint changes or new integrations',
-    reasoning: 'API changes affect external consumers and integrations. Breaking changes can impact multiple systems.',
+    reasoning:
+      'API changes affect external consumers and integrations. Breaking changes can impact multiple systems.',
     examples: [
       'Adding new REST endpoint',
       'Modifying existing API response format',
@@ -201,15 +187,10 @@ export const highRiskPatterns: RiskPattern[] = [
       'requests.get',
       'requests.post',
     ],
-    codePatterns: [
-      'fetch(',
-      'axios.get',
-      'axios.post',
-      'http.request',
-      'requests.get(',
-    ],
+    codePatterns: ['fetch(', 'axios.get', 'axios.post', 'http.request', 'requests.get('],
     description: 'External service integrations and API calls',
-    reasoning: 'External service failures can cascade. Timeouts, rate limits, or API changes can break functionality.',
+    reasoning:
+      'External service failures can cascade. Timeouts, rate limits, or API changes can break functionality.',
     examples: [
       'Integrating with new email service',
       'Calling third-party analytics API',
@@ -220,13 +201,10 @@ export const highRiskPatterns: RiskPattern[] = [
   {
     category: 'high',
     keywords: ['class ', 'new class', 'extends', 'implements'],
-    codePatterns: [
-      'class ',
-      'extends ',
-      'implements ',
-    ],
+    codePatterns: ['class ', 'extends ', 'implements '],
     description: 'New class or significant architecture changes',
-    reasoning: 'New classes often represent significant features or architectural changes that need gradual rollout.',
+    reasoning:
+      'New classes often represent significant features or architectural changes that need gradual rollout.',
     examples: [
       'Adding new service class',
       'Creating new domain model',
@@ -237,7 +215,8 @@ export const highRiskPatterns: RiskPattern[] = [
     category: 'high',
     keywords: [],
     description: 'Large code changes (>100 lines)',
-    reasoning: 'Large changes have higher probability of bugs. Benefit from gradual rollout to detect issues early.',
+    reasoning:
+      'Large changes have higher probability of bugs. Benefit from gradual rollout to detect issues early.',
     examples: [
       'Major refactor affecting multiple modules',
       'Complete rewrite of a feature',
@@ -254,24 +233,11 @@ export const highRiskPatterns: RiskPattern[] = [
 export const mediumRiskPatterns: RiskPattern[] = [
   {
     category: 'medium',
-    keywords: [
-      'async',
-      'await',
-      'Promise',
-      'setTimeout',
-      'setInterval',
-      'callback',
-    ],
-    codePatterns: [
-      'async function',
-      'async (',
-      'await ',
-      'new Promise',
-      '.then(',
-      '.catch(',
-    ],
+    keywords: ['async', 'await', 'Promise', 'setTimeout', 'setInterval', 'callback'],
+    codePatterns: ['async function', 'async (', 'await ', 'new Promise', '.then(', '.catch('],
     description: 'Asynchronous operations and async/await',
-    reasoning: 'Async code can introduce race conditions, timing issues, or error handling complexity.',
+    reasoning:
+      'Async code can introduce race conditions, timing issues, or error handling complexity.',
     examples: [
       'Converting sync code to async',
       'Adding new async API calls',
@@ -280,22 +246,11 @@ export const mediumRiskPatterns: RiskPattern[] = [
   },
   {
     category: 'medium',
-    keywords: [
-      'state',
-      'redux',
-      'vuex',
-      'useState',
-      'useReducer',
-      'store',
-    ],
-    codePatterns: [
-      'useState(',
-      'useReducer(',
-      'createStore(',
-      'Redux.createStore',
-    ],
+    keywords: ['state', 'redux', 'vuex', 'useState', 'useReducer', 'store'],
+    codePatterns: ['useState(', 'useReducer(', 'createStore(', 'Redux.createStore'],
     description: 'State management changes',
-    reasoning: 'State changes can affect application behavior across components. May introduce subtle bugs.',
+    reasoning:
+      'State changes can affect application behavior across components. May introduce subtle bugs.',
     examples: [
       'Adding new global state',
       'Modifying Redux reducers',
@@ -323,18 +278,10 @@ export const mediumRiskPatterns: RiskPattern[] = [
 export const lowRiskPatterns: RiskPattern[] = [
   {
     category: 'low',
-    keywords: [
-      'fix',
-      'bug',
-      'issue',
-      'error',
-      'problem',
-      'patch',
-      'correct',
-      'typo',
-    ],
+    keywords: ['fix', 'bug', 'issue', 'error', 'problem', 'patch', 'correct', 'typo'],
     description: 'Bug fixes and corrections',
-    reasoning: 'Small bug fixes that don\'t change core logic typically don\'t need flags. Exception: critical system bugs.',
+    reasoning:
+      "Small bug fixes that don't change core logic typically don't need flags. Exception: critical system bugs.",
     examples: [
       'Fixing typo in error message',
       'Correcting validation logic',
@@ -343,16 +290,10 @@ export const lowRiskPatterns: RiskPattern[] = [
   },
   {
     category: 'low',
-    keywords: [
-      'refactor',
-      'cleanup',
-      'reorganize',
-      'improve',
-      'optimize',
-      'simplify',
-    ],
+    keywords: ['refactor', 'cleanup', 'reorganize', 'improve', 'optimize', 'simplify'],
     description: 'Code refactoring without behavior changes',
-    reasoning: 'Refactors that don\'t change external behavior are low risk. Should have test coverage.',
+    reasoning:
+      "Refactors that don't change external behavior are low risk. Should have test coverage.",
     examples: [
       'Extracting helper function',
       'Renaming variables',
@@ -365,11 +306,7 @@ export const lowRiskPatterns: RiskPattern[] = [
     keywords: [],
     description: 'Small changes (<20 lines)',
     reasoning: 'Small, focused changes are easier to review and have lower bug probability.',
-    examples: [
-      'Adding logging statement',
-      'Updating text content',
-      'Adjusting styling',
-    ],
+    examples: ['Adding logging statement', 'Updating text content', 'Adjusting styling'],
   },
 ];
 
@@ -397,12 +334,8 @@ export const excludedPatterns: RiskPattern[] = [
       '**/*.test.java',
     ],
     description: 'Test files',
-    reasoning: 'Test code doesn\'t run in production and doesn\'t need feature flags.',
-    examples: [
-      'unit tests',
-      'integration tests',
-      'e2e tests',
-    ],
+    reasoning: "Test code doesn't run in production and doesn't need feature flags.",
+    examples: ['unit tests', 'integration tests', 'e2e tests'],
   },
   {
     category: 'excluded',
@@ -419,13 +352,8 @@ export const excludedPatterns: RiskPattern[] = [
       '**/settings.py',
     ],
     description: 'Configuration files',
-    reasoning: 'Config files typically contain static values that don\'t need flags.',
-    examples: [
-      'webpack.config.js',
-      'tsconfig.json',
-      '.env files',
-      'settings.py',
-    ],
+    reasoning: "Config files typically contain static values that don't need flags.",
+    examples: ['webpack.config.js', 'tsconfig.json', '.env files', 'settings.py'],
   },
   {
     category: 'excluded',
@@ -439,12 +367,8 @@ export const excludedPatterns: RiskPattern[] = [
       'CHANGELOG.md',
     ],
     description: 'Documentation files',
-    reasoning: 'Documentation changes don\'t affect runtime behavior.',
-    examples: [
-      'README updates',
-      'API documentation',
-      'Code comments',
-    ],
+    reasoning: "Documentation changes don't affect runtime behavior.",
+    examples: ['README updates', 'API documentation', 'Code comments'],
   },
 ];
 
@@ -516,9 +440,9 @@ export function getRiskPatternGuidance(): string {
         `### ${section.title}\n*Risk weight: ${section.weight}*\n\n${section.patterns
           .map(
             (p) =>
-              `**${p.description}**\n- Keywords: ${p.keywords.length > 0 ? p.keywords.join(', ') : 'N/A'}\n- Reasoning: ${p.reasoning}\n- Examples: ${p.examples.join('; ')}`
+              `**${p.description}**\n- Keywords: ${p.keywords.length > 0 ? p.keywords.join(', ') : 'N/A'}\n- Reasoning: ${p.reasoning}\n- Examples: ${p.examples.join('; ')}`,
           )
-          .join('\n\n')}`
+          .join('\n\n')}`,
     )
     .join('\n\n---\n\n');
 }

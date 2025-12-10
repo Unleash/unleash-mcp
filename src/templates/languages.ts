@@ -136,10 +136,7 @@ export const LANGUAGE_METADATA: Record<SupportedLanguage, LanguageMetadata> = {
 /**
  * Detect language from file name or explicit language parameter
  */
-export function detectLanguage(
-  fileName?: string,
-  explicitLanguage?: string
-): SupportedLanguage {
+export function detectLanguage(fileName?: string, explicitLanguage?: string): SupportedLanguage {
   // Use explicit language if provided and valid
   if (explicitLanguage && explicitLanguage in LANGUAGE_METADATA) {
     return explicitLanguage as SupportedLanguage;

@@ -5,7 +5,12 @@ import { VERSION } from '../version.js';
  * Feature flag types supported by Unleash.
  * See: https://docs.getunleash.io/reference/feature-toggle-types
  */
-export type FeatureFlagType = 'release' | 'experiment' | 'operational' | 'kill-switch' | 'permission';
+export type FeatureFlagType =
+  | 'release'
+  | 'experiment'
+  | 'operational'
+  | 'kill-switch'
+  | 'permission';
 
 /**
  * Request payload for creating a feature flag.
@@ -146,7 +151,7 @@ export class UnleashClient {
    */
   async createFeatureFlag(
     projectId: string,
-    request: CreateFeatureFlagRequest
+    request: CreateFeatureFlagRequest,
   ): Promise<CreateFeatureFlagResponse> {
     if (this.dryRun) {
       // In dry-run mode, return a mock response
@@ -169,7 +174,7 @@ export class UnleashClient {
       },
       {
         errorMessage: 'Failed to create feature flag',
-      }
+      },
     );
   }
 
@@ -202,7 +207,7 @@ export class UnleashClient {
       {
         errorMessage: 'Failed to list projects',
         networkErrorMessage: 'Failed to connect to Unleash API while listing projects',
-      }
+      },
     );
 
     if (!Array.isArray(data.projects)) {
@@ -245,7 +250,7 @@ export class UnleashClient {
     projectId: string,
     featureName: string,
     environment: string,
-    options: SetFlagRolloutOptions
+    options: SetFlagRolloutOptions,
   ): Promise<FeatureStrategy> {
     const rollout = Math.min(100, Math.max(0, options.rolloutPercentage));
     const parameters: Record<string, string> = {
@@ -259,9 +264,7 @@ export class UnleashClient {
       title: options.title,
       disabled: options.disabled,
       parameters,
-      ...(options.variants && options.variants.length > 0
-        ? { variants: options.variants }
-        : {}),
+      ...(options.variants && options.variants.length > 0 ? { variants: options.variants } : {}),
     };
 
     if (this.dryRun) {
@@ -285,14 +288,11 @@ export class UnleashClient {
       {
         errorMessage: `Failed to configure flexibleRollout strategy for feature ${featureName} in ${environment}`,
         networkErrorMessage: `Failed to connect to Unleash API while configuring strategy for feature ${featureName}`,
-      }
+      },
     );
   }
 
-  async getFeature(
-    projectId: string,
-    featureName: string
-  ): Promise<FeatureDetails> {
+  async getFeature(projectId: string, featureName: string): Promise<FeatureDetails> {
     if (this.dryRun) {
       return {
         name: featureName,
@@ -327,7 +327,7 @@ export class UnleashClient {
       {
         errorMessage: `Failed to fetch feature ${featureName} in project ${projectId}`,
         networkErrorMessage: `Failed to connect to Unleash API while fetching feature ${featureName}`,
-      }
+      },
     );
   }
 
@@ -335,7 +335,7 @@ export class UnleashClient {
     projectId: string,
     featureName: string,
     environment: string,
-    strategyId: string
+    strategyId: string,
   ): Promise<void> {
     if (this.dryRun) {
       return;
@@ -391,7 +391,7 @@ export class UnleashClient {
         throw new CustomError(
           'NETWORK_ERROR',
           `Failed to connect to Unleash API while deleting strategy for feature ${featureName}`,
-          hint
+          hint,
         );
       }
 
@@ -403,7 +403,7 @@ export class UnleashClient {
     projectId: string,
     featureName: string,
     environment: string,
-    enabled: boolean
+    enabled: boolean,
   ): Promise<FeatureDetails> {
     if (this.dryRun) {
       const feature = await this.getFeature(projectId, featureName);
@@ -414,9 +414,9 @@ export class UnleashClient {
           ? {
               ...env,
               enabled,
-              hasEnabledStrategies: enabled ? env.hasEnabledStrategies ?? true : false,
+              hasEnabledStrategies: enabled ? (env.hasEnabledStrategies ?? true) : false,
             }
-          : env
+          : env,
       );
 
       return {
@@ -436,13 +436,11 @@ export class UnleashClient {
       {
         errorMessage: `Failed to turn ${enabled ? 'on' : 'off'} feature ${featureName} in ${environment}`,
         networkErrorMessage: `Failed to connect to Unleash API while toggling feature ${featureName}`,
-      }
+      },
     );
   }
 
-  private async fetchProjectFeatureFlags(
-    projectId: string
-  ): Promise<FeatureFlagSummary[]> {
+  private async fetchProjectFeatureFlags(projectId: string): Promise<FeatureFlagSummary[]> {
     const data = await this.requestJson<{
       features?: Array<{
         name?: string;
@@ -459,13 +457,13 @@ export class UnleashClient {
       {
         errorMessage: `Failed to list feature flags for project ${projectId}`,
         networkErrorMessage: `Failed to connect to Unleash API while listing flags for project ${projectId}`,
-      }
+      },
     );
 
     return (data.features ?? [])
       .filter((f) => f.name)
       .map((feature) => {
-        const name = feature.name!;
+        const name = feature.name as string;
         const project = feature.project ?? projectId;
         return {
           name,
@@ -496,9 +494,9 @@ export class UnleashClient {
    */
   private buildRequestHeaders(): Record<string, string> {
     return {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json',
-      'Authorization': this.pat.trim(),
+      Authorization: this.pat.trim(),
       'X-Unleash-AppName': 'unleash-mcp',
       'User-Agent': `unleash-mcp/${VERSION} (MCP Server)`,
     };
@@ -510,7 +508,7 @@ export class UnleashClient {
     options: {
       errorMessage: string;
       networkErrorMessage?: string;
-    }
+    },
   ): Promise<T> {
     const url = `${this.baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
     const headers = {
@@ -566,7 +564,7 @@ export class UnleashClient {
         throw new CustomError(
           'NETWORK_ERROR',
           options.networkErrorMessage ?? 'Failed to connect to Unleash API',
-          hint
+          hint,
         );
       }
 

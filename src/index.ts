@@ -27,39 +27,39 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
   CallToolRequestSchema,
-  ListToolsRequestSchema,
   ListResourcesRequestSchema,
   ListResourceTemplatesRequestSchema,
+  ListToolsRequestSchema,
   ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
 import { loadConfig } from './config.js';
-import { UnleashClient } from './unleash/client.js';
-import { ServerContext, createLogger, handleToolError } from './context.js';
-import { createFlag, createFlagTool } from './tools/createFlag.js';
-import { evaluateChange, evaluateChangeTool } from './tools/evaluateChange.js';
-import { wrapChange, wrapChangeTool } from './tools/wrapChange.js';
-import { detectFlag, detectFlagTool } from './tools/detectFlag.js';
-import { cleanupFlag, cleanupFlagTool } from './tools/cleanupFlag.js';
-import { setFlagRollout, setFlagRolloutTool } from './tools/setFlagRollout.js';
-import { getFlagState, getFlagStateTool } from './tools/getFlagState.js';
-import { toggleFlagEnvironment, toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
-import { removeFlagStrategy, removeFlagStrategyTool } from './tools/removeFlagStrategy.js';
-import { VERSION } from './version.js';
+import { createLogger, handleToolError, type ServerContext } from './context.js';
 import {
-  isProjectsUri,
-  isFeatureFlagUri,
   extractFlagNameFromFeatureUri,
-  parseProjectsResourceOptions,
   extractProjectIdFromFeatureUri,
   isFeatureFlagsUri,
+  isFeatureFlagUri,
+  isProjectsUri,
   listResourceTemplates,
   listStaticResources,
   parseFeatureFlagsResourceOptions,
+  parseProjectsResourceOptions,
   readFeatureFlagResource,
   readFeatureFlagsResource,
   readProjectsResource,
 } from './resources/unleashResources.js';
+import { cleanupFlag, cleanupFlagTool } from './tools/cleanupFlag.js';
+import { createFlag, createFlagTool } from './tools/createFlag.js';
+import { detectFlag, detectFlagTool } from './tools/detectFlag.js';
+import { evaluateChange, evaluateChangeTool } from './tools/evaluateChange.js';
+import { getFlagState, getFlagStateTool } from './tools/getFlagState.js';
+import { removeFlagStrategy, removeFlagStrategyTool } from './tools/removeFlagStrategy.js';
+import { setFlagRollout, setFlagRolloutTool } from './tools/setFlagRollout.js';
+import { toggleFlagEnvironment, toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
+import { wrapChange, wrapChangeTool } from './tools/wrapChange.js';
+import { UnleashClient } from './unleash/client.js';
+import { VERSION } from './version.js';
 
 /**
  * Main entry point for the MCP server.
@@ -81,7 +81,7 @@ async function main(): Promise<void> {
   const unleashClient = new UnleashClient(
     config.unleash.baseUrl,
     config.unleash.pat,
-    config.server.dryRun
+    config.server.dryRun,
   );
 
   const instructions = [
@@ -109,8 +109,7 @@ async function main(): Promise<void> {
         resources: {},
         instructions,
       },
-      
-    }
+    },
   );
 
   // Build shared context
@@ -128,7 +127,7 @@ async function main(): Promise<void> {
         createFlagTool,
         evaluateChangeTool,
         detectFlagTool,
-        wrapChangeTool, 
+        wrapChangeTool,
         cleanupFlagTool,
         setFlagRolloutTool,
         getFlagStateTool,
@@ -162,13 +161,7 @@ async function main(): Promise<void> {
       }
 
       return {
-        contents: [
-          await readFeatureFlagResource(
-            context,
-            projectId,
-            flagName,
-          ),
-        ],
+        contents: [await readFeatureFlagResource(context, projectId, flagName)],
       };
     }
 
@@ -181,11 +174,7 @@ async function main(): Promise<void> {
 
       return {
         contents: [
-          await readFeatureFlagsResource(
-            context,
-            projectId,
-            parseFeatureFlagsResourceOptions(uri)
-          ),
+          await readFeatureFlagsResource(context, projectId, parseFeatureFlagsResourceOptions(uri)),
         ],
       };
     }
@@ -236,11 +225,7 @@ async function main(): Promise<void> {
           return await getFlagState(context, args, request.params._meta?.progressToken);
 
         case 'toggle_flag_environment':
-          return await toggleFlagEnvironment(
-            context,
-            args,
-            request.params._meta?.progressToken
-          );
+          return await toggleFlagEnvironment(context, args, request.params._meta?.progressToken);
 
         case 'remove_flag_strategy':
           return await removeFlagStrategy(context, args, request.params._meta?.progressToken);

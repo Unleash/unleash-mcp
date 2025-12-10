@@ -5,7 +5,7 @@
  * code while preserving the desired code path (enabled or disabled).
  */
 
-import { SupportedLanguage, getLanguageMetadata } from './languages.js';
+import { getLanguageMetadata, type SupportedLanguage } from './languages.js';
 
 /**
  * Preserve path option - which code path to keep
@@ -18,11 +18,10 @@ export type PreservePath = 'enabled' | 'disabled';
 export function generateCleanupInstructions(
   flagName: string,
   preservePath: PreservePath,
-  files?: string[]
+  files?: string[],
 ): string {
-  const searchScope = files && files.length > 0
-    ? `specific files: ${files.join(', ')}`
-    : 'the entire codebase';
+  const searchScope =
+    files && files.length > 0 ? `specific files: ${files.join(', ')}` : 'the entire codebase';
 
   return `# Feature Flag Cleanup Instructions: "${flagName}"
 
@@ -42,9 +41,10 @@ You are removing the feature flag "${flagName}" from ${searchScope}.
 **Goal**: Remove all flag checks while preserving only the **${preservePath}** code path.
 
 **What this means**:
-${preservePath === 'enabled'
-  ? '- Keep code that runs when the flag is ENABLED/TRUE\n- Remove code that runs when the flag is DISABLED/FALSE'
-  : '- Keep code that runs when the flag is DISABLED/FALSE\n- Remove code that runs when the flag is ENABLED/TRUE'
+${
+  preservePath === 'enabled'
+    ? '- Keep code that runs when the flag is ENABLED/TRUE\n- Remove code that runs when the flag is DISABLED/FALSE'
+    : '- Keep code that runs when the flag is DISABLED/FALSE\n- Remove code that runs when the flag is ENABLED/TRUE'
 }
 
 ---
@@ -100,9 +100,10 @@ After completing the cleanup, provide:
  * Generate search instructions for finding flag occurrences
  */
 function generateSearchInstructions(flagName: string, files?: string[]): string {
-  const fileScope = files && files.length > 0
-    ? `\n**Files to search**: ${files.map(f => `\`${f}\``).join(', ')}`
-    : '';
+  const fileScope =
+    files && files.length > 0
+      ? `\n**Files to search**: ${files.map((f) => `\`${f}\``).join(', ')}`
+      : '';
 
   return `## Step 1: Find All Flag Occurrences
 ${fileScope}
@@ -156,9 +157,11 @@ if (!isEnabled('flag')) {
 }
 // Main code here
 \`\`\`
-**Action**: ${preservePath === 'enabled'
-  ? 'Remove the guard clause (keep main code)'
-  : 'Keep the early exit, remove everything after'}.
+**Action**: ${
+    preservePath === 'enabled'
+      ? 'Remove the guard clause (keep main code)'
+      : 'Keep the early exit, remove everything after'
+  }.
 
 ---
 
@@ -175,9 +178,11 @@ const value = isEnabled('flag') ? valueA : valueB;
 isEnabled('flag') && doSomething();
 isEnabled('flag') || doFallback();
 \`\`\`
-**Action**: ${preservePath === 'enabled'
-  ? 'Replace `&&` with just the function call, remove `||` entirely'
-  : 'Remove `&&` statement entirely, replace `||` with just the function call'}.
+**Action**: ${
+    preservePath === 'enabled'
+      ? 'Replace `&&` with just the function call, remove `||` entirely'
+      : 'Remove `&&` statement entirely, replace `||` with just the function call'
+  }.
 
 ---
 
@@ -186,9 +191,11 @@ isEnabled('flag') || doFallback();
 {isEnabled('flag') && <Component />}
 {isEnabled('flag') ? <ComponentA /> : <ComponentB />}
 \`\`\`
-**Action**: ${preservePath === 'enabled'
-  ? 'Keep ComponentA/Component, remove the condition'
-  : 'Keep ComponentB or remove the entire block'}.
+**Action**: ${
+    preservePath === 'enabled'
+      ? 'Keep ComponentA/Component, remove the condition'
+      : 'Keep ComponentB or remove the entire block'
+  }.
 
 ---
 
@@ -209,9 +216,11 @@ if (someCondition) {
   }
 }
 \`\`\`
-**Action**: ${preservePath === 'enabled'
-  ? 'Remove inner flag check, keep nested code within outer condition'
-  : 'Remove the entire inner block'}.
+**Action**: ${
+    preservePath === 'enabled'
+      ? 'Remove inner flag check, keep nested code within outer condition'
+      : 'Remove the entire inner block'
+  }.
 
 ---
 

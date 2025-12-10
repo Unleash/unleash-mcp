@@ -6,16 +6,16 @@
  * that helps LLMs make informed decisions about flag usage.
  */
 
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { ServerContext, handleToolError } from '../context.js';
+import { handleToolError, type ServerContext } from '../context.js';
+import { getFlagDetectionGuidance } from '../evaluation/flagDetectionPatterns.js';
+import { getRiskPatternGuidance } from '../evaluation/riskPatterns.js';
 import {
+  getAntiPatternWarnings,
   getFlagTypeGuidance,
   getRolloutGuidance,
-  getAntiPatternWarnings,
 } from '../knowledge/unleashBestPractices.js';
-import { getRiskPatternGuidance } from '../evaluation/riskPatterns.js';
-import { getFlagDetectionGuidance } from '../evaluation/flagDetectionPatterns.js';
 import * as pb from '../prompts/promptBuilder.js';
 
 /**
@@ -27,7 +27,10 @@ const evaluateChangeInputSchema = z.object({
   branch: z.string().optional().describe('Current branch name'),
   files: z.array(z.string()).optional().describe('List of files changed'),
   description: z.string().optional().describe('Description of the change'),
-  riskLevel: z.enum(['low', 'medium', 'high', 'critical']).optional().describe('User-assessed risk level'),
+  riskLevel: z
+    .enum(['low', 'medium', 'high', 'critical'])
+    .optional()
+    .describe('User-assessed risk level'),
   codeContext: z.string().optional().describe('Surrounding code context for parent flag detection'),
 });
 
@@ -70,7 +73,7 @@ function buildEvaluationGuidance(input?: EvaluateChangeInput): string {
    - If existing flag found: Call ${pb.inlineCode('wrap_change')} with existing flag → then implement
    - If flag needed: Call ${pb.inlineCode('create_flag')} → then ${pb.inlineCode('wrap_change')} → then implement
    - If no flag needed: Proceed with implementation`,
-        'danger'
+        'danger',
       ),
     },
     {
@@ -149,15 +152,18 @@ function buildWorkflowSection(): string {
   return pb.workflow('Evaluation Process', [
     {
       step: 'Gather Code Changes',
-      details: 'Use git commands or ask the user to identify what code is being changed. Read the files to get full context.',
+      details:
+        'Use git commands or ask the user to identify what code is being changed. Read the files to get full context.',
     },
     {
       step: 'Detect Existing Flags (NEW)',
-      details: 'Call detect_flag tool with description of the change. Execute search instructions to find existing flags that might already cover this functionality. If high-confidence match found (≥0.7), recommend using that flag.',
+      details:
+        'Call detect_flag tool with description of the change. Execute search instructions to find existing flags that might already cover this functionality. If high-confidence match found (≥0.7), recommend using that flag.',
     },
     {
       step: 'Check Parent Flag Coverage',
-      details: 'Scan surrounding code for existing feature flag checks. If found and covering the change location, STOP - no new flag needed.',
+      details:
+        'Scan surrounding code for existing feature flag checks. If found and covering the change location, STOP - no new flag needed.',
     },
     {
       step: 'Assess Code Type',
@@ -165,7 +171,8 @@ function buildWorkflowSection(): string {
     },
     {
       step: 'Evaluate Risk',
-      details: 'Analyze for risky patterns (auth, payments, database, API changes). Calculate risk score.',
+      details:
+        'Analyze for risky patterns (auth, payments, database, API changes). Calculate risk score.',
     },
     {
       step: 'Make Recommendation',
@@ -185,18 +192,15 @@ function buildParentFlagSection(): string {
   let content = pb.alert(
     'FIRST AND MOST IMPORTANT',
     'Scan for existing feature flag checks that might already cover this code. Nesting flags inside other flags creates unnecessary complexity.',
-    'warning'
+    'warning',
   );
 
   content += pb.subsection(
     'Why This Matters',
-    'If code is already protected by a parent flag, adding another flag is redundant and creates technical debt. Always check for parent coverage first.'
+    'If code is already protected by a parent flag, adding another flag is redundant and creates technical debt. Always check for parent coverage first.',
   );
 
-  content += pb.subsection(
-    'Flag Detection Patterns (Cross-Language)',
-    getFlagDetectionGuidance()
-  );
+  content += pb.subsection('Flag Detection Patterns (Cross-Language)', getFlagDetectionGuidance());
 
   content += pb.subsection(
     'Decision Logic',
@@ -216,7 +220,7 @@ function buildParentFlagSection(): string {
         result: 'Proceed to Step 2',
         reasoning: 'Evaluate code characteristics to determine if new flag needed',
       },
-    ])
+    ]),
   );
 
   return content;
@@ -237,7 +241,7 @@ function buildCodeCharacteristicsSection(): string {
       `${pb.emphasis('Low-Risk Bug Fixes', 'bold')}: Small changes (<20 lines) fixing typos, validation, edge cases (no risky operations)`,
       `${pb.emphasis('Low-Risk Refactors', 'bold')}: Code reorganization without behavior changes, renaming, cleanup (no risky operations)`,
       `${pb.emphasis('Simple Changes', 'bold')}: Very small changes (<20 lines) with no risky operations`,
-    ])
+    ]),
   );
 
   content += pb.subsection(
@@ -248,7 +252,7 @@ function buildCodeCharacteristicsSection(): string {
       `${pb.emphasis('API Changes', 'bold')}: New endpoints, modified contracts, breaking changes`,
       `${pb.emphasis('Large Changes', 'bold')}: Changes >50 lines, especially >100 lines`,
       `${pb.emphasis('Async Operations', 'bold')}: New async functions, promises, background jobs`,
-    ])
+    ]),
   );
 
   return content;
@@ -260,28 +264,31 @@ function buildCodeCharacteristicsSection(): string {
 function buildRiskAssessmentSection(): string {
   let content = pb.subsection(
     'Risk Patterns',
-    'Use these patterns to identify risky code and calculate a risk score:\n\n' + getRiskPatternGuidance()
+    `Use these patterns to identify risky code and calculate a risk score:\n\n${getRiskPatternGuidance()}`,
   );
 
   content += pb.subsection(
     'Risk Scoring',
-    pb.list([
-      'Critical pattern match: +5 points',
-      'High pattern match: +3 points',
-      'Medium pattern match: +2 points',
-      'Code >100 lines: +2 points',
-      'Code 50-100 lines: +1 point',
-    ], true) +
-    '\n' +
-    pb.table(
-      ['Risk Level', 'Score Range', 'Flag Required?'],
+    pb.list(
       [
-        ['Critical', '≥ 5', 'YES - Absolutely'],
-        ['High', '3-4', 'YES - Strongly recommended'],
-        ['Medium', '2', 'MAYBE - Consider context'],
-        ['Low', '< 2', 'NO - Usually not needed'],
-      ]
-    )
+        'Critical pattern match: +5 points',
+        'High pattern match: +3 points',
+        'Medium pattern match: +2 points',
+        'Code >100 lines: +2 points',
+        'Code 50-100 lines: +1 point',
+      ],
+      true,
+    ) +
+      '\n' +
+      pb.table(
+        ['Risk Level', 'Score Range', 'Flag Required?'],
+        [
+          ['Critical', '≥ 5', 'YES - Absolutely'],
+          ['High', '3-4', 'YES - Strongly recommended'],
+          ['Medium', '2', 'MAYBE - Consider context'],
+          ['Low', '< 2', 'NO - Usually not needed'],
+        ],
+      ),
   );
 
   return content;
@@ -293,7 +300,8 @@ function buildRiskAssessmentSection(): string {
 function buildOutputFormatSection(): string {
   const schema = {
     needsFlag: 'boolean',
-    reason: 'already_covered | existing_flag_found | new_feature | configuration_change | bug_fix | refactor | test_code | low_risk_change',
+    reason:
+      'already_covered | existing_flag_found | new_feature | configuration_change | bug_fix | refactor | test_code | low_risk_change',
     recommendation: 'use_existing | create_new | no_flag_needed',
     existingFlag: {
       name: 'string (flag name)',
@@ -324,7 +332,7 @@ function buildOutputFormatSection(): string {
       `${pb.inlineCode('riskScore')}: Numerical risk score you calculated`,
       `${pb.inlineCode('explanation')}: Clear, detailed reasoning for your decision`,
       `${pb.inlineCode('confidence')}: How confident you are (more context = higher confidence)`,
-    ])
+    ]),
   );
 
   return content;
@@ -337,13 +345,13 @@ function buildNextActionsSection(): string {
   let content = pb.alert(
     'CRITICAL',
     'After providing the evaluation JSON above, you MUST take the appropriate next action. Do not stop at evaluation.',
-    'danger'
+    'danger',
   );
 
   content += pb.subsection(
     '❌ If needsFlag is FALSE (no flag needed)',
     `**Action**: Tell the user no flag is needed and explain why. Then proceed with implementing the code without a flag.\n\n` +
-    `Example: "Based on my evaluation, this change does not require a feature flag because it is a small bug fix with no risky operations. I'll proceed with implementing the change directly."`
+      `Example: "Based on my evaluation, this change does not require a feature flag because it is a small bug fix with no risky operations. I'll proceed with implementing the change directly."`,
   );
 
   content += pb.subsection(
@@ -351,66 +359,91 @@ function buildNextActionsSection(): string {
     pb.alert(
       'MANDATORY ACTION SEQUENCE',
       'When a flag is needed, you MUST follow this exact sequence of tool calls:',
-      'danger'
-    ) + '\n\n' +
-    pb.workflow('Required Tool Call Sequence', [
-      {
-        step: 'Step 1: Determine Flag to Use',
-        details: `${pb.emphasis('IF recommendation is "use_existing":', 'bold')}\n` +
-          `An existing flag was found (either by detect_flag or parent coverage). Use the flag name from ${pb.inlineCode('existingFlag.name')} and skip to Step 2.\n\n` +
-          `${pb.emphasis('IF recommendation is "create_new":', 'bold')}\n\n` +
-          `Call the ${pb.inlineCode('create_flag')} tool with:\n` +
-          pb.list([
-            `${pb.inlineCode('name')}: Use the ${pb.inlineCode('suggestedFlag')} value from your evaluation`,
-            `${pb.inlineCode('type')}: Choose based on the Flag Type Selection guidance below`,
-            `${pb.inlineCode('description')}: Clear explanation of what this flag controls and why`,
-          ], true) + '\n\n' +
-          `Then proceed to Step 2 with the newly created flag name.`,
-      },
-      {
-        step: 'Step 2: Generate Wrapping Code',
-        details: `${pb.emphasis('MANDATORY:', 'bold')} Call the ${pb.inlineCode('wrap_change')} tool with:\n` +
-          pb.list([
-            `${pb.inlineCode('flagName')}: The flag name from Step 1 (or existing flag)`,
-            `${pb.inlineCode('fileName')}: The file you are modifying`,
-            `${pb.inlineCode('language')}: (optional) The programming language`,
-            `${pb.inlineCode('frameworkHint')}: (optional) Framework like "React", "Express", "Django"`,
-          ], true) + '\n\n' +
-          `The ${pb.inlineCode('wrap_change')} tool will return:\n` +
-          pb.list([
-            'Search instructions to find existing flag patterns in the codebase',
-            'Code templates for wrapping your changes',
-            'Framework-specific examples if applicable',
-            'Instructions on how to match existing conventions',
-          ], true) + '\n\n' +
-          `${pb.emphasis('Follow the guidance from wrap_change:', 'bold')} Search for existing patterns using Grep, then wrap your code to match those patterns.`,
-      },
-      {
-        step: 'Step 3: Implement the Wrapped Code',
-        details: 'Use the templates and guidance from ' + pb.inlineCode('wrap_change') + ' to implement your changes:\n' +
-          pb.list([
-            'Add the import statement at the top of the file',
-            'Wrap your code changes with the flag check',
-            'Match the existing code style and conventions',
-            'Handle both enabled and disabled states appropriately',
-          ], true),
-      },
-      {
-        step: 'Step 4: Test and Verify',
-        details: pb.list([
-          'Ensure the code compiles without errors',
-          'Test with the flag enabled',
-          'Test with the flag disabled',
-          'Verify it follows project conventions',
-        ], true),
-      },
-    ]) + '\n\n' +
-    pb.alert(
-      'IMPORTANT',
-      `Do NOT manually write flag wrapping code without first calling ${pb.inlineCode('wrap_change')}. ` +
-      `The tool ensures you follow existing patterns and provides language-specific guidance.`,
-      'warning'
-    )
+      'danger',
+    ) +
+      '\n\n' +
+      pb.workflow('Required Tool Call Sequence', [
+        {
+          step: 'Step 1: Determine Flag to Use',
+          details:
+            `${pb.emphasis('IF recommendation is "use_existing":', 'bold')}\n` +
+            `An existing flag was found (either by detect_flag or parent coverage). Use the flag name from ${pb.inlineCode('existingFlag.name')} and skip to Step 2.\n\n` +
+            `${pb.emphasis('IF recommendation is "create_new":', 'bold')}\n\n` +
+            `Call the ${pb.inlineCode('create_flag')} tool with:\n` +
+            pb.list(
+              [
+                `${pb.inlineCode('name')}: Use the ${pb.inlineCode('suggestedFlag')} value from your evaluation`,
+                `${pb.inlineCode('type')}: Choose based on the Flag Type Selection guidance below`,
+                `${pb.inlineCode('description')}: Clear explanation of what this flag controls and why`,
+              ],
+              true,
+            ) +
+            '\n\n' +
+            `Then proceed to Step 2 with the newly created flag name.`,
+        },
+        {
+          step: 'Step 2: Generate Wrapping Code',
+          details:
+            `${pb.emphasis('MANDATORY:', 'bold')} Call the ${pb.inlineCode('wrap_change')} tool with:\n` +
+            pb.list(
+              [
+                `${pb.inlineCode('flagName')}: The flag name from Step 1 (or existing flag)`,
+                `${pb.inlineCode('fileName')}: The file you are modifying`,
+                `${pb.inlineCode('language')}: (optional) The programming language`,
+                `${pb.inlineCode('frameworkHint')}: (optional) Framework like "React", "Express", "Django"`,
+              ],
+              true,
+            ) +
+            '\n\n' +
+            `The ${pb.inlineCode('wrap_change')} tool will return:\n` +
+            pb.list(
+              [
+                'Search instructions to find existing flag patterns in the codebase',
+                'Code templates for wrapping your changes',
+                'Framework-specific examples if applicable',
+                'Instructions on how to match existing conventions',
+              ],
+              true,
+            ) +
+            '\n\n' +
+            `${pb.emphasis('Follow the guidance from wrap_change:', 'bold')} Search for existing patterns using Grep, then wrap your code to match those patterns.`,
+        },
+        {
+          step: 'Step 3: Implement the Wrapped Code',
+          details:
+            'Use the templates and guidance from ' +
+            pb.inlineCode('wrap_change') +
+            ' to implement your changes:\n' +
+            pb.list(
+              [
+                'Add the import statement at the top of the file',
+                'Wrap your code changes with the flag check',
+                'Match the existing code style and conventions',
+                'Handle both enabled and disabled states appropriately',
+              ],
+              true,
+            ),
+        },
+        {
+          step: 'Step 4: Test and Verify',
+          details: pb.list(
+            [
+              'Ensure the code compiles without errors',
+              'Test with the flag enabled',
+              'Test with the flag disabled',
+              'Verify it follows project conventions',
+            ],
+            true,
+          ),
+        },
+      ]) +
+      '\n\n' +
+      pb.alert(
+        'IMPORTANT',
+        `Do NOT manually write flag wrapping code without first calling ${pb.inlineCode('wrap_change')}. ` +
+          `The tool ensures you follow existing patterns and provides language-specific guidance.`,
+        'warning',
+      ),
   );
 
   return content;
@@ -420,28 +453,28 @@ function buildNextActionsSection(): string {
  * Build best practices section
  */
 function buildBestPracticesSection(): string {
-  let content = pb.subsection(
-    'Flag Type Selection',
-    getFlagTypeGuidance()
-  );
+  let content = pb.subsection('Flag Type Selection', getFlagTypeGuidance());
 
-  content += pb.subsection(
-    'Rollout Strategy Recommendations',
-    getRolloutGuidance()
-  );
+  content += pb.subsection('Rollout Strategy Recommendations', getRolloutGuidance());
 
-  content += pb.subsection(
-    'Anti-Patterns to Avoid',
-    getAntiPatternWarnings()
-  );
+  content += pb.subsection('Anti-Patterns to Avoid', getAntiPatternWarnings());
 
   content += pb.subsection(
     'Documentation',
     pb.list([
-      pb.link('Unleash Best Practices', 'https://docs.getunleash.io/topics/feature-flags/best-practices-using-feature-flags-at-scale'),
-      pb.link('Feature Flag Types', 'https://docs.getunleash.io/topics/feature-flags/feature-flag-types'),
-      pb.link('Activation Strategies', 'https://docs.getunleash.io/reference/activation-strategies'),
-    ])
+      pb.link(
+        'Unleash Best Practices',
+        'https://docs.getunleash.io/topics/feature-flags/best-practices-using-feature-flags-at-scale',
+      ),
+      pb.link(
+        'Feature Flag Types',
+        'https://docs.getunleash.io/topics/feature-flags/feature-flag-types',
+      ),
+      pb.link(
+        'Activation Strategies',
+        'https://docs.getunleash.io/reference/activation-strategies',
+      ),
+    ]),
   );
 
   return content;
@@ -452,7 +485,7 @@ function buildBestPracticesSection(): string {
  */
 export async function evaluateChange(
   context: ServerContext,
-  args: unknown
+  args: unknown,
 ): Promise<CallToolResult> {
   try {
     // Validate input (all fields optional)

@@ -158,9 +158,7 @@ return newUI();`,
     language: ['python'],
     patternType: 'assignment',
     description: 'Python flag assignment',
-    regexPatterns: [
-      '(\\w+)\\s*=\\s*.*\\.is_enabled\\([\'"`]([^\'"`]+)[\'"`]\\)',
-    ],
+    regexPatterns: ['(\\w+)\\s*=\\s*.*\\.is_enabled\\([\'"`]([^\'"`]+)[\'"`]\\)'],
     scopeRules: {
       type: 'indentation',
       instructions: `
@@ -465,9 +463,9 @@ ${p.scopeRules.instructions}
 
 **Examples**:
 ${p.examples.map((ex) => `\`\`\`\n${ex.code}\n\`\`\`\n*${ex.explanation}*`).join('\n\n')}
-`
+`,
   )
-  .join('\n---\n\n')}`
+  .join('\n---\n\n')}`,
     )
     .join('\n\n');
 }

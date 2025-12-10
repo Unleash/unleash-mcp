@@ -41,7 +41,7 @@ export function listResourceTemplates(): ResourceTemplate[] {
 
 export async function readProjectsResource(
   context: ServerContext,
-  options: { limit?: number; order?: 'asc' | 'desc'; offset?: number } = {}
+  options: { limit?: number; order?: 'asc' | 'desc'; offset?: number } = {},
 ): Promise<TextResourceContents> {
   try {
     const { projects, fetchedAt, fromCache } = await getCachedProjects(context);
@@ -67,7 +67,7 @@ export async function readProjectsResource(
           projects: slice,
         },
         null,
-        2
+        2,
       ),
     };
   } catch (error) {
@@ -79,7 +79,7 @@ export async function readProjectsResource(
 export async function readFeatureFlagsResource(
   context: ServerContext,
   projectId: string,
-  options: { limit?: number; order?: 'asc' | 'desc'; offset?: number } = {}
+  options: { limit?: number; order?: 'asc' | 'desc'; offset?: number } = {},
 ): Promise<TextResourceContents> {
   try {
     const { flags, fetchedAt, fromCache } = await getCachedFeatureFlags(context, projectId);
@@ -106,7 +106,7 @@ export async function readFeatureFlagsResource(
           flags: slice,
         },
         null,
-        2
+        2,
       ),
     };
   } catch (error) {
@@ -122,7 +122,7 @@ export async function readFeatureFlagResource(
 ): Promise<TextResourceContents> {
   try {
     const { flags, fetchedAt, fromCache } = await getCachedFeatureFlags(context, projectId);
-    const flag = flags.find(f => f.name === flagName);
+    const flag = flags.find((f) => f.name === flagName);
     if (!flag) {
       throw new Error(`Feature flag not found: ${flagName}`);
     }
@@ -139,7 +139,7 @@ export async function readFeatureFlagResource(
           flag,
         },
         null,
-        2
+        2,
       ),
     };
   } catch (error) {
@@ -160,9 +160,11 @@ export function isProjectsUri(uri: string): boolean {
   return uri === PROJECTS_RESOURCE_URI || uri.startsWith(`${PROJECTS_RESOURCE_URI}?`);
 }
 
-export function parseProjectsResourceOptions(
-  uri: string
-): { limit?: number; order?: 'asc' | 'desc'; offset?: number } {
+export function parseProjectsResourceOptions(uri: string): {
+  limit?: number;
+  order?: 'asc' | 'desc';
+  offset?: number;
+} {
   if (!isProjectsUri(uri)) {
     return {};
   }
@@ -220,9 +222,11 @@ export function extractFlagNameFromFeatureUri(uri: string): string | undefined {
   }
 }
 
-export function parseFeatureFlagsResourceOptions(
-  uri: string
-): { limit?: number; order?: 'asc' | 'desc'; offset?: number } {
+export function parseFeatureFlagsResourceOptions(uri: string): {
+  limit?: number;
+  order?: 'asc' | 'desc';
+  offset?: number;
+} {
   if (!isFeatureFlagsUri(uri)) {
     return {};
   }
@@ -252,7 +256,7 @@ export function parseFeatureFlagsResourceOptions(
 
 export function buildFeatureFlagsUri(
   projectId: string,
-  options: { limit?: number; order?: 'asc' | 'desc'; offset?: number } = {}
+  options: { limit?: number; order?: 'asc' | 'desc'; offset?: number } = {},
 ): string {
   const base = `unleash://projects/${encodeURIComponent(projectId)}/feature-flags`;
   const params = new URLSearchParams();
@@ -273,14 +277,15 @@ export function buildFeatureFlagsUri(
   return query ? `${base}?${query}` : base;
 }
 
-export function buildFeatureFlagUri(
-  projectId: string,
-  flagName: string,
-): string {
+export function buildFeatureFlagUri(projectId: string, flagName: string): string {
   return `unleash://projects/${encodeURIComponent(projectId)}/feature-flags/${encodeURIComponent(flagName)}`;
 }
 
-function buildProjectsUri(options: { limit?: number; order?: 'asc' | 'desc'; offset?: number }): string {
+function buildProjectsUri(options: {
+  limit?: number;
+  order?: 'asc' | 'desc';
+  offset?: number;
+}): string {
   const params = new URLSearchParams();
 
   if (typeof options.limit === 'number') {
@@ -301,7 +306,7 @@ function buildProjectsUri(options: { limit?: number; order?: 'asc' | 'desc'; off
 
 function sortProjects(
   projects: UnleashProjectSummary[],
-  order: 'asc' | 'desc'
+  order: 'asc' | 'desc',
 ): UnleashProjectSummary[] {
   const direction = order === 'asc' ? 1 : -1;
 
@@ -333,7 +338,7 @@ function sortProjects(
 
 function sortFeatureFlags(
   flags: FeatureFlagSummary[],
-  order: 'asc' | 'desc'
+  order: 'asc' | 'desc',
 ): FeatureFlagSummary[] {
   const direction = order === 'asc' ? 1 : -1;
 
@@ -359,23 +364,22 @@ function sortFeatureFlags(
 function applyPagination<T>(
   items: T[],
   limit?: number,
-  offset?: number
+  offset?: number,
 ): { slice: T[]; nextOffset?: number } {
-  const safeLimit = typeof limit === 'number' && Number.isFinite(limit)
-    ? Math.max(0, Math.floor(limit))
-    : undefined;
-  const safeOffset = typeof offset === 'number' && Number.isFinite(offset)
-    ? Math.max(0, Math.floor(offset))
-    : 0;
+  const safeLimit =
+    typeof limit === 'number' && Number.isFinite(limit)
+      ? Math.max(0, Math.floor(limit))
+      : undefined;
+  const safeOffset =
+    typeof offset === 'number' && Number.isFinite(offset) ? Math.max(0, Math.floor(offset)) : 0;
 
   const start = safeOffset;
   const end = safeLimit !== undefined ? start + safeLimit : undefined;
 
   const slice = items.slice(start, end);
 
-  const nextOffset = safeLimit !== undefined && start + safeLimit < items.length
-    ? start + safeLimit
-    : undefined;
+  const nextOffset =
+    safeLimit !== undefined && start + safeLimit < items.length ? start + safeLimit : undefined;
 
   return {
     slice,
@@ -459,7 +463,7 @@ async function getCachedProjects(context: ServerContext): Promise<{
 
 async function getCachedFeatureFlags(
   context: ServerContext,
-  projectId: string
+  projectId: string,
 ): Promise<{
   flags: FeatureFlagSummary[];
   fetchedAt: number;
