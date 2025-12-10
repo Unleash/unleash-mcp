@@ -45,6 +45,7 @@ import { getFlagStateTool } from './tools/getFlagState.js';
 import { removeFlagStrategyTool } from './tools/removeFlagStrategy.js';
 import { setFlagRolloutTool } from './tools/setFlagRollout.js';
 import { toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
+import type { ToolType } from './tools/types.js';
 import { wrapChangeTool } from './tools/wrapChange.js';
 import { UnleashClient } from './unleash/client.js';
 import { VERSION } from './version.js';
@@ -121,7 +122,7 @@ async function main(): Promise<void> {
     removeFlagStrategyTool,
   ];
 
-  tools.forEach((tool) => {
+  tools.forEach((tool: ToolType) => {
     server.registerTool(
       tool.name,
       {

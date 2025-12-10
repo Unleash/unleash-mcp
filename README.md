@@ -96,11 +96,16 @@ Follow these steps to set up the project for local development.
 
 1. **Install dependencies**
 
-Clone the repository and install dependencies using Yarn.
+Clone the repository and install dependencies using Yarn. Corepack keeps everyone on the same Yarn 1.x version:
 
 ```bash
 git clone https://github.com/Unleash/unleash-mcp.git
 cd unleash-mcp
+
+# Enable Corepack once per machine, then prepare the Yarn 1.x version this repo expects
+corepack enable
+corepack prepare yarn@1.22.22 --activate
+
 yarn install
 ```
 
