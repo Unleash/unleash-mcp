@@ -1,11 +1,12 @@
-import type { AnySchema } from '@modelcontextprotocol/sdk/server/zod-compat.js';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { ServerContext } from '../context.js';
 
 export interface ToolType {
   name: string;
   description: string;
-  inputSchema: AnySchema;
+  // Schemas come from individual tools (zod). Using unknown here keeps registration lightweight
+  // and avoids deep instantiation issues with the compat types.
+  inputSchema: unknown;
   implementation: (
     context: ServerContext,
     args: unknown,

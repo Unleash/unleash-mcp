@@ -25,6 +25,7 @@
 
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import type { AnySchema } from '@modelcontextprotocol/sdk/server/zod-compat.js';
 import { loadConfig } from './config.js';
 import { createLogger, type ServerContext } from './context.js';
 import {
@@ -110,7 +111,7 @@ async function main(): Promise<void> {
 
   type ProgressExtra = { _meta?: { progressToken?: string | number } };
 
-  const tools = [
+  const tools: ToolType[] = [
     createFlagTool,
     evaluateChangeTool,
     detectFlagTool,
@@ -122,12 +123,12 @@ async function main(): Promise<void> {
     removeFlagStrategyTool,
   ];
 
-  tools.forEach((tool: ToolType) => {
+  tools.forEach((tool) => {
     server.registerTool(
       tool.name,
       {
         description: tool.description,
-        inputSchema: tool.inputSchema,
+        inputSchema: tool.inputSchema as AnySchema,
       },
       (args: unknown, extra: ProgressExtra) =>
         tool.implementation(context, args, extra._meta?.progressToken),
