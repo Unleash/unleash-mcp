@@ -1,8 +1,7 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { ensureProjectId, handleToolError, type ServerContext } from '../context.js';
-import type { FeatureDetails } from '../unleash/client.js';
-import { createFlagResourceLink, notifyProgress } from '../utils/streaming.js';
+import { createFlagResourceLink } from '../utils/streaming.js';
 
 const toggleFlagEnvironmentSchema = z.object({
   projectId: z
@@ -29,23 +28,30 @@ export async function toggleFlagEnvironment(
     const projectId = ensureProjectId(input.projectId, context.config.unleash.defaultProject);
     const action = input.enabled ? 'Enabling' : 'Disabling';
 
-    await notifyProgress(
-      context.server,
+    await context.notifyProgress(
       progressToken,
       0,
       100,
       `${action} "${input.featureName}" in "${input.environment}"...`,
     );
 
-    const feature: FeatureDetails = await context.unleashClient.toggleFeatureEnvironment(
+    await context.unleashClient.toggleFeatureEnvironment(
       projectId,
       input.featureName,
       input.environment,
       input.enabled,
     );
 
-    await notifyProgress(
-      context.server,
+    await context.notifyProgress(
+      progressToken,
+      75,
+      100,
+      `Feature ${input.enabled ? 'Enabled' : 'Disabled'} "${input.featureName}" in "${input.environment}", validating state...`,
+    );
+
+    const feature = await context.unleashClient.getFeature(projectId, input.featureName);
+
+    await context.notifyProgress(
       progressToken,
       100,
       100,

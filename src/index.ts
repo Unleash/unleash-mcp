@@ -25,12 +25,18 @@
 
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import type { AnySchema } from '@modelcontextprotocol/sdk/server/zod-compat.js';
+import type { Variables } from '@modelcontextprotocol/sdk/shared/uriTemplate.js';
+import { UriTemplate } from '@modelcontextprotocol/sdk/shared/uriTemplate.js';
 import { loadConfig } from './config.js';
 import { createLogger, type ServerContext } from './context.js';
 import {
+  extractFlagNameFromFeatureUri,
+  extractProjectIdFromFeatureUri,
   FEATURE_FLAG_RESOURCE_URI,
   FEATURE_FLAGS_RESOURCE_TEMPLATE,
+  isFeatureFlagsUri,
+  isFeatureFlagUri,
+  isProjectsUri,
   PROJECTS_RESOURCE_TEMPLATE,
   parseFeatureFlagsResourceOptions,
   parseProjectsResourceOptions,
@@ -46,15 +52,34 @@ import { getFlagStateTool } from './tools/getFlagState.js';
 import { removeFlagStrategyTool } from './tools/removeFlagStrategy.js';
 import { setFlagRolloutTool } from './tools/setFlagRollout.js';
 import { toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
-import type { ToolType } from './tools/types.js';
+import type { ToolDefinition } from './tools/types.js';
 import { wrapChangeTool } from './tools/wrapChange.js';
 import { UnleashClient } from './unleash/client.js';
+import { enableStdioLogging } from './utils/stdioLogging.js';
+import { notifyProgress } from './utils/streaming.js';
 import { VERSION } from './version.js';
+
+class UriTemplateWithMatcher extends UriTemplate {
+  matchFn: (uri: string) => Variables | null;
+
+  constructor(template: string, matchFn: (uri: string) => Variables | null) {
+    super(template);
+    this.matchFn = matchFn;
+  }
+
+  // Override default matching to tolerate missing optional query params.
+  match(uri: string): Variables | null {
+    return this.matchFn(uri);
+  }
+}
 
 /**
  * Main entry point for the MCP server.
  */
 async function main(): Promise<void> {
+  // Optional diagnostic logging of stdio without modifying protocol flow.
+  enableStdioLogging();
+
   // Load and validate configuration
   const config = loadConfig();
   const logger = createLogger(config.server.logLevel);
@@ -103,15 +128,15 @@ async function main(): Promise<void> {
 
   // Build shared context
   const context: ServerContext = {
-    server,
     config,
     unleashClient,
     logger,
+    notifyProgress: notifyProgress(server),
   };
 
   type ProgressExtra = { _meta?: { progressToken?: string | number } };
 
-  const tools: ToolType[] = [
+  const tools: ToolDefinition[] = [
     createFlagTool,
     evaluateChangeTool,
     detectFlagTool,
@@ -123,18 +148,25 @@ async function main(): Promise<void> {
     removeFlagStrategyTool,
   ];
 
+  // this is needed to work around a typing issue in the MCP SDK
+  const registerTool = server.registerTool.bind(server) as (
+    name: string,
+    config: { description?: string; inputSchema?: ToolDefinition['inputSchema'] },
+    cb: (args: unknown, extra: ProgressExtra) => unknown,
+  ) => unknown;
+
   tools.forEach((tool) => {
-    server.registerTool(
+    registerTool(
       tool.name,
       {
         description: tool.description,
-        inputSchema: tool.inputSchema as AnySchema,
+        inputSchema: tool.inputSchema,
       },
       (args: unknown, extra: ProgressExtra) =>
         tool.implementation(context, args, extra._meta?.progressToken),
     );
   });
-  registerResources(context);
+  registerResources(server, context);
 
   // Start server with stdio transport
   const transport = new StdioServerTransport();
@@ -149,12 +181,15 @@ main().catch((error) => {
   process.exit(1);
 });
 
-function registerResources(context: ServerContext): void {
-  const projectsTemplate = new ResourceTemplate(PROJECTS_RESOURCE_TEMPLATE, {
-    list: undefined,
-  });
+function registerResources(server: McpServer, context: ServerContext): void {
+  const projectsTemplate = new ResourceTemplate(
+    new UriTemplateWithMatcher(PROJECTS_RESOURCE_TEMPLATE, (uri) =>
+      isProjectsUri(uri) ? {} : null,
+    ),
+    { list: undefined },
+  );
 
-  context.server.registerResource(
+  server.registerResource(
     'unleash-projects-filtered',
     projectsTemplate,
     {
@@ -167,11 +202,19 @@ function registerResources(context: ServerContext): void {
     }),
   );
 
-  const featureFlagsTemplate = new ResourceTemplate(FEATURE_FLAGS_RESOURCE_TEMPLATE, {
-    list: undefined,
-  });
+  const featureFlagsTemplate = new ResourceTemplate(
+    new UriTemplateWithMatcher(FEATURE_FLAGS_RESOURCE_TEMPLATE, (uri) => {
+      if (!isFeatureFlagsUri(uri)) {
+        return null;
+      }
 
-  context.server.registerResource(
+      const projectId = extractProjectIdFromFeatureUri(uri);
+      return projectId ? { projectId } : null;
+    }),
+    { list: undefined },
+  );
+
+  server.registerResource(
     'unleash-feature-flags-by-project',
     featureFlagsTemplate,
     {
@@ -197,11 +240,25 @@ function registerResources(context: ServerContext): void {
     },
   );
 
-  const featureFlagTemplate = new ResourceTemplate(FEATURE_FLAG_RESOURCE_URI, {
-    list: undefined,
-  });
+  const featureFlagTemplate = new ResourceTemplate(
+    new UriTemplateWithMatcher(FEATURE_FLAG_RESOURCE_URI, (uri) => {
+      if (!isFeatureFlagUri(uri)) {
+        return null;
+      }
 
-  context.server.registerResource(
+      const projectId = extractProjectIdFromFeatureUri(uri);
+      const flagName = extractFlagNameFromFeatureUri(uri);
+
+      if (!projectId || !flagName) {
+        return null;
+      }
+
+      return { projectId, flagName };
+    }),
+    { list: undefined },
+  );
+
+  server.registerResource(
     'unleash-feature-flag',
     featureFlagTemplate,
     {

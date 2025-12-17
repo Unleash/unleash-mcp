@@ -2,11 +2,7 @@ import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { ensureProjectId, handleToolError, type ServerContext } from '../context.js';
 import type { FeatureFlagType } from '../unleash/client.js';
-import {
-  createFlagResourceLink,
-  formatFlagCreatedMessage,
-  notifyProgress,
-} from '../utils/streaming.js';
+import { createFlagResourceLink, formatFlagCreatedMessage } from '../utils/streaming.js';
 
 /**
  * Input schema for the create_flag tool.
@@ -73,13 +69,7 @@ export async function createFlag(
     context.logger.info(`Creating feature flag "${input.name}" in project "${projectId}"`);
 
     // Notify progress: Starting
-    await notifyProgress(
-      context.server,
-      progressToken,
-      0,
-      100,
-      `Creating feature flag "${input.name}"...`,
-    );
+    await context.notifyProgress(progressToken, 0, 100, `Creating feature flag "${input.name}"...`);
 
     // Call Unleash API to create the flag
     const response = await context.unleashClient.createFeatureFlag(projectId, {
@@ -90,8 +80,7 @@ export async function createFlag(
     });
 
     // Notify progress: Complete
-    await notifyProgress(
-      context.server,
+    await context.notifyProgress(
       progressToken,
       100,
       100,

@@ -1,4 +1,4 @@
-import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import fs from 'node:fs';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { Config } from './config.js';
 import type { UnleashClient } from './unleash/client.js';
@@ -9,10 +9,15 @@ import { normalizeError } from './utils/errors.js';
  * Provides centralized access to configuration, clients, and utilities.
  */
 export interface ServerContext {
-  server: McpServer;
   config: Config;
   unleashClient: UnleashClient;
   logger: Logger;
+  notifyProgress: (
+    progressToken: string | number | undefined,
+    current: number,
+    total: number,
+    message?: string,
+  ) => Promise<void>;
 }
 
 /**
@@ -31,31 +36,46 @@ export interface Logger {
 export function createLogger(logLevel: string): Logger {
   const levels = ['debug', 'info', 'warn', 'error'];
   const currentLevelIndex = levels.indexOf(logLevel);
+  const appLogFile = process.env.APP_LOG_FILE;
 
   function shouldLog(level: string): boolean {
     const levelIndex = levels.indexOf(level);
     return levelIndex >= currentLevelIndex;
   }
 
+  // Write logs to a file when provided; otherwise use stderr. Never write to stdout.
+  const writeLog = (prefix: string, message: string, args: unknown[]): void => {
+    const line = `${prefix} ${message}${args.length ? ` ${args.map(String).join(' ')}` : ''}\n`;
+    if (appLogFile) {
+      try {
+        fs.appendFileSync(appLogFile, line);
+        return;
+      } catch {
+        // Fall back to stderr if file writing fails.
+      }
+    }
+    console.error(line.trimEnd());
+  };
+
   return {
     debug(message: string, ...args: unknown[]): void {
       if (shouldLog('debug')) {
-        console.debug(`[DEBUG] ${message}`, ...args);
+        writeLog('[DEBUG]', message, args);
       }
     },
     info(message: string, ...args: unknown[]): void {
       if (shouldLog('info')) {
-        console.info(`[INFO] ${message}`, ...args);
+        writeLog('[INFO]', message, args);
       }
     },
     warn(message: string, ...args: unknown[]): void {
       if (shouldLog('warn')) {
-        console.warn(`[WARN] ${message}`, ...args);
+        writeLog('[WARN]', message, args);
       }
     },
     error(message: string, ...args: unknown[]): void {
       if (shouldLog('error')) {
-        console.error(`[ERROR] ${message}`, ...args);
+        writeLog('[ERROR]', message, args);
       }
     },
   };

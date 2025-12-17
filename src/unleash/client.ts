@@ -404,31 +404,14 @@ export class UnleashClient {
     featureName: string,
     environment: string,
     enabled: boolean,
-  ): Promise<FeatureDetails> {
+  ): Promise<void> {
     if (this.dryRun) {
-      const feature = await this.getFeature(projectId, featureName);
-      const environments = feature.environments ?? [];
-      const updatedEnvironments = environments.map((env) =>
-        env.environment?.toLowerCase() === environment.toLowerCase() ||
-        env.name.toLowerCase() === environment.toLowerCase()
-          ? {
-              ...env,
-              enabled,
-              hasEnabledStrategies: enabled ? (env.hasEnabledStrategies ?? true) : false,
-            }
-          : env,
-      );
-
-      return {
-        ...feature,
-        enabled: feature.enabled ?? enabled,
-        environments: updatedEnvironments,
-      };
+      return;
     }
 
     const path = `/api/admin/projects/${encodeURIComponent(projectId)}/features/${encodeURIComponent(featureName)}/environments/${encodeURIComponent(environment)}/${enabled ? 'on' : 'off'}`;
 
-    return this.requestJson<FeatureDetails>(
+    await this.request(
       path,
       {
         method: 'POST',
@@ -553,6 +536,80 @@ export class UnleashClient {
       }
 
       return (await response.json()) as T;
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        const hint = `Check that UNLEASH_BASE_URL (${this.baseUrl}) is reachable.`;
+
+        throw new CustomError(
+          'NETWORK_ERROR',
+          options.networkErrorMessage ?? 'Failed to connect to Unleash API',
+          hint,
+        );
+      }
+
+      throw error;
+    }
+  }
+
+  /**
+   * Requests without expecting a JSON response.
+   *
+   */
+  private async request(
+    path: string,
+    init: RequestInit,
+    options: {
+      errorMessage: string;
+      networkErrorMessage?: string;
+    },
+  ): Promise<void> {
+    const url = `${this.baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
+    const headers = {
+      ...this.buildRequestHeaders(),
+      ...(init.headers ? (init.headers as Record<string, string>) : {}),
+    };
+
+    try {
+      const response = await fetch(url, {
+        ...init,
+        headers,
+      });
+
+      if (!response.ok) {
+        const rawBody = await response.text();
+        let message = `${options.errorMessage}: ${response.status} ${response.statusText}`;
+
+        try {
+          const parsed = JSON.parse(rawBody) as {
+            message?: string;
+            details?: Array<{ message?: string }>;
+          };
+
+          if (parsed.message) {
+            message = parsed.message;
+          } else if (parsed.details && Array.isArray(parsed.details)) {
+            const detailMessages = parsed.details
+              .map((detail) => detail.message)
+              .filter((detail): detail is string => Boolean(detail));
+
+            if (detailMessages.length > 0) {
+              message = detailMessages.join(', ');
+            }
+          }
+        } catch {
+          if (rawBody && rawBody.length < 200) {
+            message += `: ${rawBody}`;
+          }
+        }
+
+        throw new CustomError(`HTTP_${response.status}`, message);
+      }
+
+      return;
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;

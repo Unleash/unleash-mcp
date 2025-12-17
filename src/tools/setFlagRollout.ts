@@ -2,7 +2,7 @@ import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { ensureProjectId, handleToolError, type ServerContext } from '../context.js';
 import type { StrategyVariant, StrategyVariantPayload } from '../unleash/client.js';
-import { createFlagResourceLink, notifyProgress } from '../utils/streaming.js';
+import { createFlagResourceLink } from '../utils/streaming.js';
 
 const variantPayloadSchema = z.object({
   type: z.enum(['json', 'csv', 'string', 'number']).describe('Payload type'),
@@ -58,8 +58,7 @@ export async function setFlagRollout(
     const rolloutDisplay = `${input.rolloutPercentage}%`;
     const mode = context.config.server.dryRun ? '[DRY RUN] ' : '';
 
-    await notifyProgress(
-      context.server,
+    await context.notifyProgress(
       progressToken,
       0,
       100,
@@ -88,8 +87,7 @@ export async function setFlagRollout(
       },
     );
 
-    await notifyProgress(
-      context.server,
+    await context.notifyProgress(
       progressToken,
       100,
       100,

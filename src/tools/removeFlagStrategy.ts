@@ -2,7 +2,7 @@ import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { ensureProjectId, handleToolError, type ServerContext } from '../context.js';
 import type { FeatureDetails } from '../unleash/client.js';
-import { createFlagResourceLink, notifyProgress } from '../utils/streaming.js';
+import { createFlagResourceLink } from '../utils/streaming.js';
 
 const removeFlagStrategySchema = z.object({
   projectId: z
@@ -28,8 +28,7 @@ export async function removeFlagStrategy(
 
     const projectId = ensureProjectId(input.projectId, context.config.unleash.defaultProject);
 
-    await notifyProgress(
-      context.server,
+    await context.notifyProgress(
       progressToken,
       0,
       100,
@@ -48,8 +47,7 @@ export async function removeFlagStrategy(
       input.featureName,
     );
 
-    await notifyProgress(
-      context.server,
+    await context.notifyProgress(
       progressToken,
       100,
       100,

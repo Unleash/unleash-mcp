@@ -109,68 +109,62 @@ corepack prepare yarn@1.22.22 --activate
 yarn install
 ```
 
-2. **Configure environment variables**
+2) **Run in dev mode directly from Claude or Codex**
 
-Copy `.env.example` to `.env` and fill in your Unleash credentials:
+Avoid `npm run` output and `tsx watch` banners because any extra stdout breaks the MCP handshake. Two quiet options:
 
-```bash
-cp .env.example .env
+**A) Use compiled JS (most reliable)**
+```
+npm run build
+# or keep it hot in another terminal: npm run build:watch
+
+claude mcp add unleash-dev \
+  --env UNLEASH_BASE_URL={{your-instance-url}} \
+  --env UNLEASH_PAT={{your-personal-access-token}} \
+  --env LOG_LEVEL=debug \
+  --env APP_LOG_FILE="$(pwd)/app.log" \
+  --env MCP_STDIO_LOG_FILE="$(pwd)/mcp-stdio.log" \
+  -- node "$(pwd)/dist/index.js"
+
+codex mcp add unleash-dev \
+  --env UNLEASH_BASE_URL={{your-instance-url}} \
+  --env UNLEASH_PAT={{your-personal-access-token}} \
+  --env LOG_LEVEL=debug \
+  --env APP_LOG_FILE="$(pwd)/app.log" \
+  --env MCP_STDIO_LOG_FILE="$(pwd)/mcp-stdio.log" \
+  -- node "$(pwd)/dist/index.js"
 ```
 
-Edit `.env`:
+**B) Use TypeScript directly (no build)**
+```
+claude mcp add unleash-dev \
+  --env UNLEASH_BASE_URL={{your-instance-url}} \
+  --env UNLEASH_PAT={{your-personal-access-token}} \
+  --env LOG_LEVEL=debug \
+  --env APP_LOG_FILE="$(pwd)/app.log" \
+  --env MCP_STDIO_LOG_FILE="$(pwd)/mcp-stdio.log" \
+  -- node --no-warnings --import tsx "$(pwd)/src/index.ts"
 
-```env
-UNLEASH_BASE_URL={{your-instance-url}}
-UNLEASH_PAT={{your-personal-access-token}}
-UNLEASH_DEFAULT_PROJECT={{default_project_id}}  # Optional: the project the MCP should use by default
+codex mcp add unleash-dev \
+  --env UNLEASH_BASE_URL={{your-instance-url}} \
+  --env UNLEASH_PAT={{your-personal-access-token}} \
+  --env LOG_LEVEL=debug \
+  --env APP_LOG_FILE="$(pwd)/app.log" \
+  --env MCP_STDIO_LOG_FILE="$(pwd)/mcp-stdio.log" \
+  -- node --no-warnings --import tsx "$(pwd)/src/index.ts"
 ```
 
-3. **Build the project**
+Notes:
+- `node --import tsx` is quiet (no npm lifecycle output) and runs TS directly; use this when you want to avoid building.
+- `node dist/index.js` is the safest choice; pair it with `npm run build:watch` to rebuild on changes while the agent command stays stable.
+- Logs stay in the repo root (`app.log`, `mcp-stdio.log`), both gitignored.
 
-```bash
-yarn build
-```
+### Logging control
 
-Output will be in the `dist/` directory.
-
-4. **(Optional) Run checks**
-
-Run type checking, linting, and tests:
-
-```
-# Type checking and linting
-yarn lint
-
-# Run tests (the Vitest framework is configured, but no test suites yet)
-yarn test
-```
-
-#### Running the server
-
-**Development mode with hot reload**
-
-```bash
-yarn dev
-```
-
-**Production mode**
-
-```bash
-node dist/index.js
-```
-
-**With CLI flags**
-
-```bash
-# Dry run mode (simulates API calls without actually creating flags)
-node dist/index.js --dry-run
-
-# Custom log level
-node dist/index.js --log-level debug
-
-# Combine flags
-node dist/index.js --dry-run --log-level debug
-```
+- `LOG_LEVEL` (preferred): controls application logging verbosity (`debug`, `info`, `warn`, `error`). Defaults to `error` when unset.
+- `--log-level` CLI flag: optional override for `LOG_LEVEL` when you want a one-off change.
+- `APP_LOG_FILE` (optional): if set, application logs are written to this file (not stdout). If unset, logs go to stderr.
+- `MCP_STDIO_LOG_FILE` (optional): if set, MCP stdin/stdout/stderr are tee’d into this single file with channel prefixes. Protocol messages still flow over stdout normally.
 
 ## Tool reference
 

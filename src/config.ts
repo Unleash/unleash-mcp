@@ -17,7 +17,7 @@ const configSchema = z.object({
   }),
   server: z.object({
     dryRun: z.boolean().default(false),
-    logLevel: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
+    logLevel: z.enum(['debug', 'info', 'warn', 'error']).default('error'),
   }),
 });
 
@@ -25,11 +25,12 @@ export type Config = z.infer<typeof configSchema>;
 
 /**
  * Parse CLI arguments for --dry-run and --log-level flags.
+ * Log level is optional here because LOG_LEVEL env is the primary source.
  */
-function parseCliFlags(): { dryRun: boolean; logLevel: string } {
+function parseCliFlags(): { dryRun: boolean; logLevel?: string } {
   const args = process.argv.slice(2);
   let dryRun = false;
-  let logLevel = 'info';
+  let logLevel: string | undefined;
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--dry-run') {
@@ -49,6 +50,7 @@ function parseCliFlags(): { dryRun: boolean; logLevel: string } {
  */
 export function loadConfig(): Config {
   const cliFlags = parseCliFlags();
+  const logLevel = cliFlags.logLevel ?? process.env.LOG_LEVEL;
 
   const rawConfig = {
     unleash: {
@@ -59,12 +61,20 @@ export function loadConfig(): Config {
     },
     server: {
       dryRun: cliFlags.dryRun,
-      logLevel: cliFlags.logLevel,
+      logLevel,
     },
   };
 
   try {
-    return configSchema.parse(rawConfig);
+    const parsed = configSchema.parse(rawConfig);
+
+    return {
+      ...parsed,
+      unleash: {
+        ...parsed.unleash,
+        baseUrl: normalizeBaseUrl(parsed.unleash.baseUrl),
+      },
+    };
   } catch (error) {
     if (error instanceof z.ZodError) {
       const messages = error.errors.map((err) => `  - ${err.path.join('.')}: ${err.message}`);
@@ -73,5 +83,17 @@ export function loadConfig(): Config {
       );
     }
     throw error;
+  }
+}
+
+function normalizeBaseUrl(url: string): string {
+  try {
+    const parsed = new URL(url);
+    // Collapse multiple slashes in the path, remove trailing slashes, and preserve root path if pathname becomes empty.
+    parsed.pathname = parsed.pathname.replace(/\/{2,}/g, '/').replace(/\/+$/, '') || '/';
+    return parsed.toString();
+  } catch {
+    // Fallback: strip trailing slashes only
+    return url.replace(/\/+$/, '');
   }
 }
