@@ -6,12 +6,12 @@
     "url": "https://github.com/Unleash/unleash-mcp",
     "source": "github"
   },
-  "version": "0.1.1",
+  "version": "0.2.6",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@unleash/mcp",
-      "version": "0.1.1",
+      "version": "0.2.6",
       "transport": {
         "type": "stdio"
       },

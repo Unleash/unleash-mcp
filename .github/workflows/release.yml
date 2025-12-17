@@ -30,11 +30,19 @@ jobs:
     runs-on: ubuntu-latest
     needs: release # publish to npm first
     steps:
-      - name: Checkout code
+      - name: Checkout recently pushed tag v${{ github.event.inputs.version }}
         uses: actions/checkout@v6
+        with:
+          ref: refs/tags/v${{ github.event.inputs.version }}
       - name: Install MCP Publisher
         run: |
           curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+      - name: Align server.json version
+        run: |
+          PKG_VERSION=$(jq -r '.version' package.json)
+          TMP_FILE=$(mktemp)
+          jq --arg v "$PKG_VERSION" '.version=$v | .packages = (.packages | map(.version=$v))' server.json > "$TMP_FILE"
+          mv "$TMP_FILE" server.json
       # the guide suggests using --private-key-file but that isn't supported, so I'm using --private-key
       # official publishing guide: https://github.com/modelcontextprotocol/registry/blob/main/docs/guides/publishing/publish-server.md
       - name: Login to MCP Registry
