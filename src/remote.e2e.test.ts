@@ -11,8 +11,8 @@ import { createMcpHandler } from './remote.js';
  */
 describe('remote MCP handler (e2e)', () => {
   const handler = createMcpHandler({
-    baseUrl: 'http://localhost:4242',
-    dryRun: true,
+    baseUrl: 'http://localhost:4242', // Unleash admin API URL
+    dryRun: true, // don't hit the above URL
     logLevel: 'error',
   });
 
@@ -66,18 +66,18 @@ describe('remote MCP handler (e2e)', () => {
       ? listRes.body.find((r: { id?: number }) => r.id === 2)
       : listRes.body;
 
-    expect(toolsResult.result.tools).toBeDefined();
-    const toolNames = toolsResult.result.tools.map((t: { name: string }) => t.name);
-    expect(toolNames).toContain('create_flag');
-    expect(toolNames).toContain('evaluate_change');
-    expect(toolNames).toContain('detect_flag');
-    expect(toolNames).toContain('wrap_change');
-    expect(toolNames).toContain('cleanup_flag');
-    expect(toolNames).toContain('set_flag_rollout');
-    expect(toolNames).toContain('get_flag_state');
-    expect(toolNames).toContain('toggle_flag_environment');
-    expect(toolNames).toContain('remove_flag_strategy');
-    expect(toolNames).toHaveLength(9);
+    const toolNames = toolsResult.result.tools.map((t: { name: string }) => t.name).sort();
+    expect(toolNames).toEqual([
+      'cleanup_flag',
+      'create_flag',
+      'detect_flag',
+      'evaluate_change',
+      'get_flag_state',
+      'remove_flag_strategy',
+      'set_flag_rollout',
+      'toggle_flag_environment',
+      'wrap_change',
+    ]);
 
     // 3. Call a tool (dry-run create_flag)
     const callRes = await mcpPost([
@@ -105,9 +105,12 @@ describe('remote MCP handler (e2e)', () => {
     expect(callResult.result).toBeDefined();
     expect(callResult.result.isError).toBeFalsy();
 
-    const textContent = callResult.result.content.find((c: { type: string }) => c.type === 'text');
-    expect(textContent.text).toContain('e2e-test-flag');
-    expect(textContent.text).toContain('DRY RUN');
+    expect(callResult.result).toMatchObject({
+      content: expect.arrayContaining([
+        { type: 'text', text: expect.stringContaining('e2e-test-flag') },
+        { type: 'text', text: expect.stringContaining('DRY RUN') },
+      ]),
+    });
   });
 });
 
