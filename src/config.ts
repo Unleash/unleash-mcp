@@ -86,7 +86,7 @@ export function loadConfig(): Config {
   }
 }
 
-function normalizeBaseUrl(url: string): string {
+export function normalizeBaseUrl(url: string): string {
   try {
     const parsed = new URL(url);
     // Collapse multiple slashes in the path, remove trailing slashes, and preserve root path if pathname becomes empty.
