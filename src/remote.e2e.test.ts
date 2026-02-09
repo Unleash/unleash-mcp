@@ -1,41 +1,34 @@
-import { createServer } from 'node:http';
+import express from 'express';
 import request from 'supertest';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { createMcpHandler } from './remote.js';
 
 /**
  * E2E test for the remote MCP handler.
  *
- * Spins up a real HTTP server with createMcpHandler, sends JSON-RPC requests
+ * Spins up an Express app with createMcpHandler, sends JSON-RPC requests
  * via supertest, and verifies the full MCP lifecycle works end-to-end.
  */
 describe('remote MCP handler (e2e)', () => {
   const handler = createMcpHandler({
-    baseUrl: 'http://localhost:4242', // Unleash admin API URL
-    dryRun: true, // don't hit the above URL
+    baseUrl: 'http://localhost:4242',
+    dryRun: true,
     logLevel: 'error',
   });
 
-  const server = createServer(async (req, res) => {
+  const app = express();
+  app.use(express.json());
+  app.post('/', async (req, res) => {
     await handler(req, res, {
       authHeaders: { Authorization: 'test-token' },
-      parsedBody: await parseBody(req),
+      parsedBody: req.body,
     });
   });
 
-  beforeAll(() => new Promise<void>((resolve) => server.listen(0, resolve)));
-  afterAll(
-    () =>
-      new Promise<void>((resolve, reject) =>
-        server.close((err) => (err ? reject(err) : resolve())),
-      ),
-  );
-
   function mcpPost(body: unknown) {
-    return request(server)
+    return request(app)
       .post('/')
       .set('Accept', 'application/json, text/event-stream')
-      .set('Content-Type', 'application/json')
       .send(body);
   }
 
@@ -113,18 +106,3 @@ describe('remote MCP handler (e2e)', () => {
     });
   });
 });
-
-function parseBody(req: import('node:http').IncomingMessage): Promise<unknown> {
-  return new Promise((resolve, reject) => {
-    const chunks: Buffer[] = [];
-    req.on('data', (chunk: Buffer) => chunks.push(chunk));
-    req.on('end', () => {
-      try {
-        resolve(JSON.parse(Buffer.concat(chunks).toString()));
-      } catch (e) {
-        reject(e);
-      }
-    });
-    req.on('error', reject);
-  });
-}
