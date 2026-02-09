@@ -25,11 +25,8 @@ describe('remote MCP handler (e2e)', () => {
     });
   });
 
-  function mcpPost(body: unknown) {
-    return request(app)
-      .post('/')
-      .set('Accept', 'application/json, text/event-stream')
-      .send(body);
+  function mcpPost(body: object | object[]) {
+    return request(app).post('/').set('Accept', 'application/json, text/event-stream').send(body);
   }
 
   it('handles initialize → tools/list → tools/call roundtrip', async () => {

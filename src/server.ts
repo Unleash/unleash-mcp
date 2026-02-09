@@ -189,8 +189,8 @@ function registerResources(server: McpServer, context: ServerContext): void {
       description:
         'Feature flags for a specific Unleash project. Replace {projectId}; optional limit/order/offset parameters help paginate flags alphabetically.',
     },
-    async (uri: URL, variables: any, _extra: unknown) => {
-      const projectId = variables.projectId;
+    async (uri: URL, variables: Variables, _extra: unknown) => {
+      const projectId = variables.projectId as string | undefined;
       if (!projectId) {
         throw new Error('Project ID missing from feature flags URI');
       }
@@ -232,8 +232,8 @@ function registerResources(server: McpServer, context: ServerContext): void {
       mimeType: 'application/json',
       description: 'Single feature flag resource.',
     },
-    async (_uri: URL, variables: any, _extra: unknown) => {
-      const { projectId, flagName } = variables;
+    async (_uri: URL, variables: Variables, _extra: unknown) => {
+      const { projectId, flagName } = variables as { projectId?: string; flagName?: string };
       if (!projectId) {
         throw new Error('Project ID missing from feature flag URI');
       }
