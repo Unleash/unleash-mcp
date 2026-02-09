@@ -419,19 +419,7 @@ function normalizeOrder(value: string | null): 'asc' | 'desc' | undefined {
 }
 
 const PROJECTS_CACHE_TTL_MS = 60_000;
-let cachedProjects: {
-  data: UnleashProjectSummary[];
-  fetchedAt: number;
-} | null = null;
-
 const FEATURE_FLAGS_CACHE_TTL_MS = 60_000;
-const cachedFeatureFlags = new Map<
-  string,
-  {
-    data: FeatureFlagSummary[];
-    fetchedAt: number;
-  }
->();
 
 async function getCachedProjects(context: ServerContext): Promise<{
   projects: UnleashProjectSummary[];
@@ -439,20 +427,18 @@ async function getCachedProjects(context: ServerContext): Promise<{
   fromCache: boolean;
 }> {
   const now = Date.now();
+  const cached = context.cache.projects;
 
-  if (cachedProjects && now - cachedProjects.fetchedAt < PROJECTS_CACHE_TTL_MS) {
+  if (cached && now - cached.fetchedAt < PROJECTS_CACHE_TTL_MS) {
     return {
-      projects: cachedProjects.data,
-      fetchedAt: cachedProjects.fetchedAt,
+      projects: cached.data,
+      fetchedAt: cached.fetchedAt,
       fromCache: true,
     };
   }
 
   const data = await context.unleashClient.listProjects();
-  cachedProjects = {
-    data,
-    fetchedAt: now,
-  };
+  context.cache.projects = { data, fetchedAt: now };
 
   return {
     projects: data,
@@ -470,7 +456,7 @@ async function getCachedFeatureFlags(
   fromCache: boolean;
 }> {
   const now = Date.now();
-  const cached = cachedFeatureFlags.get(projectId);
+  const cached = context.cache.featureFlags.get(projectId);
 
   if (cached && now - cached.fetchedAt < FEATURE_FLAGS_CACHE_TTL_MS) {
     return {
@@ -481,10 +467,7 @@ async function getCachedFeatureFlags(
   }
 
   const data = await context.unleashClient.listFeatureFlags(projectId);
-  cachedFeatureFlags.set(projectId, {
-    data,
-    fetchedAt: now,
-  });
+  context.cache.featureFlags.set(projectId, { data, fetchedAt: now });
 
   return {
     flags: data,

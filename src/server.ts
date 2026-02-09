@@ -108,6 +108,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     config,
     unleashClient,
     logger,
+    cache: { projects: null, featureFlags: new Map() },
     notifyProgress: notifyProgress(server),
   };
 
