@@ -1,8 +1,13 @@
 import fs from 'node:fs';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { Config } from './config.js';
-import type { UnleashClient } from './unleash/client.js';
+import type { FeatureFlagSummary, UnleashClient, UnleashProjectSummary } from './unleash/client.js';
 import { normalizeError } from './utils/errors.js';
+
+export interface ResourceCache {
+  projects: { data: UnleashProjectSummary[]; fetchedAt: number } | null;
+  featureFlags: Map<string, { data: FeatureFlagSummary[]; fetchedAt: number }>;
+}
 
 /**
  * Shared runtime context available to all tools and prompts.
@@ -12,6 +17,7 @@ export interface ServerContext {
   config: Config;
   unleashClient: UnleashClient;
   logger: Logger;
+  cache: ResourceCache;
   notifyProgress: (
     progressToken: string | number | undefined,
     current: number,
