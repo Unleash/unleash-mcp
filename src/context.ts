@@ -88,24 +88,56 @@ export function createLogger(logLevel: string): Logger {
 }
 
 /**
- * Ensure a project ID is available, using the default if not provided.
- * Helper function to simplify project ID handling in tools.
+ * Resolve a project ID from provided value, default config, or API discovery.
+ * Returns the project ID string, or undefined if it could not be resolved.
  */
-export function ensureProjectId(
+export async function resolveProjectId(
   providedProjectId: string | undefined,
-  defaultProjectId: string | undefined,
-): string {
+  context: ServerContext,
+): Promise<string | undefined> {
   if (providedProjectId) {
     return providedProjectId;
   }
 
+  const defaultProjectId = context.config.unleash.defaultProject;
   if (defaultProjectId) {
     return defaultProjectId;
   }
 
-  throw new Error(
-    'Project ID is required. Either provide it as a parameter or set UNLEASH_DEFAULT_PROJECT in your .env file.',
-  );
+  const projects = await context.unleashClient.listProjects();
+  if (projects.length === 1) {
+    return projects[0].id;
+  }
+
+  return undefined;
+}
+
+/**
+ * Build a CallToolResult that asks the user to pick a project.
+ */
+export async function askForProjectId(context: ServerContext): Promise<CallToolResult> {
+  const projects = await context.unleashClient.listProjects();
+
+  if (projects.length === 0) {
+    return {
+      content: [
+        {
+          type: 'text' as const,
+          text: 'No projects found in Unleash. Create a project first.',
+        },
+      ],
+    };
+  }
+
+  const projectList = projects.map((p) => `- ${p.id}: ${p.name}`).join('\n');
+  return {
+    content: [
+      {
+        type: 'text' as const,
+        text: `Multiple projects found. Ask the user which project to use before proceeding:\n${projectList}`,
+      },
+    ],
+  };
 }
 
 /**
