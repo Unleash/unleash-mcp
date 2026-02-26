@@ -77,6 +77,56 @@ codex mcp add unleash \
     -- npx -y @unleash/mcp@latest --log-level error
 ```
 
+### Remote agent setup (experimental)
+
+Instead of running the MCP server locally, you can connect directly to your Unleash instance's built-in remote MCP server over HTTP. This uses the [Streamable HTTP transport](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) — no local process needed.
+
+You must run the following command from the root directory of the project where you want to use the MCP.
+
+#### OAuth
+
+The OAuth flow opens your browser, lets you log in to Unleash, and automatically provisions a short-lived PAT. No manual token management required.
+
+For Claude Code:
+
+```bash
+claude mcp add --transport http unleash https://{{your-instance-url}}/api/admin/mcp
+```
+
+For Codex:
+
+```bash
+codex mcp add --transport http unleash https://{{your-instance-url}}/api/admin/mcp
+```
+
+On first use, the client will automatically open your browser for login. After authenticating with Unleash, a PAT is created and used for all subsequent requests.
+
+The PAT expires after 24 hours by default.
+
+#### Personal Access Token (PAT)
+
+Use this method when you already have a PAT or need headless/non-interactive access (CI pipelines, shared developer environments, clients that don't support OAuth).
+
+To create a PAT: log in to your Unleash instance, go to **Profile** > **Personal Access Tokens**, and create a new token.
+
+For Claude Code:
+
+```bash
+claude mcp add --transport http \
+  --header "Authorization: Bearer {{your-personal-access-token}}" \
+  unleash https://{{your-instance-url}}/api/admin/mcp
+```
+
+For Codex:
+
+```bash
+codex mcp add --transport http \
+  --header "Authorization: Bearer {{your-personal-access-token}}" \
+  unleash https://{{your-instance-url}}/api/admin/mcp
+```
+
+The `--header` flag sends the PAT directly, bypassing the OAuth flow entirely.
+
 ### Quickstart with npx
 
 You can run the MCP server as a standalone process without cloning the repository using `npx`. Provide configuration through environment variables or a local `.env` file in the directory where you run the command:
