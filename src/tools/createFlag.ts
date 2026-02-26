@@ -64,7 +64,9 @@ export async function createFlag(
     const input: CreateFeatureFlagInput = createFeatureFlagSchema.parse(args);
 
     // Ensure project ID is available
-    const projectId = ensureProjectId(input.projectId, context.config.unleash.defaultProject);
+    const resolved = await ensureProjectId(input.projectId, context);
+    if (typeof resolved !== 'string') return resolved;
+    const projectId = resolved;
 
     context.logger.info(`Creating feature flag "${input.name}" in project "${projectId}"`);
 

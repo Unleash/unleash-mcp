@@ -33,7 +33,9 @@ export async function getFlagState(
   try {
     const input: GetFlagStateInput = getFlagStateSchema.parse(args);
 
-    const projectId = ensureProjectId(input.projectId, context.config.unleash.defaultProject);
+    const resolved = await ensureProjectId(input.projectId, context);
+    if (typeof resolved !== 'string') return resolved;
+    const projectId = resolved;
 
     await context.notifyProgress(
       progressToken,

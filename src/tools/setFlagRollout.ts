@@ -53,7 +53,9 @@ export async function setFlagRollout(
   try {
     const input: SetFlagRolloutInput = setFlagRolloutSchema.parse(args);
 
-    const projectId = ensureProjectId(input.projectId, context.config.unleash.defaultProject);
+    const resolved = await ensureProjectId(input.projectId, context);
+    if (typeof resolved !== 'string') return resolved;
+    const projectId = resolved;
 
     const rolloutDisplay = `${input.rolloutPercentage}%`;
     const mode = context.config.server.dryRun ? '[DRY RUN] ' : '';

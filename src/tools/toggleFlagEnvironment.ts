@@ -25,7 +25,9 @@ export async function toggleFlagEnvironment(
   try {
     const input: ToggleFlagEnvironmentInput = toggleFlagEnvironmentSchema.parse(args);
 
-    const projectId = ensureProjectId(input.projectId, context.config.unleash.defaultProject);
+    const resolved = await ensureProjectId(input.projectId, context);
+    if (typeof resolved !== 'string') return resolved;
+    const projectId = resolved;
     const action = input.enabled ? 'Enabling' : 'Disabling';
 
     await context.notifyProgress(
