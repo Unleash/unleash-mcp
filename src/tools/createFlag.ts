@@ -1,6 +1,11 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { ensureProjectId, handleToolError, type ServerContext } from '../context.js';
+import {
+  askForProjectId,
+  handleToolError,
+  resolveProjectId,
+  type ServerContext,
+} from '../context.js';
 import type { FeatureFlagType } from '../unleash/client.js';
 import { createFlagResourceLink, formatFlagCreatedMessage } from '../utils/streaming.js';
 
@@ -64,7 +69,8 @@ export async function createFlag(
     const input: CreateFeatureFlagInput = createFeatureFlagSchema.parse(args);
 
     // Ensure project ID is available
-    const projectId = ensureProjectId(input.projectId, context.config.unleash.defaultProject);
+    const projectId = await resolveProjectId(input.projectId, context);
+    if (!projectId) return askForProjectId(context);
 
     context.logger.info(`Creating feature flag "${input.name}" in project "${projectId}"`);
 

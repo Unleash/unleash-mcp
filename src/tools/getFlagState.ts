@@ -1,6 +1,11 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { ensureProjectId, handleToolError, type ServerContext } from '../context.js';
+import {
+  askForProjectId,
+  handleToolError,
+  resolveProjectId,
+  type ServerContext,
+} from '../context.js';
 import type { FeatureDetails, FeatureEnvironment } from '../unleash/client.js';
 import { createFlagResourceLink } from '../utils/streaming.js';
 
@@ -33,7 +38,8 @@ export async function getFlagState(
   try {
     const input: GetFlagStateInput = getFlagStateSchema.parse(args);
 
-    const projectId = ensureProjectId(input.projectId, context.config.unleash.defaultProject);
+    const projectId = await resolveProjectId(input.projectId, context);
+    if (!projectId) return askForProjectId(context);
 
     await context.notifyProgress(
       progressToken,
