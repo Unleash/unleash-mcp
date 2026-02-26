@@ -90,13 +90,13 @@ The OAuth flow opens your browser, lets you log in to Unleash, and automatically
 For Claude Code:
 
 ```bash
-claude mcp add --transport http unleash https://{{your-instance-url}}/api/admin/mcp
+claude mcp add unleash https://{{your-instance-url}}/api/admin/mcp --transport http
 ```
 
 For Codex:
 
 ```bash
-codex mcp add --transport http unleash https://{{your-instance-url}}/api/admin/mcp
+codex mcp add unleash https://{{your-instance-url}}/api/admin/mcp --transport http
 ```
 
 On first use, the client will automatically open your browser for login. After authenticating with Unleash, a PAT is created and used for all subsequent requests.
@@ -112,17 +112,17 @@ To create a PAT: log in to your Unleash instance, go to **Profile** > **Personal
 For Claude Code:
 
 ```bash
-claude mcp add --transport http \
-  --header "Authorization: Bearer {{your-personal-access-token}}" \
-  unleash https://{{your-instance-url}}/api/admin/mcp
+claude mcp add unleash https://{{your-instance-url}}/api/admin/mcp \
+  --transport http \
+  --header "Authorization: Bearer {{your-personal-access-token}}"
 ```
 
 For Codex:
 
 ```bash
-codex mcp add --transport http \
-  --header "Authorization: Bearer {{your-personal-access-token}}" \
-  unleash https://{{your-instance-url}}/api/admin/mcp
+codex mcp add unleash https://{{your-instance-url}}/api/admin/mcp \
+  --transport http \
+  --header "Authorization: Bearer {{your-personal-access-token}}"
 ```
 
 The `--header` flag sends the PAT directly, bypassing the OAuth flow entirely.
