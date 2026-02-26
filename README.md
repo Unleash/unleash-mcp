@@ -81,7 +81,7 @@ codex mcp add unleash \
 
 Instead of running the MCP server locally, you can connect directly to your Unleash instance's built-in remote MCP server over HTTP. This uses the [Streamable HTTP transport](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) — no local process needed.
 
-You must run the following command from the root directory of the project where you want to use the MCP.
+> **Note:** Remote MCP is an experimental feature that must be enabled on your Unleash instance. Contact the Unleash team to get it enabled.
 
 #### OAuth
 
