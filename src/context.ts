@@ -89,12 +89,12 @@ export function createLogger(logLevel: string): Logger {
 
 /**
  * Resolve a project ID from provided value, default config, or API discovery.
- * Returns the project ID string, or a CallToolResult to return early.
+ * Returns the project ID string, or undefined if it could not be resolved.
  */
-export async function ensureProjectId(
+export async function resolveProjectId(
   providedProjectId: string | undefined,
   context: ServerContext,
-): Promise<string | CallToolResult> {
+): Promise<string | undefined> {
   if (providedProjectId) {
     return providedProjectId;
   }
@@ -104,6 +104,18 @@ export async function ensureProjectId(
     return defaultProjectId;
   }
 
+  const projects = await context.unleashClient.listProjects();
+  if (projects.length === 1) {
+    return projects[0].id;
+  }
+
+  return undefined;
+}
+
+/**
+ * Build a CallToolResult that asks the user to pick a project.
+ */
+export async function askForProjectId(context: ServerContext): Promise<CallToolResult> {
   const projects = await context.unleashClient.listProjects();
 
   if (projects.length === 0) {
@@ -115,10 +127,6 @@ export async function ensureProjectId(
         },
       ],
     };
-  }
-
-  if (projects.length === 1) {
-    return projects[0].id;
   }
 
   const projectList = projects.map((p) => `- ${p.id}: ${p.name}`).join('\n');

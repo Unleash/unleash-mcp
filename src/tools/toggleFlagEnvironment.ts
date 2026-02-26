@@ -1,6 +1,11 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { ensureProjectId, handleToolError, type ServerContext } from '../context.js';
+import {
+  askForProjectId,
+  handleToolError,
+  resolveProjectId,
+  type ServerContext,
+} from '../context.js';
 import { createFlagResourceLink } from '../utils/streaming.js';
 
 const toggleFlagEnvironmentSchema = z.object({
@@ -25,9 +30,8 @@ export async function toggleFlagEnvironment(
   try {
     const input: ToggleFlagEnvironmentInput = toggleFlagEnvironmentSchema.parse(args);
 
-    const resolved = await ensureProjectId(input.projectId, context);
-    if (typeof resolved !== 'string') return resolved;
-    const projectId = resolved;
+    const projectId = await resolveProjectId(input.projectId, context);
+    if (!projectId) return askForProjectId(context);
     const action = input.enabled ? 'Enabling' : 'Disabling';
 
     await context.notifyProgress(

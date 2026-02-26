@@ -1,6 +1,11 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { ensureProjectId, handleToolError, type ServerContext } from '../context.js';
+import {
+  askForProjectId,
+  handleToolError,
+  resolveProjectId,
+  type ServerContext,
+} from '../context.js';
 import type { FeatureDetails } from '../unleash/client.js';
 import { createFlagResourceLink } from '../utils/streaming.js';
 
@@ -26,9 +31,8 @@ export async function removeFlagStrategy(
   try {
     const input: RemoveFlagStrategyInput = removeFlagStrategySchema.parse(args);
 
-    const resolved = await ensureProjectId(input.projectId, context);
-    if (typeof resolved !== 'string') return resolved;
-    const projectId = resolved;
+    const projectId = await resolveProjectId(input.projectId, context);
+    if (!projectId) return askForProjectId(context);
 
     await context.notifyProgress(
       progressToken,
