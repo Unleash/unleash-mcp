@@ -77,6 +77,56 @@ codex mcp add unleash \
     -- npx -y @unleash/mcp@latest --log-level error
 ```
 
+### Remote agent setup (experimental)
+
+Instead of running the MCP server locally, you can connect directly to your Unleash instance's built-in remote MCP server over HTTP. This uses the [Streamable HTTP transport](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) — no local process needed.
+
+> **Note:** Remote MCP is an experimental feature that must be enabled on your Unleash instance. Contact the Unleash team to get it enabled.
+
+#### OAuth
+
+The OAuth flow opens your browser, lets you log in to Unleash, and automatically provisions a short-lived PAT. No manual token management required.
+
+For Claude Code:
+
+```bash
+claude mcp add unleash https://{{your-instance-url}}/api/admin/mcp --transport http
+```
+
+For Codex:
+
+```bash
+codex mcp add unleash https://{{your-instance-url}}/api/admin/mcp --transport http
+```
+
+On first use, the client will automatically open your browser for login. After authenticating with Unleash, a PAT is created and used for all subsequent requests.
+
+The PAT expires after 24 hours by default.
+
+#### Personal Access Token (PAT)
+
+Use this method when you already have a PAT or need headless/non-interactive access (CI pipelines, shared developer environments, clients that don't support OAuth).
+
+To create a PAT: log in to your Unleash instance, go to **Profile** > **Personal Access Tokens**, and create a new token.
+
+For Claude Code:
+
+```bash
+claude mcp add unleash https://{{your-instance-url}}/api/admin/mcp \
+  --transport http \
+  --header "Authorization: Bearer {{your-personal-access-token}}"
+```
+
+For Codex:
+
+```bash
+codex mcp add unleash https://{{your-instance-url}}/api/admin/mcp \
+  --transport http \
+  --header "Authorization: Bearer {{your-personal-access-token}}"
+```
+
+The `--header` flag sends the PAT directly, bypassing the OAuth flow entirely.
+
 ### Quickstart with npx
 
 You can run the MCP server as a standalone process without cloning the repository using `npx`. Provide configuration through environment variables or a local `.env` file in the directory where you run the command:

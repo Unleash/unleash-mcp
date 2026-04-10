@@ -165,13 +165,13 @@ export interface FeatureDetails {
  */
 export class UnleashClient {
   private readonly baseUrl: string;
-  private readonly pat: string;
+  private readonly authHeaders: Record<string, string>;
   private readonly dryRun: boolean;
 
-  constructor(baseUrl: string, pat: string, dryRun: boolean = false) {
+  constructor(baseUrl: string, authHeaders: Record<string, string>, dryRun: boolean = false) {
     // Ensure baseUrl doesn't have trailing slash
     this.baseUrl = baseUrl.replace(/\/$/, '');
-    this.pat = pat;
+    this.authHeaders = authHeaders;
     this.dryRun = dryRun;
   }
 
@@ -518,7 +518,7 @@ export class UnleashClient {
     return {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: this.pat.trim(),
+      ...this.authHeaders,
       'X-Unleash-AppName': 'unleash-mcp',
       'User-Agent': `unleash-mcp/${VERSION} (MCP Server)`,
     };
