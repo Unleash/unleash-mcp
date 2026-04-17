@@ -318,6 +318,18 @@ The tool uses language-agnostic patterns to score risk:
 - **Medium risk** (Score +2): For example, async operations or state management.
 - **Low risk** (Score +1): For example, bug fixes, refactors, or small changes.
 
+Scores accumulate across matched categories. The total maps to a risk level:
+- **Critical**: Score ≥ 5
+- **High**: Score ≥ 3
+- **Medium**: Score ≥ 2
+- **Low**: Score < 2
+
+The output includes a `confidence` score (0-1) representing the LLM's self-assessed certainty, which increases with more context provided.
+
+An **excluded** category covers files that do not need feature flags regardless of content: test files (`*.test.ts`, `*_test.go`, etc.), configuration files (`*.config.js`, `.env`, `*.yaml`), and documentation files (`*.md`, `docs/**`). Changes limited to excluded files will not trigger a flag recommendation.
+
+The full pattern definitions, including per-category keywords, file globs, code patterns, and reasoning, are in [`src/evaluation/riskPatterns.ts`](src/evaluation/riskPatterns.ts).
+
 **Parent flag detection**
 
 The tool looks for common patterns across languages, such as:
@@ -562,6 +574,324 @@ Returns a comprehensive, markdown-formatted string that guides the user on how t
 [If-block, guard clause, hooks, ternary, etc.]
 ```
 
+### Set flag rollout
+
+The `set_flag_rollout` tool configures a `flexibleRollout` strategy on a feature flag environment. It sets the rollout percentage, stickiness, and optional strategy-level variants. This does not enable the flag; use `toggle_flag_environment` to turn it on.
+
+#### When to use
+
+Use this tool after creating a flag with `create_flag` to configure how traffic is distributed before enabling it. Also use it to update an existing rollout percentage or add variants.
+
+#### Parameters
+
+- `featureName` (required): Feature flag name.
+- `environment` (required): Target environment (for example, `"production"`, `"development"`).
+- `rolloutPercentage` (required): Percentage of traffic to receive the feature (0-100).
+- `projectId` (optional): Project ID (defaults to `UNLEASH_DEFAULT_PROJECT`).
+- `groupId` (optional): Stickiness bucketing key (defaults to the feature name).
+- `stickiness` (optional): Stickiness field (defaults to `"default"`).
+- `title` (optional): Descriptive title for the strategy.
+- `disabled` (optional): Create the strategy in a disabled state (defaults to false).
+- `variants` (optional): List of strategy-level variants, each with `name`, `weight` (0-1000), optional `weightType` (`"variable"` or `"fix"`), `stickiness`, and `payload` (`{type, value}`).
+
+#### Usage example
+
+**Agent prompt**
+
+```
+Use set_flag_rollout with:
+- featureName: "new-checkout-flow"
+- environment: "production"
+- rolloutPercentage: 25
+```
+
+**Tool payload**
+
+```json
+{
+  "featureName": "new-checkout-flow",
+  "environment": "production",
+  "rolloutPercentage": 25,
+  "projectId": "ecommerce",
+  "stickiness": "userId"
+}
+```
+
+**Tool output**
+
+Returns a confirmation with the configured percentage, a link to the flag in the Unleash Admin UI, the Admin API strategies URL, and an MCP resource link for the flag.
+
+### Get flag state
+
+The `get_flag_state` tool fetches a feature flag's current metadata and environment strategies from the Unleash Admin API. It returns the flag's type, enabled/archived status, impression data setting, and a per-environment summary of active strategies and variants.
+
+#### When to use
+
+Use this tool to inspect a flag before modifying it, to check how many strategies are active across environments, or to find strategy IDs before calling `remove_flag_strategy`.
+
+#### Parameters
+
+- `featureName` (required): Feature flag name.
+- `projectId` (optional): Project ID (defaults to `UNLEASH_DEFAULT_PROJECT`).
+- `environment` (optional): Filter results to a single environment (case-insensitive).
+
+#### Usage example
+
+**Agent prompt**
+
+```
+Use get_flag_state with:
+- featureName: "new-checkout-flow"
+- environment: "production"
+```
+
+**Tool payload**
+
+```json
+{
+  "featureName": "new-checkout-flow",
+  "projectId": "ecommerce",
+  "environment": "production"
+}
+```
+
+**Tool output**
+
+Returns a text summary of the flag (type, enabled/archived/impression-data, project, environment summaries with strategy counts) along with UI and API links. The structured output includes the full feature object with all environments and strategy details.
+
+### List flags
+
+The `list_flags` tool enumerates the feature flags in a project and returns a structured inventory with pagination and sort order. Active and archived flags are returned separately: call it once with `archived: false` (the default) and once with `archived: true` to assemble a full inventory for audit workflows.
+
+#### When to use
+
+Use this tool when an agent needs to discover which flags already exist, for example to audit a project, find candidates for cleanup, or build context before creating or wrapping a flag. It is the agent-invokable equivalent of the `unleash://projects/{projectId}/feature-flags` resource (see [MCP resources](#mcp-resources)).
+
+#### Parameters
+
+- `projectId` (optional): Project to list flags from (defaults to `UNLEASH_DEFAULT_PROJECT`; auto-resolved when a single project exists).
+- `archived` (optional): `true` to list archived flags instead of active ones. Defaults to `false`. Active and archived flags cannot be returned in the same response.
+- `limit` (optional): Maximum flags per page (default: server page size, typically 50).
+- `order` (optional): Sort order by flag name, `asc` or `desc` (default: `asc`).
+- `offset` (optional): Number of flags to skip for pagination (default: 0).
+
+#### Usage example
+
+**Agent prompt**
+
+```
+Use list_flags with:
+- projectId: "ecommerce"
+- archived: false
+```
+
+**Tool payload**
+
+```json
+{
+  "projectId": "ecommerce",
+  "archived": false,
+  "limit": 50,
+  "order": "asc"
+}
+```
+
+**Tool output**
+
+Returns a text summary plus structured content with `projectId`, `archived`, `order`, `limit`, `offset`, `nextOffset`, `totalFlags`, and the `flags` array (each with name, type, project, archived status, and links). Use `nextOffset` to page through large projects.
+
+### List projects
+
+The `list_projects` tool enumerates the Unleash projects available to the configured token, with pagination and sort order.
+
+#### When to use
+
+Use this tool when the target project is unknown, or when an agent needs to pick a project before listing or creating flags. It is the agent-invokable equivalent of the `unleash://projects` resource (see [MCP resources](#mcp-resources)).
+
+#### Parameters
+
+- `limit` (optional): Maximum projects per page (default: server page size, typically 20).
+- `order` (optional): Sort order by project creation time, `asc` or `desc` (default: `desc`, newest first).
+- `offset` (optional): Number of projects to skip for pagination (default: 0).
+
+#### Usage example
+
+**Agent prompt**
+
+```
+Use list_projects to see which projects are available.
+```
+
+**Tool payload**
+
+```json
+{
+  "limit": 20,
+  "order": "desc"
+}
+```
+
+**Tool output**
+
+Returns a text summary plus structured content with `order`, `limit`, `offset`, `nextOffset`, `totalProjects`, and the `projects` array (each with id, name, description, mode, creation time, and URL).
+
+### Toggle flag environment
+
+The `toggle_flag_environment` tool enables or disables a feature flag in a specific environment. For gradual rollouts, configure a strategy with `set_flag_rollout` before enabling.
+
+#### When to use
+
+Use this tool to turn a flag on after configuring a rollout strategy, or to disable a flag during an incident or after completing a rollout.
+
+#### Parameters
+
+- `featureName` (required): Feature flag name.
+- `environment` (required): Environment to toggle (for example, `"production"`).
+- `enabled` (required): `true` to enable, `false` to disable.
+- `projectId` (optional): Project ID (defaults to `UNLEASH_DEFAULT_PROJECT`).
+
+#### Usage example
+
+**Agent prompt**
+
+```
+Use toggle_flag_environment with:
+- featureName: "new-checkout-flow"
+- environment: "production"
+- enabled: true
+```
+
+**Tool payload**
+
+```json
+{
+  "featureName": "new-checkout-flow",
+  "environment": "production",
+  "enabled": true,
+  "projectId": "ecommerce"
+}
+```
+
+**Tool output**
+
+Returns a confirmation of the new state, a summary of the environment (enabled/disabled, strategy count), and links to the flag in the Unleash Admin UI and Admin API.
+
+### Remove flag strategy
+
+The `remove_flag_strategy` tool deletes a strategy configuration from a feature flag environment. Use `get_flag_state` first to discover the strategy ID.
+
+#### When to use
+
+Use this tool to clean up stale strategies, or to replace an existing strategy by removing the old one and configuring a new one with `set_flag_rollout`.
+
+#### Parameters
+
+- `featureName` (required): Feature flag name.
+- `environment` (required): Environment from which to remove the strategy.
+- `strategyId` (required): ID of the strategy to remove (find this via `get_flag_state`).
+- `projectId` (optional): Project ID (defaults to `UNLEASH_DEFAULT_PROJECT`).
+
+#### Usage example
+
+**Agent prompt**
+
+```
+Use get_flag_state to find strategy IDs for "new-checkout-flow" in production,
+then use remove_flag_strategy to delete the old strategy.
+```
+
+**Tool payload**
+
+```json
+{
+  "featureName": "new-checkout-flow",
+  "environment": "production",
+  "strategyId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "projectId": "ecommerce"
+}
+```
+
+**Tool output**
+
+Returns a confirmation of removal, a count of remaining strategies in the environment, and links to the flag in the Unleash Admin UI and Admin API.
+
+### Cleanup flag
+
+The `cleanup_flag` tool generates step-by-step instructions for safely removing feature flag code from the codebase while preserving the desired code path.
+
+#### When to use
+
+Use this tool when a feature flag has completed its lifecycle:
+- After a rollout reaches 100% and the flag is no longer needed.
+- When deprecating an experimental feature (preserve the disabled path).
+- When removing a kill switch that is no longer necessary.
+- During technical debt cleanup of old flags.
+
+#### How it works
+
+The tool returns comprehensive cleanup instructions that guide the LLM through:
+1. Finding all occurrences of the flag using grep patterns.
+2. Identifying usage patterns (if-else blocks, ternary expressions, guard clauses, hooks, decorators, middleware).
+3. Removing flag checks while preserving the correct code path.
+4. Cleaning up unused imports with language-specific guidance.
+5. Verifying changes with post-cleanup search and test steps.
+
+If `preservePath` is not provided, the tool returns instructions to ask the user which path to keep before proceeding.
+
+#### Parameters
+
+- `flagName` (required): Name of the feature flag to remove (for example, `"new-checkout-flow"`).
+- `preservePath` (optional): `"enabled"` to keep the flag-on code path (typical for completed rollouts), or `"disabled"` to keep the flag-off path (for removed experiments). If omitted, the tool prompts you to ask the user.
+- `files` (optional): Specific files to clean up. If omitted, searches the entire codebase.
+- `language` (optional): Programming language for specialized import cleanup guidance (for example, `"typescript"`, `"python"`). Auto-detected from `files` if not provided.
+
+#### Usage example
+
+**Agent prompt**
+
+```
+Use cleanup_flag with:
+- flagName: "new-checkout-flow"
+- preservePath: "enabled"
+```
+
+**Tool payload**
+
+```json
+{
+  "flagName": "new-checkout-flow",
+  "preservePath": "enabled",
+  "files": ["src/components/checkout.tsx", "src/api/checkout.ts"],
+  "language": "typescript"
+}
+```
+
+**Tool output**
+
+Returns a markdown guide covering the cleanup scope and preserved path, grep commands to find all occurrences, per-pattern removal instructions, language-specific import cleanup, and post-cleanup verification steps (re-search, run tests, manual review).
+
+## MCP resources
+
+The server registers MCP [resources](https://modelcontextprotocol.io/docs/concepts/resources) for reading project and feature flag data. All resources return JSON and are cached for 60 seconds.
+
+| URI template | Description |
+|---|---|
+| `unleash://projects{?limit,order,offset}` | List projects. Default page size: 20, sorted by creation time (newest first). |
+| `unleash://projects/{projectId}/feature-flags{?limit,order,offset}` | List flags in a project. Default page size: 50, sorted alphabetically. |
+| `unleash://projects/{projectId}/feature-flags/{flagName}` | Single feature flag metadata. |
+
+The first two templates accept optional query parameters: `limit` (page size), `order` (`asc` or `desc`), and `offset` (pagination start). Responses include `fetchedAt`, `cached`, `totalProjects` or `totalFlags`, and `nextOffset` fields.
+
+> **Resources vs. tools:** MCP resources are application-controlled, so many clients only surface them through user-driven UI (for example `#`-mentions) and do not let the agent call `resources/read` on its own. When an agent needs to enumerate projects or flags programmatically, use the `list_projects` and `list_flags` tools, which return the same data through the tool interface. The `detect_flag` inventory analysis routes through the same path.
+
+**Example resource read**
+
+```
+Read unleash://projects/ecommerce/feature-flags?limit=10&order=asc
+```
+
+Returns the first 10 feature flags in the `ecommerce` project, sorted alphabetically, with pagination metadata.
+
 ## Architecture
 
 The server follows a focused, purpose-driven design.
@@ -570,16 +900,27 @@ The server follows a focused, purpose-driven design.
 
 ```
 src/
-├── index.ts                     # Main server entry point
+├── index.ts                     # Stdio CLI entry point
+├── server.ts                    # Transport-agnostic server factory
+├── remote.ts                    # HTTP request handler for embedded mode
 ├── config.ts                    # Configuration loading and validation
 ├── context.ts                   # Shared runtime context
+├── version.ts                   # Version constant
 ├── unleash/
 │   └── client.ts                # Unleash Admin API client
 ├── tools/
+│   ├── types.ts                 # Shared ToolDefinition type
 │   ├── createFlag.ts            # create_flag tool
 │   ├── evaluateChange.ts        # evaluate_change tool
 │   ├── detectFlag.ts            # detect_flag tool
-│   └── wrapChange.ts            # wrap_change tool
+│   ├── wrapChange.ts            # wrap_change tool
+│   ├── cleanupFlag.ts           # cleanup_flag tool
+│   ├── setFlagRollout.ts        # set_flag_rollout tool
+│   ├── getFlagState.ts          # get_flag_state tool
+│   ├── toggleFlagEnvironment.ts # toggle_flag_environment tool
+│   └── removeFlagStrategy.ts    # remove_flag_strategy tool
+├── resources/
+│   └── unleashResources.ts      # MCP resource handlers (projects, flags)
 ├── prompts/
 │   └── promptBuilder.ts         # Markdown formatting utilities
 ├── evaluation/
@@ -593,10 +934,12 @@ src/
 ├── templates/
 │   ├── languages.ts             # Language detection and metadata
 │   ├── wrapperTemplates.ts      # Code wrapping templates
-│   └── searchGuidance.ts        # Pattern search instructions
+│   ├── searchGuidance.ts        # Pattern search instructions
+│   └── cleanupGuidance.ts       # Flag cleanup instructions
 └── utils/
     ├── errors.ts                # Error normalization
-    └── streaming.ts             # Progress notifications
+    ├── streaming.ts             # Progress notifications
+    └── stdioLogging.ts          # Stdio protocol traffic logging
 ```
 
 ### Design principles
@@ -655,7 +998,14 @@ This server uses the Unleash Admin API. For complete API documentation, see:
 
 ### Endpoints used
 
+- `GET /api/admin/projects` - List projects
+- `GET /api/admin/projects/{projectId}/features` - List feature flags
 - `POST /api/admin/projects/{projectId}/features` - Create feature flag
+- `GET /api/admin/projects/{projectId}/features/{featureName}` - Get flag details
+- `POST /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies` - Add rollout strategy
+- `DELETE /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies/{strategyId}` - Remove strategy
+- `POST /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on` - Enable flag
+- `POST /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/off` - Disable flag
 
 ## Troubleshooting
 
@@ -683,7 +1033,7 @@ MIT
 
 This is a purpose-driven project with a focused scope. Contributions should:
 
-- Align with the three core capabilities (create, evaluate, wrap).
+- Align with the existing tool surface and MCP resource model.
 - Maintain the thin, purpose-driven architecture.
 - Follow Unleash best practices.
 - Include clear documentation.
