@@ -106,6 +106,141 @@ export interface FeatureEnvironment {
   hasEnabledStrategies?: boolean;
 }
 
+export interface FeatureExposureRow {
+  receivedAt: string;
+  timestamp: string;
+  eventId: string;
+  featureName: string;
+  enabled: boolean | null;
+  variant: string | null;
+  userId: string | null;
+  sessionId: string | null;
+  environment: string;
+  appName: string;
+  project: string;
+  payload: Record<string, unknown>;
+  context: Record<string, unknown>;
+}
+
+export interface FeatureExposuresResponse {
+  rows: FeatureExposureRow[];
+  truncated: boolean;
+}
+
+export interface GetFeatureExposuresParams {
+  from: string;
+  to: string;
+  featureName?: string;
+  variant?: string;
+  enabled?: boolean;
+  userId?: string;
+  sessionId?: string;
+  environment?: string;
+  appName?: string;
+  project?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export type FeatureExposureSummaryBucket = 'none' | 'hour' | 'day';
+
+export interface FeatureExposureSummaryRow {
+  bucket?: string;
+  featureName: string;
+  variant: string | null;
+  enabled: boolean | null;
+  exposures: number;
+  distinctUsers: number;
+  distinctSessions: number;
+}
+
+export interface FeatureExposureSummaryResponse {
+  rows: FeatureExposureSummaryRow[];
+}
+
+export interface GetFeatureExposureSummaryParams {
+  from: string;
+  to: string;
+  bucket?: FeatureExposureSummaryBucket;
+  featureName?: string;
+  variant?: string;
+  enabled?: boolean;
+  userId?: string;
+  sessionId?: string;
+  environment?: string;
+  appName?: string;
+  project?: string;
+  limit?: number;
+}
+
+export interface CustomEventRow {
+  receivedAt: string;
+  timestamp: string;
+  eventId: string;
+  eventName: string;
+  userId: string | null;
+  sessionId: string | null;
+  environment: string | null;
+  appName: string | null;
+  project: string | null;
+  payload: Record<string, unknown>;
+  context: Record<string, unknown>;
+}
+
+export interface CustomEventsResponse {
+  rows: CustomEventRow[];
+  truncated: boolean;
+}
+
+export interface GetCustomEventsParams {
+  from: string;
+  to: string;
+  eventName?: string;
+  userId?: string;
+  sessionId?: string;
+  environment?: string;
+  appName?: string;
+  project?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export type TopImpressionEventsGroupBy =
+  | 'featureName'
+  | 'variant'
+  | 'eventName'
+  | 'eventType'
+  | 'userId'
+  | 'sessionId'
+  | 'appName'
+  | 'environment';
+
+export interface TopImpressionEventsRow {
+  key: string;
+  count: number;
+}
+
+export interface TopImpressionEventsResponse {
+  groupBy: TopImpressionEventsGroupBy;
+  rows: TopImpressionEventsRow[];
+}
+
+export interface GetTopImpressionEventsParams {
+  from: string;
+  to: string;
+  groupBy: TopImpressionEventsGroupBy;
+  featureName?: string;
+  eventName?: string;
+  variant?: string;
+  enabled?: boolean;
+  userId?: string;
+  sessionId?: string;
+  environment?: string;
+  appName?: string;
+  project?: string;
+  limit?: number;
+}
+
 export interface FeatureDetails {
   name: string;
   description?: string | null;
@@ -329,6 +464,207 @@ export class UnleashClient {
         networkErrorMessage: `Failed to connect to Unleash API while fetching feature ${featureName}`,
       },
     );
+  }
+
+  async getFeatureExposures(params: GetFeatureExposuresParams): Promise<FeatureExposuresResponse> {
+    if (this.dryRun) {
+      const now = new Date().toISOString();
+      return {
+        rows: [
+          {
+            receivedAt: now,
+            timestamp: now,
+            eventId: 'dry-run-event-1',
+            featureName: params.featureName ?? 'dry-run-feature',
+            enabled: params.enabled ?? true,
+            variant: params.variant ?? 'treatment',
+            userId: params.userId ?? 'dry-run-user',
+            sessionId: params.sessionId ?? 'dry-run-session',
+            environment: params.environment ?? 'development',
+            appName: params.appName ?? 'dry-run-app',
+            project: params.project ?? 'default',
+            payload: {},
+            context: {},
+          },
+        ],
+        truncated: false,
+      };
+    }
+
+    const search = new URLSearchParams();
+    search.set('from', params.from);
+    search.set('to', params.to);
+    if (params.featureName) search.set('featureName', params.featureName);
+    if (params.variant) search.set('variant', params.variant);
+    if (params.enabled !== undefined) search.set('enabled', params.enabled ? 'true' : 'false');
+    if (params.userId) search.set('userId', params.userId);
+    if (params.sessionId) search.set('sessionId', params.sessionId);
+    if (params.environment) search.set('environment', params.environment);
+    if (params.appName) search.set('appName', params.appName);
+    if (params.project) search.set('project', params.project);
+    if (params.limit !== undefined) search.set('limit', params.limit.toString());
+    if (params.offset !== undefined) search.set('offset', params.offset.toString());
+
+    const raw = await this.requestJson<{ exposures: FeatureExposureRow[]; truncated?: boolean }>(
+      `/api/admin/impression-events/exposures?${search.toString()}`,
+      { method: 'GET' },
+      {
+        errorMessage: 'Failed to fetch feature exposures',
+        networkErrorMessage: 'Failed to connect to Unleash API while fetching feature exposures',
+      },
+    );
+
+    return {
+      rows: raw.exposures ?? [],
+      truncated: raw.truncated ?? false,
+    };
+  }
+
+  async getFeatureExposureSummary(
+    params: GetFeatureExposureSummaryParams,
+  ): Promise<FeatureExposureSummaryResponse> {
+    if (this.dryRun) {
+      return {
+        rows: [
+          {
+            ...(params.bucket && params.bucket !== 'none'
+              ? { bucket: new Date().toISOString() }
+              : {}),
+            featureName: params.featureName ?? 'dry-run-feature',
+            variant: params.variant ?? 'treatment',
+            enabled: params.enabled ?? true,
+            exposures: 1,
+            distinctUsers: 1,
+            distinctSessions: 1,
+          },
+        ],
+      };
+    }
+
+    const search = new URLSearchParams();
+    search.set('from', params.from);
+    search.set('to', params.to);
+    if (params.bucket) search.set('bucket', params.bucket);
+    if (params.featureName) search.set('featureName', params.featureName);
+    if (params.variant) search.set('variant', params.variant);
+    if (params.enabled !== undefined) search.set('enabled', params.enabled ? 'true' : 'false');
+    if (params.userId) search.set('userId', params.userId);
+    if (params.sessionId) search.set('sessionId', params.sessionId);
+    if (params.environment) search.set('environment', params.environment);
+    if (params.appName) search.set('appName', params.appName);
+    if (params.project) search.set('project', params.project);
+    if (params.limit !== undefined) search.set('limit', params.limit.toString());
+
+    const raw = await this.requestJson<{ rows?: FeatureExposureSummaryRow[] }>(
+      `/api/admin/impression-events/exposures/summary?${search.toString()}`,
+      { method: 'GET' },
+      {
+        errorMessage: 'Failed to fetch feature exposure summary',
+        networkErrorMessage:
+          'Failed to connect to Unleash API while fetching feature exposure summary',
+      },
+    );
+
+    return {
+      rows: raw.rows ?? [],
+    };
+  }
+
+  async getCustomEvents(params: GetCustomEventsParams): Promise<CustomEventsResponse> {
+    if (this.dryRun) {
+      const now = new Date().toISOString();
+      return {
+        rows: [
+          {
+            receivedAt: now,
+            timestamp: now,
+            eventId: 'dry-run-custom-event-1',
+            eventName: params.eventName ?? 'dry-run-event',
+            userId: params.userId ?? 'dry-run-user',
+            sessionId: params.sessionId ?? 'dry-run-session',
+            environment: params.environment ?? 'development',
+            appName: params.appName ?? 'dry-run-app',
+            project: params.project ?? 'default',
+            payload: {},
+            context: {},
+          },
+        ],
+        truncated: false,
+      };
+    }
+
+    const search = new URLSearchParams();
+    search.set('from', params.from);
+    search.set('to', params.to);
+    if (params.eventName) search.set('eventName', params.eventName);
+    if (params.userId) search.set('userId', params.userId);
+    if (params.sessionId) search.set('sessionId', params.sessionId);
+    if (params.environment) search.set('environment', params.environment);
+    if (params.appName) search.set('appName', params.appName);
+    if (params.project) search.set('project', params.project);
+    if (params.limit !== undefined) search.set('limit', params.limit.toString());
+    if (params.offset !== undefined) search.set('offset', params.offset.toString());
+
+    const raw = await this.requestJson<{ events: CustomEventRow[]; truncated?: boolean }>(
+      `/api/admin/impression-events/custom-events?${search.toString()}`,
+      { method: 'GET' },
+      {
+        errorMessage: 'Failed to fetch custom events',
+        networkErrorMessage: 'Failed to connect to Unleash API while fetching custom events',
+      },
+    );
+
+    return {
+      rows: raw.events ?? [],
+      truncated: raw.truncated ?? false,
+    };
+  }
+
+  async getTopImpressionEvents(
+    params: GetTopImpressionEventsParams,
+  ): Promise<TopImpressionEventsResponse> {
+    if (this.dryRun) {
+      return {
+        groupBy: params.groupBy,
+        rows: [
+          { key: `dry-run-${params.groupBy}-1`, count: 42 },
+          { key: `dry-run-${params.groupBy}-2`, count: 17 },
+        ],
+      };
+    }
+
+    const search = new URLSearchParams();
+    search.set('from', params.from);
+    search.set('to', params.to);
+    search.set('groupBy', params.groupBy);
+    if (params.featureName) search.set('featureName', params.featureName);
+    if (params.eventName) search.set('eventName', params.eventName);
+    if (params.variant) search.set('variant', params.variant);
+    if (params.enabled !== undefined) search.set('enabled', params.enabled ? 'true' : 'false');
+    if (params.userId) search.set('userId', params.userId);
+    if (params.sessionId) search.set('sessionId', params.sessionId);
+    if (params.environment) search.set('environment', params.environment);
+    if (params.appName) search.set('appName', params.appName);
+    if (params.project) search.set('project', params.project);
+    if (params.limit !== undefined) search.set('limit', params.limit.toString());
+
+    const raw = await this.requestJson<{
+      groupBy?: TopImpressionEventsGroupBy;
+      rows?: TopImpressionEventsRow[];
+    }>(
+      `/api/admin/impression-events/top?${search.toString()}`,
+      { method: 'GET' },
+      {
+        errorMessage: 'Failed to fetch top impression events',
+        networkErrorMessage:
+          'Failed to connect to Unleash API while fetching top impression events',
+      },
+    );
+
+    return {
+      groupBy: raw.groupBy ?? params.groupBy,
+      rows: raw.rows ?? [],
+    };
   }
 
   async deleteFeatureStrategy(

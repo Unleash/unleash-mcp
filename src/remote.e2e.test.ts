@@ -62,7 +62,11 @@ describe('remote MCP handler (e2e)', () => {
       'create_flag',
       'detect_flag',
       'evaluate_change',
+      'get_custom_events',
+      'get_feature_exposure_summary',
+      'get_feature_exposures',
       'get_flag_state',
+      'get_top_impression_events',
       'remove_flag_strategy',
       'set_flag_rollout',
       'toggle_flag_environment',
@@ -99,6 +103,41 @@ describe('remote MCP handler (e2e)', () => {
       content: expect.arrayContaining([
         { type: 'text', text: expect.stringContaining('e2e-test-flag') },
         { type: 'text', text: expect.stringContaining('DRY RUN') },
+      ]),
+    });
+
+    // 4. Call get_feature_exposures (dry-run returns a single mock row)
+    const exposuresRes = await mcpPost([
+      { jsonrpc: '2.0', method: 'notifications/initialized' },
+      {
+        jsonrpc: '2.0',
+        id: 4,
+        method: 'tools/call',
+        params: {
+          name: 'get_feature_exposures',
+          arguments: {
+            from: '2026-04-01T00:00:00.000Z',
+            to: '2026-04-02T00:00:00.000Z',
+            featureName: 'new-checkout',
+          },
+        },
+      },
+    ]).expect(200);
+
+    const exposuresResult = Array.isArray(exposuresRes.body)
+      ? exposuresRes.body.find((r: { id?: number }) => r.id === 4)
+      : exposuresRes.body;
+
+    expect(exposuresResult.result).toBeDefined();
+    expect(exposuresResult.result.isError).toBeFalsy();
+    expect(exposuresResult.result.structuredContent).toMatchObject({
+      success: true,
+      rowCount: 1,
+      truncated: false,
+    });
+    expect(exposuresResult.result).toMatchObject({
+      content: expect.arrayContaining([
+        { type: 'text', text: expect.stringContaining('Found 1 exposure row') },
       ]),
     });
   });
