@@ -205,6 +205,66 @@ export interface GetCustomEventsParams {
   offset?: number;
 }
 
+export type CustomEventSummaryBucket = 'none' | 'hour' | 'day';
+
+export interface CustomEventSummaryRow {
+  bucket?: string;
+  eventName: string;
+  events: number;
+  distinctUsers: number;
+  distinctSessions: number;
+}
+
+export interface CustomEventSummaryResponse {
+  rows: CustomEventSummaryRow[];
+}
+
+export interface GetCustomEventSummaryParams {
+  from: string;
+  to: string;
+  bucket?: CustomEventSummaryBucket;
+  eventName?: string;
+  userId?: string;
+  sessionId?: string;
+  environment?: string;
+  appName?: string;
+  project?: string;
+  limit?: number;
+}
+
+export type AttributionMode = 'first' | 'last';
+
+export interface AttributionRow {
+  variant: string | null;
+  exposedUsers: number;
+  convertedUsers: number;
+  conversionRate: number;
+  avgTimeToConvertSec: number | null;
+}
+
+export interface AttributionResponse {
+  featureName: string;
+  targetEventName: string;
+  windowMinutes: number;
+  rows: AttributionRow[];
+}
+
+export interface GetAttributionParams {
+  from: string;
+  to: string;
+  featureName: string;
+  eventName: string;
+  variant?: string;
+  enabled?: boolean;
+  userId?: string;
+  sessionId?: string;
+  environment?: string;
+  appName?: string;
+  project?: string;
+  windowMinutes?: number;
+  attributionMode?: AttributionMode;
+}
+
 export type TopImpressionEventsGroupBy =
   | 'featureName'
   | 'variant'
@@ -620,6 +680,51 @@ export class UnleashClient {
     };
   }
 
+  async getCustomEventSummary(
+    params: GetCustomEventSummaryParams,
+  ): Promise<CustomEventSummaryResponse> {
+    if (this.dryRun) {
+      return {
+        rows: [
+          {
+            ...(params.bucket && params.bucket !== 'none'
+              ? { bucket: new Date().toISOString() }
+              : {}),
+            eventName: params.eventName ?? 'dry-run-event',
+            events: 1,
+            distinctUsers: 1,
+            distinctSessions: 1,
+          },
+        ],
+      };
+    }
+
+    const search = new URLSearchParams();
+    search.set('from', params.from);
+    search.set('to', params.to);
+    if (params.bucket) search.set('bucket', params.bucket);
+    if (params.eventName) search.set('eventName', params.eventName);
+    if (params.userId) search.set('userId', params.userId);
+    if (params.sessionId) search.set('sessionId', params.sessionId);
+    if (params.environment) search.set('environment', params.environment);
+    if (params.appName) search.set('appName', params.appName);
+    if (params.project) search.set('project', params.project);
+    if (params.limit !== undefined) search.set('limit', params.limit.toString());
+
+    const raw = await this.requestJson<{ rows?: CustomEventSummaryRow[] }>(
+      `/api/admin/impression-events/custom-events/summary?${search.toString()}`,
+      { method: 'GET' },
+      {
+        errorMessage: 'Failed to fetch custom event summary',
+        networkErrorMessage: 'Failed to connect to Unleash API while fetching custom event summary',
+      },
+    );
+
+    return {
+      rows: raw.rows ?? [],
+    };
+  }
+
   async getTopImpressionEvents(
     params: GetTopImpressionEventsParams,
   ): Promise<TopImpressionEventsResponse> {
@@ -663,6 +768,69 @@ export class UnleashClient {
 
     return {
       groupBy: raw.groupBy ?? params.groupBy,
+      rows: raw.rows ?? [],
+    };
+  }
+
+  async getAttribution(params: GetAttributionParams): Promise<AttributionResponse> {
+    if (this.dryRun) {
+      return {
+        featureName: params.featureName,
+        targetEventName: params.eventName,
+        windowMinutes: params.windowMinutes ?? 60,
+        rows: [
+          {
+            variant: 'treatment',
+            exposedUsers: 120,
+            convertedUsers: 36,
+            conversionRate: 0.3,
+            avgTimeToConvertSec: 142,
+          },
+          {
+            variant: 'control',
+            exposedUsers: 118,
+            convertedUsers: 28,
+            conversionRate: 0.237,
+            avgTimeToConvertSec: 156,
+          },
+        ],
+      };
+    }
+
+    const search = new URLSearchParams();
+    search.set('from', params.from);
+    search.set('to', params.to);
+    search.set('featureName', params.featureName);
+    search.set('eventName', params.eventName);
+    if (params.variant) search.set('variant', params.variant);
+    if (params.enabled !== undefined) search.set('enabled', params.enabled ? 'true' : 'false');
+    if (params.userId) search.set('userId', params.userId);
+    if (params.sessionId) search.set('sessionId', params.sessionId);
+    if (params.environment) search.set('environment', params.environment);
+    if (params.appName) search.set('appName', params.appName);
+    if (params.project) search.set('project', params.project);
+    if (params.windowMinutes !== undefined)
+      search.set('windowMinutes', params.windowMinutes.toString());
+    if (params.attributionMode) search.set('attributionMode', params.attributionMode);
+
+    const raw = await this.requestJson<{
+      featureName?: string;
+      targetEventName?: string;
+      windowMinutes?: number;
+      rows?: AttributionRow[];
+    }>(
+      `/api/admin/impression-events/attribution?${search.toString()}`,
+      { method: 'GET' },
+      {
+        errorMessage: 'Failed to fetch feature attribution',
+        networkErrorMessage: 'Failed to connect to Unleash API while fetching feature attribution',
+      },
+    );
+
+    return {
+      featureName: raw.featureName ?? params.featureName,
+      targetEventName: raw.targetEventName ?? params.eventName,
+      windowMinutes: raw.windowMinutes ?? params.windowMinutes ?? 60,
       rows: raw.rows ?? [],
     };
   }

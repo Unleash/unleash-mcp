@@ -22,7 +22,9 @@ import { cleanupFlagTool } from './tools/cleanupFlag.js';
 import { createFlagTool } from './tools/createFlag.js';
 import { detectFlagTool } from './tools/detectFlag.js';
 import { evaluateChangeTool } from './tools/evaluateChange.js';
+import { getCustomEventSummaryTool } from './tools/getCustomEventSummary.js';
 import { getCustomEventsTool } from './tools/getCustomEvents.js';
+import { getFeatureAttributionTool } from './tools/getFeatureAttribution.js';
 import { getFeatureExposureSummaryTool } from './tools/getFeatureExposureSummary.js';
 import { getFeatureExposuresTool } from './tools/getFeatureExposures.js';
 import { getFlagStateTool } from './tools/getFlagState.js';
@@ -132,6 +134,8 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     getFeatureExposureSummaryTool,
     getTopImpressionEventsTool,
     getCustomEventsTool,
+    getCustomEventSummaryTool,
+    getFeatureAttributionTool,
   ];
 
   const registerTool = server.registerTool.bind(server) as (
