@@ -9,12 +9,12 @@ Unleash MCP Server — a Model Context Protocol server for managing Unleash feat
 ## Commands
 
 ```bash
-yarn install          # Install dependencies (uses Yarn 1.x via Corepack)
-yarn build            # Compile TypeScript (tsc) → dist/
-yarn dev              # Run from source with tsx
-yarn lint             # Lint with Biome
-yarn lint:fix         # Lint and auto-fix with Biome
-yarn test             # Run tests with Vitest (currently no test files)
+pnpm install          # Install dependencies (uses pnpm 11 via Corepack)
+pnpm build            # Compile TypeScript (tsc) → dist/
+pnpm dev              # Run from source with tsx
+pnpm lint             # Lint with Biome
+pnpm lint:fix         # Lint and auto-fix with Biome
+pnpm test             # Run tests with Vitest (currently no test files)
 ```
 
 Single test file: `npx vitest run src/path/to/file.test.ts`
