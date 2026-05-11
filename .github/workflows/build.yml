@@ -19,8 +19,6 @@ jobs:
         with:
           node-version: 22.x
           cache: pnpm
-      - name: Setup pnpm
-        run: corepack enable pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Lint validation
