@@ -17,7 +17,7 @@ export interface NormalizedError {
 export function normalizeError(error: unknown): NormalizedError {
   // Zod validation errors
   if (error instanceof z.ZodError) {
-    const firstError = error.errors[0];
+    const firstError = error.issues[0];
     return {
       code: 'VALIDATION_ERROR',
       message: `Validation failed: ${firstError.message}`,

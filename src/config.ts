@@ -77,7 +77,7 @@ export function loadConfig(): Config {
     };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const messages = error.errors.map((err) => `  - ${err.path.join('.')}: ${err.message}`);
+      const messages = error.issues.map((err) => `  - ${err.path.join('.')}: ${err.message}`);
       throw new Error(
         `Configuration validation failed:\n${messages.join('\n')}\n\nPlease check your .env file or environment variables.`,
       );
