@@ -12,16 +12,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
       - name: Setup node
         uses: actions/setup-node@v6
         with:
-          node-version: 20.x
-          cache: yarn
-      - name: Yarn
-        run: yarn
-      - name: lockfile validation
-        run: yarn install --immutable
+          node-version: 22.x
+          cache: pnpm
+      - name: Setup pnpm
+        run: corepack enable pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
       - name: Lint validation
-        run: yarn lint
+        run: pnpm lint
       - name: Test
-        run: yarn test
+        run: pnpm test
