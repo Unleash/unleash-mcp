@@ -47,8 +47,8 @@ See more information on the core workflow tools in the [Tool reference](#tool-re
 ## Prerequisites
 
 Before you can run the server, you need the following:
-- Node.js 18 or higher
-- Yarn package manager or npm
+- Node.js 22 or higher
+- pnpm package manager or npm
 - An Unleash instance (hosted or self-hosted)
 - A [personal access token](https://docs.getunleash.io/reference/api-tokens-and-client-keys#personal-access-tokens) with permissions to create feature flags
 
@@ -146,17 +146,17 @@ Follow these steps to set up the project for local development.
 
 1. **Install dependencies**
 
-Clone the repository and install dependencies using Yarn. Corepack keeps everyone on the same Yarn 1.x version:
+Clone the repository and install dependencies using pnpm. Corepack keeps everyone on the same pnpm version:
 
 ```bash
 git clone https://github.com/Unleash/unleash-mcp.git
 cd unleash-mcp
 
-# Enable Corepack once per machine, then prepare the Yarn 1.x version this repo expects
+# Enable Corepack once per machine, then prepare the pnpm this repo expects
 corepack enable
-corepack prepare yarn@1.22.22 --activate
+corepack prepare pnpm@11.0.8 --activate
 
-yarn install
+pnpm install
 ```
 
 2) **Run in dev mode directly from Claude or Codex**
