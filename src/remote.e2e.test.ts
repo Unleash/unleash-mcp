@@ -279,7 +279,7 @@ describe('outbound User-Agent attribution (e2e)', () => {
 
     // Verify at least one outbound call has the enriched User-Agent
     expect(fetchSpy).toHaveBeenCalled();
-    const enrichedCall = fetchSpy.mock.calls.find((c) => {
+    const enrichedCall = fetchSpy.mock.calls.find((c: unknown[]) => {
       const init = c[1] as RequestInit | undefined;
       if (!init) return false;
       const headers = init.headers as Record<string, string> | undefined;
