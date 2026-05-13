@@ -1,7 +1,10 @@
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import express from 'express';
 import request from 'supertest';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMcpHandler } from './remote.js';
+import { createUnleashMcpServer } from './server.js';
 
 /**
  * E2E test for the remote MCP handler.
@@ -229,5 +232,62 @@ describe('remote MCP handler (e2e)', () => {
       projects: expect.any(Array),
     });
     expect(callResult.result.structuredContent.projects.length).toBeGreaterThan(0);
+  });
+});
+
+describe('outbound User-Agent attribution (e2e)', () => {
+  let fetchSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ name: 'example', environments: [] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+  });
+
+  afterEach(() => {
+    fetchSpy.mockRestore();
+  });
+
+  it('forwards MCP clientInfo into outbound User-Agent header', async () => {
+    // Use InMemoryTransport so initialize and tools/call share the same McpServer
+    // instance, which is required for server.server.getClientVersion() to return
+    // the clientInfo set during initialize.
+    const server = createUnleashMcpServer({
+      baseUrl: 'http://localhost:4242',
+      authHeaders: { Authorization: 'test-token' },
+      dryRun: false,
+      logLevel: 'error',
+    });
+
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+
+    const client = new Client({ name: 'test-client', version: '1.0.0' }, { capabilities: {} });
+
+    await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
+
+    // Invoke a tool that triggers an outbound HTTP call
+    await client.callTool({
+      name: 'get_flag_state',
+      arguments: { featureName: 'example', projectId: 'default' },
+    });
+
+    await client.close();
+    await server.close();
+
+    // Verify at least one outbound call has the enriched User-Agent
+    expect(fetchSpy).toHaveBeenCalled();
+    const enrichedCall = fetchSpy.mock.calls.find((c) => {
+      const init = c[1] as RequestInit | undefined;
+      if (!init) return false;
+      const headers = init.headers as Record<string, string> | undefined;
+      if (!headers) return false;
+      return /^unleash-mcp\/[\w.-]+ \(MCP Server; client=test-client\/1\.0\.0\)$/.test(
+        headers['User-Agent'] ?? '',
+      );
+    });
+    expect(enrichedCall).toBeDefined();
   });
 });
