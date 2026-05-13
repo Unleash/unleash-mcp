@@ -213,6 +213,18 @@ Notes:
 - `APP_LOG_FILE` (optional): if set, application logs are written to this file (not stdout). If unset, logs go to stderr.
 - `MCP_STDIO_LOG_FILE` (optional): if set, MCP stdin/stdout/stderr are tee’d into this single file with channel prefixes. Protocol messages still flow over stdout normally.
 
+### Client attribution
+
+When an MCP client sends `clientInfo` during initialization (Claude Code, Cursor, Copilot, Windsurf, Codex, Kiro, and other conforming clients), the server enriches the `User-Agent` header on outbound Unleash Admin API calls:
+
+```
+User-Agent: unleash-mcp/0.3.0-beta.9 (MCP Server; client=claude-code/1.2.3)
+```
+
+This makes Unleash event logs answer "which AI tool created or toggled this flag" without any server-side changes. Attribution values are sanitized so they cannot break the User-Agent header.
+
+Set `UNLEASH_MCP_CLIENT_ATTRIBUTION=off` to disable enrichment and revert to `unleash-mcp/<version> (MCP Server)`. Default: enabled.
+
 ## Tool reference
 
 This section describes each of the core tools in detail, including its purpose, parameters, and output.
