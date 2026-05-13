@@ -30,6 +30,7 @@ import { setFlagRolloutTool } from './tools/setFlagRollout.js';
 import { toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
 import type { ToolDefinition } from './tools/types.js';
 import { wrapChangeTool } from './tools/wrapChange.js';
+import type { ClientInfo } from './unleash/attribution.js';
 import { UnleashClient } from './unleash/client.js';
 import { notifyProgress } from './utils/streaming.js';
 import { VERSION } from './version.js';
@@ -78,8 +79,6 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     },
   };
 
-  const unleashClient = new UnleashClient(baseUrl, options.authHeaders, dryRun);
-
   const instructions = [
     'Use this tool for local development to increase confidence by decoupling the change from deployments:',
     '1) Call evaluate_change to get a risk assessment on the current code change.',
@@ -106,9 +105,18 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     },
   );
 
+  const getClientInfo = (): ClientInfo | undefined => {
+    const info = server.server.getClientVersion();
+    if (!info) return undefined;
+    return { name: info.name, version: info.version };
+  };
+
+  const unleashClient = new UnleashClient(baseUrl, options.authHeaders, dryRun, getClientInfo);
+
   const context: ServerContext = {
     config,
     unleashClient,
+    getClientInfo,
     logger,
     cache: { projects: null, featureFlags: new Map() },
     notifyProgress: notifyProgress(server),
