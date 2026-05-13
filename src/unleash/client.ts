@@ -1,5 +1,6 @@
 import { CustomError } from '../utils/errors.js';
 import { VERSION } from '../version.js';
+import { buildClientAttribution, type ClientInfo, parseAttributionEnv } from './attribution.js';
 
 /**
  * Feature flag types supported by Unleash.
@@ -132,12 +133,21 @@ export class UnleashClient {
   private readonly baseUrl: string;
   private readonly authHeaders: Record<string, string>;
   private readonly dryRun: boolean;
+  private readonly getClientInfo?: () => ClientInfo | undefined;
+  private readonly attributionEnabled: boolean;
 
-  constructor(baseUrl: string, authHeaders: Record<string, string>, dryRun: boolean = false) {
+  constructor(
+    baseUrl: string,
+    authHeaders: Record<string, string>,
+    dryRun: boolean = false,
+    getClientInfo?: () => ClientInfo | undefined,
+  ) {
     // Ensure baseUrl doesn't have trailing slash
     this.baseUrl = baseUrl.replace(/\/$/, '');
     this.authHeaders = authHeaders;
     this.dryRun = dryRun;
+    this.getClientInfo = getClientInfo;
+    this.attributionEnabled = parseAttributionEnv(process.env.UNLEASH_MCP_CLIENT_ATTRIBUTION);
   }
 
   /**
@@ -550,12 +560,24 @@ export class UnleashClient {
    * Adds identity metadata so Unleash can attribute MCP traffic.
    */
   private buildRequestHeaders(): Record<string, string> {
+    let attribution = '';
+    try {
+      const info = this.attributionEnabled ? this.getClientInfo?.() : undefined;
+      attribution = buildClientAttribution(info, this.attributionEnabled);
+    } catch {
+      attribution = '';
+    }
+
+    const userAgent = attribution
+      ? `unleash-mcp/${VERSION} (MCP Server; ${attribution})`
+      : `unleash-mcp/${VERSION} (MCP Server)`;
+
     return {
       Accept: 'application/json',
       'Content-Type': 'application/json',
       ...this.authHeaders,
       'X-Unleash-AppName': 'unleash-mcp',
-      'User-Agent': `unleash-mcp/${VERSION} (MCP Server)`,
+      'User-Agent': userAgent,
     };
   }
 
