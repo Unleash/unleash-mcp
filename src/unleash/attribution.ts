@@ -5,3 +5,12 @@ const MAX_FIELD_LENGTH = 64;
 export function sanitize(value: string): string {
   return value.replace(SANITIZE_PATTERN, '').trim().slice(0, MAX_FIELD_LENGTH);
 }
+
+const DISABLED_VALUES = new Set(['off', 'false', '0', 'no']);
+
+export function parseAttributionEnv(value: string | undefined): boolean {
+  if (value === undefined) return true;
+  const normalized = value.trim().toLowerCase();
+  if (normalized === '') return true;
+  return !DISABLED_VALUES.has(normalized);
+}

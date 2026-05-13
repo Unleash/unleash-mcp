@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { sanitize } from './attribution.js';
+import { parseAttributionEnv, sanitize } from './attribution.js';
 
 describe('sanitize', () => {
   it('returns plain ASCII unchanged', () => {
@@ -37,5 +37,46 @@ describe('sanitize', () => {
 
   it('preserves dots, dashes, and digits', () => {
     expect(sanitize('claude-code/1.2.3-beta')).toBe('claude-code/1.2.3-beta');
+  });
+});
+
+describe('parseAttributionEnv', () => {
+  it('returns true when env var is undefined', () => {
+    expect(parseAttributionEnv(undefined)).toBe(true);
+  });
+
+  it('returns true when env var is empty string', () => {
+    expect(parseAttributionEnv('')).toBe(true);
+  });
+
+  it('returns false for "off"', () => {
+    expect(parseAttributionEnv('off')).toBe(false);
+  });
+
+  it('returns false for "OFF" (case-insensitive)', () => {
+    expect(parseAttributionEnv('OFF')).toBe(false);
+  });
+
+  it('returns false for "false"', () => {
+    expect(parseAttributionEnv('false')).toBe(false);
+  });
+
+  it('returns false for "0"', () => {
+    expect(parseAttributionEnv('0')).toBe(false);
+  });
+
+  it('returns false for "no"', () => {
+    expect(parseAttributionEnv('no')).toBe(false);
+  });
+
+  it('returns false ignoring surrounding whitespace', () => {
+    expect(parseAttributionEnv('  off  ')).toBe(false);
+  });
+
+  it('returns true for any other value', () => {
+    expect(parseAttributionEnv('on')).toBe(true);
+    expect(parseAttributionEnv('1')).toBe(true);
+    expect(parseAttributionEnv('yes')).toBe(true);
+    expect(parseAttributionEnv('garbage')).toBe(true);
   });
 });
