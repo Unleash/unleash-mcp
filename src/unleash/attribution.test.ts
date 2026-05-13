@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseAttributionEnv, sanitize } from './attribution.js';
+import { buildClientAttribution, parseAttributionEnv, sanitize } from './attribution.js';
 
 describe('sanitize', () => {
   it('returns plain ASCII unchanged', () => {
@@ -78,5 +78,40 @@ describe('parseAttributionEnv', () => {
     expect(parseAttributionEnv('1')).toBe(true);
     expect(parseAttributionEnv('yes')).toBe(true);
     expect(parseAttributionEnv('garbage')).toBe(true);
+  });
+});
+
+describe('buildClientAttribution', () => {
+  it('returns the attribution fragment when enabled with valid clientInfo', () => {
+    expect(buildClientAttribution({ name: 'claude-code', version: '1.2.3' }, true)).toBe(
+      'client=claude-code/1.2.3',
+    );
+  });
+
+  it('returns empty string when attribution is disabled', () => {
+    expect(buildClientAttribution({ name: 'claude-code', version: '1.2.3' }, false)).toBe('');
+  });
+
+  it('returns empty string when clientInfo is undefined', () => {
+    expect(buildClientAttribution(undefined, true)).toBe('');
+  });
+
+  it('sanitizes parentheses and semicolons in name and version', () => {
+    expect(buildClientAttribution({ name: 'claude(code)', version: '1;0' }, true)).toBe(
+      'client=claudecode/10',
+    );
+  });
+
+  it('returns empty string when name sanitizes to empty', () => {
+    expect(buildClientAttribution({ name: '()', version: '1.0' }, true)).toBe('');
+  });
+
+  it('returns empty string when version sanitizes to empty', () => {
+    expect(buildClientAttribution({ name: 'claude-code', version: ';' }, true)).toBe('');
+  });
+
+  it('truncates oversized name to 64 chars', () => {
+    const result = buildClientAttribution({ name: 'a'.repeat(100), version: '1.0' }, true);
+    expect(result.startsWith(`client=${'a'.repeat(64)}/`)).toBe(true);
   });
 });

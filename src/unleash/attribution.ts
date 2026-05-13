@@ -14,3 +14,16 @@ export function parseAttributionEnv(value: string | undefined): boolean {
   if (normalized === '') return true;
   return !DISABLED_VALUES.has(normalized);
 }
+
+export type ClientInfo = { name: string; version: string };
+
+export function buildClientAttribution(
+  clientInfo: ClientInfo | undefined,
+  attributionEnabled: boolean,
+): string {
+  if (!attributionEnabled || !clientInfo) return '';
+  const name = sanitize(clientInfo.name);
+  const version = sanitize(clientInfo.version);
+  if (!name || !version) return '';
+  return `client=${name}/${version}`;
+}
