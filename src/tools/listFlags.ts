@@ -43,7 +43,7 @@ interface FeatureFlagsEnvelope {
   order: 'asc' | 'desc';
   limit: number;
   offset: number;
-  nextOffset: number | null;
+  nextOffset?: number;
   totalFlags: number;
   flags: FeatureFlagSummary[];
 }
