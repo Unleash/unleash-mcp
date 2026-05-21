@@ -63,6 +63,8 @@ describe('remote MCP handler (e2e)', () => {
       'detect_flag',
       'evaluate_change',
       'get_flag_state',
+      'list_flags',
+      'list_projects',
       'remove_flag_strategy',
       'set_flag_rollout',
       'toggle_flag_environment',
@@ -101,5 +103,82 @@ describe('remote MCP handler (e2e)', () => {
         { type: 'text', text: expect.stringContaining('DRY RUN') },
       ]),
     });
+  });
+
+  it('lists feature flags via list_flags tool (dry-run)', async () => {
+    await mcpPost({
+      jsonrpc: '2.0',
+      id: 10,
+      method: 'initialize',
+      params: {
+        protocolVersion: '2025-03-26',
+        capabilities: {},
+        clientInfo: { name: 'test-client', version: '1.0.0' },
+      },
+    }).expect(200);
+
+    const callRes = await mcpPost([
+      { jsonrpc: '2.0', method: 'notifications/initialized' },
+      {
+        jsonrpc: '2.0',
+        id: 11,
+        method: 'tools/call',
+        params: {
+          name: 'list_flags',
+          arguments: { projectId: 'default' },
+        },
+      },
+    ]).expect(200);
+
+    const callResult = Array.isArray(callRes.body)
+      ? callRes.body.find((r: { id?: number }) => r.id === 11)
+      : callRes.body;
+
+    expect(callResult.result).toBeDefined();
+    expect(callResult.result.isError).toBeFalsy();
+    expect(callResult.result.structuredContent).toMatchObject({
+      success: true,
+      projectId: 'default',
+      flags: expect.any(Array),
+    });
+    expect(callResult.result.structuredContent.flags.length).toBeGreaterThan(0);
+  });
+
+  it('lists projects via list_projects tool (dry-run)', async () => {
+    await mcpPost({
+      jsonrpc: '2.0',
+      id: 20,
+      method: 'initialize',
+      params: {
+        protocolVersion: '2025-03-26',
+        capabilities: {},
+        clientInfo: { name: 'test-client', version: '1.0.0' },
+      },
+    }).expect(200);
+
+    const callRes = await mcpPost([
+      { jsonrpc: '2.0', method: 'notifications/initialized' },
+      {
+        jsonrpc: '2.0',
+        id: 21,
+        method: 'tools/call',
+        params: {
+          name: 'list_projects',
+          arguments: {},
+        },
+      },
+    ]).expect(200);
+
+    const callResult = Array.isArray(callRes.body)
+      ? callRes.body.find((r: { id?: number }) => r.id === 21)
+      : callRes.body;
+
+    expect(callResult.result).toBeDefined();
+    expect(callResult.result.isError).toBeFalsy();
+    expect(callResult.result.structuredContent).toMatchObject({
+      success: true,
+      projects: expect.any(Array),
+    });
+    expect(callResult.result.structuredContent.projects.length).toBeGreaterThan(0);
   });
 });
