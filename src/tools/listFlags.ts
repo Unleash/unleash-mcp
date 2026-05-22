@@ -16,6 +16,12 @@ const listFlagsSchema = z.object({
     .describe(
       'Project ID to list flags from (optional if UNLEASH_DEFAULT_PROJECT is set; auto-resolved when a single project exists)',
     ),
+  archived: z
+    .boolean()
+    .optional()
+    .describe(
+      'Set to true to list archived flags instead of active ones. Defaults to false (active flags only). Active and archived flags cannot be returned in the same response — call this tool twice (once with archived=false, once with archived=true) to assemble a full inventory for audit workflows.',
+    ),
   limit: z
     .number()
     .int()
@@ -40,6 +46,7 @@ interface FeatureFlagsEnvelope {
   cached: boolean;
   dryRun: boolean;
   projectId: string;
+  archived: boolean;
   order: 'asc' | 'desc';
   limit: number;
   offset: number;
@@ -59,17 +66,21 @@ export async function listFlags(
     const projectId = await resolveProjectId(input.projectId, context);
     if (!projectId) return askForProjectId(context);
 
+    const archivedRequested = input.archived === true;
+    const filterLabel = archivedRequested ? 'archived' : 'active';
+
     await context.notifyProgress(
       progressToken,
       0,
       100,
-      `Listing feature flags in project "${projectId}"...`,
+      `Listing ${filterLabel} feature flags in project "${projectId}"...`,
     );
 
     const resource = await readFeatureFlagsResource(context, projectId, {
       limit: input.limit,
       order: input.order,
       offset: input.offset,
+      archived: archivedRequested,
     });
     const envelope = JSON.parse(resource.text) as FeatureFlagsEnvelope;
 
@@ -77,11 +88,9 @@ export async function listFlags(
       progressToken,
       100,
       100,
-      `Listed ${envelope.flags.length} of ${envelope.totalFlags} flag${envelope.totalFlags === 1 ? '' : 's'}`,
+      `Listed ${envelope.flags.length} of ${envelope.totalFlags} ${filterLabel} flag${envelope.totalFlags === 1 ? '' : 's'}`,
     );
 
-    const activeCount = envelope.flags.filter((f) => !f.archived).length;
-    const archivedCount = envelope.flags.length - activeCount;
     const paginationHint =
       envelope.nextOffset != null
         ? `, nextOffset=${envelope.nextOffset} (call again with offset=${envelope.nextOffset} for the next page)`
@@ -91,22 +100,26 @@ export async function listFlags(
       envelope.flags.length > 0
         ? envelope.flags.map((f) => {
             const typeLabel = f.type ?? 'unknown';
-            const archivedLabel = f.archived ? ', archived' : '';
             const descriptionSuffix = f.description ? ` — ${f.description}` : '';
-            return `- ${f.name} (${typeLabel}${archivedLabel})${descriptionSuffix}`;
+            return `- ${f.name} (${typeLabel})${descriptionSuffix}`;
           })
-        : ['- No flags found.'];
+        : [`- No ${filterLabel} flags found.`];
+
+    const counterpartHint = archivedRequested
+      ? ' Call again with archived=false (or omit the parameter) to see active flags.'
+      : ' Call again with archived=true to see archived flags.';
 
     const summaryText = [
-      `Project "${projectId}": ${envelope.totalFlags} flag${envelope.totalFlags === 1 ? '' : 's'} total.`,
-      `Showing ${envelope.flags.length} (active: ${activeCount}, archived: ${archivedCount}); order=${envelope.order}, offset=${envelope.offset}${paginationHint}.`,
+      `Project "${projectId}" — ${envelope.totalFlags} ${filterLabel} flag${envelope.totalFlags === 1 ? '' : 's'} total.`,
+      `Showing ${envelope.flags.length}; order=${envelope.order}, offset=${envelope.offset}${paginationHint}.`,
+      `(Filter: archived=${envelope.archived}.${counterpartHint})`,
       '',
-      'Flags:',
+      `${filterLabel.charAt(0).toUpperCase()}${filterLabel.slice(1)} flags:`,
       ...flagLines,
     ].join('\n');
 
     context.logger.info(
-      `Listed ${envelope.flags.length}/${envelope.totalFlags} feature flag(s) in project "${projectId}"`,
+      `Listed ${envelope.flags.length}/${envelope.totalFlags} ${filterLabel} feature flag(s) in project "${projectId}"`,
     );
 
     return {
@@ -117,10 +130,10 @@ export async function listFlags(
         },
         {
           type: 'resource_link',
-          name: `feature-flags-${projectId}`,
+          name: `feature-flags-${projectId}-${filterLabel}`,
           uri: resource.uri,
           mimeType: resource.mimeType ?? 'application/json',
-          title: `Feature flags in project ${projectId}`,
+          title: `${filterLabel.charAt(0).toUpperCase()}${filterLabel.slice(1)} feature flags in project ${projectId}`,
         },
       ],
       structuredContent: {
@@ -136,7 +149,7 @@ export async function listFlags(
 export const listFlagsTool = {
   name: 'list_flags',
   description:
-    'List all feature flags in an Unleash project, with optional pagination and sort order. Use this to discover flags before creating new ones, audit flag inventory for cleanup, or scope a workflow to a specific project. Returns name, type, description, archived status, and URL for each flag.',
+    'List feature flags in an Unleash project, with optional pagination and sort order. By default returns active flags only; set archived=true to list archived flags instead (active and archived flags are disjoint result sets in Unleash and cannot be combined in one response). Use this to discover flags before creating new ones, audit flag inventory for cleanup (call twice — once for active, once for archived), or scope a workflow to a specific project. Returns name, type, description, archived status, and URL for each flag.',
   inputSchema: listFlagsSchema,
   implementation: listFlags,
 };

@@ -105,7 +105,7 @@ describe('remote MCP handler (e2e)', () => {
     });
   });
 
-  it('lists feature flags via list_flags tool (dry-run)', async () => {
+  it('lists active feature flags via list_flags tool (dry-run)', async () => {
     await mcpPost({
       jsonrpc: '2.0',
       id: 10,
@@ -139,9 +139,58 @@ describe('remote MCP handler (e2e)', () => {
     expect(callResult.result.structuredContent).toMatchObject({
       success: true,
       projectId: 'default',
+      archived: false,
       flags: expect.any(Array),
     });
     expect(callResult.result.structuredContent.flags.length).toBeGreaterThan(0);
+    // Active path: every returned flag should have archived !== true
+    for (const flag of callResult.result.structuredContent.flags) {
+      expect(flag.archived).not.toBe(true);
+    }
+  });
+
+  it('lists archived feature flags via list_flags tool (dry-run, archived=true)', async () => {
+    await mcpPost({
+      jsonrpc: '2.0',
+      id: 30,
+      method: 'initialize',
+      params: {
+        protocolVersion: '2025-03-26',
+        capabilities: {},
+        clientInfo: { name: 'test-client', version: '1.0.0' },
+      },
+    }).expect(200);
+
+    const callRes = await mcpPost([
+      { jsonrpc: '2.0', method: 'notifications/initialized' },
+      {
+        jsonrpc: '2.0',
+        id: 31,
+        method: 'tools/call',
+        params: {
+          name: 'list_flags',
+          arguments: { projectId: 'default', archived: true },
+        },
+      },
+    ]).expect(200);
+
+    const callResult = Array.isArray(callRes.body)
+      ? callRes.body.find((r: { id?: number }) => r.id === 31)
+      : callRes.body;
+
+    expect(callResult.result).toBeDefined();
+    expect(callResult.result.isError).toBeFalsy();
+    expect(callResult.result.structuredContent).toMatchObject({
+      success: true,
+      projectId: 'default',
+      archived: true,
+      flags: expect.any(Array),
+    });
+    expect(callResult.result.structuredContent.flags.length).toBeGreaterThan(0);
+    // Archived path: every returned flag should be archived
+    for (const flag of callResult.result.structuredContent.flags) {
+      expect(flag.archived).toBe(true);
+    }
   });
 
   it('lists projects via list_projects tool (dry-run)', async () => {
