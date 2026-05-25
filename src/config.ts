@@ -86,14 +86,36 @@ export function loadConfig(): Config {
   }
 }
 
+/**
+ * Matches a trailing `/api` segment (with optional trailing slash) at the very
+ * end of a URL pathname. Only the complete `api` segment matches — paths like
+ * `/api-v2` or `/api/admin` are left alone.
+ */
+const TRAILING_API_SEGMENT = /\/api\/?$/;
+
+/**
+ * Returns true if the given URL string ends with a `/api` (or `/api/`) segment.
+ * Useful for surfacing a one-time info message when the configured URL was
+ * normalized by stripping the trailing `/api`.
+ */
+export function hasTrailingApiSegment(url: string): boolean {
+  return TRAILING_API_SEGMENT.test(url);
+}
+
 export function normalizeBaseUrl(url: string): string {
   try {
     const parsed = new URL(url);
-    // Collapse multiple slashes in the path, remove trailing slashes, and preserve root path if pathname becomes empty.
-    parsed.pathname = parsed.pathname.replace(/\/{2,}/g, '/').replace(/\/+$/, '') || '/';
+    // Collapse multiple slashes in the path, then strip trailing slashes.
+    parsed.pathname = parsed.pathname.replace(/\/{2,}/g, '/').replace(/\/+$/, '');
+    // Strip a trailing `/api` segment if present. Most Unleash SDKs require
+    // `/api` in the base URL (they hit `/api/client/...` endpoints under it),
+    // but the MCP server hits `/api/admin/...` and adds the `/api` prefix
+    // itself. Accepting both forms avoids the "doubled /api" footgun that
+    // happens when users copy a base URL from their SDK configuration.
+    parsed.pathname = parsed.pathname.replace(TRAILING_API_SEGMENT, '') || '/';
     return parsed.toString();
   } catch {
-    // Fallback: strip trailing slashes only
-    return url.replace(/\/+$/, '');
+    // Fallback for non-URL inputs: same normalizations, regex-only.
+    return url.replace(/\/+$/, '').replace(TRAILING_API_SEGMENT, '');
   }
 }
