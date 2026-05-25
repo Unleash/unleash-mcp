@@ -33,7 +33,7 @@ async function main(): Promise<void> {
   const rawBaseUrl = process.env.UNLEASH_BASE_URL ?? '';
   if (hasTrailingApiSegment(rawBaseUrl)) {
     logger.info(
-      `Note: UNLEASH_BASE_URL had a trailing /api which was stripped (normalized to ${config.unleash.baseUrl}). Both forms are accepted — the MCP server adds /api/admin/... internally where needed. This matches the Unleash SDK convention where /api is expected.`,
+      `Note: UNLEASH_BASE_URL had a trailing /api which was stripped (normalized to ${config.unleash.baseUrl}). Both forms are accepted. Remove /api from UNLEASH_BASE_URL to avoid this message.`,
     );
   }
 
