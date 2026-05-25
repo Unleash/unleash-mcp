@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { loadConfig } from './config.js';
+import { hasTrailingApiSegment, loadConfig } from './config.js';
 import { createLogger } from './context.js';
 import { createUnleashMcpServer } from './server.js';
 import { enableStdioLogging } from './utils/stdioLogging.js';
@@ -24,6 +24,18 @@ async function main(): Promise<void> {
   logger.info(`Starting Unleash MCP Server ${VERSION}`);
   logger.info(`Base URL: ${config.unleash.baseUrl}`);
   logger.info(`Dry run: ${config.server.dryRun}`);
+
+  // If the configured UNLEASH_BASE_URL had a trailing `/api`, normalizeBaseUrl
+  // stripped it. Surface that explicitly so users debugging connectivity see
+  // what changed and don't think their config was ignored. The Unleash SDKs
+  // require `/api` in the base URL; the MCP server adds it back internally for
+  // the endpoints it hits — both forms are accepted.
+  const rawBaseUrl = process.env.UNLEASH_BASE_URL ?? '';
+  if (hasTrailingApiSegment(rawBaseUrl)) {
+    logger.info(
+      `Note: UNLEASH_BASE_URL had a trailing /api which was stripped (normalized to ${config.unleash.baseUrl}). Both forms are accepted — the MCP server adds /api/admin/... internally where needed. This matches the Unleash SDK convention where /api is expected.`,
+    );
+  }
 
   if (config.unleash.defaultProject) {
     logger.info(`Default project: ${config.unleash.defaultProject}`);

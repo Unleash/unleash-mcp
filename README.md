@@ -616,7 +616,7 @@ src/
 This section provides a quick reference for all configuration options.
 
 **Environment variables:**
-- `UNLEASH_BASE_URL`: Your Unleash instance URL (required).
+- `UNLEASH_BASE_URL`: Your Unleash instance URL (required). Both `https://your-instance.getunleash.io` and `https://your-instance.getunleash.io/api` are accepted — the server normalizes a trailing `/api` away if present, so you can paste the same value most Unleash SDKs expect.
 - `UNLEASH_PAT`: Personal access token (required).
 - `UNLEASH_DEFAULT_PROJECT`: The default project ID the MCP should use (optional).
 
