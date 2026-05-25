@@ -99,12 +99,7 @@ const TRAILING_API_SEGMENT = /\/api\/?$/;
  * normalized by stripping the trailing `/api`.
  */
 export function hasTrailingApiSegment(url: string): boolean {
-  try {
-    const parsed = new URL(url);
-    return TRAILING_API_SEGMENT.test(parsed.pathname);
-  } catch {
-    return TRAILING_API_SEGMENT.test(url.replace(/\/+$/, '/'));
-  }
+  return TRAILING_API_SEGMENT.test(url);
 }
 
 export function normalizeBaseUrl(url: string): string {
