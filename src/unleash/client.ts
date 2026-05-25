@@ -227,8 +227,27 @@ export class UnleashClient {
     });
   }
 
-  async listFeatureFlags(projectId: string): Promise<FeatureFlagSummary[]> {
+  async listFeatureFlags(
+    projectId: string,
+    options: { archived?: boolean } = {},
+  ): Promise<FeatureFlagSummary[]> {
+    const archived = options.archived === true;
+
     if (this.dryRun) {
+      if (archived) {
+        return [
+          {
+            name: 'dry-run-placeholder-archived-flag',
+            description:
+              'Dry-run mode placeholder for an archived flag. Set UNLEASH_BASE_URL and UNLEASH_PAT to fetch real archived flags.',
+            project: projectId,
+            type: 'release',
+            archived: true,
+            impressionData: false,
+            url: `${this.baseUrl}/projects/${encodeURIComponent(projectId)}/features/dry-run-placeholder-archived-flag`,
+          },
+        ];
+      }
       return [
         {
           name: 'dry-run-placeholder-flag',
@@ -243,7 +262,9 @@ export class UnleashClient {
       ];
     }
 
-    return this.fetchProjectFeatureFlags(projectId);
+    return archived
+      ? this.fetchArchivedProjectFeatureFlags(projectId)
+      : this.fetchProjectFeatureFlags(projectId);
   }
 
   async setFlexibleRolloutStrategy(
@@ -454,6 +475,59 @@ export class UnleashClient {
           project,
           type: feature.type,
           archived: feature.archived,
+          impressionData: feature.impressionData,
+          createdAt: feature.createdAt,
+          url: `${this.baseUrl}/projects/${encodeURIComponent(project)}/features/${encodeURIComponent(name)}`,
+        };
+      });
+  }
+
+  /**
+   * Fetch archived feature flags for a project.
+   *
+   * The project-features endpoint (`/api/admin/projects/{id}/features`) returns
+   * only non-archived flags — its controller doesn't extract the `archived` query
+   * parameter. Archived flags must be fetched via the search endpoint, which
+   * accepts the Unleash search syntax (`archived=IS:true`).
+   */
+  private async fetchArchivedProjectFeatureFlags(projectId: string): Promise<FeatureFlagSummary[]> {
+    const params = new URLSearchParams({
+      project: `IS:${projectId}`,
+      archived: 'IS:true',
+    });
+
+    const data = await this.requestJson<{
+      features?: Array<{
+        name?: string;
+        description?: string;
+        type?: FeatureFlagType;
+        archived?: boolean;
+        impressionData?: boolean;
+        createdAt?: string;
+        project?: string;
+      }>;
+    }>(
+      `/api/admin/search/features?${params.toString()}`,
+      { method: 'GET' },
+      {
+        errorMessage: `Failed to list archived feature flags for project ${projectId}`,
+        networkErrorMessage: `Failed to connect to Unleash API while listing archived flags for project ${projectId}`,
+      },
+    );
+
+    return (data.features ?? [])
+      .filter((f) => f.name)
+      .map((feature) => {
+        const name = feature.name as string;
+        const project = feature.project ?? projectId;
+        return {
+          name,
+          description: feature.description,
+          project,
+          type: feature.type,
+          // The search endpoint may not always set `archived: true` explicitly
+          // since the filter already narrowed the result set — assert it here.
+          archived: true,
           impressionData: feature.impressionData,
           createdAt: feature.createdAt,
           url: `${this.baseUrl}/projects/${encodeURIComponent(project)}/features/${encodeURIComponent(name)}`,

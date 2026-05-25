@@ -36,7 +36,14 @@ export interface DiscoveryInput {
 }
 
 /**
- * Build instructions for leveraging Unleash inventory resources.
+ * Build instructions for leveraging Unleash inventory tools.
+ *
+ * Instructs the agent to call the dedicated `list_projects` / `list_flags` MCP tools
+ * rather than `resources/read` on the equivalent URIs. Most MCP clients (e.g. Kiro
+ * autopilot) only surface tools to the agent — resources are user-attached via UI
+ * pickers — so tool-based instructions work everywhere. The underlying
+ * `unleash://projects` and `unleash://projects/{id}/feature-flags` resources still
+ * exist for clients that do expose resources; the new tools wrap the same handlers.
  */
 export function buildUnleashInventoryInstructions(
   description: string,
@@ -58,18 +65,17 @@ export function buildUnleashInventoryInstructions(
 ${baseNote}`.trim();
 
   if (defaultProject) {
-    const encodedProjectId = encodeURIComponent(defaultProject);
     return `
 ## Unleash Inventory Analysis
 
-Use the MCP resources to discover existing flags already defined in Unleash so you can reuse them instead of creating duplicates.
+Use the dedicated MCP tools to discover existing flags already defined in Unleash so you can reuse them instead of creating duplicates.
 
 **Step 1**: Focus on the configured default project **${defaultProject}**.
-- Optionally call \`resources/read\` with \`unleash://projects?order=desc&limit=200\` to confirm its metadata (filter to the entry whose 'id' matches "${defaultProject}").
+- Optionally call the \`list_projects\` tool (with limit=200, order=desc) to confirm its metadata (filter to the entry whose 'id' matches "${defaultProject}").
 - Do not evaluate other projects unless the default project clearly does not align with the change. If uncertain, ask the user for guidance before proceeding.
 
 **Step 2**: Inspect feature flags for the default project.
-- Call \`resources/read\` with \`unleash://projects/${encodedProjectId}/feature-flags?order=asc&limit=200\`.
+- Call the \`list_flags\` tool with projectId="${defaultProject}", limit=200, order=asc.
 - Review the returned flag names, descriptions, types, archived status and URLs.
 - Pay close attention to flags whose descriptions, rollout intent, or ownership align with "${description}".
 
@@ -80,16 +86,16 @@ ${sharedSteps}
   return `
 ## Unleash Inventory Analysis
 
-Use the MCP resources to discover existing flags already defined in Unleash so you can reuse them instead of creating duplicates.
+Use the dedicated MCP tools to discover existing flags already defined in Unleash so you can reuse them instead of creating duplicates.
 
 **Step 1**: List available projects.
-- Call \`resources/read\` with \`unleash://projects?order=desc&limit=200\` to retrieve project metadata (names, descriptions, URLs).
+- Call the \`list_projects\` tool (with limit=200, order=desc) to retrieve project metadata (names, descriptions, URLs).
 - Identify the project whose name or description best aligns with the feature description for "${description}".
 - If multiple projects seem relevant, shortlist up to 3 and justify your selection.
 - If you cannot determine a suitable project, explicitly ask the user which project to target before proceeding.
 
 **Step 2**: Inspect feature flags for each shortlisted project.
-- For each candidate project, call \`resources/read\` with \`unleash://projects/<projectId>/feature-flags?order=asc&limit=200\`.
+- For each candidate project, call the \`list_flags\` tool with projectId="<projectId>", limit=200, order=asc.
 - Review the returned flag names, descriptions, types, archived status and URLs.
 - Pay close attention to flags whose descriptions, rollout intent, or ownership align with "${description}".
 
