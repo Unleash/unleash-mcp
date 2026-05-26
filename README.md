@@ -2,12 +2,7 @@
 
 A purpose-driven [Model Context Protocol](https://modelcontextprotocol.io) (MCP) server for managing [Unleash](https://www.getunleash.io/) feature flags. This server enables LLM-powered coding assistants to create and manage feature flags following Unleash best practices.
 
-> **Experimental feature**
->
-> The Unleash MCP server is an experimental feature. Functionality may change, and we do not yet recommend using it in production environments.
->
-> To share feedback, join our [community Slack](https://www.getunleash.io/unleash-community), open an [issue on GitHub](https://github.com/Unleash/unleash-mcp/issues), or email us at
-> **beta@getunleash.io**.
+To share feedback, join our [community Slack](https://www.getunleash.io/unleash-community) or open an [issue on GitHub](https://github.com/Unleash/unleash-mcp/issues).
 
 ## Overview
 
