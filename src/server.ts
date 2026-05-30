@@ -125,7 +125,6 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
   const context: ServerContext = {
     config,
     unleashClient,
-    getClientInfo,
     logger,
     cache: { projects: null, featureFlags: new Map() },
     notifyProgress: notifyProgress(server),
