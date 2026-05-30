@@ -290,4 +290,49 @@ describe('outbound User-Agent attribution (e2e)', () => {
     });
     expect(enrichedCall).toBeDefined();
   });
+
+  it('omits client attribution when attributionEnabled is false', async () => {
+    const server = createUnleashMcpServer({
+      baseUrl: 'http://localhost:4242',
+      authHeaders: { Authorization: 'test-token' },
+      dryRun: false,
+      logLevel: 'error',
+      attributionEnabled: false,
+    });
+
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+
+    const client = new Client({ name: 'test-client', version: '1.0.0' }, { capabilities: {} });
+
+    await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
+
+    await client.callTool({
+      name: 'get_flag_state',
+      arguments: { featureName: 'example', projectId: 'default' },
+    });
+
+    await client.close();
+    await server.close();
+
+    expect(fetchSpy).toHaveBeenCalled();
+
+    // Even though the client sent clientInfo, no outbound call should carry attribution.
+    const attributedCall = fetchSpy.mock.calls.find((c: unknown[]) => {
+      const init = c[1] as RequestInit | undefined;
+      if (!init) return false;
+      const headers = init.headers as Record<string, string> | undefined;
+      if (!headers) return false;
+      return (headers['User-Agent'] ?? '').includes('client=');
+    });
+    expect(attributedCall).toBeUndefined();
+
+    const baseCall = fetchSpy.mock.calls.find((c: unknown[]) => {
+      const init = c[1] as RequestInit | undefined;
+      if (!init) return false;
+      const headers = init.headers as Record<string, string> | undefined;
+      if (!headers) return false;
+      return /^unleash-mcp\/[\w.-]+ \(MCP Server\)$/.test(headers['User-Agent'] ?? '');
+    });
+    expect(baseCall).toBeDefined();
+  });
 });

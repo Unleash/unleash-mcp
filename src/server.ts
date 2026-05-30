@@ -42,6 +42,7 @@ export interface CreateServerOptions {
   defaultEnvironment?: string;
   dryRun?: boolean;
   logLevel?: 'debug' | 'info' | 'warn' | 'error';
+  attributionEnabled?: boolean;
   logger?: Logger;
 }
 
@@ -62,6 +63,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
   const baseUrl = normalizeBaseUrl(options.baseUrl);
   const dryRun = options.dryRun ?? false;
   const logLevel = options.logLevel ?? 'error';
+  const attributionEnabled = options.attributionEnabled ?? true;
   const logger = options.logger ?? createLogger(logLevel);
 
   // Build a Config object for ServerContext. The pat field is a placeholder —
@@ -76,6 +78,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     server: {
       dryRun,
       logLevel,
+      attributionEnabled,
     },
   };
 
@@ -111,7 +114,13 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     return { name: info.name, version: info.version };
   };
 
-  const unleashClient = new UnleashClient(baseUrl, options.authHeaders, dryRun, getClientInfo);
+  const unleashClient = new UnleashClient(
+    baseUrl,
+    options.authHeaders,
+    dryRun,
+    getClientInfo,
+    attributionEnabled,
+  );
 
   const context: ServerContext = {
     config,

@@ -1,22 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { UnleashClient } from './client.js';
 
 describe('UnleashClient User-Agent', () => {
-  let originalEnv: string | undefined;
-
-  beforeEach(() => {
-    originalEnv = process.env.UNLEASH_MCP_CLIENT_ATTRIBUTION;
-    delete process.env.UNLEASH_MCP_CLIENT_ATTRIBUTION;
-  });
-
-  afterEach(() => {
-    if (originalEnv === undefined) {
-      delete process.env.UNLEASH_MCP_CLIENT_ATTRIBUTION;
-    } else {
-      process.env.UNLEASH_MCP_CLIENT_ATTRIBUTION = originalEnv;
-    }
-  });
-
   function getUserAgent(client: UnleashClient): string {
     const headers = (
       client as unknown as { buildRequestHeaders: () => Record<string, string> }
@@ -44,12 +29,17 @@ describe('UnleashClient User-Agent', () => {
     );
   });
 
-  it('emits base User-Agent when UNLEASH_MCP_CLIENT_ATTRIBUTION=off', () => {
-    process.env.UNLEASH_MCP_CLIENT_ATTRIBUTION = 'off';
-    const client = new UnleashClient('https://example.com', {}, true, () => ({
-      name: 'claude-code',
-      version: '1.2.3',
-    }));
+  it('emits base User-Agent when attribution is disabled', () => {
+    const client = new UnleashClient(
+      'https://example.com',
+      {},
+      true,
+      () => ({
+        name: 'claude-code',
+        version: '1.2.3',
+      }),
+      false,
+    );
     expect(getUserAgent(client)).toMatch(/^unleash-mcp\/[\w.-]+ \(MCP Server\)$/);
   });
 

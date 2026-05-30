@@ -1,6 +1,6 @@
 import { CustomError } from '../utils/errors.js';
 import { VERSION } from '../version.js';
-import { buildClientAttribution, type ClientInfo, parseAttributionEnv } from './attribution.js';
+import { buildClientAttribution, type ClientInfo } from './attribution.js';
 
 /**
  * Feature flag types supported by Unleash.
@@ -141,13 +141,14 @@ export class UnleashClient {
     authHeaders: Record<string, string>,
     dryRun: boolean = false,
     getClientInfo?: () => ClientInfo | undefined,
+    attributionEnabled: boolean = true,
   ) {
     // Ensure baseUrl doesn't have trailing slash
     this.baseUrl = baseUrl.replace(/\/$/, '');
     this.authHeaders = authHeaders;
     this.dryRun = dryRun;
     this.getClientInfo = getClientInfo;
-    this.attributionEnabled = parseAttributionEnv(process.env.UNLEASH_MCP_CLIENT_ATTRIBUTION);
+    this.attributionEnabled = attributionEnabled;
   }
 
   /**
