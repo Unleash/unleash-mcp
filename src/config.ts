@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import { z } from 'zod';
+import { parseAttributionEnv } from './unleash/attribution.js';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -18,6 +19,7 @@ const configSchema = z.object({
   server: z.object({
     dryRun: z.boolean().default(false),
     logLevel: z.enum(['debug', 'info', 'warn', 'error']).default('error'),
+    attributionEnabled: z.boolean().default(true),
   }),
 });
 
@@ -62,6 +64,7 @@ export function loadConfig(): Config {
     server: {
       dryRun: cliFlags.dryRun,
       logLevel,
+      attributionEnabled: parseAttributionEnv(process.env.UNLEASH_MCP_CLIENT_ATTRIBUTION),
     },
   };
 

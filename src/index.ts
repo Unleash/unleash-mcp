@@ -48,6 +48,7 @@ async function main(): Promise<void> {
     defaultEnvironment: config.unleash.defaultEnvironment,
     dryRun: config.server.dryRun,
     logLevel: config.server.logLevel,
+    attributionEnabled: config.server.attributionEnabled,
     logger,
   });
 
