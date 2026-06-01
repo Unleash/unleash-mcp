@@ -71,4 +71,4 @@ TypeScript strict mode is on with `noUnusedLocals`, `noUnusedParameters`, `noImp
 
 ## Configuration
 
-Required env vars: `UNLEASH_BASE_URL`, `UNLEASH_PAT`. Optional: `UNLEASH_DEFAULT_PROJECT`, `UNLEASH_DEFAULT_ENVIRONMENT`, `LOG_LEVEL`, `APP_LOG_FILE`, `MCP_STDIO_LOG_FILE`. CLI flags: `--dry-run`, `--log-level <level>`. See `.env.example` for reference.
+Required env vars: `UNLEASH_BASE_URL`, `UNLEASH_PAT`. Optional: `UNLEASH_DEFAULT_PROJECT`, `UNLEASH_DEFAULT_ENVIRONMENT`, `LOG_LEVEL`, `APP_LOG_FILE`, `MCP_STDIO_LOG_FILE`, `UNLEASH_MCP_CLIENT_ATTRIBUTION` (set to `off` to disable client attribution in outbound headers; default: enabled). CLI flags: `--dry-run`, `--log-level <level>`. See `.env.example` for reference.

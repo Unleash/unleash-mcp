@@ -30,6 +30,7 @@ import { setFlagRolloutTool } from './tools/setFlagRollout.js';
 import { toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
 import type { ToolDefinition } from './tools/types.js';
 import { wrapChangeTool } from './tools/wrapChange.js';
+import type { ClientInfo } from './unleash/attribution.js';
 import { UnleashClient } from './unleash/client.js';
 import { notifyProgress } from './utils/streaming.js';
 import { VERSION } from './version.js';
@@ -41,6 +42,7 @@ export interface CreateServerOptions {
   defaultEnvironment?: string;
   dryRun?: boolean;
   logLevel?: 'debug' | 'info' | 'warn' | 'error';
+  attributionEnabled?: boolean;
   logger?: Logger;
 }
 
@@ -61,6 +63,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
   const baseUrl = normalizeBaseUrl(options.baseUrl);
   const dryRun = options.dryRun ?? false;
   const logLevel = options.logLevel ?? 'error';
+  const attributionEnabled = options.attributionEnabled ?? true;
   const logger = options.logger ?? createLogger(logLevel);
 
   // Build a Config object for ServerContext. The pat field is a placeholder —
@@ -75,10 +78,9 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     server: {
       dryRun,
       logLevel,
+      attributionEnabled,
     },
   };
-
-  const unleashClient = new UnleashClient(baseUrl, options.authHeaders, dryRun);
 
   const instructions = [
     'Use this tool for local development to increase confidence by decoupling the change from deployments:',
@@ -104,6 +106,20 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
       },
       instructions,
     },
+  );
+
+  const getClientInfo = (): ClientInfo | undefined => {
+    const info = server.server.getClientVersion();
+    if (!info) return undefined;
+    return { name: info.name, version: info.version };
+  };
+
+  const unleashClient = new UnleashClient(
+    baseUrl,
+    options.authHeaders,
+    dryRun,
+    getClientInfo,
+    attributionEnabled,
   );
 
   const context: ServerContext = {
