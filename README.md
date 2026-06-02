@@ -574,6 +574,64 @@ Returns a comprehensive, markdown-formatted string that guides the user on how t
 [If-block, guard clause, hooks, ternary, etc.]
 ```
 
+### Set flag rollout
+
+The `set_flag_rollout` tool configures a `flexibleRollout` strategy for a feature flag in a specific environment. This includes rollout percentage, stickiness, variants, and constraints for targeting.
+
+#### When to use
+
+Use this tool after creating a feature flag when you want to configure how the flag rolls out to users. This tool does **not** enable the flag; use `toggle_flag_environment` to turn it on.
+
+#### Parameters
+
+- `featureName` (required): The feature flag name.
+- `environment` (required): Target environment (e.g., `development`, `production`).
+- `rolloutPercentage` (required): Percentage of users to receive the feature (0-100).
+- `projectId` (optional): Project ID (defaults to `UNLEASH_DEFAULT_PROJECT`).
+- `groupId` (optional): Group ID for stickiness bucketing (defaults to feature name).
+- `stickiness` (optional): Stickiness field (defaults to `"default"`).
+- `title` (optional): Descriptive title for the strategy.
+- `disabled` (optional): Disable the strategy (defaults to `false`).
+- `variants` (optional): List of strategy-level variants.
+- `constraints` (optional): List of targeting constraints.
+
+#### Constraints
+
+Constraints allow you to target specific users based on context fields. Each constraint has:
+
+- `contextName` (required): Context field name (e.g., `userId`, `environment`).
+- `operator` (required): Comparison operator.
+- `values` (optional): Values for multi-value operators (`IN`, `NOT_IN`).
+- `value` (optional): Single value for single-value operators.
+- `caseInsensitive` (optional): Case insensitive matching.
+- `inverted` (optional): Invert the constraint result.
+
+**Available operators:**
+- Basic: `IN`, `NOT_IN`
+- String: `STR_CONTAINS`, `STR_STARTS_WITH`, `STR_ENDS_WITH`
+- Numeric: `NUM_EQ`, `NUM_GT`, `NUM_GTE`, `NUM_LT`, `NUM_LTE`
+- Date: `DATE_AFTER`, `DATE_BEFORE`
+- Semver: `SEMVER_EQ`, `SEMVER_GT`, `SEMVER_LT`
+
+#### Usage example
+
+**Tool payload**
+
+```json
+{
+  "featureName": "new-checkout-flow",
+  "environment": "production",
+  "rolloutPercentage": 50,
+  "constraints": [
+    {
+      "contextName": "userId",
+      "operator": "IN",
+      "values": ["user-123", "user-456"]
+    }
+  ]
+}
+```
+
 ## Architecture
 
 The server follows a focused, purpose-driven design.

@@ -6,7 +6,11 @@ import {
   resolveProjectId,
   type ServerContext,
 } from '../context.js';
-import type { StrategyVariant, StrategyVariantPayload } from '../unleash/client.js';
+import type {
+  StrategyConstraint,
+  StrategyVariant,
+  StrategyVariantPayload,
+} from '../unleash/client.js';
 import { createFlagResourceLink } from '../utils/streaming.js';
 
 const variantPayloadSchema = z.object({
@@ -28,6 +32,35 @@ const variantSchema = z
   })
   .describe('Strategy-level variant definition');
 
+const constraintOperatorSchema = z.enum([
+  'IN',
+  'NOT_IN',
+  'STR_CONTAINS',
+  'STR_STARTS_WITH',
+  'STR_ENDS_WITH',
+  'NUM_EQ',
+  'NUM_GT',
+  'NUM_GTE',
+  'NUM_LT',
+  'NUM_LTE',
+  'DATE_AFTER',
+  'DATE_BEFORE',
+  'SEMVER_EQ',
+  'SEMVER_GT',
+  'SEMVER_LT',
+]);
+
+const constraintSchema = z
+  .object({
+    contextName: z.string().min(1).describe('Context field name (e.g., userId, environment)'),
+    operator: constraintOperatorSchema.describe('Comparison operator'),
+    values: z.array(z.string()).optional().describe('Values for multi-value operators (IN, NOT_IN)'),
+    value: z.string().optional().describe('Single value for single-value operators'),
+    caseInsensitive: z.boolean().optional().describe('Case insensitive matching (default: false)'),
+    inverted: z.boolean().optional().describe('Invert the constraint result (default: false)'),
+  })
+  .describe('Strategy constraint for targeting');
+
 const setFlagRolloutSchema = z.object({
   projectId: z
     .string()
@@ -46,6 +79,10 @@ const setFlagRolloutSchema = z.object({
   title: z.string().optional().describe('Optional descriptive title for the strategy'),
   disabled: z.boolean().optional().describe('Disable the strategy (defaults to false)'),
   variants: z.array(variantSchema).optional().describe('Optional list of strategy-level variants'),
+  constraints: z
+    .array(constraintSchema)
+    .optional()
+    .describe('Optional list of strategy constraints for targeting'),
 });
 
 type SetFlagRolloutInput = z.infer<typeof setFlagRolloutSchema>;
@@ -79,6 +116,17 @@ export async function setFlagRollout(
       ...(variant.payload ? { payload: variant.payload } : {}),
     }));
 
+    const constraints: StrategyConstraint[] | undefined = input.constraints?.map((constraint) => ({
+      contextName: constraint.contextName,
+      operator: constraint.operator,
+      ...(constraint.values ? { values: constraint.values } : {}),
+      ...(constraint.value ? { value: constraint.value } : {}),
+      ...(constraint.caseInsensitive !== undefined
+        ? { caseInsensitive: constraint.caseInsensitive }
+        : {}),
+      ...(constraint.inverted !== undefined ? { inverted: constraint.inverted } : {}),
+    }));
+
     const strategy = await context.unleashClient.setFlexibleRolloutStrategy(
       projectId,
       input.featureName,
@@ -90,6 +138,7 @@ export async function setFlagRollout(
         title: input.title,
         disabled: input.disabled,
         variants,
+        constraints,
       },
     );
 

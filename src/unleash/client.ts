@@ -70,6 +70,40 @@ export interface StrategyVariant {
   [key: string]: unknown;
 }
 
+/**
+ * Constraint operators supported by Unleash.
+ * See: https://docs.getunleash.io/reference/activation-strategies
+ */
+export type ConstraintOperator =
+  | 'IN'
+  | 'NOT_IN'
+  | 'STR_CONTAINS'
+  | 'STR_STARTS_WITH'
+  | 'STR_ENDS_WITH'
+  | 'NUM_EQ'
+  | 'NUM_GT'
+  | 'NUM_GTE'
+  | 'NUM_LT'
+  | 'NUM_LTE'
+  | 'DATE_AFTER'
+  | 'DATE_BEFORE'
+  | 'SEMVER_EQ'
+  | 'SEMVER_GT'
+  | 'SEMVER_LT';
+
+/**
+ * Strategy constraint for targeting.
+ * See: https://docs.getunleash.io/reference/activation-strategies
+ */
+export interface StrategyConstraint {
+  contextName: string;
+  operator: ConstraintOperator;
+  values?: string[];
+  value?: string;
+  caseInsensitive?: boolean;
+  inverted?: boolean;
+}
+
 export interface SetFlagRolloutOptions {
   rolloutPercentage: number;
   groupId?: string;
@@ -77,6 +111,7 @@ export interface SetFlagRolloutOptions {
   title?: string;
   disabled?: boolean;
   variants?: StrategyVariant[];
+  constraints?: StrategyConstraint[];
 }
 
 export interface FeatureStrategy {
@@ -87,7 +122,7 @@ export interface FeatureStrategy {
   featureName?: string;
   sortOrder?: number;
   segments?: number[];
-  constraints?: Array<Record<string, unknown>>;
+  constraints?: StrategyConstraint[];
   variants?: StrategyVariant[];
   parameters: Record<string, string>;
 }
@@ -297,6 +332,9 @@ export class UnleashClient {
       disabled: options.disabled,
       parameters,
       ...(options.variants && options.variants.length > 0 ? { variants: options.variants } : {}),
+      ...(options.constraints && options.constraints.length > 0
+        ? { constraints: options.constraints }
+        : {}),
     };
 
     if (this.dryRun) {
@@ -308,6 +346,7 @@ export class UnleashClient {
         featureName,
         parameters,
         variants: payload.variants ?? [],
+        constraints: payload.constraints ?? [],
       };
     }
 

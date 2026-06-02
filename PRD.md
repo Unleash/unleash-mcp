@@ -387,6 +387,57 @@ Returns a comprehensive markdown document containing:
 
 ---
 
+## Phase 4: Strategy Constraints (Planned)
+
+### Objective
+
+Add `constraints` parameter to `set_flag_rollout` tool for targeting based on context fields.
+
+### Scope
+
+Extend `set_flag_rollout` to accept an optional `constraints` array passed through to the Unleash Admin API.
+
+**Supported Context Fields** (Built-in):
+- `userId`, `sessionId`, `remoteAddress`, `environment`, `appName`, `currentTime`, `properties`
+
+**Note**: Custom context fields (e.g., `country`, `appVersion`) are supported but require Unleash Admin configuration.
+
+### Input Schema
+
+```typescript
+interface StrategyConstraint {
+  contextName: string;                    // e.g., "userId", "appName"
+  operator: ConstraintOperator;           // e.g., "IN", "NOT_IN", "SEMVER_GTE"
+  values?: string[];                      // For IN/NOT_IN
+  value?: string;                         // For single value operators
+}
+```
+
+**Operators**: `IN`, `NOT_IN`, `STR_CONTAINS`, `STR_STARTS_WITH`, `STR_ENDS_WITH`, `NUM_EQ/GT/GTE/LT/LTE`, `SEMVER_EQ/GT/GTE/LT/LTE`
+
+### Example
+
+```json
+{
+  "featureName": "new-feature",
+  "environment": "production",
+  "rolloutPercentage": 100,
+  "constraints": [
+    { "contextName": "userId", "operator": "IN", "values": ["user123", "user456"] }
+  ]
+}
+```
+
+### TODO: Phase 4 Tasks
+
+- [ ] Add `StrategyConstraint` type to `src/unleash/client.ts`
+- [ ] Update `setFlexibleRolloutStrategy` to include constraints in payload
+- [ ] Add constraint schema to `src/tools/setFlagRollout.ts`
+- [ ] Update README with examples
+- [ ] Test against live Unleash instance
+
+---
+
 ## Cross-Phase Tasks
 
 ### Documentation
@@ -451,6 +502,10 @@ Returns a comprehensive markdown document containing:
 - [x] Users can copy-paste snippets directly into their codebase
 - [x] Framework-specific templates for major frameworks
 
+### Phase 4 (Planned)
+- [ ] Constraints parameter working in `set_flag_rollout`
+- [ ] Constraints correctly applied in Unleash dashboard
+
 ### Overall
 - [x] LLM assistants can complete full flag workflow without human intervention
 - [x] Average time to create and wrap a flag: <2 minutes
@@ -488,7 +543,6 @@ Returns a comprehensive markdown document containing:
   - Tag assignment during creation
   - Initial strategy configuration
   - Variant creation
-  - Constraint configuration
 
 ---
 
