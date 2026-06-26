@@ -43,6 +43,7 @@ export interface CreateServerOptions {
   dryRun?: boolean;
   logLevel?: 'debug' | 'info' | 'warn' | 'error';
   attributionEnabled?: boolean;
+  fetchFn?: typeof fetch;
   logger?: Logger;
 }
 
@@ -120,6 +121,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     dryRun,
     getClientInfo,
     attributionEnabled,
+    options.fetchFn,
   );
 
   const context: ServerContext = {

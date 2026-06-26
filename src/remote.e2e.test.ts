@@ -2,7 +2,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import express from 'express';
 import request from 'supertest';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { createMcpHandler } from './remote.js';
 import { createUnleashMcpServer } from './server.js';
 
@@ -236,22 +236,19 @@ describe('remote MCP handler (e2e)', () => {
 });
 
 describe('outbound User-Agent attribution (e2e)', () => {
-  let fetchSpy: ReturnType<typeof vi.spyOn>;
-
-  beforeEach(() => {
-    fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue(
-      new Response(JSON.stringify({ name: 'example', environments: [] }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      }),
+  function makeFakeFetch() {
+    return vi.fn<typeof fetch>(
+      async () =>
+        new Response(JSON.stringify({ name: 'example', environments: [] }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        }),
     );
-  });
-
-  afterEach(() => {
-    fetchSpy.mockRestore();
-  });
+  }
 
   it('forwards MCP clientInfo into outbound User-Agent header', async () => {
+    const fakeFetch = makeFakeFetch();
+
     // Use InMemoryTransport so initialize and tools/call share the same McpServer
     // instance, which is required for server.server.getClientVersion() to return
     // the clientInfo set during initialize.
@@ -260,6 +257,7 @@ describe('outbound User-Agent attribution (e2e)', () => {
       authHeaders: { Authorization: 'test-token' },
       dryRun: false,
       logLevel: 'error',
+      fetchFn: fakeFetch,
     });
 
     const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
@@ -278,8 +276,8 @@ describe('outbound User-Agent attribution (e2e)', () => {
     await server.close();
 
     // Verify at least one outbound call has the enriched User-Agent
-    expect(fetchSpy).toHaveBeenCalled();
-    const enrichedCall = fetchSpy.mock.calls.find((c: unknown[]) => {
+    expect(fakeFetch).toHaveBeenCalled();
+    const enrichedCall = fakeFetch.mock.calls.find((c: unknown[]) => {
       const init = c[1] as RequestInit | undefined;
       if (!init) return false;
       const headers = init.headers as Record<string, string> | undefined;
@@ -292,12 +290,15 @@ describe('outbound User-Agent attribution (e2e)', () => {
   });
 
   it('omits client attribution when attributionEnabled is false', async () => {
+    const fakeFetch = makeFakeFetch();
+
     const server = createUnleashMcpServer({
       baseUrl: 'http://localhost:4242',
       authHeaders: { Authorization: 'test-token' },
       dryRun: false,
       logLevel: 'error',
       attributionEnabled: false,
+      fetchFn: fakeFetch,
     });
 
     const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
@@ -314,10 +315,10 @@ describe('outbound User-Agent attribution (e2e)', () => {
     await client.close();
     await server.close();
 
-    expect(fetchSpy).toHaveBeenCalled();
+    expect(fakeFetch).toHaveBeenCalled();
 
     // Even though the client sent clientInfo, no outbound call should carry attribution.
-    const attributedCall = fetchSpy.mock.calls.find((c: unknown[]) => {
+    const attributedCall = fakeFetch.mock.calls.find((c: unknown[]) => {
       const init = c[1] as RequestInit | undefined;
       if (!init) return false;
       const headers = init.headers as Record<string, string> | undefined;
@@ -326,7 +327,7 @@ describe('outbound User-Agent attribution (e2e)', () => {
     });
     expect(attributedCall).toBeUndefined();
 
-    const baseCall = fetchSpy.mock.calls.find((c: unknown[]) => {
+    const baseCall = fakeFetch.mock.calls.find((c: unknown[]) => {
       const init = c[1] as RequestInit | undefined;
       if (!init) return false;
       const headers = init.headers as Record<string, string> | undefined;
