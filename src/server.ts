@@ -18,18 +18,8 @@ import {
   readFeatureFlagsResource,
   readProjectsResource,
 } from './resources/unleashResources.js';
-import { cleanupFlagTool } from './tools/cleanupFlag.js';
-import { createFlagTool } from './tools/createFlag.js';
-import { detectFlagTool } from './tools/detectFlag.js';
-import { evaluateChangeTool } from './tools/evaluateChange.js';
-import { getFlagStateTool } from './tools/getFlagState.js';
-import { listFlagsTool } from './tools/listFlags.js';
-import { listProjectsTool } from './tools/listProjects.js';
-import { removeFlagStrategyTool } from './tools/removeFlagStrategy.js';
-import { setFlagRolloutTool } from './tools/setFlagRollout.js';
-import { toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
+import { allTools } from './tools/index.js';
 import type { ToolDefinition } from './tools/types.js';
-import { wrapChangeTool } from './tools/wrapChange.js';
 import type { ClientInfo } from './unleash/attribution.js';
 import { UnleashClient } from './unleash/client.js';
 import { notifyProgress } from './utils/streaming.js';
@@ -132,20 +122,6 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
 
   type ProgressExtra = { _meta?: { progressToken?: string | number } };
 
-  const tools: ToolDefinition[] = [
-    createFlagTool,
-    evaluateChangeTool,
-    detectFlagTool,
-    wrapChangeTool,
-    cleanupFlagTool,
-    setFlagRolloutTool,
-    getFlagStateTool,
-    listFlagsTool,
-    listProjectsTool,
-    toggleFlagEnvironmentTool,
-    removeFlagStrategyTool,
-  ];
-
   const registerTool = server.registerTool.bind(server) as (
     name: string,
     config: {
@@ -157,7 +133,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     cb: (args: unknown, extra: ProgressExtra) => unknown,
   ) => unknown;
 
-  tools.forEach((tool) => {
+  allTools.forEach((tool) => {
     registerTool(
       tool.name,
       {
