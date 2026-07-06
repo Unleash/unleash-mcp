@@ -3,7 +3,8 @@ import { z } from 'zod';
 import { parseAttributionEnv } from './unleash/attribution.js';
 
 // Load environment variables from .env file
-dotenv.config();
+// quiet: true — dotenv's default tip log writes to stdout, which corrupts the MCP stdio JSON-RPC stream
+dotenv.config({ quiet: true });
 
 /**
  * Configuration schema with Zod validation.
