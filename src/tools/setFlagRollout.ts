@@ -154,6 +154,8 @@ export async function setFlagRollout(
 
 export const setFlagRolloutTool = {
   name: 'set_flag_rollout',
+  title: 'Set flag rollout strategy',
+  annotations: { readOnlyHint: false, destructiveHint: false },
   description: `Configure or update a flexibleRollout strategy for a feature flag environment with an optional rollout percentage and variants. This does NOT enable the feature; call toggle_flag_environment to turn environments on or off.`,
   inputSchema: setFlagRolloutSchema,
   implementation: setFlagRollout,
