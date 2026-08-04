@@ -126,6 +126,8 @@ export async function removeFlagStrategy(
 
 export const removeFlagStrategyTool = {
   name: 'remove_flag_strategy',
+  title: 'Remove flag strategy',
+  annotations: { readOnlyHint: false, destructiveHint: true },
   description:
     'Delete a strategy configuration from a feature flag environment. Use get_flag_state to discover strategy IDs before removal.',
   inputSchema: removeFlagStrategySchema,

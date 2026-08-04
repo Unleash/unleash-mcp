@@ -132,6 +132,8 @@ export async function toggleFlagEnvironment(
 
 export const toggleFlagEnvironmentTool = {
   name: 'toggle_flag_environment',
+  title: 'Toggle flag in environment',
+  annotations: { readOnlyHint: false, destructiveHint: false },
   description:
     'Enable or disable a feature flag in a specific environment using the Unleash Admin API. For gradual rollouts, configure a flexibleRollout strategy first via set_flag_rollout.',
   inputSchema: toggleFlagEnvironmentSchema,

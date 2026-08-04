@@ -158,6 +158,8 @@ export async function createFlag(
  */
 export const createFlagTool = {
   name: 'create_flag',
+  title: 'Create feature flag',
+  annotations: { readOnlyHint: false, destructiveHint: false },
   description: `Create a new feature flag in Unleash.
 
 This tool creates a feature flag with the specified configuration. Choose the appropriate flag type:
