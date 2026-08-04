@@ -148,7 +148,12 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
 
   const registerTool = server.registerTool.bind(server) as (
     name: string,
-    config: { description?: string; inputSchema?: ToolDefinition['inputSchema'] },
+    config: {
+      title?: string;
+      description?: string;
+      inputSchema?: ToolDefinition['inputSchema'];
+      annotations?: ToolDefinition['annotations'];
+    },
     cb: (args: unknown, extra: ProgressExtra) => unknown,
   ) => unknown;
 
@@ -156,8 +161,10 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     registerTool(
       tool.name,
       {
+        title: tool.title,
         description: tool.description,
         inputSchema: tool.inputSchema,
+        annotations: tool.annotations,
       },
       (args: unknown, extra: ProgressExtra) =>
         tool.implementation(context, args, extra._meta?.progressToken),

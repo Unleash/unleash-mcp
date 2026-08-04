@@ -113,6 +113,8 @@ export async function listProjects(
 
 export const listProjectsTool = {
   name: 'list_projects',
+  title: 'List Unleash projects',
+  annotations: { readOnlyHint: true },
   description:
     'List Unleash projects available to the configured token, with optional pagination. Use this for discovery before scoping flag operations to a specific project. Returns project id, name, description, mode, creation time, and URL.',
   inputSchema: listProjectsSchema,

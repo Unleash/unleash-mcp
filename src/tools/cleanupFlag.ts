@@ -264,6 +264,8 @@ Good luck! Take your time and be thorough. 🧹
  */
 export const cleanupFlagTool = {
   name: 'cleanup_flag',
+  title: 'Clean up flag',
+  annotations: { readOnlyHint: true },
   description: `Remove a feature flag from the codebase while preserving the desired code path.
 
 This tool provides comprehensive step-by-step instructions for safely removing feature flag code.

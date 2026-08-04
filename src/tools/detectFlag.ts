@@ -164,6 +164,8 @@ Start by executing the file-based detection first, as it's often the most releva
  */
 export const detectFlagTool = {
   name: 'detect_flag',
+  title: 'Detect existing flag',
+  annotations: { readOnlyHint: true },
   description: `Discover existing feature flags in the codebase to prevent duplicates and encourage reuse.
 
 This tool provides comprehensive search instructions for finding existing flags through multiple detection strategies:

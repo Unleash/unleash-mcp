@@ -148,6 +148,8 @@ export async function listFlags(
 
 export const listFlagsTool = {
   name: 'list_flags',
+  title: 'List feature flags',
+  annotations: { readOnlyHint: true },
   description:
     'List feature flags in an Unleash project, with optional pagination and sort order. By default returns active flags only; set archived=true to list archived flags instead (active and archived flags are disjoint result sets in Unleash and cannot be combined in one response). Use this to discover flags before creating new ones, audit flag inventory for cleanup (call twice — once for active, once for archived), or scope a workflow to a specific project. Returns name, type, description, archived status, and URL for each flag.',
   inputSchema: listFlagsSchema,

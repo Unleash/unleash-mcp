@@ -134,6 +134,8 @@ export async function getFlagState(
 
 export const getFlagStateTool = {
   name: 'get_flag_state',
+  title: 'Get flag state',
+  annotations: { readOnlyHint: true },
   description:
     'Fetch the current feature flag metadata and environment strategies from the Unleash Admin API.',
   inputSchema: getFlagStateSchema,

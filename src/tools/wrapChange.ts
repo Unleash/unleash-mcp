@@ -317,6 +317,8 @@ function capitalizeFirst(str: string): string {
  */
 export const wrapChangeTool = {
   name: 'wrap_change',
+  title: 'Wrap change behind a flag',
+  annotations: { readOnlyHint: true },
   description: `Generate code snippets and guidance for wrapping changes with feature flags.
 
 ⚠️ CRITICAL: This tool enforces RUNTIME-CONTROLLABLE feature flags. You MUST place flag checks INSIDE execution paths (handlers, functions), NOT wrapping route registrations, middleware mounting, or controller registration.

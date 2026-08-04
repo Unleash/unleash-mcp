@@ -518,6 +518,8 @@ export async function evaluateChange(
  */
 export const evaluateChangeTool = {
   name: 'evaluate_change',
+  title: 'Evaluate change for flag risk',
+  annotations: { readOnlyHint: true },
   description: `Provides comprehensive guidance for evaluating whether code changes require feature flags.
 
 This tool returns detailed evaluation guidelines including:
