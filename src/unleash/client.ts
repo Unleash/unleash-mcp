@@ -127,7 +127,8 @@ export interface FeatureDetails {
 
 /**
  * Minimal Unleash Admin API client focused on feature flag creation.
- * Uses native fetch (Node 18+) for HTTP requests.
+ * Uses native fetch (Node 18+) by default; the transport is injectable via the
+ * constructor so tests can supply a fake instead of spying on the global fetch.
  */
 export class UnleashClient {
   private readonly baseUrl: string;
@@ -135,6 +136,7 @@ export class UnleashClient {
   private readonly dryRun: boolean;
   private readonly getClientInfo?: () => ClientInfo | undefined;
   private readonly attributionEnabled: boolean;
+  private readonly fetchFn: typeof fetch;
 
   constructor(
     baseUrl: string,
@@ -142,6 +144,7 @@ export class UnleashClient {
     dryRun: boolean = false,
     getClientInfo?: () => ClientInfo | undefined,
     attributionEnabled: boolean = true,
+    fetchFn: typeof fetch = fetch,
   ) {
     // Ensure baseUrl doesn't have trailing slash
     this.baseUrl = baseUrl.replace(/\/$/, '');
@@ -149,6 +152,7 @@ export class UnleashClient {
     this.dryRun = dryRun;
     this.getClientInfo = getClientInfo;
     this.attributionEnabled = attributionEnabled;
+    this.fetchFn = fetchFn;
   }
 
   /**
@@ -378,7 +382,7 @@ export class UnleashClient {
     const headers = this.buildRequestHeaders();
 
     try {
-      const response = await fetch(url, {
+      const response = await this.fetchFn(url, {
         method: 'DELETE',
         headers,
       });
@@ -597,7 +601,7 @@ export class UnleashClient {
     };
 
     try {
-      const response = await fetch(url, {
+      const response = await this.fetchFn(url, {
         ...init,
         headers,
       });
@@ -671,7 +675,7 @@ export class UnleashClient {
     };
 
     try {
-      const response = await fetch(url, {
+      const response = await this.fetchFn(url, {
         ...init,
         headers,
       });
