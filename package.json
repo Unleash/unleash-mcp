@@ -37,6 +37,8 @@
     "dev": "tsx src/index.ts",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
+    "docs:generate": "tsx scripts/generate-tool-docs.ts",
+    "docs:check": "tsx scripts/generate-tool-docs.ts --check",
     "test": "vitest run --passWithNoTests",
     "prepack": "npm run build"
   },
