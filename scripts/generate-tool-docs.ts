@@ -1,8 +1,9 @@
 /**
  * Generates docs/tools.md from the MCP tool definitions in src/tools.
  *
- * The reference is derived from each tool's Zod input schema (via Zod 4's
- * native z.toJSONSchema), so it stays in sync with what the server registers.
+ * The reference is derived from each tool's title, MCP behavior annotations,
+ * and Zod input schema (via Zod 4's native z.toJSONSchema), so it stays in
+ * sync with what the server registers.
  * Run `pnpm docs:generate` to refresh the file; CI runs `pnpm docs:check` to
  * fail the build if it is stale.
  *
@@ -137,9 +138,23 @@ function renderParameters(schema: ToolDefinition['inputSchema']): string {
   return lines.join('\n');
 }
 
+/**
+ * Collapse the MCP behavior hints into one reader-facing label. Mirrors the
+ * contract in src/tools/types.ts: destructiveHint is only meaningful when
+ * readOnlyHint is false.
+ */
+function accessLabel(annotations: ToolDefinition['annotations']): string {
+  if (annotations.readOnlyHint === true) {
+    return 'read-only';
+  }
+  return annotations.destructiveHint === true ? 'destructive write' : 'write';
+}
+
 function renderTool(tool: ToolDefinition): string {
   return [
     `## \`${tool.name}\``,
+    '',
+    `**${tool.title.trim()}** (${accessLabel(tool.annotations)})`,
     '',
     tool.description.trim(),
     '',
@@ -153,19 +168,26 @@ function render(): string {
   const intro = [
     '<!--',
     '  GENERATED FILE — DO NOT EDIT BY HAND.',
-    '  Run `pnpm docs:generate` to regenerate from the tool input schemas in src/tools.',
+    '  Run `pnpm docs:generate` to regenerate from the tool definitions in src/tools.',
     '  CI runs `pnpm docs:check` to fail the build when this file is out of sync.',
     '-->',
     '',
     '# Tool reference',
     '',
-    "This reference is generated from each tool's Zod input schema in `src/tools` (via " +
-      "Zod 4's `z.toJSONSchema`), so it stays in sync with what the MCP server registers. " +
-      'For MCP resources, see the README.',
+    "This reference is generated from the tool definitions in `src/tools`: each tool's " +
+      "title, MCP behavior annotations, and Zod input schema (via Zod 4's `z.toJSONSchema`), " +
+      'so it stays in sync with what the MCP server registers. Access is derived from the ' +
+      'annotations: read-only tools declare `readOnlyHint`, and destructive writes declare ' +
+      '`destructiveHint`. For MCP resources, see the README.',
     '',
     `The server registers ${allTools.length} tools:`,
     '',
-    ...allTools.map((tool) => `- [\`${tool.name}\`](#${tool.name})`),
+    '| Tool | Title | Access |',
+    '| --- | --- | --- |',
+    ...allTools.map(
+      (tool) =>
+        `| [\`${tool.name}\`](#${tool.name}) | ${escapeCell(tool.title)} | ${accessLabel(tool.annotations)} |`,
+    ),
   ].join('\n');
 
   const sections = allTools.map(renderTool).join('\n\n');

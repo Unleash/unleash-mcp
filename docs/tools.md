@@ -1,28 +1,32 @@
 <!--
   GENERATED FILE — DO NOT EDIT BY HAND.
-  Run `pnpm docs:generate` to regenerate from the tool input schemas in src/tools.
+  Run `pnpm docs:generate` to regenerate from the tool definitions in src/tools.
   CI runs `pnpm docs:check` to fail the build when this file is out of sync.
 -->
 
 # Tool reference
 
-This reference is generated from each tool's Zod input schema in `src/tools` (via Zod 4's `z.toJSONSchema`), so it stays in sync with what the MCP server registers. For MCP resources, see the README.
+This reference is generated from the tool definitions in `src/tools`: each tool's title, MCP behavior annotations, and Zod input schema (via Zod 4's `z.toJSONSchema`), so it stays in sync with what the MCP server registers. Access is derived from the annotations: read-only tools declare `readOnlyHint`, and destructive writes declare `destructiveHint`. For MCP resources, see the README.
 
 The server registers 11 tools:
 
-- [`create_flag`](#create_flag)
-- [`evaluate_change`](#evaluate_change)
-- [`detect_flag`](#detect_flag)
-- [`wrap_change`](#wrap_change)
-- [`cleanup_flag`](#cleanup_flag)
-- [`set_flag_rollout`](#set_flag_rollout)
-- [`get_flag_state`](#get_flag_state)
-- [`list_flags`](#list_flags)
-- [`list_projects`](#list_projects)
-- [`toggle_flag_environment`](#toggle_flag_environment)
-- [`remove_flag_strategy`](#remove_flag_strategy)
+| Tool | Title | Access |
+| --- | --- | --- |
+| [`create_flag`](#create_flag) | Create feature flag | write |
+| [`evaluate_change`](#evaluate_change) | Evaluate change for flag risk | read-only |
+| [`detect_flag`](#detect_flag) | Detect existing flag | read-only |
+| [`wrap_change`](#wrap_change) | Wrap change behind a flag | read-only |
+| [`cleanup_flag`](#cleanup_flag) | Clean up flag | read-only |
+| [`set_flag_rollout`](#set_flag_rollout) | Set flag rollout strategy | write |
+| [`get_flag_state`](#get_flag_state) | Get flag state | read-only |
+| [`list_flags`](#list_flags) | List feature flags | read-only |
+| [`list_projects`](#list_projects) | List Unleash projects | read-only |
+| [`toggle_flag_environment`](#toggle_flag_environment) | Toggle flag in environment | write |
+| [`remove_flag_strategy`](#remove_flag_strategy) | Remove flag strategy | destructive write |
 
 ## `create_flag`
+
+**Create feature flag** (write)
 
 Create a new feature flag in Unleash.
 
@@ -52,6 +56,8 @@ See: https://docs.getunleash.io/topics/feature-flags/best-practices-using-featur
 | `impressionData` | boolean | optional | Enable impression data collection for analytics (optional, defaults to false) |
 
 ## `evaluate_change`
+
+**Evaluate change for flag risk** (read-only)
 
 Provides comprehensive guidance for evaluating whether code changes require feature flags.
 
@@ -90,6 +96,8 @@ The tool returns markdown-formatted guidance that helps you make informed decisi
 | `codeContext` | string | optional | Surrounding code context for parent flag detection (optional) |
 
 ## `detect_flag`
+
+**Detect existing flag** (read-only)
 
 Discover existing feature flags in the codebase to prevent duplicates and encourage reuse.
 
@@ -134,6 +142,8 @@ indicating whether a flag was found and, if so, its details with a confidence sc
 
 ## `wrap_change`
 
+**Wrap change behind a flag** (read-only)
+
 Generate code snippets and guidance for wrapping changes with feature flags.
 
 ⚠️ CRITICAL: This tool enforces RUNTIME-CONTROLLABLE feature flags. You MUST place flag checks INSIDE execution paths (handlers, functions), NOT wrapping route registrations, middleware mounting, or controller registration.
@@ -176,6 +186,8 @@ Best suited for use after evaluate_change recommends a flag and create_flag crea
 | `frameworkHint` | string | optional | Optional: framework hint for specialized templates (React, Express, Django, Rails, etc.) |
 
 ## `cleanup_flag`
+
+**Clean up flag** (read-only)
 
 Remove a feature flag from the codebase while preserving the desired code path.
 
@@ -226,6 +238,8 @@ See: https://github.com/Unleash/unleash/blob/main/.github/workflows/ai-flag-clea
 
 ## `set_flag_rollout`
 
+**Set flag rollout strategy** (write)
+
 Configure or update a flexibleRollout strategy for a feature flag environment with an optional rollout percentage and variants. This does NOT enable the feature; call toggle_flag_environment to turn environments on or off.
 
 ### Parameters
@@ -251,6 +265,8 @@ Configure or update a flexibleRollout strategy for a feature flag environment wi
 
 ## `get_flag_state`
 
+**Get flag state** (read-only)
+
 Fetch the current feature flag metadata and environment strategies from the Unleash Admin API.
 
 ### Parameters
@@ -262,6 +278,8 @@ Fetch the current feature flag metadata and environment strategies from the Unle
 | `environment` | string | optional | Optional environment filter (case-insensitive) |
 
 ## `list_flags`
+
+**List feature flags** (read-only)
 
 List feature flags in an Unleash project, with optional pagination and sort order. By default returns active flags only; set archived=true to list archived flags instead (active and archived flags are disjoint result sets in Unleash and cannot be combined in one response). Use this to discover flags before creating new ones, audit flag inventory for cleanup (call twice — once for active, once for archived), or scope a workflow to a specific project. Returns name, type, description, archived status, and URL for each flag.
 
@@ -277,6 +295,8 @@ List feature flags in an Unleash project, with optional pagination and sort orde
 
 ## `list_projects`
 
+**List Unleash projects** (read-only)
+
 List Unleash projects available to the configured token, with optional pagination. Use this for discovery before scoping flag operations to a specific project. Returns project id, name, description, mode, creation time, and URL.
 
 ### Parameters
@@ -288,6 +308,8 @@ List Unleash projects available to the configured token, with optional paginatio
 | `offset` | integer (≥ 0) | optional | Number of projects to skip for pagination (default: 0) |
 
 ## `toggle_flag_environment`
+
+**Toggle flag in environment** (write)
 
 Enable or disable a feature flag in a specific environment using the Unleash Admin API. For gradual rollouts, configure a flexibleRollout strategy first via set_flag_rollout.
 
@@ -301,6 +323,8 @@ Enable or disable a feature flag in a specific environment using the Unleash Adm
 | `enabled` | boolean | required | Set to true to enable the flag, or false to disable it |
 
 ## `remove_flag_strategy`
+
+**Remove flag strategy** (destructive write)
 
 Delete a strategy configuration from a feature flag environment. Use get_flag_state to discover strategy IDs before removal.
 

@@ -1,30 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { cleanupFlagTool } from './cleanupFlag.js';
-import { createFlagTool } from './createFlag.js';
-import { detectFlagTool } from './detectFlag.js';
-import { evaluateChangeTool } from './evaluateChange.js';
-import { getFlagStateTool } from './getFlagState.js';
-import { listFlagsTool } from './listFlags.js';
-import { listProjectsTool } from './listProjects.js';
-import { removeFlagStrategyTool } from './removeFlagStrategy.js';
-import { setFlagRolloutTool } from './setFlagRollout.js';
-import { toggleFlagEnvironmentTool } from './toggleFlagEnvironment.js';
-import type { ToolDefinition } from './types.js';
-import { wrapChangeTool } from './wrapChange.js';
+import { allTools } from './index.js';
 
-const tools = [
-  createFlagTool,
-  evaluateChangeTool,
-  detectFlagTool,
-  wrapChangeTool,
-  cleanupFlagTool,
-  setFlagRolloutTool,
-  getFlagStateTool,
-  listFlagsTool,
-  listProjectsTool,
-  toggleFlagEnvironmentTool,
-  removeFlagStrategyTool,
-] as ToolDefinition[];
+// Read the registry rather than keeping a second copy of the tool list here:
+// a tool added to allTools is covered by this contract automatically.
+const tools = allTools;
 
 // The Connectors Directory requires every tool to declare a title and the
 // applicable readOnlyHint/destructiveHint. This guards that contract so a new
