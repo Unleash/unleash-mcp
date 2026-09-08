@@ -132,7 +132,7 @@ You can run the MCP server as a standalone process without cloning the repositor
 UNLEASH_BASE_URL={{your-instance-url}} \
 UNLEASH_PAT={{your-personal-access-token}} \
 UNLEASH_DEFAULT_PROJECT={{default_project_id}} \
-npx unleash-mcp --log-level debug
+npx @unleash/mcp@latest --log-level debug
 ```
 
 The CLI supports the same flags as the local build (for example, `--dry-run`, `--log-level`).
