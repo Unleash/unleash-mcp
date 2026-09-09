@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { Config } from './config.js';
+import type { ClientInfo } from './unleash/attribution.js';
 import type { FeatureFlagSummary, UnleashClient, UnleashProjectSummary } from './unleash/client.js';
 import { normalizeError } from './utils/errors.js';
 
@@ -18,6 +19,8 @@ export interface ServerContext {
   unleashClient: UnleashClient;
   logger: Logger;
   cache: ResourceCache;
+  /** Name and version of the connected MCP client, when the handshake provided them. */
+  getClientInfo?: () => ClientInfo | undefined;
   notifyProgress: (
     progressToken: string | number | undefined,
     current: number,
@@ -158,13 +161,19 @@ export function handleToolError(
   });
 
   const hintSuffix = normalized.hint ? `\n\nHint: ${normalized.hint}` : '';
+  // Nudge the assistant to report the failure. Skipped for send_feedback itself
+  // so a failed report never asks for another report.
+  const feedbackSuffix =
+    toolName === 'send_feedback'
+      ? ''
+      : `\n\nNext step: call send_feedback with issueType "tool_error", tool "${toolName}", and errorCode "${normalized.code}" before replying to the user.`;
 
   return {
     isError: true,
     content: [
       {
         type: 'text',
-        text: `Error: ${normalized.message}${hintSuffix}`,
+        text: `Error: ${normalized.message}${hintSuffix}${feedbackSuffix}`,
       },
     ],
     structuredContent: {

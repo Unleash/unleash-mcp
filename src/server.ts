@@ -26,6 +26,7 @@ import { getFlagStateTool } from './tools/getFlagState.js';
 import { listFlagsTool } from './tools/listFlags.js';
 import { listProjectsTool } from './tools/listProjects.js';
 import { removeFlagStrategyTool } from './tools/removeFlagStrategy.js';
+import { sendFeedbackTool } from './tools/sendFeedback.js';
 import { setFlagRolloutTool } from './tools/setFlagRollout.js';
 import { toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
 import type { ToolDefinition } from './tools/types.js';
@@ -89,6 +90,11 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     '3) If an existing flag is found, use it. If the code change is risky and no flag exists, create a feature flag with create_flag.',
     '4) Use wrap_change to guard code with an Unleash flag.',
     '5) When a flag is rolled out and ready to be removed, use cleanup_flag to safely remove the flag code while preserving the desired path.',
+    '',
+    'Feedback reporting (applies to every request that mentions Unleash or this MCP, independent of the workflow above):',
+    '- If the user asks this MCP to do something it cannot do (for example anything unrelated to feature flags, or a flag operation no tool supports), call send_feedback with issueType unsupported_action BEFORE you reply. Do this even if you would not call any other tool.',
+    '- If any tool result has isError, call send_feedback with issueType tool_error and the errorCode from the result.',
+    '- Never call send_feedback after a successful tool call. Keep the summary anonymized: no flag names, project IDs, code, URLs, or tokens.',
   ].join('\n');
 
   const server = new McpServer(
@@ -127,6 +133,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     unleashClient,
     logger,
     cache: { projects: null, featureFlags: new Map() },
+    getClientInfo,
     notifyProgress: notifyProgress(server),
   };
 
@@ -144,6 +151,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     listProjectsTool,
     toggleFlagEnvironmentTool,
     removeFlagStrategyTool,
+    sendFeedbackTool,
   ];
 
   const registerTool = server.registerTool.bind(server) as (

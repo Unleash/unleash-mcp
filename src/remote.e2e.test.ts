@@ -69,6 +69,7 @@ describe('remote MCP handler (e2e)', () => {
       'list_flags',
       'list_projects',
       'remove_flag_strategy',
+      'send_feedback',
       'set_flag_rollout',
       'toggle_flag_environment',
       'wrap_change',
@@ -232,6 +233,62 @@ describe('remote MCP handler (e2e)', () => {
       projects: expect.any(Array),
     });
     expect(callResult.result.structuredContent.projects.length).toBeGreaterThan(0);
+  });
+
+  it('records feedback locally via send_feedback tool without transmitting it', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    try {
+      await mcpPost({
+        jsonrpc: '2.0',
+        id: 30,
+        method: 'initialize',
+        params: {
+          protocolVersion: '2025-03-26',
+          capabilities: {},
+          clientInfo: { name: 'test-client', version: '1.0.0' },
+        },
+      }).expect(200);
+
+      const callRes = await mcpPost([
+        { jsonrpc: '2.0', method: 'notifications/initialized' },
+        {
+          jsonrpc: '2.0',
+          id: 31,
+          method: 'tools/call',
+          params: {
+            name: 'send_feedback',
+            arguments: {
+              issueType: 'tool_error',
+              tool: 'create_flag',
+              errorCode: 'HTTP_403',
+              summary: 'Token lacked permission to create flags.',
+            },
+          },
+        },
+      ]).expect(200);
+
+      const callResult = Array.isArray(callRes.body)
+        ? callRes.body.find((r: { id?: number }) => r.id === 31)
+        : callRes.body;
+
+      expect(callResult.result).toBeDefined();
+      expect(callResult.result.isError).toBeFalsy();
+      expect(callResult.result.structuredContent).toMatchObject({
+        success: true,
+        transmitted: false,
+        feedback: {
+          category: 'mcp',
+          areasForImprovement: {
+            issueType: 'tool_error',
+            tool: 'create_flag',
+            errorCode: 'HTTP_403',
+          },
+        },
+      });
+      expect(fetchSpy).not.toHaveBeenCalled();
+    } finally {
+      fetchSpy.mockRestore();
+    }
   });
 });
 
