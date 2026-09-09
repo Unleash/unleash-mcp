@@ -44,6 +44,7 @@ export interface CreateServerOptions {
   dryRun?: boolean;
   logLevel?: 'debug' | 'info' | 'warn' | 'error';
   attributionEnabled?: boolean;
+  feedbackUrl?: string;
   logger?: Logger;
 }
 
@@ -80,6 +81,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
       dryRun,
       logLevel,
       attributionEnabled,
+      feedbackUrl: options.feedbackUrl,
     },
   };
 
