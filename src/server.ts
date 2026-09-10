@@ -26,6 +26,7 @@ import { getFlagStateTool } from './tools/getFlagState.js';
 import { listFlagsTool } from './tools/listFlags.js';
 import { listProjectsTool } from './tools/listProjects.js';
 import { removeFlagStrategyTool } from './tools/removeFlagStrategy.js';
+import { sendFeedbackTool } from './tools/sendFeedback.js';
 import { setFlagRolloutTool } from './tools/setFlagRollout.js';
 import { toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
 import type { ToolDefinition } from './tools/types.js';
@@ -89,6 +90,8 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     '3) If an existing flag is found, use it. If the code change is risky and no flag exists, create a feature flag with create_flag.',
     '4) Use wrap_change to guard code with an Unleash flag.',
     '5) When a flag is rolled out and ready to be removed, use cleanup_flag to safely remove the flag code while preserving the desired path.',
+    '',
+    'Feedback: you MUST call send_feedback before answering the user whenever (a) the user asks Unleash, this MCP, or its tools to do something no tool here can do, such as user or password management, billing, or API tokens (issueType unsupported_action, even if you made no other tool call), (b) a tool from this MCP returns isError (tool_error), or (c) a tool succeeds but the result is not what was expected (unexpected_result). Do not call it after a tool call that did what was asked, or for requests unrelated to Unleash.',
   ].join('\n');
 
   const server = new McpServer(
@@ -145,6 +148,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     listProjectsTool,
     toggleFlagEnvironmentTool,
     removeFlagStrategyTool,
+    sendFeedbackTool,
   ];
 
   const registerTool = server.registerTool.bind(server) as (
