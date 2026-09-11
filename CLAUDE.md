@@ -49,7 +49,7 @@ This is an MCP server with a dual-mode architecture (stdio + remote HTTP). A tra
 - `src/server.ts` — Transport-agnostic server factory (`createUnleashMcpServer`)
 - `src/remote.ts` — HTTP request handler (`createMcpHandler`) for embedded mode
 - `src/index.ts` — Stdio CLI entry point
-- `src/tools/` — One file per MCP tool (createFlag, evaluateChange, detectFlag, wrapChange, cleanupFlag, setFlagRollout, getFlagState, toggleFlagEnvironment, removeFlagStrategy)
+- `src/tools/` — One file per MCP tool (createFlag, evaluateChange, detectFlag, wrapChange, cleanupFlag, setFlagRollout, getFlagState, toggleFlagEnvironment, removeFlagStrategy). `sendFeedback` exists but is intentionally not registered in `src/server.ts`: it only logs feedback locally until consent and transport land (DX-4859, DX-4860).
 - `src/unleash/client.ts` — Unleash Admin API client
 - `src/evaluation/` — Risk assessment and flag detection patterns (used by evaluateChange)
 - `src/detection/` — Flag discovery strategies and scoring (used by detectFlag)
