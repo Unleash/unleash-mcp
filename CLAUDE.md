@@ -57,6 +57,7 @@ This is an MCP server with a dual-mode architecture (stdio + remote HTTP). A tra
 - `src/knowledge/` — Unleash best practices knowledge base
 - `src/prompts/` — Markdown prompt formatting utilities
 - `src/resources/` — MCP resource handlers for projects and feature flags
+- `src/http/` — Generic `HttpClient` (fetch wrapper, header merging, error normalization) for API-specific clients
 - `src/utils/` — Error normalization, streaming/progress notifications, stdio logging
 
 ## Code Style
