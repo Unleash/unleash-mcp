@@ -2,10 +2,20 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { Logger, ServerContext } from '../context.js';
 import type { ClientInfo } from '../unleash/attribution.js';
 import type { UnleashClient } from '../unleash/client.js';
+import { CustomError } from '../utils/errors.js';
 import { VERSION } from '../version.js';
-import { type FeedbackReport, sendFeedback } from './sendFeedback.js';
+import { type FeedbackReport, type SendFeedbackInput, sendFeedback } from './sendFeedback.js';
 
 const defaultClientInfo: ClientInfo = { name: 'claude-code', version: '1.2.3' };
+
+const defaultInput: SendFeedbackInput = {
+  issueType: 'tool_error',
+  tool: 'create_flag',
+  errorCode: 'HTTP_500',
+  summary: 'The Unleash server returned an internal error while creating a flag.',
+};
+
+const sendFeedbackRequest = vi.fn<(areasForImprovement: string) => Promise<void>>();
 
 function createContext(
   overrides: { clientInfo?: ClientInfo; attributionEnabled?: boolean } = {},
@@ -21,6 +31,7 @@ function createContext(
       },
     },
     unleashClient: {} as UnleashClient,
+    feedbackClient: { send: sendFeedbackRequest } as unknown as ServerContext['feedbackClient'],
     logger,
     cache: { projects: null, featureFlags: new Map() },
     getClientInfo: () => overrides.clientInfo,
@@ -36,18 +47,14 @@ function reportOf(result: Awaited<ReturnType<typeof sendFeedback>>): FeedbackRep
 
 describe('send_feedback', () => {
   afterEach(() => {
-    vi.restoreAllMocks();
+    sendFeedbackRequest.mockReset();
   });
 
-  it('records the report in the hosted feedback endpoint format without transmitting it', async () => {
+  it('sends feedback using feedback client', async () => {
+    sendFeedbackRequest.mockResolvedValue(undefined);
     const context = createContext({ clientInfo: defaultClientInfo });
 
-    const result = await sendFeedback(context, {
-      issueType: 'tool_error',
-      tool: 'create_flag',
-      errorCode: 'HTTP_500',
-      summary: 'The Unleash server returned an internal error while creating a flag.',
-    });
+    const result = await sendFeedback(context, defaultInput);
 
     const expectedReport: FeedbackReport = {
       issueType: 'tool_error',
@@ -66,9 +73,37 @@ describe('send_feedback', () => {
     expect(result.isError).toBeFalsy();
     expect(result.structuredContent).toEqual({
       success: true,
-      transmitted: false,
       feedback: expectedPayload,
     });
+    expect(sendFeedbackRequest).toHaveBeenCalledTimes(1);
+    expect(sendFeedbackRequest).toHaveBeenCalledWith(expectedPayload.areasForImprovement);
+    expect((result.content[0] as { text: string }).text).toContain('Feedback sent to Unleash.');
+  });
+
+  it('returns error on http client failure', async () => {
+    sendFeedbackRequest.mockRejectedValue(
+      new CustomError(
+        'NETWORK_ERROR',
+        'Failed to connect to the Unleash feedback endpoint',
+        'Check that UNLEASH_FEEDBACK_URL is reachable.',
+      ),
+    );
+    const context = createContext();
+
+    const result = await sendFeedback(context, defaultInput);
+
+    expect(result.isError).toBe(true);
+    expect(result.structuredContent).toEqual({
+      success: false,
+      error: {
+        code: 'NETWORK_ERROR',
+        message: 'Failed to connect to the Unleash feedback endpoint',
+        hint: 'Check that UNLEASH_FEEDBACK_URL is reachable.',
+      },
+    });
+    expect((result.content[0] as { text: string }).text).toContain(
+      'Error: Failed to connect to the Unleash feedback endpoint',
+    );
   });
 
   it('reports an unsupported request with null tool and error code', async () => {

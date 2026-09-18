@@ -49,7 +49,7 @@ This is an MCP server with a dual-mode architecture (stdio + remote HTTP). A tra
 - `src/server.ts` — Transport-agnostic server factory (`createUnleashMcpServer`)
 - `src/remote.ts` — HTTP request handler (`createMcpHandler`) for embedded mode
 - `src/index.ts` — Stdio CLI entry point
-- `src/tools/` — One file per MCP tool (createFlag, evaluateChange, detectFlag, wrapChange, cleanupFlag, setFlagRollout, getFlagState, toggleFlagEnvironment, removeFlagStrategy). `sendFeedback` exists but is intentionally not registered in `src/server.ts`: it only logs feedback locally until consent and transport land (DX-4859, DX-4860).
+- `src/tools/` — One file per MCP tool (createFlag, evaluateChange, detectFlag, wrapChange, cleanupFlag, setFlagRollout, getFlagState, toggleFlagEnvironment, removeFlagStrategy). `sendFeedback` exists and transmits reports via `FeedbackHttpClient` (DX-4860), but is intentionally not registered in `src/server.ts` until user consent lands (DX-4859).
 - `src/unleash/client.ts` — Unleash Admin API client
 - `src/evaluation/` — Risk assessment and flag detection patterns (used by evaluateChange)
 - `src/detection/` — Flag discovery strategies and scoring (used by detectFlag)
@@ -57,6 +57,7 @@ This is an MCP server with a dual-mode architecture (stdio + remote HTTP). A tra
 - `src/knowledge/` — Unleash best practices knowledge base
 - `src/prompts/` — Markdown prompt formatting utilities
 - `src/resources/` — MCP resource handlers for projects and feature flags
+- `src/http/` — Generic `HttpClient` (fetch wrapper, header merging, error normalization) for API-specific clients
 - `src/utils/` — Error normalization, streaming/progress notifications, stdio logging
 
 ## Code Style
@@ -71,4 +72,4 @@ TypeScript strict mode is on with `noUnusedLocals`, `noUnusedParameters`, `noImp
 
 ## Configuration
 
-Required env vars: `UNLEASH_BASE_URL`, `UNLEASH_PAT`. Optional: `UNLEASH_DEFAULT_PROJECT`, `UNLEASH_DEFAULT_ENVIRONMENT`, `LOG_LEVEL`, `APP_LOG_FILE`, `MCP_STDIO_LOG_FILE`, `UNLEASH_MCP_CLIENT_ATTRIBUTION` (set to `off` to disable client attribution in outbound headers; default: enabled). CLI flags: `--dry-run`, `--log-level <level>`. See `.env.example` for reference.
+Required env vars: `UNLEASH_BASE_URL`, `UNLEASH_PAT`. Optional: `UNLEASH_DEFAULT_PROJECT`, `UNLEASH_DEFAULT_ENVIRONMENT`, `LOG_LEVEL`, `APP_LOG_FILE`, `MCP_STDIO_LOG_FILE`, `UNLEASH_MCP_CLIENT_ATTRIBUTION` (set to `off` to disable client attribution in outbound headers; default: enabled), `UNLEASH_FEEDBACK_URL` (base URL of the Unleash instance that receives `send_feedback` reports; defaults to the sandbox instance). CLI flags: `--dry-run`, `--log-level <level>`. See `.env.example` for reference.

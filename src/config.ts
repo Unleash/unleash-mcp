@@ -21,6 +21,7 @@ const configSchema = z.object({
     dryRun: z.boolean().default(false),
     logLevel: z.enum(['debug', 'info', 'warn', 'error']).default('error'),
     attributionEnabled: z.boolean().default(true),
+    feedbackUrl: z.url('UNLEASH_FEEDBACK_URL must be a valid URL').optional(),
   }),
 });
 
@@ -66,6 +67,7 @@ export function loadConfig(): Config {
       dryRun: cliFlags.dryRun,
       logLevel,
       attributionEnabled: parseAttributionEnv(process.env.UNLEASH_MCP_CLIENT_ATTRIBUTION),
+      feedbackUrl: process.env.UNLEASH_FEEDBACK_URL,
     },
   };
 
