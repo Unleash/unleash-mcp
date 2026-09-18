@@ -5,6 +5,11 @@ export interface RequestErrorOptions {
   networkErrorMessage?: string;
 }
 
+interface ErrorResponseBody {
+  message?: string;
+  details?: Array<{ message?: string }>;
+}
+
 export interface HttpClientOptions {
   networkErrorMessage?: string;
   networkErrorHint?: string;
@@ -64,10 +69,7 @@ export class HttpClient {
     let message = `${errorMessage}: ${response.status} ${response.statusText}`;
 
     try {
-      const parsed = JSON.parse(rawBody) as {
-        message?: string;
-        details?: Array<{ message?: string }>;
-      };
+      const parsed = JSON.parse(rawBody) as ErrorResponseBody;
 
       if (parsed.message) {
         message = parsed.message;
