@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { DEFAULT_FEEDBACK_URL, FeedbackHttpClient } from './feedbackHttpClient.js';
+import { DEFAULT_FEEDBACK_BASE_URL, FeedbackHttpClient } from './feedbackHttpClient.js';
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -7,8 +7,8 @@ afterEach(() => {
 
 describe('FeedbackHttpClient endpoint', () => {
   it('defaults when no URL is configured', () => {
-    expect(new FeedbackHttpClient().endpoint).toBe(DEFAULT_FEEDBACK_URL);
-    expect(new FeedbackHttpClient('  ').endpoint).toBe(DEFAULT_FEEDBACK_URL);
+    expect(new FeedbackHttpClient().endpoint).toBe(`${DEFAULT_FEEDBACK_BASE_URL}/feedback`);
+    expect(new FeedbackHttpClient('  ').endpoint).toBe(`${DEFAULT_FEEDBACK_BASE_URL}/feedback`);
   });
 
   it('appends /feedback to an instance base URL', () => {
@@ -17,29 +17,34 @@ describe('FeedbackHttpClient endpoint', () => {
     );
   });
 
-  it('appends /feedback to a bare host', () => {
-    expect(new FeedbackHttpClient('https://unleash.example.com').endpoint).toBe(
-      'https://unleash.example.com/feedback',
+  it('ignores a trailing slash on the base URL', () => {
+    expect(new FeedbackHttpClient('https://unleash.example.com/hosted/').endpoint).toBe(
+      'https://unleash.example.com/hosted/feedback',
     );
   });
 
-  it('leaves a full endpoint URL alone, with or without a trailing slash', () => {
-    expect(
-      new FeedbackHttpClient('https://sandbox.getunleash.io/enterprise/feedback').endpoint,
-    ).toBe('https://sandbox.getunleash.io/enterprise/feedback');
-    expect(
-      new FeedbackHttpClient('https://sandbox.getunleash.io/enterprise/feedback/').endpoint,
-    ).toBe('https://sandbox.getunleash.io/enterprise/feedback');
+  it('accepts a plain http base URL', () => {
+    expect(new FeedbackHttpClient('http://localhost:4242/hosted').endpoint).toBe(
+      'http://localhost:4242/hosted/feedback',
+    );
   });
 
-  it('assumes https when the scheme is omitted', () => {
-    expect(new FeedbackHttpClient('sandbox.getunleash.io/enterprise').endpoint).toBe(
-      'https://sandbox.getunleash.io/enterprise/feedback',
+  it('rejects a URL without a scheme', () => {
+    expect(() => new FeedbackHttpClient('unleash.example.com/hosted')).toThrow(
+      /absolute http\(s\) instance base URL/,
+    );
+  });
+
+  it('rejects a non-http scheme', () => {
+    expect(() => new FeedbackHttpClient('ftp://unleash.example.com/hosted')).toThrow(
+      /absolute http\(s\) instance base URL/,
     );
   });
 
   it('throws on a malformed override instead of falling back to production', () => {
-    expect(() => new FeedbackHttpClient('https://not a host')).toThrow(/not a valid URL/);
+    expect(() => new FeedbackHttpClient('https://not a host')).toThrow(
+      /absolute http\(s\) instance base URL/,
+    );
   });
 });
 
@@ -92,7 +97,7 @@ describe('FeedbackHttpClient.send', () => {
       name: 'CustomError',
       code: 'NETWORK_ERROR',
       message: 'Failed to connect to the Unleash feedback endpoint',
-      hint: `Check that UNLEASH_FEEDBACK_URL (${DEFAULT_FEEDBACK_URL}) is reachable.`,
+      hint: `Check that UNLEASH_FEEDBACK_URL (${DEFAULT_FEEDBACK_BASE_URL}/feedback) is reachable.`,
     });
   });
 

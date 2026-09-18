@@ -1,36 +1,31 @@
 import { HttpClient } from '../http/httpClient.js';
 
-export const DEFAULT_FEEDBACK_URL = 'https://sandbox.getunleash.io/enterprise/feedback';
+export const DEFAULT_FEEDBACK_BASE_URL = 'https://sandbox.getunleash.io/enterprise';
 
 const FEEDBACK_PATH = '/feedback';
 
 /**
  * Sends user feedback about the MCP server to the Unleash feedback endpoint.
- *
- * Like `UnleashClient`, transport failures are thrown as `CustomError`
- * (`HTTP_<status>` or `NETWORK_ERROR`). Deciding whether a failed report may
- * break the caller is left to the caller.
  */
 export class FeedbackHttpClient {
   readonly endpoint: string;
   private readonly http: HttpClient;
   private readonly dryRun: boolean;
 
-  constructor(url?: string, dryRun: boolean = false) {
-    const baseUrl = resolveBaseUrl(url);
-    this.endpoint = `${baseUrl}${FEEDBACK_PATH}`;
+  /**
+   * @param baseUrl Unleash instance base URL (e.g. `https://host/hosted`);
+   *   `/feedback` is appended to it. Defaults to the Unleash sandbox.
+   */
+  constructor(baseUrl?: string, dryRun: boolean = false) {
+    const resolved = resolveBaseUrl(baseUrl);
+    this.endpoint = `${resolved}${FEEDBACK_PATH}`;
     this.dryRun = dryRun;
-    this.http = new HttpClient(baseUrl, {
-      headers: () => ({ 'Content-Type': 'application/json' }),
+    this.http = new HttpClient(resolved, {
       networkErrorMessage: 'Failed to connect to the Unleash feedback endpoint',
       networkErrorHint: `Check that UNLEASH_FEEDBACK_URL (${this.endpoint}) is reachable.`,
     });
   }
 
-  /**
-   * Post a feedback report.
-   * @throws CustomError if the request fails
-   */
   async send(areasForImprovement: string): Promise<void> {
     if (this.dryRun) {
       return;
@@ -40,6 +35,7 @@ export class FeedbackHttpClient {
       FEEDBACK_PATH,
       {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           category: 'mcp',
           userType: null,
@@ -53,25 +49,17 @@ export class FeedbackHttpClient {
   }
 }
 
-/**
- * Resolve the configured feedback URL into a base URL that `/feedback` is
- * appended to. Accepts an instance base URL (`https://host/hosted`), a full
- * endpoint (`https://host/hosted/feedback`), or a bare host without a scheme.
- */
 function resolveBaseUrl(raw?: string): string {
   const trimmed = raw?.trim();
   if (!trimmed) {
-    return DEFAULT_FEEDBACK_URL.slice(0, -FEEDBACK_PATH.length);
+    return DEFAULT_FEEDBACK_BASE_URL;
   }
 
-  let url: URL;
-  try {
-    url = new URL(/^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`);
-  } catch {
-    throw new Error(`UNLEASH_FEEDBACK_URL is not a valid URL (received "${raw}")`);
+  if (!URL.canParse(trimmed) || !/^https?:$/.test(new URL(trimmed).protocol)) {
+    throw new Error(
+      `UNLEASH_FEEDBACK_URL must be an absolute http(s) instance base URL such as https://host/hosted (received "${raw}")`,
+    );
   }
 
-  const path = url.pathname.replace(/\/+$/, '');
-  const basePath = path.endsWith(FEEDBACK_PATH) ? path.slice(0, -FEEDBACK_PATH.length) : path;
-  return `${url.origin}${basePath}`;
+  return trimmed.replace(/\/+$/, '');
 }

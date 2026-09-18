@@ -40,19 +40,14 @@ describe('HttpClient', () => {
     expect(fetchMock.mock.calls[1][0]).toBe('https://example.com/api/y');
   });
 
-  it('merges default headers with per-request headers, request wins', async () => {
+  it('passes the request init, including headers, through to fetch untouched', async () => {
     const fetchMock = mockFetch({ text: '{}' });
-    const client = new HttpClient('https://example.com', {
-      headers: () => ({ Authorization: 'default', 'X-A': '1' }),
-    });
+    const client = new HttpClient('https://example.com');
+    const init = { method: 'GET', headers: { Authorization: 'token', 'X-A': '1' } };
 
-    await client.requestJson(
-      '/p',
-      { method: 'GET', headers: { Authorization: 'override' } },
-      { errorMessage: 'x' },
-    );
+    await client.requestJson('/p', init, { errorMessage: 'x' });
 
-    expect(fetchMock.mock.calls[0][1].headers).toEqual({ Authorization: 'override', 'X-A': '1' });
+    expect(fetchMock.mock.calls[0][1]).toBe(init);
   });
 
   it('returns parsed JSON from requestJson', async () => {
