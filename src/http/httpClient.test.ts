@@ -1,58 +1,42 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { CustomError } from '../utils/errors.js';
 import { HttpClient } from './httpClient.js';
 
-interface MockResponse {
-  ok?: boolean;
-  status?: number;
-  statusText?: string;
-  text?: string;
-}
-
-function mockFetch(response: MockResponse) {
-  const { text: body = '', ...rest } = response;
-  const fetchMock = vi.fn().mockResolvedValue({
-    ok: true,
-    status: 200,
-    statusText: 'OK',
-    text: async () => body,
-    json: async () => JSON.parse(body),
-    ...rest,
-  });
-  vi.stubGlobal('fetch', fetchMock);
-  return fetchMock;
-}
-
 describe('HttpClient', () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
   it('strips trailing slash from baseUrl and joins paths', async () => {
-    const fetchMock = mockFetch({ text: '{}' });
-    const client = new HttpClient('https://example.com/');
+    const urls: string[] = [];
+    const client = new HttpClient('https://example.com/', {
+      fetch: async (url) => {
+        urls.push(String(url));
+        return new Response('{}');
+      },
+    });
 
     await client.requestJson('api/x', { method: 'GET' }, { errorMessage: 'x' });
     await client.requestJson('/api/y', { method: 'GET' }, { errorMessage: 'y' });
-
     expect(client.baseUrl).toBe('https://example.com');
-    expect(fetchMock.mock.calls[0][0]).toBe('https://example.com/api/x');
-    expect(fetchMock.mock.calls[1][0]).toBe('https://example.com/api/y');
+    expect(urls).toEqual(['https://example.com/api/x', 'https://example.com/api/y']);
   });
 
   it('passes the request init, including headers, through to fetch untouched', async () => {
-    const fetchMock = mockFetch({ text: '{}' });
-    const client = new HttpClient('https://example.com');
+    let received: RequestInit | undefined;
+    const client = new HttpClient('https://example.com', {
+      fetch: async (_url, init) => {
+        received = init;
+        return new Response('{}');
+      },
+    });
     const init = { method: 'GET', headers: { Authorization: 'token', 'X-A': '1' } };
 
     await client.requestJson('/p', init, { errorMessage: 'x' });
 
-    expect(fetchMock.mock.calls[0][1]).toBe(init);
+    expect(received).toBe(init);
   });
 
   it('returns parsed JSON from requestJson', async () => {
-    mockFetch({ text: '{"hello":"world"}' });
-    const client = new HttpClient('https://example.com');
+    const client = new HttpClient('https://example.com', {
+      fetch: async () => new Response('{"hello":"world"}'),
+    });
 
     await expect(
       client.requestJson<{ hello: string }>('/p', { method: 'GET' }, { errorMessage: 'x' }),
@@ -60,8 +44,9 @@ describe('HttpClient', () => {
   });
 
   it('uses the server message for non-2xx JSON error bodies', async () => {
-    mockFetch({ ok: false, status: 404, statusText: 'Not Found', text: '{"message":"nope"}' });
-    const client = new HttpClient('https://example.com');
+    const client = new HttpClient('https://example.com', {
+      fetch: async () => new Response('{"message":"nope"}', { status: 404 }),
+    });
 
     await expect(
       client.request('/p', { method: 'DELETE' }, { errorMessage: 'Failed' }),
@@ -69,13 +54,10 @@ describe('HttpClient', () => {
   });
 
   it('joins details[].message when message is absent', async () => {
-    mockFetch({
-      ok: false,
-      status: 400,
-      statusText: 'Bad Request',
-      text: '{"details":[{"message":"a"},{"message":"b"}]}',
+    const client = new HttpClient('https://example.com', {
+      fetch: async () =>
+        new Response('{"details":[{"message":"a"},{"message":"b"}]}', { status: 400 }),
     });
-    const client = new HttpClient('https://example.com');
 
     await expect(
       client.request('/p', { method: 'POST' }, { errorMessage: 'Failed' }),
@@ -83,8 +65,9 @@ describe('HttpClient', () => {
   });
 
   it('falls back to status text plus short raw body for non-JSON errors', async () => {
-    mockFetch({ ok: false, status: 500, statusText: 'Server Error', text: 'boom' });
-    const client = new HttpClient('https://example.com');
+    const client = new HttpClient('https://example.com', {
+      fetch: async () => new Response('boom', { status: 500, statusText: 'Server Error' }),
+    });
 
     await expect(
       client.request('/p', { method: 'GET' }, { errorMessage: 'Failed' }),
@@ -92,10 +75,12 @@ describe('HttpClient', () => {
   });
 
   it('normalizes fetch network failures into NETWORK_ERROR with configured hint', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('fetch failed')));
     const client = new HttpClient('https://example.com', {
       networkErrorMessage: 'Default network msg',
       networkErrorHint: 'Custom hint',
+      fetch: async () => {
+        throw new TypeError('fetch failed');
+      },
     });
 
     const error = await client
@@ -111,8 +96,11 @@ describe('HttpClient', () => {
   });
 
   it('prefers per-request networkErrorMessage over the default', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('fetch failed')));
-    const client = new HttpClient('https://example.com');
+    const client = new HttpClient('https://example.com', {
+      fetch: async () => {
+        throw new TypeError('fetch failed');
+      },
+    });
 
     await expect(
       client.request(
@@ -125,8 +113,11 @@ describe('HttpClient', () => {
 
   it('rethrows non-fetch errors unchanged', async () => {
     const boom = new Error('unrelated');
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(boom));
-    const client = new HttpClient('https://example.com');
+    const client = new HttpClient('https://example.com', {
+      fetch: async () => {
+        throw boom;
+      },
+    });
 
     await expect(client.request('/p', { method: 'GET' }, { errorMessage: 'Failed' })).rejects.toBe(
       boom,

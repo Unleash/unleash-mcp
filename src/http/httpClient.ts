@@ -8,15 +8,18 @@ export interface RequestErrorOptions {
 export interface HttpClientOptions {
   networkErrorMessage?: string;
   networkErrorHint?: string;
+  fetch?: typeof fetch;
 }
 
 export class HttpClient {
   readonly baseUrl: string;
   private readonly networkErrorMessage: string;
   private readonly networkErrorHint: string;
+  private readonly fetch: typeof fetch;
 
   constructor(baseUrl: string, options: HttpClientOptions = {}) {
     this.baseUrl = baseUrl.replace(/\/$/, '');
+    this.fetch = options.fetch ?? fetch;
     this.networkErrorMessage = options.networkErrorMessage ?? 'Failed to connect to API';
     this.networkErrorHint = options.networkErrorHint ?? `Check that ${this.baseUrl} is reachable.`;
   }
@@ -28,7 +31,7 @@ export class HttpClient {
 
   async request(path: string, init: RequestInit, options: RequestErrorOptions): Promise<Response> {
     try {
-      const response = await fetch(this.buildUrl(path), init);
+      const response = await this.fetch(this.buildUrl(path), init);
 
       if (!response.ok) {
         throw await this.toHttpError(response, options.errorMessage);
