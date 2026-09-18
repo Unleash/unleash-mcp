@@ -32,6 +32,7 @@ import type { ToolDefinition } from './tools/types.js';
 import { wrapChangeTool } from './tools/wrapChange.js';
 import type { ClientInfo } from './unleash/attribution.js';
 import { UnleashClient } from './unleash/client.js';
+import { FeedbackHttpClient } from './unleash/feedbackHttpClient.js';
 import { notifyProgress } from './utils/streaming.js';
 import { VERSION } from './version.js';
 
@@ -43,6 +44,7 @@ export interface CreateServerOptions {
   dryRun?: boolean;
   logLevel?: 'debug' | 'info' | 'warn' | 'error';
   attributionEnabled?: boolean;
+  feedbackUrl?: string;
   logger?: Logger;
 }
 
@@ -122,9 +124,12 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     attributionEnabled,
   );
 
+  const feedbackClient = new FeedbackHttpClient(options.feedbackUrl, dryRun);
+
   const context: ServerContext = {
     config,
     unleashClient,
+    feedbackClient,
     logger,
     cache: { projects: null, featureFlags: new Map() },
     getClientInfo,
