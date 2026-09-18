@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { hasTrailingApiSegment, normalizeBaseUrl } from './config.js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { hasTrailingApiSegment, loadConfig, normalizeBaseUrl } from './config.js';
 
 describe('normalizeBaseUrl', () => {
   it('returns the URL unchanged when there is no trailing slash or /api', () => {
@@ -98,5 +98,28 @@ describe('hasTrailingApiSegment', () => {
   it('handles non-URL inputs without throwing', () => {
     expect(hasTrailingApiSegment('not-a-url/api')).toBe(true);
     expect(hasTrailingApiSegment('not-a-url')).toBe(false);
+  });
+});
+
+describe('loadConfig', () => {
+  beforeEach(() => {
+    vi.stubEnv('UNLEASH_BASE_URL', 'https://unleash.example.com');
+    vi.stubEnv('UNLEASH_PAT', 'user:token');
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it('forwards UNLEASH_FEEDBACK_URL to the feedback client configuration', () => {
+    vi.stubEnv('UNLEASH_FEEDBACK_URL', 'https://feedback.example.com/hosted');
+
+    expect(loadConfig().server.feedbackUrl).toBe('https://feedback.example.com/hosted');
+  });
+
+  it('leaves the feedback URL unset when UNLEASH_FEEDBACK_URL is absent', () => {
+    vi.stubEnv('UNLEASH_FEEDBACK_URL', undefined);
+
+    expect(loadConfig().server.feedbackUrl).toBeUndefined();
   });
 });
