@@ -98,7 +98,7 @@ describe('send_feedback', () => {
       new CustomError(
         'NETWORK_ERROR',
         'Failed to connect to the Unleash feedback endpoint',
-        'Check that UNLEASH_FEEDBACK_URL is reachable.',
+        'Check that the configured feedback URL is reachable.',
       ),
     );
     const context = createContext();
@@ -111,7 +111,7 @@ describe('send_feedback', () => {
       error: {
         code: 'NETWORK_ERROR',
         message: 'Failed to connect to the Unleash feedback endpoint',
-        hint: 'Check that UNLEASH_FEEDBACK_URL is reachable.',
+        hint: 'Check that the configured feedback URL is reachable.',
       },
     });
     expect((result.content[0] as { text: string }).text).toContain(

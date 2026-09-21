@@ -49,7 +49,7 @@ describe('FeedbackHttpClient.send', () => {
       name: 'CustomError',
       code: 'NETWORK_ERROR',
       message: 'Failed to connect to the Unleash feedback endpoint',
-      hint: `Check that UNLEASH_FEEDBACK_URL (${BASE_URL}) is reachable.`,
+      hint: `Check that the configured feedback URL (${BASE_URL}) is reachable.`,
     });
   });
 

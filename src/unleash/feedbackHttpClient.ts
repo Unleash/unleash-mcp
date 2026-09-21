@@ -10,7 +10,7 @@ export class FeedbackHttpClient {
   constructor(baseUrl: string) {
     this.http = new HttpClient(baseUrl, {
       networkErrorMessage: 'Failed to connect to the Unleash feedback endpoint',
-      networkErrorHint: `Check that UNLEASH_FEEDBACK_URL (${baseUrl}) is reachable.`,
+      networkErrorHint: `Check that the configured feedback URL (${baseUrl}) is reachable.`,
     });
   }
 

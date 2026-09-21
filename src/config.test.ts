@@ -114,7 +114,7 @@ describe('resolveFeedbackBaseUrl', () => {
     expect(resolveFeedbackBaseUrl('  ')).toBe(DEFAULT_FEEDBACK_BASE_URL);
   });
 
-  it('returns an http(s) instance base URL unchanged', () => {
+  it('accepts an http(s) instance base URL', () => {
     expect(resolveFeedbackBaseUrl('https://unleash.example.com/hosted')).toBe(
       'https://unleash.example.com/hosted',
     );
@@ -148,7 +148,7 @@ describe('loadConfig', () => {
     vi.unstubAllEnvs();
   });
 
-  it('reads the feedback URL from the environment', () => {
+  it('uses UNLEASH_FEEDBACK_URL as the feedback destination', () => {
     vi.stubEnv('UNLEASH_FEEDBACK_URL', 'https://feedback.example.com/hosted');
 
     expect(loadConfig().unleash.feedbackUrl).toBe('https://feedback.example.com/hosted');
