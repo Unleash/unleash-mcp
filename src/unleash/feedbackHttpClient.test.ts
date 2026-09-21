@@ -30,13 +30,6 @@ describe('FeedbackHttpClient.send', () => {
     });
   });
 
-  it('skips the request in dry-run mode', async () => {
-    const fetchSpy = vi.spyOn(global, 'fetch');
-
-    await expect(new FeedbackHttpClient(BASE_URL, true).send('report')).resolves.toBeUndefined();
-    expect(fetchSpy).not.toHaveBeenCalled();
-  });
-
   it('throws HTTP_<status> with the server message on a non-2xx', async () => {
     vi.spyOn(global, 'fetch').mockResolvedValue(
       new Response('{"message":"feedback disabled"}', { status: 503 }),

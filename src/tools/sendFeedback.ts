@@ -9,10 +9,11 @@ import { VERSION } from '../version.js';
  * a failed tool call, a request no tool covers, or a result that was not what
  * the user expected.
  *
- * The tool validates its input, builds the payload the hosted Unleash feedback
- * endpoint expects, and posts it through `FeedbackHttpClient` (DX-4860). A
- * failed transmission surfaces as a tool error via `handleToolError`; there is
- * no local fallback. The tool is not registered until consent lands (DX-4859).
+ * The tool validates its input, builds an allowlisted report, and posts it as
+ * the `areasForImprovement` text through `FeedbackHttpClient`, which owns the
+ * wire format of the hosted Unleash feedback endpoint (DX-4860). A failed
+ * transmission surfaces as a tool error via `handleToolError`; there is no
+ * local fallback. The tool is not registered until consent lands (DX-4859).
  */
 
 const ISSUE_TYPES = ['tool_error', 'unsupported_action', 'unexpected_result'] as const;
@@ -69,17 +70,6 @@ export interface FeedbackReport {
   clientVersion?: string;
 }
 
-/**
- * Wire format of the hosted Unleash feedback endpoint, the same one the
- * Unleash UI posts to. `areasForImprovement` is the endpoint's only free-text
- * field, so the report travels as a JSON string inside it.
- */
-interface FeedbackPayload {
-  category: 'mcp';
-  userType: null;
-  areasForImprovement: string;
-}
-
 interface FeedbackSource {
   mcpVersion: string;
   clientInfo: ClientInfo | undefined;
@@ -106,14 +96,6 @@ function buildFeedbackReport(input: SendFeedbackInput, source: FeedbackSource): 
   };
 }
 
-function buildFeedbackPayload(report: FeedbackReport): FeedbackPayload {
-  return {
-    category: 'mcp',
-    userType: null,
-    areasForImprovement: JSON.stringify(report),
-  };
-}
-
 export async function sendFeedback(
   context: ServerContext,
   args: unknown,
@@ -125,21 +107,29 @@ export async function sendFeedback(
       ? context.getClientInfo()
       : undefined;
     const report = buildFeedbackReport(input, { mcpVersion: VERSION, clientInfo });
-    const payload = buildFeedbackPayload(report);
+    const areasForImprovement = JSON.stringify(report);
 
-    await context.feedbackClient.send(payload.areasForImprovement);
-    context.logger.debug(`[send_feedback] sent ${JSON.stringify(payload)}`);
+    const dryRun = context.config.server.dryRun;
+    if (!dryRun) {
+      await context.feedbackClient.send(areasForImprovement);
+    }
+    context.logger.debug(`[send_feedback] ${dryRun ? 'dry run' : 'sent'} ${areasForImprovement}`);
+
+    const message = dryRun
+      ? 'Executed in dry run. Feedback not sent.'
+      : 'Feedback sent to Unleash.';
 
     return {
       content: [
         {
           type: 'text',
-          text: `Feedback sent to Unleash.\n${JSON.stringify(report, null, 2)}`,
+          text: `${message}\n${JSON.stringify(report, null, 2)}`,
         },
       ],
       structuredContent: {
         success: true,
-        feedback: payload,
+        dryRun,
+        areasForImprovement,
       },
     };
   } catch (error) {

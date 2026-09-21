@@ -126,7 +126,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     attributionEnabled,
   );
 
-  const feedbackClient = new FeedbackHttpClient(feedbackUrl, dryRun);
+  const feedbackClient = new FeedbackHttpClient(feedbackUrl);
 
   const context: ServerContext = {
     config,

@@ -18,7 +18,7 @@ const defaultInput: SendFeedbackInput = {
 const sendFeedbackRequest = vi.fn<(areasForImprovement: string) => Promise<void>>();
 
 function createContext(
-  overrides: { clientInfo?: ClientInfo; attributionEnabled?: boolean } = {},
+  overrides: { clientInfo?: ClientInfo; attributionEnabled?: boolean; dryRun?: boolean } = {},
 ): ServerContext {
   const logger: Logger = { debug: () => {}, info: () => {}, warn: () => {}, error: () => {} };
   return {
@@ -29,7 +29,7 @@ function createContext(
         feedbackUrl: 'https://feedback.example.com/hosted',
       },
       server: {
-        dryRun: false,
+        dryRun: overrides.dryRun ?? false,
         logLevel: 'info',
         attributionEnabled: overrides.attributionEnabled ?? true,
       },
@@ -44,9 +44,8 @@ function createContext(
 }
 
 function reportOf(result: Awaited<ReturnType<typeof sendFeedback>>): FeedbackReport {
-  const feedback = (result.structuredContent as { feedback: { areasForImprovement: string } })
-    .feedback;
-  return JSON.parse(feedback.areasForImprovement) as FeedbackReport;
+  const { areasForImprovement } = result.structuredContent as { areasForImprovement: string };
+  return JSON.parse(areasForImprovement) as FeedbackReport;
 }
 
 describe('send_feedback', () => {
@@ -69,19 +68,29 @@ describe('send_feedback', () => {
       client: 'claude-code',
       clientVersion: '1.2.3',
     };
-    const expectedPayload = {
-      category: 'mcp',
-      userType: null,
-      areasForImprovement: JSON.stringify(expectedReport),
-    };
+    const areasForImprovement = JSON.stringify(expectedReport);
     expect(result.isError).toBeFalsy();
     expect(result.structuredContent).toEqual({
       success: true,
-      feedback: expectedPayload,
+      dryRun: false,
+      areasForImprovement,
     });
     expect(sendFeedbackRequest).toHaveBeenCalledTimes(1);
-    expect(sendFeedbackRequest).toHaveBeenCalledWith(expectedPayload.areasForImprovement);
+    expect(sendFeedbackRequest).toHaveBeenCalledWith(areasForImprovement);
     expect((result.content[0] as { text: string }).text).toContain('Feedback sent to Unleash.');
+  });
+
+  it('skips transmission and reports a dry run when dry-run mode is on', async () => {
+    const context = createContext({ clientInfo: defaultClientInfo, dryRun: true });
+
+    const result = await sendFeedback(context, defaultInput);
+
+    expect(result.isError).toBeFalsy();
+    expect(sendFeedbackRequest).not.toHaveBeenCalled();
+    expect(result.structuredContent).toMatchObject({ success: true, dryRun: true });
+    expect((result.content[0] as { text: string }).text).toContain(
+      'Executed in dry run. Feedback not sent.',
+    );
   });
 
   it('returns error on http client failure', async () => {
