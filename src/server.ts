@@ -1,7 +1,7 @@
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { Variables } from '@modelcontextprotocol/sdk/shared/uriTemplate.js';
 import { UriTemplate } from '@modelcontextprotocol/sdk/shared/uriTemplate.js';
-import { type Config, normalizeBaseUrl } from './config.js';
+import { type Config, normalizeBaseUrl, resolveFeedbackBaseUrl } from './config.js';
 import { createLogger, type Logger, type ServerContext } from './context.js';
 import {
   extractFlagNameFromFeatureUri,
@@ -63,6 +63,7 @@ class UriTemplateWithMatcher extends UriTemplate {
 
 export function createUnleashMcpServer(options: CreateServerOptions): McpServer {
   const baseUrl = normalizeBaseUrl(options.baseUrl);
+  const feedbackUrl = resolveFeedbackBaseUrl(options.feedbackUrl);
   const dryRun = options.dryRun ?? false;
   const logLevel = options.logLevel ?? 'error';
   const attributionEnabled = options.attributionEnabled ?? true;
@@ -76,6 +77,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
       pat: '',
       defaultProject: options.defaultProject,
       defaultEnvironment: options.defaultEnvironment,
+      feedbackUrl,
     },
     server: {
       dryRun,
@@ -124,7 +126,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     attributionEnabled,
   );
 
-  const feedbackClient = new FeedbackHttpClient(options.feedbackUrl, dryRun);
+  const feedbackClient = new FeedbackHttpClient(feedbackUrl, dryRun);
 
   const context: ServerContext = {
     config,

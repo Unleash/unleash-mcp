@@ -23,7 +23,11 @@ function createContext(
   const logger: Logger = { debug: () => {}, info: () => {}, warn: () => {}, error: () => {} };
   return {
     config: {
-      unleash: { baseUrl: 'https://unleash.example.com', pat: '' },
+      unleash: {
+        baseUrl: 'https://unleash.example.com',
+        pat: '',
+        feedbackUrl: 'https://feedback.example.com/hosted',
+      },
       server: {
         dryRun: false,
         logLevel: 'info',

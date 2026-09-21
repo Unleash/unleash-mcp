@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { hasTrailingApiSegment, loadConfig, normalizeBaseUrl } from './config.js';
+import {
+  DEFAULT_FEEDBACK_BASE_URL,
+  hasTrailingApiSegment,
+  loadConfig,
+  normalizeBaseUrl,
+  resolveFeedbackBaseUrl,
+} from './config.js';
 
 describe('normalizeBaseUrl', () => {
   it('returns the URL unchanged when there is no trailing slash or /api', () => {
@@ -101,6 +107,37 @@ describe('hasTrailingApiSegment', () => {
   });
 });
 
+describe('resolveFeedbackBaseUrl', () => {
+  it('defaults to the sandbox when no URL is configured', () => {
+    expect(resolveFeedbackBaseUrl()).toBe(DEFAULT_FEEDBACK_BASE_URL);
+    expect(resolveFeedbackBaseUrl('')).toBe(DEFAULT_FEEDBACK_BASE_URL);
+    expect(resolveFeedbackBaseUrl('  ')).toBe(DEFAULT_FEEDBACK_BASE_URL);
+  });
+
+  it('returns an http(s) instance base URL unchanged', () => {
+    expect(resolveFeedbackBaseUrl('https://unleash.example.com/hosted')).toBe(
+      'https://unleash.example.com/hosted',
+    );
+    expect(resolveFeedbackBaseUrl('http://localhost:4242/hosted')).toBe(
+      'http://localhost:4242/hosted',
+    );
+  });
+
+  it('strips a trailing slash', () => {
+    expect(resolveFeedbackBaseUrl('https://unleash.example.com/hosted/')).toBe(
+      'https://unleash.example.com/hosted',
+    );
+  });
+
+  it.each([
+    ['a scheme-less host', 'unleash.example.com/hosted'],
+    ['a non-http scheme', 'ftp://unleash.example.com/hosted'],
+    ['a malformed URL', 'https://not a host'],
+  ])('rejects %s instead of falling back to the default', (_label, value) => {
+    expect(() => resolveFeedbackBaseUrl(value)).toThrow(/absolute http\(s\) instance base URL/);
+  });
+});
+
 describe('loadConfig', () => {
   beforeEach(() => {
     vi.stubEnv('UNLEASH_BASE_URL', 'https://unleash.example.com');
@@ -111,15 +148,9 @@ describe('loadConfig', () => {
     vi.unstubAllEnvs();
   });
 
-  it('forwards UNLEASH_FEEDBACK_URL to the feedback client configuration', () => {
+  it('reads the feedback URL from the environment', () => {
     vi.stubEnv('UNLEASH_FEEDBACK_URL', 'https://feedback.example.com/hosted');
 
-    expect(loadConfig().server.feedbackUrl).toBe('https://feedback.example.com/hosted');
-  });
-
-  it('leaves the feedback URL unset when UNLEASH_FEEDBACK_URL is absent', () => {
-    vi.stubEnv('UNLEASH_FEEDBACK_URL', undefined);
-
-    expect(loadConfig().server.feedbackUrl).toBeUndefined();
+    expect(loadConfig().unleash.feedbackUrl).toBe('https://feedback.example.com/hosted');
   });
 });

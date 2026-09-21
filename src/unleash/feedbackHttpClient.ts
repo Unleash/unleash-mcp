@@ -1,28 +1,18 @@
 import { HttpClient } from '../http/httpClient.js';
 
-export const DEFAULT_FEEDBACK_BASE_URL = 'https://sandbox.getunleash.io/enterprise';
-
-const FEEDBACK_PATH = '/feedback';
-
-/**
- * Sends user feedback about the MCP server to the Unleash feedback endpoint.
- */
 export class FeedbackHttpClient {
-  readonly endpoint: string;
   private readonly http: HttpClient;
   private readonly dryRun: boolean;
 
   /**
-   * @param baseUrl Unleash instance base URL (e.g. `https://host/hosted`);
-   *   `/feedback` is appended to it. Defaults to the Unleash sandbox.
+   * @param baseUrl Resolved Unleash instance base URL (e.g. `https://host/hosted`)
+   *   as returned by `resolveFeedbackBaseUrl`; `/feedback` is appended to it.
    */
-  constructor(baseUrl?: string, dryRun: boolean = false) {
-    const resolved = resolveBaseUrl(baseUrl);
-    this.endpoint = `${resolved}${FEEDBACK_PATH}`;
+  constructor(baseUrl: string, dryRun: boolean = false) {
     this.dryRun = dryRun;
-    this.http = new HttpClient(resolved, {
+    this.http = new HttpClient(baseUrl, {
       networkErrorMessage: 'Failed to connect to the Unleash feedback endpoint',
-      networkErrorHint: `Check that UNLEASH_FEEDBACK_URL (${this.endpoint}) is reachable.`,
+      networkErrorHint: `Check that UNLEASH_FEEDBACK_URL (${baseUrl}) is reachable.`,
     });
   }
 
@@ -32,7 +22,7 @@ export class FeedbackHttpClient {
     }
 
     await this.http.request(
-      FEEDBACK_PATH,
+      '/feedback',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -47,19 +37,4 @@ export class FeedbackHttpClient {
       { errorMessage: 'Failed to send feedback' },
     );
   }
-}
-
-function resolveBaseUrl(raw?: string): string {
-  const trimmed = raw?.trim();
-  if (!trimmed) {
-    return DEFAULT_FEEDBACK_BASE_URL;
-  }
-
-  if (!URL.canParse(trimmed) || !/^https?:$/.test(new URL(trimmed).protocol)) {
-    throw new Error(
-      `UNLEASH_FEEDBACK_URL must be an absolute http(s) instance base URL such as https://host/hosted (received "${raw}")`,
-    );
-  }
-
-  return trimmed.replace(/\/+$/, '');
 }

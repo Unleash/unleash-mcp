@@ -49,7 +49,7 @@ async function main(): Promise<void> {
     dryRun: config.server.dryRun,
     logLevel: config.server.logLevel,
     attributionEnabled: config.server.attributionEnabled,
-    feedbackUrl: config.server.feedbackUrl,
+    feedbackUrl: config.unleash.feedbackUrl,
     logger,
   });
 
