@@ -77,7 +77,9 @@ describe('send_feedback', () => {
     });
     expect(sendFeedbackRequest).toHaveBeenCalledTimes(1);
     expect(sendFeedbackRequest).toHaveBeenCalledWith(areasForImprovement);
-    expect((result.content[0] as { text: string }).text).toContain('Feedback sent to Unleash.');
+    expect(result.content).toMatchObject([
+      { type: 'text', text: expect.stringContaining('Feedback sent to Unleash.') },
+    ]);
   });
 
   it('skips transmission and reports a dry run when dry-run mode is on', async () => {
@@ -88,9 +90,9 @@ describe('send_feedback', () => {
     expect(result.isError).toBeFalsy();
     expect(sendFeedbackRequest).not.toHaveBeenCalled();
     expect(result.structuredContent).toMatchObject({ success: true, dryRun: true });
-    expect((result.content[0] as { text: string }).text).toContain(
-      'Executed in dry run. Feedback not sent.',
-    );
+    expect(result.content).toMatchObject([
+      { type: 'text', text: expect.stringContaining('Executed in dry run. Feedback not sent.') },
+    ]);
   });
 
   it('returns error on http client failure', async () => {
@@ -114,9 +116,12 @@ describe('send_feedback', () => {
         hint: 'Check that the configured feedback URL is reachable.',
       },
     });
-    expect((result.content[0] as { text: string }).text).toContain(
-      'Error: Failed to connect to the Unleash feedback endpoint',
-    );
+    expect(result.content).toMatchObject([
+      {
+        type: 'text',
+        text: expect.stringContaining('Error: Failed to connect to the Unleash feedback endpoint'),
+      },
+    ]);
   });
 
   it('reports an unsupported request with null tool and error code', async () => {
