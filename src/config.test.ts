@@ -1,5 +1,11 @@
-import { describe, expect, it } from 'vitest';
-import { hasTrailingApiSegment, normalizeBaseUrl } from './config.js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  DEFAULT_FEEDBACK_BASE_URL,
+  hasTrailingApiSegment,
+  loadConfig,
+  normalizeBaseUrl,
+  resolveFeedbackBaseUrl,
+} from './config.js';
 
 describe('normalizeBaseUrl', () => {
   it('returns the URL unchanged when there is no trailing slash or /api', () => {
@@ -98,5 +104,53 @@ describe('hasTrailingApiSegment', () => {
   it('handles non-URL inputs without throwing', () => {
     expect(hasTrailingApiSegment('not-a-url/api')).toBe(true);
     expect(hasTrailingApiSegment('not-a-url')).toBe(false);
+  });
+});
+
+describe('resolveFeedbackBaseUrl', () => {
+  it('defaults to the sandbox when no URL is configured', () => {
+    expect(resolveFeedbackBaseUrl()).toBe(DEFAULT_FEEDBACK_BASE_URL);
+    expect(resolveFeedbackBaseUrl('')).toBe(DEFAULT_FEEDBACK_BASE_URL);
+    expect(resolveFeedbackBaseUrl('  ')).toBe(DEFAULT_FEEDBACK_BASE_URL);
+  });
+
+  it('accepts an http(s) instance base URL', () => {
+    expect(resolveFeedbackBaseUrl('https://unleash.example.com/hosted')).toBe(
+      'https://unleash.example.com/hosted',
+    );
+    expect(resolveFeedbackBaseUrl('http://localhost:4242/hosted')).toBe(
+      'http://localhost:4242/hosted',
+    );
+  });
+
+  it('strips a trailing slash', () => {
+    expect(resolveFeedbackBaseUrl('https://unleash.example.com/hosted/')).toBe(
+      'https://unleash.example.com/hosted',
+    );
+  });
+
+  it.each([
+    ['a scheme-less host', 'unleash.example.com/hosted'],
+    ['a non-http scheme', 'ftp://unleash.example.com/hosted'],
+    ['a malformed URL', 'https://not a host'],
+  ])('rejects %s instead of falling back to the default', (_label, value) => {
+    expect(() => resolveFeedbackBaseUrl(value)).toThrow(/absolute http\(s\) instance base URL/);
+  });
+});
+
+describe('loadConfig', () => {
+  beforeEach(() => {
+    vi.stubEnv('UNLEASH_BASE_URL', 'https://unleash.example.com');
+    vi.stubEnv('UNLEASH_PAT', 'user:token');
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it('uses UNLEASH_FEEDBACK_URL as the feedback destination', () => {
+    vi.stubEnv('UNLEASH_FEEDBACK_URL', 'https://feedback.example.com/hosted');
+
+    expect(loadConfig().unleash.feedbackUrl).toBe('https://feedback.example.com/hosted');
   });
 });

@@ -9,9 +9,11 @@ import { VERSION } from '../version.js';
  * a failed tool call, a request no tool covers, or a result that was not what
  * the user expected.
  *
- * This is the logging-only phase (DX-4857): the tool validates its input and
- * builds the payload the hosted Unleash feedback endpoint expects, but only
- * logs it locally. Consent (DX-4859) and transport (DX-4860) land later.
+ * The tool validates its input, builds an allowlisted report, and posts it as
+ * the `areasForImprovement` text through `FeedbackHttpClient`, which owns the
+ * wire format of the hosted Unleash feedback endpoint (DX-4860). A failed
+ * transmission surfaces as a tool error via `handleToolError`; there is no
+ * local fallback. The tool is not registered until consent lands (DX-4859).
  */
 
 const ISSUE_TYPES = ['tool_error', 'unsupported_action', 'unexpected_result'] as const;
@@ -68,17 +70,6 @@ export interface FeedbackReport {
   clientVersion?: string;
 }
 
-/**
- * Wire format of the hosted Unleash feedback endpoint, the same one the
- * Unleash UI posts to. `areasForImprovement` is the endpoint's only free-text
- * field, so the report travels as a JSON string inside it.
- */
-interface FeedbackPayload {
-  category: 'mcp';
-  userType: null;
-  areasForImprovement: string;
-}
-
 interface FeedbackSource {
   mcpVersion: string;
   clientInfo: ClientInfo | undefined;
@@ -105,14 +96,6 @@ function buildFeedbackReport(input: SendFeedbackInput, source: FeedbackSource): 
   };
 }
 
-function buildFeedbackPayload(report: FeedbackReport): FeedbackPayload {
-  return {
-    category: 'mcp',
-    userType: null,
-    areasForImprovement: JSON.stringify(report),
-  };
-}
-
 export async function sendFeedback(
   context: ServerContext,
   args: unknown,
@@ -124,21 +107,29 @@ export async function sendFeedback(
       ? context.getClientInfo()
       : undefined;
     const report = buildFeedbackReport(input, { mcpVersion: VERSION, clientInfo });
-    const payload = buildFeedbackPayload(report);
+    const areasForImprovement = JSON.stringify(report);
 
-    context.logger.info(`[send_feedback] ${JSON.stringify(payload)}`);
+    const dryRun = context.config.server.dryRun;
+    if (!dryRun) {
+      await context.feedbackClient.send(areasForImprovement);
+    }
+    context.logger.debug(`[send_feedback] ${dryRun ? 'dry run' : 'sent'} ${areasForImprovement}`);
+
+    const message = dryRun
+      ? 'Executed in dry run. Feedback not sent.'
+      : 'Feedback sent to Unleash.';
 
     return {
       content: [
         {
           type: 'text',
-          text: `Feedback recorded locally; nothing was transmitted.\n${JSON.stringify(report, null, 2)}`,
+          text: `${message}\n${JSON.stringify(report, null, 2)}`,
         },
       ],
       structuredContent: {
         success: true,
-        transmitted: false,
-        feedback: payload,
+        dryRun,
+        areasForImprovement,
       },
     };
   } catch (error) {
@@ -157,7 +148,7 @@ When to call it:
 - unsupported_action: the user asked for something no tool can fulfil
 - unexpected_result: a tool succeeded but its result was not what was expected
 
-Call it before replying to the user, and never after a successful tool call.
+Call it before replying to the user, and never after a successful tool call. Never call it to report a failure of send_feedback itself.
 
 What is recorded (allowlisted only):
 - issue type, tool name, normalized error code
