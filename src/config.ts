@@ -6,6 +6,20 @@ import { parseAttributionEnv } from './unleash/attribution.js';
 // quiet: true — dotenv's default tip log writes to stdout, which corrupts the MCP stdio JSON-RPC stream
 dotenv.config({ quiet: true });
 
+export const DEFAULT_FEEDBACK_BASE_URL = 'https://sandbox.getunleash.io/enterprise';
+
+const feedbackBaseUrlSchema = z.preprocess(
+  (value) => (typeof value === 'string' && value.trim() === '' ? undefined : value),
+  z
+    .url({
+      protocol: /^https?$/,
+      error:
+        'UNLEASH_FEEDBACK_URL must be an absolute http(s) instance base URL such as https://host/hosted',
+    })
+    .transform((url) => url.replace(/\/+$/, ''))
+    .default(DEFAULT_FEEDBACK_BASE_URL),
+);
+
 /**
  * Configuration schema with Zod validation.
  * Supports both environment variables and CLI flags.
@@ -16,6 +30,7 @@ const configSchema = z.object({
     pat: z.string().min(1, 'UNLEASH_PAT is required'),
     defaultProject: z.string().optional(),
     defaultEnvironment: z.string().optional(),
+    feedbackUrl: feedbackBaseUrlSchema,
   }),
   server: z.object({
     dryRun: z.boolean().default(false),
@@ -61,6 +76,7 @@ export function loadConfig(): Config {
       pat: process.env.UNLEASH_PAT,
       defaultProject: process.env.UNLEASH_DEFAULT_PROJECT,
       defaultEnvironment: process.env.UNLEASH_DEFAULT_ENVIRONMENT,
+      feedbackUrl: process.env.UNLEASH_FEEDBACK_URL,
     },
     server: {
       dryRun: cliFlags.dryRun,
@@ -104,6 +120,15 @@ const TRAILING_API_SEGMENT = /\/api\/?$/;
  */
 export function hasTrailingApiSegment(url: string): boolean {
   return TRAILING_API_SEGMENT.test(url);
+}
+
+export function resolveFeedbackBaseUrl(raw?: string): string {
+  const parsed = feedbackBaseUrlSchema.safeParse(raw);
+  if (!parsed.success) {
+    throw new Error(`${parsed.error.issues[0]?.message} (received "${raw}")`);
+  }
+
+  return parsed.data;
 }
 
 export function normalizeBaseUrl(url: string): string {
