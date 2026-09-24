@@ -28,6 +28,7 @@ The MCP server exposes the following tools:
 - `list_flags`: Lists all feature flags in a project, with optional pagination and sort order.
 - `list_projects`: Lists Unleash projects available to the configured token, with optional pagination.
 - `toggle_flag_environment`: Enables or disables a feature flag in an environment.
+- `update_flag_tags`: Adds or removes tags on an existing feature flag.
 - `remove_flag_strategy`: Deletes a feature flag's strategy from an environment.
 - `cleanup_flag`: Generates instructions for safely removing flagged code paths.
 
@@ -250,6 +251,7 @@ The tool accepts the following parameters:
 - `description` (required): Clear explanation of what the flag controls and why it exists.
 - `projectId` (optional): Target project (defaults to `UNLEASH_DEFAULT_PROJECT`).
 - `impressionData` (optional): Enable analytics tracking (defaults to false).
+- `tags` (optional): Tags to attach to the flag, as `[{ "type": "...", "value": "..." }]`. Use this when your organization requires ownership or governance tags on every flag. The tag type must already exist in Unleash; if a tag cannot be applied the flag is still created and the response reports the tag that failed. To tag a flag that already exists, use [`update_flag_tags`](#update-flag-tags).
 
 #### Usage example
 
@@ -270,7 +272,8 @@ Use create_flag with:
   "type": "release",
   "description": "Gradual rollout of the redesigned checkout experience with improved conversion tracking",
   "projectId": "ecommerce",
-  "impressionData": true
+  "impressionData": true,
+  "tags": [{ "type": "simple", "value": "squad-checkout" }]
 }
 ```
 
@@ -635,7 +638,7 @@ Returns a confirmation with the configured percentage, a link to the flag in the
 
 ### Get flag state
 
-The `get_flag_state` tool fetches a feature flag's current metadata and environment strategies from the Unleash Admin API. It returns the flag's type, enabled/archived status, impression data setting, and a per-environment summary of active strategies and variants.
+The `get_flag_state` tool fetches a feature flag's current metadata and environment strategies from the Unleash Admin API. It returns the flag's type, enabled/archived status, impression data setting, tags, and a per-environment summary of active strategies and variants.
 
 #### When to use
 
@@ -669,7 +672,7 @@ Use get_flag_state with:
 
 **Tool output**
 
-Returns a text summary of the flag (type, enabled/archived/impression-data, project, environment summaries with strategy counts) along with UI and API links. The structured output includes the full feature object with all environments and strategy details.
+Returns a text summary of the flag (type, enabled/archived/impression-data, project, tags, environment summaries with strategy counts) along with UI and API links. The structured output includes the full feature object with all environments and strategy details, plus a normalized `tags` array.
 
 ### List flags
 
@@ -787,6 +790,47 @@ Use toggle_flag_environment with:
 **Tool output**
 
 Returns a confirmation of the new state, a summary of the environment (enabled/disabled, strategy count), and links to the flag in the Unleash Admin UI and Admin API.
+
+### Update flag tags
+
+The `update_flag_tags` tool adds or removes tags on a feature flag that already exists. `create_flag` only sets tags at creation time, so this is the tool to reach for when an existing flag needs ownership or governance tags.
+
+#### When to use
+
+Use this tool to tag flags created before your tagging convention existed, to hand a flag over to another owner, or to fix a typo in a tag. Only the tags listed in `removeTags` are detached — tags you do not mention are left alone. Use `get_flag_state` to see a flag's current tags.
+
+#### Parameters
+
+- `featureName` (required): Feature flag name.
+- `projectId` (optional): Project ID (defaults to `UNLEASH_DEFAULT_PROJECT`).
+- `addTags` (optional): Tags to attach, as `[{ "type": "...", "value": "..." }]`. The tag type must already exist in Unleash.
+- `removeTags` (optional): Tags to detach, same shape.
+
+At least one of `addTags` or `removeTags` is required.
+
+#### Usage example
+
+**Agent prompt**
+
+```
+Use update_flag_tags to tag "new-checkout-flow" as owned by squad-checkout
+and drop the squad-old tag.
+```
+
+**Tool payload**
+
+```json
+{
+  "featureName": "new-checkout-flow",
+  "projectId": "ecommerce",
+  "addTags": [{ "type": "simple", "value": "squad-checkout" }],
+  "removeTags": [{ "type": "simple", "value": "squad-old" }]
+}
+```
+
+**Tool output**
+
+Returns a confirmation of the tags added and removed, the flag's resulting tag list, and links to the flag in the Unleash Admin UI and Admin API. The structured output includes `addedTags`, `removedTags`, and the resulting `tags`.
 
 ### Remove flag strategy
 
@@ -930,7 +974,9 @@ src/
 │   ├── setFlagRollout.ts        # set_flag_rollout tool
 │   ├── getFlagState.ts          # get_flag_state tool
 │   ├── toggleFlagEnvironment.ts # toggle_flag_environment tool
-│   └── removeFlagStrategy.ts    # remove_flag_strategy tool
+│   ├── removeFlagStrategy.ts    # remove_flag_strategy tool
+│   ├── updateFlagTags.ts        # update_flag_tags tool
+│   └── tagSchemas.ts            # Shared flag tag input schema and formatting
 ├── resources/
 │   └── unleashResources.ts      # MCP resource handlers (projects, flags)
 ├── prompts/

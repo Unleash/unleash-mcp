@@ -14,6 +14,17 @@ export type FeatureFlagType =
   | 'permission';
 
 /**
+ * A tag attached to a feature flag. Organizations use tags to carry ownership
+ * and governance metadata.
+ * See: https://docs.getunleash.io/reference/tags
+ */
+export interface FeatureTag {
+  type: string;
+  value: string;
+  color?: string | null;
+}
+
+/**
  * Request payload for creating a feature flag.
  */
 export interface CreateFeatureFlagRequest {
@@ -21,6 +32,7 @@ export interface CreateFeatureFlagRequest {
   type: FeatureFlagType;
   description: string;
   impressionData?: boolean;
+  tags?: FeatureTag[];
 }
 
 /**
@@ -34,6 +46,7 @@ export interface CreateFeatureFlagResponse {
   createdAt: string;
   archived: boolean;
   impressionData: boolean;
+  tags?: FeatureTag[];
 }
 
 export interface UnleashProjectSummary {
@@ -53,6 +66,8 @@ export interface FeatureFlagSummary {
   archived?: boolean;
   impressionData?: boolean;
   createdAt?: string;
+  /** Only present when the Unleash listing endpoint returns tags for the flag. */
+  tags?: FeatureTag[];
   url: string;
 }
 
@@ -174,6 +189,7 @@ export class UnleashClient {
         createdAt: new Date().toISOString(),
         archived: false,
         impressionData: request.impressionData ?? false,
+        tags: request.tags ?? [],
       };
     }
 
@@ -187,6 +203,66 @@ export class UnleashClient {
         errorMessage: 'Failed to create feature flag',
       },
     );
+  }
+
+  /**
+   * Attach a tag to a feature flag.
+   * Endpoint: POST /api/admin/features/{featureName}/tags
+   *
+   * Tags are managed outside the project scope in the Admin API, so this
+   * endpoint takes only the feature name.
+   * See: https://docs.getunleash.io/reference/api/unleash/add-tag
+   */
+  async addFeatureTag(featureName: string, tag: FeatureTag): Promise<FeatureTag> {
+    if (this.dryRun) {
+      return tag;
+    }
+
+    return this.requestJson<FeatureTag>(
+      `/api/admin/features/${encodeURIComponent(featureName)}/tags`,
+      {
+        method: 'POST',
+        body: JSON.stringify(tag),
+      },
+      {
+        errorMessage: `Failed to add tag ${tag.type}:${tag.value} to feature ${featureName}`,
+        networkErrorMessage: `Failed to connect to Unleash API while tagging feature ${featureName}`,
+      },
+    );
+  }
+
+  /**
+   * Add and/or remove tags on an existing feature flag in one call.
+   * Endpoint: PUT /api/admin/features/{featureName}/tags
+   *
+   * Unleash applies `addedTags` first and `removedTags` afterwards, and both
+   * lists are mandatory — the omitted side is sent as an empty array.
+   * See: https://docs.getunleash.io/reference/api/unleash/update-tags
+   */
+  async updateFeatureTags(
+    featureName: string,
+    updates: { addedTags?: FeatureTag[]; removedTags?: FeatureTag[] },
+  ): Promise<FeatureTag[]> {
+    const addedTags = updates.addedTags ?? [];
+    const removedTags = updates.removedTags ?? [];
+
+    if (this.dryRun) {
+      return addedTags;
+    }
+
+    const response = await this.requestJson<{ version?: number; tags?: FeatureTag[] }>(
+      `/api/admin/features/${encodeURIComponent(featureName)}/tags`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ addedTags, removedTags }),
+      },
+      {
+        errorMessage: `Failed to update tags on feature ${featureName}`,
+        networkErrorMessage: `Failed to connect to Unleash API while updating tags on feature ${featureName}`,
+      },
+    );
+
+    return response.tags ?? [];
   }
 
   async listProjects(): Promise<UnleashProjectSummary[]> {
@@ -465,6 +541,7 @@ export class UnleashClient {
         impressionData?: boolean;
         createdAt?: string;
         project?: string;
+        tags?: FeatureTag[];
       }>;
     }>(
       `/api/admin/projects/${encodeURIComponent(projectId)}/features`,
@@ -488,6 +565,7 @@ export class UnleashClient {
           archived: feature.archived,
           impressionData: feature.impressionData,
           createdAt: feature.createdAt,
+          tags: feature.tags,
           url: `${this.baseUrl}/projects/${encodeURIComponent(project)}/features/${encodeURIComponent(name)}`,
         };
       });
@@ -516,6 +594,7 @@ export class UnleashClient {
         impressionData?: boolean;
         createdAt?: string;
         project?: string;
+        tags?: FeatureTag[];
       }>;
     }>(
       `/api/admin/search/features?${params.toString()}`,
@@ -541,6 +620,7 @@ export class UnleashClient {
           archived: true,
           impressionData: feature.impressionData,
           createdAt: feature.createdAt,
+          tags: feature.tags,
           url: `${this.baseUrl}/projects/${encodeURIComponent(project)}/features/${encodeURIComponent(name)}`,
         };
       });
