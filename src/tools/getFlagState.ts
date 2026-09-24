@@ -6,8 +6,9 @@ import {
   resolveProjectId,
   type ServerContext,
 } from '../context.js';
-import type { FeatureDetails, FeatureEnvironment } from '../unleash/client.js';
+import type { FeatureDetails, FeatureEnvironment, FeatureTag } from '../unleash/client.js';
 import { createFlagResourceLink } from '../utils/streaming.js';
+import { formatTags } from './tagSchemas.js';
 
 const getFlagStateSchema = z.object({
   projectId: z
@@ -82,10 +83,15 @@ export async function getFlagState(
         ? environments.map((env) => `- ${summarizeEnvironment(env)}`).join('\n')
         : '- No environments matched the provided filters.';
 
+    const tags = (feature.tags ?? []).filter(
+      (tag): tag is FeatureTag => Boolean(tag.type) && Boolean(tag.value),
+    );
+
     const messageLines = [
       `Feature "${feature.name}" (${feature.type ?? 'unknown type'})`,
       `Enabled: ${feature.enabled ? 'yes' : 'no'} • Archived: ${feature.archived ? 'yes' : 'no'} • Impression data: ${feature.impressionData ? 'on' : 'off'}`,
       `Project: ${feature.project ?? projectId}`,
+      `Tags: ${tags.length > 0 ? formatTags(tags) : 'none'}`,
       `Environments:\n${environmentSummaries}`,
       `View feature: ${url}`,
       `Admin API: ${apiUrl}`,
@@ -103,6 +109,7 @@ export async function getFlagState(
       featureName: feature.name,
       environmentFilter: input.environment,
       feature: feature as FeatureDetails,
+      tags,
       environments,
       links: {
         ui: url,
