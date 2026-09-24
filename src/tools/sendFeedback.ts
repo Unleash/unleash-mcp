@@ -13,7 +13,7 @@ import { VERSION } from '../version.js';
  * the `areasForImprovement` text through `FeedbackHttpClient`, which owns the
  * wire format of the hosted Unleash feedback endpoint (DX-4860). A failed
  * transmission surfaces as a tool error via `handleToolError`; there is no
- * local fallback. The tool is not registered until consent lands (DX-4859).
+ * local fallback. Nothing is sent until the user grants consent (DX-4859).
  */
 
 const ISSUE_TYPES = ['tool_error', 'unsupported_action', 'unexpected_result'] as const;
@@ -96,42 +96,50 @@ function buildFeedbackReport(input: SendFeedbackInput, source: FeedbackSource): 
   };
 }
 
+type SendFeedbackOutcome = 'sent' | 'denied';
+
+function buildOutputMessage(outcome: SendFeedbackOutcome, dryRun: boolean): string {
+  switch (outcome) {
+    case 'sent':
+      return dryRun ? '[DRY_RUN] Would send Feedback to Unleash.' : 'Feedback sent to Unleash.';
+    case 'denied':
+      return 'Feedback is disabled: the user has not opted in to sending feedback to Unleash. Do not call send_feedback again in this session.';
+  }
+}
+
+function sendFeedbackResult(outcome: SendFeedbackOutcome, dryRun: boolean): CallToolResult {
+  return {
+    content: [{ type: 'text', text: buildOutputMessage(outcome, dryRun) }],
+    structuredContent: { success: true, sent: outcome === 'sent' && !dryRun, dryRun },
+  };
+}
+
+async function sendGrantedFeedback(context: ServerContext, args: unknown): Promise<CallToolResult> {
+  const input = sendFeedbackSchema.parse(args);
+  const clientInfo = context.config.server.attributionEnabled ? context.getClientInfo() : undefined;
+  const report = buildFeedbackReport(input, { mcpVersion: VERSION, clientInfo });
+  const areasForImprovement = JSON.stringify(report);
+  if (context.config.server.dryRun) {
+    context.logger.info(`[send_feedback][DRY_RUN] Would send feedback: ${areasForImprovement}`);
+  } else {
+    await context.feedbackClient.send(areasForImprovement);
+  }
+  return sendFeedbackResult('sent', context.config.server.dryRun);
+}
+
 export async function sendFeedback(
   context: ServerContext,
   args: unknown,
   _progressToken?: string | number,
 ): Promise<CallToolResult> {
   try {
-    const input = sendFeedbackSchema.parse(args);
-    const clientInfo = context.config.server.attributionEnabled
-      ? context.getClientInfo()
-      : undefined;
-    const report = buildFeedbackReport(input, { mcpVersion: VERSION, clientInfo });
-    const areasForImprovement = JSON.stringify(report);
-
-    const dryRun = context.config.server.dryRun;
-    if (!dryRun) {
-      await context.feedbackClient.send(areasForImprovement);
+    const consent = await context.feedbackConsentResolver.resolve();
+    switch (consent) {
+      case 'granted':
+        return await sendGrantedFeedback(context, args);
+      case 'denied':
+        return sendFeedbackResult('denied', context.config.server.dryRun);
     }
-    context.logger.debug(`[send_feedback] ${dryRun ? 'dry run' : 'sent'} ${areasForImprovement}`);
-
-    const message = dryRun
-      ? 'Executed in dry run. Feedback not sent.'
-      : 'Feedback sent to Unleash.';
-
-    return {
-      content: [
-        {
-          type: 'text',
-          text: `${message}\n${JSON.stringify(report, null, 2)}`,
-        },
-      ],
-      structuredContent: {
-        success: true,
-        dryRun,
-        areasForImprovement,
-      },
-    };
   } catch (error) {
     return handleToolError(context, error, 'send_feedback');
   }

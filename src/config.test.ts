@@ -4,6 +4,7 @@ import {
   hasTrailingApiSegment,
   loadConfig,
   normalizeBaseUrl,
+  parseFeedbackConsentEnv,
   resolveFeedbackBaseUrl,
 } from './config.js';
 
@@ -135,6 +136,37 @@ describe('resolveFeedbackBaseUrl', () => {
     ['a malformed URL', 'https://not a host'],
   ])('rejects %s instead of falling back to the default', (_label, value) => {
     expect(() => resolveFeedbackBaseUrl(value)).toThrow(/absolute http\(s\) instance base URL/);
+  });
+});
+
+describe('parseFeedbackConsentEnv', () => {
+  it.each([
+    ['true', 'granted'],
+    ['TRUE', 'granted'],
+    ['  True  ', 'granted'],
+    ['false', 'denied'],
+    ['FALSE', 'denied'],
+    ['  False  ', 'denied'],
+  ])('maps %j to %s', (value, expected) => {
+    expect(parseFeedbackConsentEnv(value)).toBe(expected);
+  });
+
+  it.each([undefined, '', '   '])('returns undefined for unset or blank value %j', (value) => {
+    expect(parseFeedbackConsentEnv(value)).toBeUndefined();
+  });
+
+  it.each([
+    '1',
+    '0',
+    'yes',
+    'no',
+    'on',
+    'off',
+    'granted',
+    'denied',
+    'truee',
+  ])('returns undefined for unsupported value %j', (value) => {
+    expect(parseFeedbackConsentEnv(value)).toBeUndefined();
   });
 });
 
