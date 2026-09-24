@@ -36,7 +36,9 @@ This is an MCP server with a dual-mode architecture (stdio + remote HTTP). A tra
 
 **Tool registration**: Each tool in `src/tools/` exports a `ToolDefinition` object (`src/tools/types.ts`) with `name`, `description`, `inputSchema` (Zod), and `implementation` function. Tools are registered in a loop in `src/server.ts`. To add a new tool: create a file in `src/tools/`, export a `ToolDefinition`, and add it to the `tools` array in `src/server.ts`.
 
-**Shared context**: All tools receive a `ServerContext` (`src/context.ts`) containing `config`, `unleashClient`, `logger`, and `notifyProgress`. Use `ensureProjectId()` and `handleToolError()` from context for consistent behavior.
+**Shared context**: All tools receive a `ServerContext` (`src/context.ts`) containing `config`, `unleashClient`, `logger`, and `notifyProgress`. Use `handleToolError()` from context for consistent error responses.
+
+**Project scoping**: Every project-scoped tool takes a required `projectId` and never falls back or resolves on its own. The server instructions tell the assistant which project to use: the configured default (`UNLEASH_DEFAULT_PROJECT` / `defaultProject` option) when set, otherwise the assistant calls `list_projects` once per session, uses the only project if there is exactly one, and asks the user to choose otherwise. The chosen id is reused for the whole session.
 
 **API client**: `src/unleash/client.ts` (`UnleashClient`) wraps the Unleash Admin API using native `fetch`. Constructor takes `(baseUrl, authHeaders, dryRun)` where `authHeaders` is a `Record<string, string>` spread into every request. All methods support `--dry-run` mode by returning mock responses. Errors are thrown as `CustomError` (`src/utils/errors.ts`) with `{code, message, hint}` format.
 

@@ -26,6 +26,12 @@ import { getScoringGuidance } from '../detection/flagScoring.js';
  * Input schema for the detect_flag tool
  */
 const detectFlagInputSchema = z.object({
+  projectId: z
+    .string()
+    .min(1)
+    .describe(
+      'Project ID to search for existing flags in. Use the default project named in the server instructions when one is configured, otherwise pick one with list_projects; determine it once per session and reuse it.',
+    ),
   description: z
     .string()
     .min(1)
@@ -57,6 +63,7 @@ export async function detectFlag(context: ServerContext, args: unknown): Promise
     const input: DetectFlagInput = detectFlagInputSchema.parse(args);
 
     context.logger.info('Generating flag detection instructions', {
+      projectId: input.projectId,
       description: input.description,
       filesCount: input.files?.length ?? 0,
       hasCodeContext: !!input.codeContext,
@@ -64,10 +71,10 @@ export async function detectFlag(context: ServerContext, args: unknown): Promise
 
     // Build discovery input
     const discoveryInput: DiscoveryInput = {
+      projectId: input.projectId,
       description: input.description,
       files: input.files,
       codeContext: input.codeContext,
-      defaultProject: context.config.unleash.defaultProject,
     };
 
     // Generate comprehensive search instructions

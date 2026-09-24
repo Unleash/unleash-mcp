@@ -86,8 +86,13 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     },
   };
 
+  const projectInstruction = options.defaultProject
+    ? `The configured default project is "${options.defaultProject}". Pass it as the projectId input to every project-scoped tool unless the user asks for a different project.`
+    : 'No default project is configured. Before the first project-scoped tool call, call list_projects once and use the only project if there is exactly one; otherwise ask the user which project to use. Remember the chosen projectId and pass it to every project-scoped tool for the rest of the session.';
+
   const instructions = [
     'Use this tool for local development to increase confidence by decoupling the change from deployments:',
+    projectInstruction,
     '1) Call evaluate_change to get a risk assessment on the current code change.',
     '2) The evaluate_change tool will automatically call detect_flag to search for existing flags to prevent duplicates.',
     '3) If an existing flag is found, use it. If the code change is risky and no flag exists, create a feature flag with create_flag.',

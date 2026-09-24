@@ -1,11 +1,6 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import {
-  askForProjectId,
-  handleToolError,
-  resolveProjectId,
-  type ServerContext,
-} from '../context.js';
+import { handleToolError, type ServerContext } from '../context.js';
 import type { FeatureFlagType } from '../unleash/client.js';
 import { createFlagResourceLink, formatFlagCreatedMessage } from '../utils/streaming.js';
 
@@ -16,9 +11,9 @@ import { createFlagResourceLink, formatFlagCreatedMessage } from '../utils/strea
 const createFeatureFlagSchema = z.object({
   projectId: z
     .string()
-    .optional()
+    .min(1)
     .describe(
-      'Project ID where the flag will be created (optional if UNLEASH_DEFAULT_PROJECT is set)',
+      'Project ID where the flag will be created. Use the default project named in the server instructions when one is configured, otherwise pick one with list_projects; determine it once per session and reuse it.',
     ),
   name: z
     .string()
@@ -68,9 +63,7 @@ export async function createFlag(
     // Validate input
     const input: CreateFeatureFlagInput = createFeatureFlagSchema.parse(args);
 
-    // Ensure project ID is available
-    const projectId = await resolveProjectId(input.projectId, context);
-    if (!projectId) return askForProjectId(context);
+    const projectId = input.projectId;
 
     context.logger.info(`Creating feature flag "${input.name}" in project "${projectId}"`);
 
