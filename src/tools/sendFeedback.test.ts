@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { ServerContext } from '../context.js';
 import type { FeedbackConsentDecision } from '../feedback/consentDecision.js';
 import { FeedbackConsentResolver } from '../feedback/consentResolver.js';
+import type { AskUser } from '../feedback/elicitation.js';
 import { silentLogger as logger } from '../test-utils/silentLogger.js';
 import type { ClientInfo } from '../unleash/attribution.js';
 import type { UnleashClient } from '../unleash/client.js';
@@ -26,12 +27,15 @@ function createContext(
     attributionEnabled?: boolean;
     dryRun?: boolean;
     consent?: FeedbackConsentDecision | 'undecided';
+    askUser?: AskUser;
   } = {},
 ): ServerContext {
   const consent = overrides.consent ?? 'granted';
   const dryRun = overrides.dryRun ?? false;
   const feedbackConsentResolver = new FeedbackConsentResolver({
     initialConsent: consent === 'undecided' ? undefined : consent,
+    askUser: overrides.askUser ?? (async () => undefined),
+    store: { location: 'consent.json', read: () => null, write: () => true },
     logger,
   });
   return {
@@ -166,7 +170,20 @@ describe('send_feedback', () => {
     expect(result.structuredContent).toEqual({ success: true, sent: false, dryRun: false });
   });
 
-  it('does not send when consent has not been decided', async () => {
+  it('sends when the user grants consent at the prompt', async () => {
+    sendFeedbackRequest.mockResolvedValue(undefined);
+    const context = createContext({
+      consent: 'undecided',
+      askUser: async () => 'granted',
+    });
+
+    const result = await sendFeedback(context, defaultInput);
+
+    expect(sendFeedbackRequest).toHaveBeenCalledTimes(1);
+    expect(result.structuredContent).toEqual({ success: true, sent: true, dryRun: false });
+  });
+
+  it('does not send when the consent prompt is unanswered', async () => {
     const context = createContext({ consent: 'undecided' });
 
     const result = await sendFeedback(context, defaultInput);
@@ -174,6 +191,29 @@ describe('send_feedback', () => {
     expect(result.isError).toBeFalsy();
     expect(sendFeedbackRequest).not.toHaveBeenCalled();
     expect(result.structuredContent).toEqual({ success: true, sent: false, dryRun: false });
+  });
+
+  it('asks for consent in dry-run mode but never sends', async () => {
+    const askUser = vi.fn<AskUser>(async () => 'granted');
+    const context = createContext({ dryRun: true, consent: 'undecided', askUser });
+
+    const result = await sendFeedback(context, defaultInput);
+
+    expect(askUser).toHaveBeenCalledTimes(1);
+    expect(sendFeedbackRequest).not.toHaveBeenCalled();
+    expect(result.structuredContent).toEqual({ success: true, sent: false, dryRun: true });
+  });
+
+  it('rejects invalid input once consent is granted', async () => {
+    const askUser = vi.fn<AskUser>(async () => 'granted');
+    const context = createContext({ consent: 'undecided', askUser });
+
+    const result = await sendFeedback(context, { ...defaultInput, tool: 'Create-Flag' });
+
+    expect(result.isError).toBe(true);
+    expect(result.structuredContent).toMatchObject({ error: { code: 'VALIDATION_ERROR' } });
+    expect(askUser).toHaveBeenCalledTimes(1);
+    expect(sendFeedbackRequest).not.toHaveBeenCalled();
   });
 
   it('does not validate input when consent is denied', async () => {
