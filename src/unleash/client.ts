@@ -70,6 +70,45 @@ export interface StrategyVariant {
   [key: string]: unknown;
 }
 
+/**
+ * Operators available for strategy constraints.
+ * See: https://docs.getunleash.io/reference/activation-strategies#constraints
+ */
+export type StrategyConstraintOperator =
+  | 'IN'
+  | 'NOT_IN'
+  | 'STR_CONTAINS'
+  | 'STR_STARTS_WITH'
+  | 'STR_ENDS_WITH'
+  | 'NUM_EQ'
+  | 'NUM_GT'
+  | 'NUM_GTE'
+  | 'NUM_LT'
+  | 'NUM_LTE'
+  | 'DATE_AFTER'
+  | 'DATE_BEFORE'
+  | 'SEMVER_EQ'
+  | 'SEMVER_GT'
+  | 'SEMVER_GTE'
+  | 'SEMVER_LT'
+  | 'SEMVER_LTE'
+  | 'REGEX';
+
+/**
+ * A constraint that narrows when a strategy applies, e.g. only enable a flag
+ * for clients whose `webVersion` is at least a given release.
+ */
+export interface StrategyConstraint {
+  contextName: string;
+  operator: StrategyConstraintOperator;
+  /** Single-value operators (NUM_*, DATE_*, SEMVER_*) use this. */
+  value?: string;
+  /** Multi-value operators (IN, NOT_IN, STR_*) use this. */
+  values?: string[];
+  inverted?: boolean;
+  caseInsensitive?: boolean;
+}
+
 export interface SetFlagRolloutOptions {
   rolloutPercentage: number;
   groupId?: string;
@@ -77,6 +116,21 @@ export interface SetFlagRolloutOptions {
   title?: string;
   disabled?: boolean;
   variants?: StrategyVariant[];
+  constraints?: StrategyConstraint[];
+}
+
+/**
+ * Fields that can be changed on an existing strategy. Anything omitted keeps
+ * its current value.
+ */
+export interface UpdateFeatureStrategyOptions {
+  rolloutPercentage?: number;
+  groupId?: string;
+  stickiness?: string;
+  title?: string;
+  disabled?: boolean;
+  variants?: StrategyVariant[];
+  constraints?: StrategyConstraint[];
 }
 
 export interface FeatureStrategy {
@@ -87,7 +141,7 @@ export interface FeatureStrategy {
   featureName?: string;
   sortOrder?: number;
   segments?: number[];
-  constraints?: Array<Record<string, unknown>>;
+  constraints?: StrategyConstraint[];
   variants?: StrategyVariant[];
   parameters: Record<string, string>;
 }
@@ -123,6 +177,10 @@ export interface FeatureDetails {
   tags?: Array<{ type?: string; value?: string }>;
   links?: Array<{ id: string; url: string; title?: string | null }>;
   [key: string]: unknown;
+}
+
+function clampRollout(rolloutPercentage: number): number {
+  return Math.min(100, Math.max(0, rolloutPercentage));
 }
 
 /**
@@ -284,7 +342,7 @@ export class UnleashClient {
     environment: string,
     options: SetFlagRolloutOptions,
   ): Promise<FeatureStrategy> {
-    const rollout = Math.min(100, Math.max(0, options.rolloutPercentage));
+    const rollout = clampRollout(options.rolloutPercentage);
     const parameters: Record<string, string> = {
       rollout: rollout.toString(),
       groupId: options.groupId ?? featureName,
@@ -297,6 +355,7 @@ export class UnleashClient {
       disabled: options.disabled,
       parameters,
       ...(options.variants && options.variants.length > 0 ? { variants: options.variants } : {}),
+      ...(options.constraints ? { constraints: options.constraints } : {}),
     };
 
     if (this.dryRun) {
@@ -308,6 +367,7 @@ export class UnleashClient {
         featureName,
         parameters,
         variants: payload.variants ?? [],
+        constraints: payload.constraints ?? [],
       };
     }
 
@@ -322,6 +382,100 @@ export class UnleashClient {
         networkErrorMessage: `Failed to connect to Unleash API while configuring strategy for feature ${featureName}`,
       },
     );
+  }
+
+  /**
+   * Update an existing strategy in place.
+   * Endpoint: PUT /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies/{strategyId}
+   *
+   * The endpoint replaces the whole strategy, so the current configuration is
+   * read first and merged with the requested changes. Without that merge, an
+   * update that only touches constraints would wipe the rollout parameters.
+   */
+  async updateFeatureStrategy(
+    projectId: string,
+    featureName: string,
+    environment: string,
+    strategyId: string,
+    updates: UpdateFeatureStrategyOptions,
+  ): Promise<FeatureStrategy> {
+    if (this.dryRun) {
+      return {
+        id: strategyId,
+        name: 'flexibleRollout',
+        title: updates.title ?? null,
+        disabled: updates.disabled ?? false,
+        featureName,
+        parameters: {
+          ...(updates.rolloutPercentage !== undefined
+            ? { rollout: clampRollout(updates.rolloutPercentage).toString() }
+            : {}),
+          ...(updates.groupId !== undefined ? { groupId: updates.groupId } : {}),
+          ...(updates.stickiness !== undefined ? { stickiness: updates.stickiness } : {}),
+        },
+        constraints: updates.constraints ?? [],
+        variants: updates.variants ?? [],
+      };
+    }
+
+    const current = await this.findFeatureStrategy(projectId, featureName, environment, strategyId);
+
+    const parameters = { ...current.parameters };
+    if (updates.rolloutPercentage !== undefined) {
+      parameters.rollout = clampRollout(updates.rolloutPercentage).toString();
+    }
+    if (updates.groupId !== undefined) {
+      parameters.groupId = updates.groupId;
+    }
+    if (updates.stickiness !== undefined) {
+      parameters.stickiness = updates.stickiness;
+    }
+
+    const payload = {
+      name: current.name,
+      title: updates.title ?? current.title,
+      disabled: updates.disabled ?? current.disabled,
+      parameters,
+      constraints: updates.constraints ?? current.constraints ?? [],
+      variants: updates.variants ?? current.variants ?? [],
+      ...(current.segments ? { segments: current.segments } : {}),
+    };
+
+    return this.requestJson<FeatureStrategy>(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/features/${encodeURIComponent(featureName)}/environments/${encodeURIComponent(environment)}/strategies/${encodeURIComponent(strategyId)}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(payload),
+      },
+      {
+        errorMessage: `Failed to update strategy ${strategyId} for feature ${featureName} in ${environment}`,
+        networkErrorMessage: `Failed to connect to Unleash API while updating strategy ${strategyId} for feature ${featureName}`,
+      },
+    );
+  }
+
+  private async findFeatureStrategy(
+    projectId: string,
+    featureName: string,
+    environment: string,
+    strategyId: string,
+  ): Promise<FeatureStrategy> {
+    const feature = await this.getFeature(projectId, featureName);
+    const target = (feature.environments ?? []).find(
+      (candidate) =>
+        (candidate.environment ?? candidate.name).toLowerCase() === environment.toLowerCase(),
+    );
+    const strategy = target?.strategies?.find((candidate) => candidate.id === strategyId);
+
+    if (!strategy) {
+      throw new CustomError(
+        'STRATEGY_NOT_FOUND',
+        `Strategy ${strategyId} was not found in environment ${environment} for feature ${featureName}`,
+        'Use get_flag_state to list the strategy IDs configured for this feature.',
+      );
+    }
+
+    return strategy;
   }
 
   async getFeature(projectId: string, featureName: string): Promise<FeatureDetails> {

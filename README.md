@@ -28,6 +28,7 @@ The MCP server exposes the following tools:
 - `list_flags`: Lists all feature flags in a project, with optional pagination and sort order.
 - `list_projects`: Lists Unleash projects available to the configured token, with optional pagination.
 - `toggle_flag_environment`: Enables or disables a feature flag in an environment.
+- `update_flag_strategy`: Updates an existing strategy in place (constraints, rollout, variants).
 - `remove_flag_strategy`: Deletes a feature flag's strategy from an environment.
 - `cleanup_flag`: Generates instructions for safely removing flagged code paths.
 
@@ -588,11 +589,13 @@ Returns a comprehensive, markdown-formatted string that guides the user on how t
 
 ### Set flag rollout
 
-The `set_flag_rollout` tool configures a `flexibleRollout` strategy on a feature flag environment. It sets the rollout percentage, stickiness, and optional strategy-level variants. This does not enable the flag; use `toggle_flag_environment` to turn it on.
+The `set_flag_rollout` tool configures a `flexibleRollout` strategy on a feature flag environment. It sets the rollout percentage, stickiness, optional strategy-level variants, and optional constraints. This does not enable the flag; use `toggle_flag_environment` to turn it on.
+
+This tool adds a strategy to the environment. To change a strategy that already exists, use `update_flag_strategy` instead.
 
 #### When to use
 
-Use this tool after creating a flag with `create_flag` to configure how traffic is distributed before enabling it. Also use it to update an existing rollout percentage or add variants.
+Use this tool after creating a flag with `create_flag` to configure how traffic is distributed before enabling it.
 
 #### Parameters
 
@@ -605,6 +608,7 @@ Use this tool after creating a flag with `create_flag` to configure how traffic 
 - `title` (optional): Descriptive title for the strategy.
 - `disabled` (optional): Create the strategy in a disabled state (defaults to false).
 - `variants` (optional): List of strategy-level variants, each with `name`, `weight` (0-1000), optional `weightType` (`"variable"` or `"fix"`), `stickiness`, and `payload` (`{type, value}`).
+- `constraints` (optional): List of constraints that gate the strategy. Each constraint takes `contextName`, `operator`, and either `value` (for the `NUM_*`, `DATE_*` and `SEMVER_*` operators) or `values` (for `IN`, `NOT_IN` and the `STR_*` operators), plus optional `inverted` and `caseInsensitive`. Available operators: `IN`, `NOT_IN`, `STR_CONTAINS`, `STR_STARTS_WITH`, `STR_ENDS_WITH`, `NUM_EQ`, `NUM_GT`, `NUM_GTE`, `NUM_LT`, `NUM_LTE`, `DATE_AFTER`, `DATE_BEFORE`, `SEMVER_EQ`, `SEMVER_GT`, `SEMVER_GTE`, `SEMVER_LT`, `SEMVER_LTE`, `REGEX`. See [strategy constraints](https://docs.getunleash.io/reference/activation-strategies#constraints).
 
 #### Usage example
 
@@ -626,6 +630,17 @@ Use set_flag_rollout with:
   "rolloutPercentage": 25,
   "projectId": "ecommerce",
   "stickiness": "userId"
+}
+```
+
+A common production convention is a 100% rollout gated by client version, so the flag only turns on for clients that already ship the code:
+
+```json
+{
+  "featureName": "new-checkout-flow",
+  "environment": "production",
+  "rolloutPercentage": 100,
+  "constraints": [{ "contextName": "webVersion", "operator": "NUM_GTE", "value": "1.42.0" }]
 }
 ```
 
@@ -788,13 +803,62 @@ Use toggle_flag_environment with:
 
 Returns a confirmation of the new state, a summary of the environment (enabled/disabled, strategy count), and links to the flag in the Unleash Admin UI and Admin API.
 
+### Update flag strategy
+
+The `update_flag_strategy` tool updates an existing strategy in place instead of adding a new one. Fields that are not provided keep their current value, so the tool reads the strategy first and merges the requested changes before writing them back.
+
+#### When to use
+
+Use this tool to change the constraints, rollout percentage, stickiness, title, or variants of a strategy that already exists — for example, to raise the minimum client version of a production rollout. Use `set_flag_rollout` when the environment has no strategy yet, and `remove_flag_strategy` to delete one.
+
+#### Parameters
+
+- `featureName` (required): Feature flag name.
+- `environment` (required): Environment the strategy belongs to.
+- `strategyId` (required): ID of the strategy to update (find this via `get_flag_state`).
+- `projectId` (optional): Project ID (defaults to `UNLEASH_DEFAULT_PROJECT`).
+- `rolloutPercentage` (optional): New rollout percentage (0-100).
+- `groupId` (optional): New stickiness bucketing key.
+- `stickiness` (optional): New stickiness field.
+- `title` (optional): New descriptive title for the strategy.
+- `disabled` (optional): Enable or disable the strategy.
+- `variants` (optional): Replacement list of strategy-level variants.
+- `constraints` (optional): Replacement list of constraints (same shape as in `set_flag_rollout`). Pass an empty array to clear all constraints.
+
+At least one of the optional update fields is required.
+
+#### Usage example
+
+**Agent prompt**
+
+```
+Use get_flag_state to find the strategy ID for "new-checkout-flow" in production,
+then use update_flag_strategy to require webVersion 1.43.0 or higher.
+```
+
+**Tool payload**
+
+```json
+{
+  "featureName": "new-checkout-flow",
+  "environment": "production",
+  "strategyId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "projectId": "ecommerce",
+  "constraints": [{ "contextName": "webVersion", "operator": "NUM_GTE", "value": "1.43.0" }]
+}
+```
+
+**Tool output**
+
+Returns a confirmation naming the strategy and the fields that were changed, the updated strategy in the structured output, and links to the flag in the Unleash Admin UI and Admin API.
+
 ### Remove flag strategy
 
 The `remove_flag_strategy` tool deletes a strategy configuration from a feature flag environment. Use `get_flag_state` first to discover the strategy ID.
 
 #### When to use
 
-Use this tool to clean up stale strategies, or to replace an existing strategy by removing the old one and configuring a new one with `set_flag_rollout`.
+Use this tool to clean up stale strategies. To change a strategy rather than delete it, prefer `update_flag_strategy`.
 
 #### Parameters
 
@@ -930,7 +994,9 @@ src/
 │   ├── setFlagRollout.ts        # set_flag_rollout tool
 │   ├── getFlagState.ts          # get_flag_state tool
 │   ├── toggleFlagEnvironment.ts # toggle_flag_environment tool
-│   └── removeFlagStrategy.ts    # remove_flag_strategy tool
+│   ├── removeFlagStrategy.ts    # remove_flag_strategy tool
+│   ├── updateFlagStrategy.ts    # update_flag_strategy tool
+│   └── strategySchemas.ts       # Shared variant/constraint input schemas
 ├── resources/
 │   └── unleashResources.ts      # MCP resource handlers (projects, flags)
 ├── prompts/

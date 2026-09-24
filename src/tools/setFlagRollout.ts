@@ -6,27 +6,8 @@ import {
   resolveProjectId,
   type ServerContext,
 } from '../context.js';
-import type { StrategyVariant, StrategyVariantPayload } from '../unleash/client.js';
 import { createFlagResourceLink } from '../utils/streaming.js';
-
-const variantPayloadSchema = z.object({
-  type: z.enum(['json', 'csv', 'string', 'number']).describe('Payload type'),
-  value: z.string().min(1).describe('Serialized payload value'),
-}) satisfies z.ZodType<StrategyVariantPayload>;
-
-const variantSchema = z
-  .object({
-    name: z.string().min(1).describe('Variant name (unique within this feature)'),
-    weight: z.number().int().min(0).max(1000).describe('Variant weight (0-1000)'),
-    weightType: z.enum(['variable', 'fix']).optional().describe('Variant weight type'),
-    stickiness: z
-      .string()
-      .min(1)
-      .optional()
-      .describe('Stickiness to use for this variant (defaults to "default")'),
-    payload: variantPayloadSchema.optional(),
-  })
-  .describe('Strategy-level variant definition');
+import { constraintSchema, toStrategyVariants, variantSchema } from './strategySchemas.js';
 
 const setFlagRolloutSchema = z.object({
   projectId: z
@@ -46,6 +27,12 @@ const setFlagRolloutSchema = z.object({
   title: z.string().optional().describe('Optional descriptive title for the strategy'),
   disabled: z.boolean().optional().describe('Disable the strategy (defaults to false)'),
   variants: z.array(variantSchema).optional().describe('Optional list of strategy-level variants'),
+  constraints: z
+    .array(constraintSchema)
+    .optional()
+    .describe(
+      'Optional constraints that gate the strategy. Common pattern: a 100% rollout constrained to clients at or above a released version.',
+    ),
 });
 
 type SetFlagRolloutInput = z.infer<typeof setFlagRolloutSchema>;
@@ -71,13 +58,7 @@ export async function setFlagRollout(
       `${mode}Configuring flexibleRollout strategy for "${input.featureName}" (${rolloutDisplay})...`,
     );
 
-    const variants: StrategyVariant[] | undefined = input.variants?.map((variant) => ({
-      name: variant.name,
-      weight: variant.weight,
-      weightType: variant.weightType ?? 'variable',
-      stickiness: variant.stickiness ?? 'default',
-      ...(variant.payload ? { payload: variant.payload } : {}),
-    }));
+    const variants = input.variants ? toStrategyVariants(input.variants) : undefined;
 
     const strategy = await context.unleashClient.setFlexibleRolloutStrategy(
       projectId,
@@ -90,6 +71,7 @@ export async function setFlagRollout(
         title: input.title,
         disabled: input.disabled,
         variants,
+        constraints: input.constraints,
       },
     );
 
@@ -156,7 +138,11 @@ export const setFlagRolloutTool = {
   name: 'set_flag_rollout',
   title: 'Set flag rollout strategy',
   annotations: { readOnlyHint: false, destructiveHint: false },
-  description: `Configure or update a flexibleRollout strategy for a feature flag environment with an optional rollout percentage and variants. This does NOT enable the feature; call toggle_flag_environment to turn environments on or off.`,
+  description: `Configure or update a flexibleRollout strategy for a feature flag environment with an optional rollout percentage and variants. This does NOT enable the feature; call toggle_flag_environment to turn environments on or off.
+
+Constraints gate when the strategy applies, e.g. a 100% rollout constrained to \`webVersion NUM_GTE 1.42.0\` so the flag only turns on for clients that already ship the code.
+
+Note: this creates a new strategy in the environment. To change an existing strategy in place (for example to adjust its constraints), use update_flag_strategy.`,
   inputSchema: setFlagRolloutSchema,
   implementation: setFlagRollout,
 };
