@@ -56,6 +56,30 @@ export interface FeatureFlagSummary {
   url: string;
 }
 
+export const DEFAULT_FEATURE_FLAG_PAGE_SIZE = 50;
+export const MAX_FEATURE_FLAG_PAGE_SIZE = 100;
+
+export function clampFeatureFlagPageSize(limit: number | undefined): number {
+  if (limit === undefined || !Number.isFinite(limit)) {
+    return DEFAULT_FEATURE_FLAG_PAGE_SIZE;
+  }
+  return Math.min(MAX_FEATURE_FLAG_PAGE_SIZE, Math.max(1, Math.floor(limit)));
+}
+
+export interface FeatureFlagPageQuery {
+  archived?: boolean;
+  limit?: number;
+  offset?: number;
+  order?: 'asc' | 'desc';
+}
+
+export interface FeatureFlagPage {
+  flags: FeatureFlagSummary[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
 export interface StrategyVariantPayload {
   type: 'json' | 'csv' | 'string' | 'number';
   value: string;
@@ -240,42 +264,124 @@ export class UnleashClient {
 
   async listFeatureFlags(
     projectId: string,
-    options: { archived?: boolean } = {},
-  ): Promise<FeatureFlagSummary[]> {
+    options: FeatureFlagPageQuery = {},
+  ): Promise<FeatureFlagPage> {
     const archived = options.archived === true;
+    const limit = clampFeatureFlagPageSize(options.limit);
+    const offset = Math.max(0, Math.floor(options.offset ?? 0));
+    const order = options.order ?? 'asc';
 
     if (this.dryRun) {
-      if (archived) {
-        return [
-          {
-            name: 'dry-run-placeholder-archived-flag',
-            description:
-              'Dry-run mode placeholder for an archived flag. Set UNLEASH_BASE_URL and UNLEASH_PAT to fetch real archived flags.',
-            project: projectId,
-            type: 'release',
-            archived: true,
-            impressionData: false,
-            url: `${this.baseUrl}/projects/${encodeURIComponent(projectId)}/features/dry-run-placeholder-archived-flag`,
-          },
-        ];
-      }
-      return [
-        {
-          name: 'dry-run-placeholder-flag',
-          description:
-            'Dry-run mode placeholder. Set UNLEASH_BASE_URL and UNLEASH_PAT to fetch real feature flags.',
-          project: projectId,
-          type: 'release',
-          archived: false,
-          impressionData: false,
-          url: `${this.baseUrl}/projects/${encodeURIComponent(projectId)}/features/dry-run-placeholder-flag`,
-        },
-      ];
+      const flags = offset === 0 ? [this.dryRunPlaceholderFlag(projectId, archived)] : [];
+      return { flags, total: 1, limit, offset };
     }
 
-    return archived
-      ? this.fetchArchivedProjectFeatureFlags(projectId)
-      : this.fetchProjectFeatureFlags(projectId);
+    return this.searchFeatureFlags({ projectId, archived, order, limit, offset });
+  }
+
+  async findFeatureFlag(
+    projectId: string,
+    flagName: string,
+  ): Promise<FeatureFlagSummary | undefined> {
+    if (this.dryRun) {
+      return { ...this.dryRunPlaceholderFlag(projectId, false), name: flagName };
+    }
+
+    for (const archived of [false, true]) {
+      const page = await this.searchFeatureFlags({
+        projectId,
+        archived,
+        order: 'asc',
+        limit: MAX_FEATURE_FLAG_PAGE_SIZE,
+        offset: 0,
+        query: flagName,
+      });
+      const match = page.flags.find((flag) => flag.name === flagName);
+      if (match) {
+        return match;
+      }
+    }
+
+    return undefined;
+  }
+
+  private dryRunPlaceholderFlag(projectId: string, archived: boolean): FeatureFlagSummary {
+    const name = archived ? 'dry-run-placeholder-archived-flag' : 'dry-run-placeholder-flag';
+    const description = archived
+      ? 'Dry-run mode placeholder for an archived flag. Set UNLEASH_BASE_URL and UNLEASH_PAT to fetch real archived flags.'
+      : 'Dry-run mode placeholder. Set UNLEASH_BASE_URL and UNLEASH_PAT to fetch real feature flags.';
+    return {
+      name,
+      description,
+      project: projectId,
+      type: 'release',
+      archived,
+      impressionData: false,
+      url: `${this.baseUrl}/projects/${encodeURIComponent(projectId)}/features/${name}`,
+    };
+  }
+
+  private async searchFeatureFlags(search: {
+    projectId: string;
+    archived: boolean;
+    order: 'asc' | 'desc';
+    limit: number;
+    offset: number;
+    query?: string;
+  }): Promise<FeatureFlagPage> {
+    const { projectId, archived, order, limit, offset, query } = search;
+    const params = new URLSearchParams({
+      project: `IS:${projectId}`,
+      sortBy: 'name',
+      sortOrder: order,
+      limit: String(limit),
+      offset: String(offset),
+    });
+    if (archived) {
+      params.set('archived', 'IS:true');
+    }
+    if (query) {
+      params.set('query', query);
+    }
+
+    const filterLabel = archived ? 'archived feature flags' : 'feature flags';
+    const data = await this.requestJson<{
+      features?: Array<{
+        name?: string;
+        description?: string;
+        type?: FeatureFlagType;
+        archived?: boolean;
+        impressionData?: boolean;
+        createdAt?: string;
+        project?: string;
+      }>;
+      total?: number;
+    }>(
+      `/api/admin/search/features?${params.toString()}`,
+      { method: 'GET' },
+      {
+        errorMessage: `Failed to list ${filterLabel} for project ${projectId}`,
+        networkErrorMessage: `Failed to connect to Unleash API while listing ${filterLabel} for project ${projectId}`,
+      },
+    );
+
+    const flags = (data.features ?? [])
+      .filter((feature): feature is typeof feature & { name: string } => Boolean(feature.name))
+      .map((feature) => {
+        const project = feature.project ?? projectId;
+        return {
+          name: feature.name,
+          description: feature.description,
+          project,
+          type: feature.type,
+          archived: archived || feature.archived === true,
+          impressionData: feature.impressionData,
+          createdAt: feature.createdAt,
+          url: `${this.baseUrl}/projects/${encodeURIComponent(project)}/features/${encodeURIComponent(feature.name)}`,
+        };
+      });
+
+    return { flags, total: data.total ?? flags.length, limit, offset };
   }
 
   async setFlexibleRolloutStrategy(
@@ -453,97 +559,6 @@ export class UnleashClient {
         networkErrorMessage: `Failed to connect to Unleash API while toggling feature ${featureName}`,
       },
     );
-  }
-
-  private async fetchProjectFeatureFlags(projectId: string): Promise<FeatureFlagSummary[]> {
-    const data = await this.requestJson<{
-      features?: Array<{
-        name?: string;
-        description?: string;
-        type?: FeatureFlagType;
-        archived?: boolean;
-        impressionData?: boolean;
-        createdAt?: string;
-        project?: string;
-      }>;
-    }>(
-      `/api/admin/projects/${encodeURIComponent(projectId)}/features`,
-      { method: 'GET' },
-      {
-        errorMessage: `Failed to list feature flags for project ${projectId}`,
-        networkErrorMessage: `Failed to connect to Unleash API while listing flags for project ${projectId}`,
-      },
-    );
-
-    return (data.features ?? [])
-      .filter((f) => f.name)
-      .map((feature) => {
-        const name = feature.name as string;
-        const project = feature.project ?? projectId;
-        return {
-          name,
-          description: feature.description,
-          project,
-          type: feature.type,
-          archived: feature.archived,
-          impressionData: feature.impressionData,
-          createdAt: feature.createdAt,
-          url: `${this.baseUrl}/projects/${encodeURIComponent(project)}/features/${encodeURIComponent(name)}`,
-        };
-      });
-  }
-
-  /**
-   * Fetch archived feature flags for a project.
-   *
-   * The project-features endpoint (`/api/admin/projects/{id}/features`) returns
-   * only non-archived flags — its controller doesn't extract the `archived` query
-   * parameter. Archived flags must be fetched via the search endpoint, which
-   * accepts the Unleash search syntax (`archived=IS:true`).
-   */
-  private async fetchArchivedProjectFeatureFlags(projectId: string): Promise<FeatureFlagSummary[]> {
-    const params = new URLSearchParams({
-      project: `IS:${projectId}`,
-      archived: 'IS:true',
-    });
-
-    const data = await this.requestJson<{
-      features?: Array<{
-        name?: string;
-        description?: string;
-        type?: FeatureFlagType;
-        archived?: boolean;
-        impressionData?: boolean;
-        createdAt?: string;
-        project?: string;
-      }>;
-    }>(
-      `/api/admin/search/features?${params.toString()}`,
-      { method: 'GET' },
-      {
-        errorMessage: `Failed to list archived feature flags for project ${projectId}`,
-        networkErrorMessage: `Failed to connect to Unleash API while listing archived flags for project ${projectId}`,
-      },
-    );
-
-    return (data.features ?? [])
-      .filter((f) => f.name)
-      .map((feature) => {
-        const name = feature.name as string;
-        const project = feature.project ?? projectId;
-        return {
-          name,
-          description: feature.description,
-          project,
-          type: feature.type,
-          // The search endpoint may not always set `archived: true` explicitly
-          // since the filter already narrowed the result set — assert it here.
-          archived: true,
-          impressionData: feature.impressionData,
-          createdAt: feature.createdAt,
-          url: `${this.baseUrl}/projects/${encodeURIComponent(project)}/features/${encodeURIComponent(name)}`,
-        };
-      });
   }
 
   /**

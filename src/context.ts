@@ -2,13 +2,13 @@ import fs from 'node:fs';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { Config } from './config.js';
 import type { ClientInfo } from './unleash/attribution.js';
-import type { FeatureFlagSummary, UnleashClient, UnleashProjectSummary } from './unleash/client.js';
+import type { FeatureFlagPage, UnleashClient, UnleashProjectSummary } from './unleash/client.js';
 import type { FeedbackHttpClient } from './unleash/feedbackHttpClient.js';
 import { normalizeError } from './utils/errors.js';
 
 export interface ResourceCache {
   projects: { data: UnleashProjectSummary[]; fetchedAt: number } | null;
-  featureFlags: Map<string, { data: FeatureFlagSummary[]; fetchedAt: number }>;
+  featureFlags: Map<string, { data: FeatureFlagPage; fetchedAt: number }>;
 }
 
 /**

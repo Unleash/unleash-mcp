@@ -7,9 +7,13 @@ import {
   type ServerContext,
 } from '../context.js';
 import { readFeatureFlagsResource } from '../resources/unleashResources.js';
-import type { FeatureFlagSummary } from '../unleash/client.js';
+import {
+  DEFAULT_FEATURE_FLAG_PAGE_SIZE,
+  type FeatureFlagSummary,
+  MAX_FEATURE_FLAG_PAGE_SIZE,
+} from '../unleash/client.js';
 
-const listFlagsSchema = z.object({
+export const listFlagsSchema = z.object({
   projectId: z
     .string()
     .optional()
@@ -18,25 +22,28 @@ const listFlagsSchema = z.object({
     ),
   archived: z
     .boolean()
-    .optional()
+    .default(false)
     .describe(
       'Set to true to list archived flags instead of active ones. Defaults to false (active flags only). Active and archived flags cannot be returned in the same response — call this tool twice (once with archived=false, once with archived=true) to assemble a full inventory for audit workflows.',
     ),
   limit: z
     .number()
     .int()
-    .positive()
-    .optional()
+    .min(1)
+    .max(MAX_FEATURE_FLAG_PAGE_SIZE)
+    .default(DEFAULT_FEATURE_FLAG_PAGE_SIZE)
     .describe(
-      'Maximum number of flags to return per page (default: server page size, typically 50)',
+      `Page size: number of flags returned per call (default ${DEFAULT_FEATURE_FLAG_PAGE_SIZE}, maximum ${MAX_FEATURE_FLAG_PAGE_SIZE}). Larger values are rejected; the tool never returns more than ${MAX_FEATURE_FLAG_PAGE_SIZE} flags at once.`,
     ),
-  order: z.enum(['asc', 'desc']).optional().describe('Sort order by flag name (default: asc)'),
+  order: z.enum(['asc', 'desc']).default('asc').describe('Sort order by flag name (default: asc)'),
   offset: z
     .number()
     .int()
     .nonnegative()
-    .optional()
-    .describe('Number of flags to skip for pagination (default: 0)'),
+    .default(0)
+    .describe(
+      'Number of flags to skip before the returned page (default: 0). Pass the nextOffset from the previous response to fetch the following page.',
+    ),
 });
 
 type ListFlagsInput = z.infer<typeof listFlagsSchema>;
@@ -55,6 +62,14 @@ interface FeatureFlagsEnvelope {
   flags: FeatureFlagSummary[];
 }
 
+function pluralizeFlags(count: number): string {
+  return `${count} flag${count === 1 ? '' : 's'}`;
+}
+
+function capitalize(value: string): string {
+  return `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
+}
+
 export async function listFlags(
   context: ServerContext,
   args: unknown,
@@ -66,8 +81,7 @@ export async function listFlags(
     const projectId = await resolveProjectId(input.projectId, context);
     if (!projectId) return askForProjectId(context);
 
-    const archivedRequested = input.archived === true;
-    const filterLabel = archivedRequested ? 'archived' : 'active';
+    const filterLabel = input.archived ? 'archived' : 'active';
 
     await context.notifyProgress(
       progressToken,
@@ -80,7 +94,7 @@ export async function listFlags(
       limit: input.limit,
       order: input.order,
       offset: input.offset,
-      archived: archivedRequested,
+      archived: input.archived,
     });
     const envelope = JSON.parse(resource.text) as FeatureFlagsEnvelope;
 
@@ -92,29 +106,29 @@ export async function listFlags(
     );
 
     const paginationHint =
-      envelope.nextOffset != null
-        ? `, nextOffset=${envelope.nextOffset} (call again with offset=${envelope.nextOffset} for the next page)`
-        : '';
+      envelope.nextOffset !== undefined
+        ? ` More pages available: call again with offset=${envelope.nextOffset} only if the task needs flags beyond this page.`
+        : ' This is the last page.';
 
     const flagLines =
       envelope.flags.length > 0
-        ? envelope.flags.map((f) => {
-            const typeLabel = f.type ?? 'unknown';
-            const descriptionSuffix = f.description ? ` — ${f.description}` : '';
-            return `- ${f.name} (${typeLabel})${descriptionSuffix}`;
+        ? envelope.flags.map((flag) => {
+            const typeLabel = flag.type ?? 'unknown';
+            const descriptionSuffix = flag.description ? ` — ${flag.description}` : '';
+            return `- ${flag.name} (${typeLabel})${descriptionSuffix}`;
           })
-        : [`- No ${filterLabel} flags found.`];
+        : [`- No ${filterLabel} flags found on this page.`];
 
-    const counterpartHint = archivedRequested
+    const counterpartHint = input.archived
       ? ' Call again with archived=false (or omit the parameter) to see active flags.'
       : ' Call again with archived=true to see archived flags.';
 
     const summaryText = [
-      `Project "${projectId}" — ${envelope.totalFlags} ${filterLabel} flag${envelope.totalFlags === 1 ? '' : 's'} total.`,
-      `Showing ${envelope.flags.length}; order=${envelope.order}, offset=${envelope.offset}${paginationHint}.`,
+      `Project "${projectId}" — ${pluralizeFlags(envelope.totalFlags)} ${filterLabel} in total.`,
+      `Showing ${envelope.flags.length} (offset=${envelope.offset}, limit=${envelope.limit}, order=${envelope.order}).${paginationHint}`,
       `(Filter: archived=${envelope.archived}.${counterpartHint})`,
       '',
-      `${filterLabel.charAt(0).toUpperCase()}${filterLabel.slice(1)} flags:`,
+      `${capitalize(filterLabel)} flags:`,
       ...flagLines,
     ].join('\n');
 
@@ -133,7 +147,7 @@ export async function listFlags(
           name: `feature-flags-${projectId}-${filterLabel}`,
           uri: resource.uri,
           mimeType: resource.mimeType ?? 'application/json',
-          title: `${filterLabel.charAt(0).toUpperCase()}${filterLabel.slice(1)} feature flags in project ${projectId}`,
+          title: `${capitalize(filterLabel)} feature flags in project ${projectId}`,
         },
       ],
       structuredContent: {
@@ -150,8 +164,7 @@ export const listFlagsTool = {
   name: 'list_flags',
   title: 'List feature flags',
   annotations: { readOnlyHint: true },
-  description:
-    'List feature flags in an Unleash project, with optional pagination and sort order. By default returns active flags only; set archived=true to list archived flags instead (active and archived flags are disjoint result sets in Unleash and cannot be combined in one response). Use this to discover flags before creating new ones, audit flag inventory for cleanup (call twice — once for active, once for archived), or scope a workflow to a specific project. Returns name, type, description, archived status, and URL for each flag.',
+  description: `List feature flags in an Unleash project, one page at a time. Results are paginated server-side: each call returns at most one page of ${MAX_FEATURE_FLAG_PAGE_SIZE} flags (default ${DEFAULT_FEATURE_FLAG_PAGE_SIZE}), sorted by name, together with totalFlags and a nextOffset when more pages exist. Work page by page: inspect the current page first and request the next page (offset=nextOffset) only when the task actually needs flags beyond it. Do not eagerly fetch every page up front — large projects can hold thousands of flags. By default returns active flags only; set archived=true to list archived flags instead (active and archived flags are disjoint result sets in Unleash and cannot be combined in one response). Use this to discover flags before creating new ones, audit flag inventory for cleanup (call twice — once for active, once for archived), or scope a workflow to a specific project. Returns name, type, description, archived status, and URL for each flag.`,
   inputSchema: listFlagsSchema,
   implementation: listFlags,
 };

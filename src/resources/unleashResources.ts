@@ -5,7 +5,12 @@ import type {
 } from '@modelcontextprotocol/sdk/types.js';
 
 import type { ServerContext } from '../context.js';
-import type { FeatureFlagSummary, UnleashProjectSummary } from '../unleash/client.js';
+import {
+  clampFeatureFlagPageSize,
+  type FeatureFlagPage,
+  type FeatureFlagPageQuery,
+  type UnleashProjectSummary,
+} from '../unleash/client.js';
 
 export const PROJECTS_RESOURCE_URI = 'unleash://projects';
 export const FEATURE_FLAG_RESOURCE_URI = 'unleash://projects/{projectId}/feature-flags/{flagName}';
@@ -14,7 +19,6 @@ export const FEATURE_FLAGS_RESOURCE_TEMPLATE =
   'unleash://projects/{projectId}/feature-flags{?limit,order,offset,archived}';
 
 const DEFAULT_PROJECT_PAGE_SIZE = 20;
-const DEFAULT_FLAG_PAGE_SIZE = 50;
 
 export function listStaticResources(): Resource[] {
   return [];
@@ -34,7 +38,7 @@ export function listResourceTemplates(): ResourceTemplate[] {
       uriTemplate: FEATURE_FLAGS_RESOURCE_TEMPLATE,
       mimeType: 'application/json',
       description:
-        'Feature flags for a specific Unleash project. Replace {projectId}; optional limit/order/offset parameters help paginate flags alphabetically. Set archived=true to list archived flags instead of active ones (archived and active flags cannot be returned in the same response).',
+        'One page of feature flags for a specific Unleash project, sorted by name. Replace {projectId}; limit sets the page size (default 50, max 100), order=asc|desc sets the direction, and offset selects the page. Set archived=true to list archived flags instead of active ones (archived and active flags cannot be returned in the same response).',
     },
   ];
 }
@@ -79,28 +83,25 @@ export async function readProjectsResource(
 export async function readFeatureFlagsResource(
   context: ServerContext,
   projectId: string,
-  options: {
-    limit?: number;
-    order?: 'asc' | 'desc';
-    offset?: number;
-    archived?: boolean;
-  } = {},
+  options: FeatureFlagPageQuery = {},
 ): Promise<TextResourceContents> {
   try {
-    const archived = options.archived === true;
-    const { flags, fetchedAt, fromCache } = await getCachedFeatureFlags(
+    const query: Required<FeatureFlagPageQuery> = {
+      archived: options.archived === true,
+      order: options.order ?? 'asc',
+      limit: clampFeatureFlagPageSize(options.limit),
+      offset: Math.max(0, Math.floor(options.offset ?? 0)),
+    };
+    const { page, fetchedAt, fromCache } = await getCachedFeatureFlagPage(
       context,
       projectId,
-      archived,
+      query,
     );
-
-    const order = options.order ?? 'asc';
-    const sorted = sortFeatureFlags(flags, order);
-    const effectiveLimit = options.limit ?? DEFAULT_FLAG_PAGE_SIZE;
-    const { slice, nextOffset } = applyPagination(sorted, effectiveLimit, options.offset);
+    const nextOffset = page.offset + page.flags.length;
+    const hasMore = nextOffset < page.total;
 
     return {
-      uri: buildFeatureFlagsUri(projectId, { ...options, limit: effectiveLimit, archived }),
+      uri: buildFeatureFlagsUri(projectId, query),
       mimeType: 'application/json',
       text: JSON.stringify(
         {
@@ -108,13 +109,13 @@ export async function readFeatureFlagsResource(
           cached: fromCache,
           dryRun: context.config.server.dryRun,
           projectId,
-          archived,
-          order,
-          limit: effectiveLimit,
-          offset: options.offset ?? 0,
-          nextOffset,
-          totalFlags: flags.length,
-          flags: slice,
+          archived: query.archived,
+          order: query.order,
+          limit: page.limit,
+          offset: page.offset,
+          nextOffset: hasMore ? nextOffset : undefined,
+          totalFlags: page.total,
+          flags: page.flags,
         },
         null,
         2,
@@ -132,20 +133,7 @@ export async function readFeatureFlagResource(
   flagName: string,
 ): Promise<TextResourceContents> {
   try {
-    // Search active flags first; fall back to archived if not found. This keeps
-    // single-flag reads working regardless of archival state without forcing
-    // the caller to know upfront.
-    const activeResult = await getCachedFeatureFlags(context, projectId, false);
-    let flag = activeResult.flags.find((f) => f.name === flagName);
-    let fetchedAt = activeResult.fetchedAt;
-    let fromCache = activeResult.fromCache;
-
-    if (!flag) {
-      const archivedResult = await getCachedFeatureFlags(context, projectId, true);
-      flag = archivedResult.flags.find((f) => f.name === flagName);
-      fetchedAt = archivedResult.fetchedAt;
-      fromCache = archivedResult.fromCache;
-    }
+    const flag = await context.unleashClient.findFeatureFlag(projectId, flagName);
 
     if (!flag) {
       throw new Error(`Feature flag not found: ${flagName}`);
@@ -156,8 +144,8 @@ export async function readFeatureFlagResource(
       mimeType: 'application/json',
       text: JSON.stringify(
         {
-          fetchedAt: new Date(fetchedAt).toISOString(),
-          cached: fromCache,
+          fetchedAt: new Date().toISOString(),
+          cached: false,
           dryRun: context.config.server.dryRun,
           projectId,
           flag,
@@ -246,12 +234,7 @@ export function extractFlagNameFromFeatureUri(uri: string): string | undefined {
   }
 }
 
-export function parseFeatureFlagsResourceOptions(uri: string): {
-  limit?: number;
-  order?: 'asc' | 'desc';
-  offset?: number;
-  archived?: boolean;
-} {
+export function parseFeatureFlagsResourceOptions(uri: string): FeatureFlagPageQuery {
   if (!isFeatureFlagsUri(uri)) {
     return {};
   }
@@ -284,12 +267,7 @@ export function parseFeatureFlagsResourceOptions(uri: string): {
 
 export function buildFeatureFlagsUri(
   projectId: string,
-  options: {
-    limit?: number;
-    order?: 'asc' | 'desc';
-    offset?: number;
-    archived?: boolean;
-  } = {},
+  options: FeatureFlagPageQuery = {},
 ): string {
   const base = `unleash://projects/${encodeURIComponent(projectId)}/feature-flags`;
   const params = new URLSearchParams();
@@ -370,31 +348,6 @@ function sortProjects(
     }
 
     return a.name.localeCompare(b.name) * direction;
-  });
-}
-
-function sortFeatureFlags(
-  flags: FeatureFlagSummary[],
-  order: 'asc' | 'desc',
-): FeatureFlagSummary[] {
-  const direction = order === 'asc' ? 1 : -1;
-
-  return [...flags].sort((a, b) => {
-    const nameA = a.name ?? '';
-    const nameB = b.name ?? '';
-
-    if (nameA === nameB) {
-      const dateA = a.createdAt ? Date.parse(a.createdAt) : Number.NaN;
-      const dateB = b.createdAt ? Date.parse(b.createdAt) : Number.NaN;
-
-      if (Number.isFinite(dateA) && Number.isFinite(dateB)) {
-        return (dateA - dateB) * direction;
-      }
-
-      return 0;
-    }
-
-    return nameA.localeCompare(nameB) * direction;
   });
 }
 
@@ -484,35 +437,38 @@ async function getCachedProjects(context: ServerContext): Promise<{
   };
 }
 
-async function getCachedFeatureFlags(
+async function getCachedFeatureFlagPage(
   context: ServerContext,
   projectId: string,
-  archived = false,
+  query: Required<FeatureFlagPageQuery>,
 ): Promise<{
-  flags: FeatureFlagSummary[];
+  page: FeatureFlagPage;
   fetchedAt: number;
   fromCache: boolean;
 }> {
-  // Cache is keyed by (projectId, archived) — Unleash exposes active and archived
-  // flags as disjoint result sets via different endpoints, so they must be cached
-  // independently. Keying by projectId alone would cause cross-contamination.
-  const cacheKey = `${projectId}::${archived ? 'archived' : 'active'}`;
+  const cacheKey = [
+    projectId,
+    query.archived ? 'archived' : 'active',
+    query.order,
+    query.limit,
+    query.offset,
+  ].join('::');
   const now = Date.now();
   const cached = context.cache.featureFlags.get(cacheKey);
 
   if (cached && now - cached.fetchedAt < FEATURE_FLAGS_CACHE_TTL_MS) {
     return {
-      flags: cached.data,
+      page: cached.data,
       fetchedAt: cached.fetchedAt,
       fromCache: true,
     };
   }
 
-  const data = await context.unleashClient.listFeatureFlags(projectId, { archived });
-  context.cache.featureFlags.set(cacheKey, { data, fetchedAt: now });
+  const page = await context.unleashClient.listFeatureFlags(projectId, query);
+  context.cache.featureFlags.set(cacheKey, { data: page, fetchedAt: now });
 
   return {
-    flags: data,
+    page,
     fetchedAt: now,
     fromCache: false,
   };

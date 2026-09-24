@@ -25,7 +25,7 @@ The MCP server exposes the following tools:
 - `wrap_change`: Provides guidance on how to wrap a change in a feature flag.
 - `set_flag_rollout`: Configures rollout strategies for a feature flag (does not enable the flag).
 - `get_flag_state`: Surfaces a feature flag's metadata and its activation strategies.
-- `list_flags`: Lists all feature flags in a project, with optional pagination and sort order.
+- `list_flags`: Lists feature flags in a project one page at a time (default 50, max 100 per page).
 - `list_projects`: Lists Unleash projects available to the configured token, with optional pagination.
 - `toggle_flag_environment`: Enables or disables a feature flag in an environment.
 - `remove_flag_strategy`: Deletes a feature flag's strategy from an environment.
@@ -673,7 +673,7 @@ Returns a text summary of the flag (type, enabled/archived/impression-data, proj
 
 ### List flags
 
-The `list_flags` tool enumerates the feature flags in a project and returns a structured inventory with pagination and sort order. Active and archived flags are returned separately: call it once with `archived: false` (the default) and once with `archived: true` to assemble a full inventory for audit workflows.
+The `list_flags` tool enumerates the feature flags in a project one page at a time. Pagination is always applied and happens server-side through the Unleash search API: each call returns at most 100 flags (50 by default) plus the total count and, when more flags exist, a `nextOffset`. Agents should work page by page and only request the next page when the task needs it rather than eagerly fetching every page. Active and archived flags are returned separately: call it once with `archived: false` (the default) and once with `archived: true` to assemble a full inventory for audit workflows.
 
 #### When to use
 
@@ -683,9 +683,9 @@ Use this tool when an agent needs to discover which flags already exist, for exa
 
 - `projectId` (optional): Project to list flags from (defaults to `UNLEASH_DEFAULT_PROJECT`; auto-resolved when a single project exists).
 - `archived` (optional): `true` to list archived flags instead of active ones. Defaults to `false`. Active and archived flags cannot be returned in the same response.
-- `limit` (optional): Maximum flags per page (default: server page size, typically 50).
+- `limit` (optional): Page size, between 1 and 100 (default: 50). Larger values are rejected.
 - `order` (optional): Sort order by flag name, `asc` or `desc` (default: `asc`).
-- `offset` (optional): Number of flags to skip for pagination (default: 0).
+- `offset` (optional): Number of flags to skip before the returned page (default: 0). Pass the `nextOffset` from the previous response to fetch the following page.
 
 #### Usage example
 
@@ -710,7 +710,7 @@ Use list_flags with:
 
 **Tool output**
 
-Returns a text summary plus structured content with `projectId`, `archived`, `order`, `limit`, `offset`, `nextOffset`, `totalFlags`, and the `flags` array (each with name, type, project, archived status, and links). Use `nextOffset` to page through large projects.
+Returns a text summary plus structured content with `projectId`, `archived`, `order`, `limit`, `offset`, `nextOffset`, `totalFlags`, and the `flags` array (each with name, type, project, archived status, and links). `nextOffset` is present only when another page exists; pass it as `offset` to continue, one page at a time.
 
 ### List projects
 
@@ -889,10 +889,10 @@ The server registers MCP [resources](https://modelcontextprotocol.io/docs/concep
 | URI template | Description |
 |---|---|
 | `unleash://projects{?limit,order,offset}` | List projects. Default page size: 20, sorted by creation time (newest first). |
-| `unleash://projects/{projectId}/feature-flags{?limit,order,offset}` | List flags in a project. Default page size: 50, sorted alphabetically. |
+| `unleash://projects/{projectId}/feature-flags{?limit,order,offset,archived}` | One page of flags in a project, sorted by name. Default page size: 50, maximum 100. |
 | `unleash://projects/{projectId}/feature-flags/{flagName}` | Single feature flag metadata. |
 
-The first two templates accept optional query parameters: `limit` (page size), `order` (`asc` or `desc`), and `offset` (pagination start). Responses include `fetchedAt`, `cached`, `totalProjects` or `totalFlags`, and `nextOffset` fields.
+The first two templates accept optional query parameters: `limit` (page size), `order` (`asc` or `desc`), and `offset` (pagination start). Feature flag pages are fetched server-side and capped at 100 flags per read. Responses include `fetchedAt`, `cached`, `totalProjects` or `totalFlags`, and `nextOffset` fields.
 
 > **Resources vs. tools:** MCP resources are application-controlled, so many clients only surface them through user-driven UI (for example `#`-mentions) and do not let the agent call `resources/read` on its own. When an agent needs to enumerate projects or flags programmatically, use the `list_projects` and `list_flags` tools, which return the same data through the tool interface. The `detect_flag` inventory analysis routes through the same path.
 

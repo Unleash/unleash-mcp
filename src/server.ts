@@ -223,7 +223,7 @@ function registerResources(server: McpServer, context: ServerContext): void {
     {
       mimeType: 'application/json',
       description:
-        'Feature flags for a specific Unleash project. Replace {projectId}; optional limit/order/offset parameters help paginate flags alphabetically.',
+        'One page of feature flags for a specific Unleash project, sorted by name. Replace {projectId}; limit sets the page size (default 50, max 100), order=asc|desc sets the direction, offset selects the page, and archived=true lists archived flags instead of active ones.',
     },
     async (uri: URL, variables: Variables, _extra: unknown) => {
       const projectId = variables.projectId as string | undefined;
