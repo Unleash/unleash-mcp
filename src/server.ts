@@ -29,6 +29,7 @@ import { removeFlagStrategyTool } from './tools/removeFlagStrategy.js';
 import { setFlagRolloutTool } from './tools/setFlagRollout.js';
 import { toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
 import type { ToolDefinition } from './tools/types.js';
+import { updateFlagStrategyTool } from './tools/updateFlagStrategy.js';
 import { wrapChangeTool } from './tools/wrapChange.js';
 import type { ClientInfo } from './unleash/attribution.js';
 import { UnleashClient } from './unleash/client.js';
@@ -152,6 +153,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     listProjectsTool,
     toggleFlagEnvironmentTool,
     removeFlagStrategyTool,
+    updateFlagStrategyTool,
   ];
 
   const registerTool = server.registerTool.bind(server) as (

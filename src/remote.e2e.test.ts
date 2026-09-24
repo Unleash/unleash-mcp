@@ -71,6 +71,7 @@ describe('remote MCP handler (e2e)', () => {
       'remove_flag_strategy',
       'set_flag_rollout',
       'toggle_flag_environment',
+      'update_flag_strategy',
       'wrap_change',
     ]);
 
