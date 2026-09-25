@@ -49,7 +49,8 @@ This is an MCP server with a dual-mode architecture (stdio + remote HTTP). A tra
 - `src/server.ts` — Transport-agnostic server factory (`createUnleashMcpServer`)
 - `src/remote.ts` — HTTP request handler (`createMcpHandler`) for embedded mode
 - `src/index.ts` — Stdio CLI entry point
-- `src/tools/` — One file per MCP tool (createFlag, evaluateChange, detectFlag, wrapChange, cleanupFlag, setFlagRollout, getFlagState, toggleFlagEnvironment, removeFlagStrategy). `sendFeedback` exists and transmits reports via `FeedbackHttpClient` (DX-4860), but is intentionally not registered in `src/server.ts` until user consent lands (DX-4859).
+- `src/tools/` — One file per MCP tool (createFlag, evaluateChange, detectFlag, wrapChange, cleanupFlag, setFlagRollout, getFlagState, toggleFlagEnvironment, removeFlagStrategy). `sendFeedback` exists and transmits reports via `FeedbackHttpClient` (DX-4860) only after `FeedbackConsentResolver` (`src/feedback/`) resolves user consent (DX-4859), but is not yet registered in `src/server.ts`.
+- `src/feedback/` — Consent resolution (`FeedbackConsentResolver`) for `send_feedback`.
 - `src/unleash/client.ts` — Unleash Admin API client
 - `src/evaluation/` — Risk assessment and flag detection patterns (used by evaluateChange)
 - `src/detection/` — Flag discovery strategies and scoring (used by detectFlag)
@@ -72,4 +73,4 @@ TypeScript strict mode is on with `noUnusedLocals`, `noUnusedParameters`, `noImp
 
 ## Configuration
 
-Required env vars: `UNLEASH_BASE_URL`, `UNLEASH_PAT`. Optional: `UNLEASH_DEFAULT_PROJECT`, `UNLEASH_DEFAULT_ENVIRONMENT`, `LOG_LEVEL`, `APP_LOG_FILE`, `MCP_STDIO_LOG_FILE`, `UNLEASH_MCP_CLIENT_ATTRIBUTION` (set to `off` to disable client attribution in outbound headers; default: enabled), `UNLEASH_FEEDBACK_URL` (base URL of the Unleash instance that receives `send_feedback` reports; defaults to the sandbox instance). CLI flags: `--dry-run`, `--log-level <level>`. See `.env.example` for reference.
+Required env vars: `UNLEASH_BASE_URL`, `UNLEASH_PAT`. Optional: `UNLEASH_DEFAULT_PROJECT`, `UNLEASH_DEFAULT_ENVIRONMENT`, `LOG_LEVEL`, `APP_LOG_FILE`, `MCP_STDIO_LOG_FILE`, `UNLEASH_MCP_CLIENT_ATTRIBUTION` (set to `off` to disable client attribution in outbound headers; default: enabled), `UNLEASH_FEEDBACK_URL` (base URL of the Unleash instance that receives `send_feedback` reports; defaults to the sandbox instance), `UNLEASH_MCP_SEND_FEEDBACK` (`true` or `false` to grant or deny `send_feedback` consent; unset means denied). CLI flags: `--dry-run`, `--log-level <level>`. See `.env.example` for reference.

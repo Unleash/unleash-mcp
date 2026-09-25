@@ -7,7 +7,10 @@ export type RemoteHandlerOptions = Omit<CreateServerOptions, 'authHeaders'>;
 export type McpRequestHandler = (
   req: IncomingMessage,
   res: ServerResponse,
-  options: { authHeaders: Record<string, string>; parsedBody?: unknown },
+  options: {
+    authHeaders: Record<string, string>;
+    parsedBody?: unknown;
+  },
 ) => Promise<void>;
 
 /**
@@ -15,7 +18,8 @@ export type McpRequestHandler = (
  * inside an existing HTTP server (e.g. Express).
  *
  * Each request creates a fresh McpServer + StreamableHTTPServerTransport pair.
- * The caller provides auth headers per request (e.g. forwarded session cookies).
+ * The caller provides auth headers per request (e.g. forwarded session cookies) and may
+ * pass the user's send_feedback consent, which overrides the handler-level default.
  *
  * Usage with Express:
  * ```typescript
@@ -31,6 +35,7 @@ export function createMcpHandler(defaults: RemoteHandlerOptions): McpRequestHand
     const server = createUnleashMcpServer({
       ...defaults,
       authHeaders: options.authHeaders,
+      feedbackConsent: defaults.feedbackConsent ?? 'denied',
     });
 
     const transport = new StreamableHTTPServerTransport({

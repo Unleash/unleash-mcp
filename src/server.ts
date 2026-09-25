@@ -3,6 +3,8 @@ import type { Variables } from '@modelcontextprotocol/sdk/shared/uriTemplate.js'
 import { UriTemplate } from '@modelcontextprotocol/sdk/shared/uriTemplate.js';
 import { type Config, normalizeBaseUrl, resolveFeedbackBaseUrl } from './config.js';
 import { createLogger, type Logger, type ServerContext } from './context.js';
+import type { FeedbackConsentDecision } from './feedback/consentDecision.js';
+import { FeedbackConsentResolver } from './feedback/consentResolver.js';
 import {
   extractFlagNameFromFeatureUri,
   extractProjectIdFromFeatureUri,
@@ -45,6 +47,7 @@ export interface CreateServerOptions {
   logLevel?: 'debug' | 'info' | 'warn' | 'error';
   attributionEnabled?: boolean;
   feedbackUrl?: string;
+  feedbackConsent?: FeedbackConsentDecision;
   logger?: Logger;
 }
 
@@ -67,6 +70,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
   const dryRun = options.dryRun ?? false;
   const logLevel = options.logLevel ?? 'error';
   const attributionEnabled = options.attributionEnabled ?? true;
+  const feedbackConsent = options.feedbackConsent;
   const logger = options.logger ?? createLogger(logLevel);
 
   // Build a Config object for ServerContext. The pat field is a placeholder —
@@ -128,10 +132,16 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
 
   const feedbackClient = new FeedbackHttpClient(feedbackUrl);
 
+  const feedbackConsentResolver = new FeedbackConsentResolver({
+    initialConsent: feedbackConsent,
+    logger,
+  });
+
   const context: ServerContext = {
     config,
     unleashClient,
     feedbackClient,
+    feedbackConsentResolver,
     logger,
     cache: { projects: null, featureFlags: new Map() },
     getClientInfo,
