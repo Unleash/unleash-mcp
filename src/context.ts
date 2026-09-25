@@ -94,59 +94,6 @@ export function createLogger(logLevel: string): Logger {
 }
 
 /**
- * Resolve a project ID from provided value, default config, or API discovery.
- * Returns the project ID string, or undefined if it could not be resolved.
- */
-export async function resolveProjectId(
-  providedProjectId: string | undefined,
-  context: ServerContext,
-): Promise<string | undefined> {
-  if (providedProjectId) {
-    return providedProjectId;
-  }
-
-  const defaultProjectId = context.config.unleash.defaultProject;
-  if (defaultProjectId) {
-    return defaultProjectId;
-  }
-
-  const projects = await context.unleashClient.listProjects();
-  if (projects.length === 1) {
-    return projects[0].id;
-  }
-
-  return undefined;
-}
-
-/**
- * Build a CallToolResult that asks the user to pick a project.
- */
-export async function askForProjectId(context: ServerContext): Promise<CallToolResult> {
-  const projects = await context.unleashClient.listProjects();
-
-  if (projects.length === 0) {
-    return {
-      content: [
-        {
-          type: 'text' as const,
-          text: 'No projects found in Unleash. Create a project first.',
-        },
-      ],
-    };
-  }
-
-  const projectList = projects.map((p) => `- ${p.id}: ${p.name}`).join('\n');
-  return {
-    content: [
-      {
-        type: 'text' as const,
-        text: `Multiple projects found. Ask the user which project to use before proceeding:\n${projectList}`,
-      },
-    ],
-  };
-}
-
-/**
  * Handle tool errors consistently by normalizing them and logging.
  * Returns a formatted error object suitable for MCP tool responses.
  */

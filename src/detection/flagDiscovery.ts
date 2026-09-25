@@ -32,7 +32,7 @@ export interface DiscoveryInput {
   description: string;
   files?: string[];
   codeContext?: string;
-  defaultProject?: string;
+  projectId: string;
 }
 
 /**
@@ -45,10 +45,7 @@ export interface DiscoveryInput {
  * `unleash://projects` and `unleash://projects/{id}/feature-flags` resources still
  * exist for clients that do expose resources; the new tools wrap the same handlers.
  */
-export function buildUnleashInventoryInstructions(
-  description: string,
-  defaultProject?: string,
-): string {
+export function buildUnleashInventoryInstructions(description: string, projectId: string): string {
   const baseNote =
     '> You cannot open the Unleash UI yourself. Ask the user to review the relevant project/flag in the Unleash console if human confirmation is required.';
 
@@ -64,38 +61,16 @@ export function buildUnleashInventoryInstructions(
 
 ${baseNote}`.trim();
 
-  if (defaultProject) {
-    return `
-## Unleash Inventory Analysis
-
-Use the dedicated MCP tools to discover existing flags already defined in Unleash so you can reuse them instead of creating duplicates.
-
-**Step 1**: Focus on the configured default project **${defaultProject}**.
-- Optionally call the \`list_projects\` tool (with limit=200, order=desc) to confirm its metadata (filter to the entry whose 'id' matches "${defaultProject}").
-- Do not evaluate other projects unless the default project clearly does not align with the change. If uncertain, ask the user for guidance before proceeding.
-
-**Step 2**: Inspect feature flags for the default project.
-- Call the \`list_flags\` tool with projectId="${defaultProject}", limit=200, order=asc.
-- Review the returned flag names, descriptions, types, archived status and URLs.
-- Pay close attention to flags whose descriptions, rollout intent, or ownership align with "${description}".
-
-${sharedSteps}
-`.trim();
-  }
-
   return `
 ## Unleash Inventory Analysis
 
 Use the dedicated MCP tools to discover existing flags already defined in Unleash so you can reuse them instead of creating duplicates.
 
-**Step 1**: List available projects.
-- Call the \`list_projects\` tool (with limit=200, order=desc) to retrieve project metadata (names, descriptions, URLs).
-- Identify the project whose name or description best aligns with the feature description for "${description}".
-- If multiple projects seem relevant, shortlist up to 3 and justify your selection.
-- If you cannot determine a suitable project, explicitly ask the user which project to target before proceeding.
+**Step 1**: Focus on project **${projectId}**.
+- Do not evaluate other projects unless this project clearly does not align with the change. If uncertain, ask the user for guidance before proceeding.
 
-**Step 2**: Inspect feature flags for each shortlisted project.
-- For each candidate project, call the \`list_flags\` tool with projectId="<projectId>", limit=200, order=asc.
+**Step 2**: Inspect feature flags for project **${projectId}**.
+- Call the \`list_flags\` tool with projectId="${projectId}", limit=200, order=asc.
 - Review the returned flag names, descriptions, types, archived status and URLs.
 - Pay close attention to flags whose descriptions, rollout intent, or ownership align with "${description}".
 
@@ -321,7 +296,7 @@ ${input.codeContext ? '5. Code context analysis (flags near modification point)'
     },
     {
       title: '1. Unleash Inventory Analysis',
-      content: buildUnleashInventoryInstructions(input.description, input.defaultProject),
+      content: buildUnleashInventoryInstructions(input.description, input.projectId),
     },
     {
       title: '2. File-Based Detection',

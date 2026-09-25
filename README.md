@@ -26,7 +26,7 @@ The MCP server exposes the following tools:
 - `set_flag_rollout`: Configures rollout strategies for a feature flag (does not enable the flag).
 - `get_flag_state`: Surfaces a feature flag's metadata and its activation strategies.
 - `list_flags`: Lists all feature flags in a project, with optional pagination and sort order.
-- `list_projects`: Lists Unleash projects available to the configured token, with optional pagination.
+- `list_projects`: Lists Unleash projects available to the configured token, with optional pagination. When `UNLEASH_DEFAULT_PROJECT` is not set, use it once per session to pick the project and pass that id as `projectId` to every project-scoped tool.
 - `toggle_flag_environment`: Enables or disables a feature flag in an environment.
 - `remove_flag_strategy`: Deletes a feature flag's strategy from an environment.
 - `cleanup_flag`: Generates instructions for safely removing flagged code paths.
@@ -248,7 +248,7 @@ The tool accepts the following parameters:
   - `kill-switch`: Emergency shutdowns or circuit breakers.
   - `permission`: Control feature access based on user roles or entitlements.
 - `description` (required): Clear explanation of what the flag controls and why it exists.
-- `projectId` (optional): Target project (defaults to `UNLEASH_DEFAULT_PROJECT`).
+- `projectId` (required): Target project. Use `UNLEASH_DEFAULT_PROJECT` when configured, otherwise pick one with `list_projects`.
 - `impressionData` (optional): Enable analytics tracking (defaults to false).
 
 #### Usage example
@@ -599,7 +599,7 @@ Use this tool after creating a flag with `create_flag` to configure how traffic 
 - `featureName` (required): Feature flag name.
 - `environment` (required): Target environment (for example, `"production"`, `"development"`).
 - `rolloutPercentage` (required): Percentage of traffic to receive the feature (0-100).
-- `projectId` (optional): Project ID (defaults to `UNLEASH_DEFAULT_PROJECT`).
+- `projectId` (required): Project ID. Use `UNLEASH_DEFAULT_PROJECT` when configured, otherwise pick one with `list_projects`.
 - `groupId` (optional): Stickiness bucketing key (defaults to the feature name).
 - `stickiness` (optional): Stickiness field (defaults to `"default"`).
 - `title` (optional): Descriptive title for the strategy.
@@ -644,7 +644,7 @@ Use this tool to inspect a flag before modifying it, to check how many strategie
 #### Parameters
 
 - `featureName` (required): Feature flag name.
-- `projectId` (optional): Project ID (defaults to `UNLEASH_DEFAULT_PROJECT`).
+- `projectId` (required): Project ID. Use `UNLEASH_DEFAULT_PROJECT` when configured, otherwise pick one with `list_projects`.
 - `environment` (optional): Filter results to a single environment (case-insensitive).
 
 #### Usage example
@@ -681,7 +681,7 @@ Use this tool when an agent needs to discover which flags already exist, for exa
 
 #### Parameters
 
-- `projectId` (optional): Project to list flags from (defaults to `UNLEASH_DEFAULT_PROJECT`; auto-resolved when a single project exists).
+- `projectId` (required): Project to list flags from. Use `UNLEASH_DEFAULT_PROJECT` when configured, otherwise pick one with `list_projects`.
 - `archived` (optional): `true` to list archived flags instead of active ones. Defaults to `false`. Active and archived flags cannot be returned in the same response.
 - `limit` (optional): Maximum flags per page (default: server page size, typically 50).
 - `order` (optional): Sort order by flag name, `asc` or `desc` (default: `asc`).
@@ -760,7 +760,7 @@ Use this tool to turn a flag on after configuring a rollout strategy, or to disa
 - `featureName` (required): Feature flag name.
 - `environment` (required): Environment to toggle (for example, `"production"`).
 - `enabled` (required): `true` to enable, `false` to disable.
-- `projectId` (optional): Project ID (defaults to `UNLEASH_DEFAULT_PROJECT`).
+- `projectId` (required): Project ID. Use `UNLEASH_DEFAULT_PROJECT` when configured, otherwise pick one with `list_projects`.
 
 #### Usage example
 
@@ -801,7 +801,7 @@ Use this tool to clean up stale strategies, or to replace an existing strategy b
 - `featureName` (required): Feature flag name.
 - `environment` (required): Environment from which to remove the strategy.
 - `strategyId` (required): ID of the strategy to remove (find this via `get_flag_state`).
-- `projectId` (optional): Project ID (defaults to `UNLEASH_DEFAULT_PROJECT`).
+- `projectId` (required): Project ID. Use `UNLEASH_DEFAULT_PROJECT` when configured, otherwise pick one with `list_projects`.
 
 #### Usage example
 

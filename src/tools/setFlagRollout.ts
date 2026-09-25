@@ -1,11 +1,6 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import {
-  askForProjectId,
-  handleToolError,
-  resolveProjectId,
-  type ServerContext,
-} from '../context.js';
+import { handleToolError, type ServerContext } from '../context.js';
 import type { StrategyVariant, StrategyVariantPayload } from '../unleash/client.js';
 import { createFlagResourceLink } from '../utils/streaming.js';
 
@@ -31,9 +26,9 @@ const variantSchema = z
 const setFlagRolloutSchema = z.object({
   projectId: z
     .string()
-    .optional()
+    .min(1)
     .describe(
-      'Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set)',
+      'Project ID where the feature flag resides. Use the default project named in the server instructions when one is configured, otherwise pick one with list_projects; determine it once per session and reuse it.',
     ),
   featureName: z.string().min(1).describe('Feature flag name'),
   environment: z.string().min(1).describe('Target environment'),
@@ -58,8 +53,7 @@ export async function setFlagRollout(
   try {
     const input: SetFlagRolloutInput = setFlagRolloutSchema.parse(args);
 
-    const projectId = await resolveProjectId(input.projectId, context);
-    if (!projectId) return askForProjectId(context);
+    const projectId = input.projectId;
 
     const rolloutDisplay = `${input.rolloutPercentage}%`;
     const mode = context.config.server.dryRun ? '[DRY RUN] ' : '';

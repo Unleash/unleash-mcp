@@ -1,20 +1,15 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import {
-  askForProjectId,
-  handleToolError,
-  resolveProjectId,
-  type ServerContext,
-} from '../context.js';
+import { handleToolError, type ServerContext } from '../context.js';
 import { readFeatureFlagsResource } from '../resources/unleashResources.js';
 import type { FeatureFlagSummary } from '../unleash/client.js';
 
 const listFlagsSchema = z.object({
   projectId: z
     .string()
-    .optional()
+    .min(1)
     .describe(
-      'Project ID to list flags from (optional if UNLEASH_DEFAULT_PROJECT is set; auto-resolved when a single project exists)',
+      'Project ID to list flags from. Use the default project named in the server instructions when one is configured, otherwise pick one with list_projects; determine it once per session and reuse it.',
     ),
   archived: z
     .boolean()
@@ -63,8 +58,7 @@ export async function listFlags(
   try {
     const input: ListFlagsInput = listFlagsSchema.parse(args);
 
-    const projectId = await resolveProjectId(input.projectId, context);
-    if (!projectId) return askForProjectId(context);
+    const projectId = input.projectId;
 
     const archivedRequested = input.archived === true;
     const filterLabel = archivedRequested ? 'archived' : 'active';

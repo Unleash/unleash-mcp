@@ -58,7 +58,7 @@ function buildEvaluationGuidance(input?: EvaluateChangeInput): string {
    - Use ${pb.inlineCode('Read')} tool to examine changed files
 
 2. **Detect existing flags** (CRITICAL - prevents duplicates):
-   - Call ${pb.inlineCode('detect_flag')} with your change description
+   - Call ${pb.inlineCode('detect_flag')} with your change description and the session's resolved ${pb.inlineCode('projectId')}
    - Follow the search instructions to find existing flags
    - If high-confidence match found (≥0.7): Use that flag, skip to wrap_change
    - If medium-confidence match (0.4-0.7): Present both options to user
@@ -161,7 +161,7 @@ function buildWorkflowSection(): string {
     {
       step: 'Detect Existing Flags (NEW)',
       details:
-        'Call detect_flag tool with description of the change. Execute search instructions to find existing flags that might already cover this functionality. If high-confidence match found (≥0.7), recommend using that flag.',
+        'Call detect_flag tool with the description of the change and the projectId in use for this session (the default project named in the server instructions when one is configured, otherwise chosen with list_projects). Execute search instructions to find existing flags that might already cover this functionality. If high-confidence match found (≥0.7), recommend using that flag.',
     },
     {
       step: 'Check Parent Flag Coverage',
