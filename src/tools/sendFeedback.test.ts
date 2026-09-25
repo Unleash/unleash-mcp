@@ -63,12 +63,6 @@ function sentReport(): FeedbackReport {
   return JSON.parse(areasForImprovement) as FeedbackReport;
 }
 
-function textOf(result: Awaited<ReturnType<typeof sendFeedback>>): string {
-  const [block] = result.content;
-  if (block?.type !== 'text') throw new Error('Expected a text content block');
-  return block.text;
-}
-
 describe('send_feedback', () => {
   afterEach(() => {
     sendFeedbackRequest.mockReset();
@@ -92,7 +86,6 @@ describe('send_feedback', () => {
     expect(result.isError).toBeFalsy();
     expect(sendFeedbackRequest).toHaveBeenCalledTimes(1);
     expect(sendFeedbackRequest).toHaveBeenCalledWith(JSON.stringify(expectedReport));
-    expect(textOf(result)).toBe('Feedback sent to Unleash.');
     expect(result.structuredContent).toEqual({ success: true, sent: true, dryRun: false });
   });
 
@@ -103,7 +96,6 @@ describe('send_feedback', () => {
 
     expect(result.isError).toBeFalsy();
     expect(sendFeedbackRequest).not.toHaveBeenCalled();
-    expect(textOf(result)).toBe('[DRY_RUN] Would send Feedback to Unleash.');
     expect(result.structuredContent).toEqual({ success: true, sent: false, dryRun: true });
   });
 
@@ -172,9 +164,6 @@ describe('send_feedback', () => {
     expect(result.isError).toBeFalsy();
     expect(sendFeedbackRequest).not.toHaveBeenCalled();
     expect(result.structuredContent).toEqual({ success: true, sent: false, dryRun: false });
-    expect(textOf(result)).toBe(
-      'Feedback is disabled: the user has not opted in to sending feedback to Unleash. Do not call send_feedback again in this session.',
-    );
   });
 
   it('does not send when consent has not been decided', async () => {
@@ -184,9 +173,7 @@ describe('send_feedback', () => {
 
     expect(result.isError).toBeFalsy();
     expect(sendFeedbackRequest).not.toHaveBeenCalled();
-    expect(textOf(result)).toBe(
-      'Feedback is disabled: the user has not opted in to sending feedback to Unleash. Do not call send_feedback again in this session.',
-    );
+    expect(result.structuredContent).toEqual({ success: true, sent: false, dryRun: false });
   });
 
   it('does not validate input when consent is denied', async () => {

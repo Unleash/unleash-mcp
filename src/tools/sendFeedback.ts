@@ -107,7 +107,7 @@ function buildOutputMessage(outcome: SendFeedbackOutcome, dryRun: boolean): stri
   }
 }
 
-function sendFeedbackResult(outcome: SendFeedbackOutcome, dryRun: boolean): CallToolResult {
+function buildFeedbackResult(outcome: SendFeedbackOutcome, dryRun: boolean): CallToolResult {
   return {
     content: [{ type: 'text', text: buildOutputMessage(outcome, dryRun) }],
     structuredContent: { success: true, sent: outcome === 'sent' && !dryRun, dryRun },
@@ -124,7 +124,7 @@ async function sendGrantedFeedback(context: ServerContext, args: unknown): Promi
   } else {
     await context.feedbackClient.send(areasForImprovement);
   }
-  return sendFeedbackResult('sent', context.config.server.dryRun);
+  return buildFeedbackResult('sent', context.config.server.dryRun);
 }
 
 export async function sendFeedback(
@@ -138,7 +138,7 @@ export async function sendFeedback(
       case 'granted':
         return await sendGrantedFeedback(context, args);
       case 'denied':
-        return sendFeedbackResult('denied', context.config.server.dryRun);
+        return buildFeedbackResult('denied', context.config.server.dryRun);
     }
   } catch (error) {
     return handleToolError(context, error, 'send_feedback');
