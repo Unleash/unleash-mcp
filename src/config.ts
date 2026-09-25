@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import { z } from 'zod';
+import type { FeedbackConsentDecision } from './feedback/consentDecision.js';
 import { parseAttributionEnv } from './unleash/attribution.js';
 
 // Load environment variables from .env file
@@ -31,6 +32,7 @@ const configSchema = z.object({
     defaultProject: z.string().optional(),
     defaultEnvironment: z.string().optional(),
     feedbackUrl: feedbackBaseUrlSchema,
+    feedbackConsent: z.enum(['granted', 'denied']).optional(),
   }),
   server: z.object({
     dryRun: z.boolean().default(false),
@@ -40,6 +42,15 @@ const configSchema = z.object({
 });
 
 export type Config = z.infer<typeof configSchema>;
+
+export function parseFeedbackConsentEnv(
+  value: string | undefined,
+): FeedbackConsentDecision | undefined {
+  const normalized = value?.trim().toLowerCase();
+  if (normalized === 'true') return 'granted';
+  if (normalized === 'false') return 'denied';
+  return undefined;
+}
 
 /**
  * Parse CLI arguments for --dry-run and --log-level flags.
@@ -77,6 +88,7 @@ export function loadConfig(): Config {
       defaultProject: process.env.UNLEASH_DEFAULT_PROJECT,
       defaultEnvironment: process.env.UNLEASH_DEFAULT_ENVIRONMENT,
       feedbackUrl: process.env.UNLEASH_FEEDBACK_URL,
+      feedbackConsent: parseFeedbackConsentEnv(process.env.UNLEASH_MCP_SEND_FEEDBACK),
     },
     server: {
       dryRun: cliFlags.dryRun,

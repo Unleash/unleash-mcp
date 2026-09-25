@@ -24,6 +24,7 @@ async function main(): Promise<void> {
   logger.info(`Starting Unleash MCP Server ${VERSION}`);
   logger.info(`Base URL: ${config.unleash.baseUrl}`);
   logger.info(`Dry run: ${config.server.dryRun}`);
+  logger.info(`Feedback consent: ${config.unleash.feedbackConsent ?? 'not decided'}`);
 
   // If the configured UNLEASH_BASE_URL had a trailing `/api`, normalizeBaseUrl
   // stripped it. Surface that explicitly so users debugging connectivity see
@@ -50,6 +51,7 @@ async function main(): Promise<void> {
     logLevel: config.server.logLevel,
     attributionEnabled: config.server.attributionEnabled,
     feedbackUrl: config.unleash.feedbackUrl,
+    feedbackConsent: config.unleash.feedbackConsent,
     logger,
   });
 
