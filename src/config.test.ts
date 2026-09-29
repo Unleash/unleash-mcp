@@ -185,4 +185,16 @@ describe('loadConfig', () => {
 
     expect(loadConfig().unleash.feedbackUrl).toBe('https://feedback.example.com/hosted');
   });
+
+  it('uses UNLEASH_MCP_CONFIG_DIR as the config directory', () => {
+    vi.stubEnv('UNLEASH_MCP_CONFIG_DIR', '/custom/config/dir');
+
+    expect(loadConfig().server.configDir).toBe('/custom/config/dir');
+  });
+
+  it('leaves the config directory undefined when UNLEASH_MCP_CONFIG_DIR is blank', () => {
+    vi.stubEnv('UNLEASH_MCP_CONFIG_DIR', '   ');
+
+    expect(loadConfig().server.configDir).toBeUndefined();
+  });
 });

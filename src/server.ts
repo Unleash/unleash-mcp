@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { Variables } from '@modelcontextprotocol/sdk/shared/uriTemplate.js';
 import { UriTemplate } from '@modelcontextprotocol/sdk/shared/uriTemplate.js';
@@ -5,6 +6,8 @@ import { type Config, normalizeBaseUrl, resolveFeedbackBaseUrl } from './config.
 import { createLogger, type Logger, type ServerContext } from './context.js';
 import type { FeedbackConsentDecision } from './feedback/consentDecision.js';
 import { FeedbackConsentResolver } from './feedback/consentResolver.js';
+import { CONSENT_FILE_NAME, FileConsentStore, resolveConfigDir } from './feedback/consentStore.js';
+import { createElicitationConsentPrompt } from './feedback/elicitation.js';
 import {
   extractFlagNameFromFeatureUri,
   extractProjectIdFromFeatureUri,
@@ -48,6 +51,7 @@ export interface CreateServerOptions {
   attributionEnabled?: boolean;
   feedbackUrl?: string;
   feedbackConsent?: FeedbackConsentDecision;
+  configDir?: string;
   logger?: Logger;
 }
 
@@ -72,6 +76,8 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
   const attributionEnabled = options.attributionEnabled ?? true;
   const feedbackConsent = options.feedbackConsent;
   const logger = options.logger ?? createLogger(logLevel);
+  const configDir = options.configDir ?? resolveConfigDir();
+  const consentStore = new FileConsentStore(logger, path.join(configDir, CONSENT_FILE_NAME));
 
   // Build a Config object for ServerContext. The pat field is a placeholder —
   // no tool reads config.unleash.pat; auth is handled via authHeaders in UnleashClient.
@@ -134,6 +140,8 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
 
   const feedbackConsentResolver = new FeedbackConsentResolver({
     initialConsent: feedbackConsent,
+    askUser: createElicitationConsentPrompt(server, consentStore.location, logger),
+    store: consentStore,
     logger,
   });
 

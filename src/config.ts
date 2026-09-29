@@ -38,6 +38,7 @@ const configSchema = z.object({
     dryRun: z.boolean().default(false),
     logLevel: z.enum(['debug', 'info', 'warn', 'error']).default('error'),
     attributionEnabled: z.boolean().default(true),
+    configDir: z.string().optional(),
   }),
 });
 
@@ -50,6 +51,11 @@ export function parseFeedbackConsentEnv(
   if (normalized === 'true') return 'granted';
   if (normalized === 'false') return 'denied';
   return undefined;
+}
+
+function trimmedOrUndefined(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : undefined;
 }
 
 /**
@@ -94,6 +100,7 @@ export function loadConfig(): Config {
       dryRun: cliFlags.dryRun,
       logLevel,
       attributionEnabled: parseAttributionEnv(process.env.UNLEASH_MCP_CLIENT_ATTRIBUTION),
+      configDir: trimmedOrUndefined(process.env.UNLEASH_MCP_CONFIG_DIR),
     },
   };
 

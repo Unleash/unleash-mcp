@@ -88,6 +88,13 @@ function getHttpErrorHint(status: number): string | undefined {
 }
 
 /**
+ * Render an unknown thrown value as a log-friendly message.
+ */
+export function describeError(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+/**
  * Create a custom error with code and hint properties.
  */
 export class CustomError extends Error {
