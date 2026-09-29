@@ -52,6 +52,7 @@ async function main(): Promise<void> {
     attributionEnabled: config.server.attributionEnabled,
     feedbackUrl: config.unleash.feedbackUrl,
     feedbackConsent: config.unleash.feedbackConsent,
+    configDir: config.server.configDir,
     logger,
   });
 
