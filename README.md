@@ -13,6 +13,7 @@ This MCP server provides tools that integrate with the [Unleash Admin API](https
 - **Evaluate changes** to decide when a feature flag is needed.
 - **Stream progress** for visibility during operations.
 - **Handle errors** gracefully with helpful hints.
+- **Report problems** with the MCP to Unleash through `send_feedback`, only after the user opts in.
 - **Follow best practices** from the [Unleash documentation](https://docs.getunleash.io/topics/feature-flags/best-practices-using-feature-flags-at-scale).
 
 ### Available tools
@@ -30,6 +31,7 @@ The MCP server exposes the following tools:
 - `toggle_flag_environment`: Enables or disables a feature flag in an environment.
 - `remove_flag_strategy`: Deletes a feature flag's strategy from an environment.
 - `cleanup_flag`: Generates instructions for safely removing flagged code paths.
+- `send_feedback`: Reports a failed tool call, an unsupported request, or an unexpected result to Unleash so the MCP can be improved. Requires the user's consent.
 
 ### Core workflow
 
@@ -882,6 +884,76 @@ Use cleanup_flag with:
 
 Returns a markdown guide covering the cleanup scope and preserved path, grep commands to find all occurrences, per-pattern removal instructions, language-specific import cleanup, and post-cleanup verification steps (re-search, run tests, manual review).
 
+### Send feedback
+
+The `send_feedback` tool reports a moment where this MCP fell short. Reports go to an Unleash-hosted instance and help prioritise fixes and new tools.
+
+#### When to use
+
+The assistant should call this tool before replying to the user when one of these happens:
+- `tool_error`: a tool call returned an error (except authentication errors, HTTP 401 or 403).
+- `unsupported_action`: the user asked for something no tool can do.
+- `unexpected_result`: a tool succeeded but its result was not what was expected.
+
+Never call it after a successful tool call, and never to report a failure of `send_feedback` itself.
+
+#### Consent
+
+Nothing is sent until the user opts in. On the first call the MCP asks the user through an MCP [elicitation](https://modelcontextprotocol.io/specification/2025-06-18/client/elicitation) prompt and stores the answer in `feedback_consent.json`, so the question is asked only once. The file lives in the platform config directory:
+
+- `$XDG_CONFIG_HOME/unleash-mcp/feedback_consent.json` when `XDG_CONFIG_HOME` is set (any platform).
+- macOS: `~/Library/Application Support/unleash-mcp/feedback_consent.json`
+- Linux: `~/.config/unleash-mcp/feedback_consent.json`
+- Windows: `%APPDATA%\unleash-mcp\feedback_consent.json` (or `~\AppData\Roaming\unleash-mcp\feedback_consent.json` when `APPDATA` is unset)
+
+Set `UNLEASH_MCP_CONFIG_DIR` to keep the file in a different directory. Delete the file to be asked again.
+
+If the user declines, the tool returns a message saying feedback is disabled and the assistant should not call it again in that session. If the client does not support elicitation, or the prompt is cancelled or not answered within 60 seconds, feedback stays disabled for the current session and nothing is stored, so the question is asked again in the next session.
+
+Set `UNLEASH_MCP_SEND_FEEDBACK=true` or `UNLEASH_MCP_SEND_FEEDBACK=false` to grant or deny consent without a prompt. The environment variable overrides the consent file. This is useful for clients that do not support elicitation and for CI setups.
+
+When the server is embedded in an HTTP host through `createMcpHandler`, consent defaults to denied unless the host passes `feedbackConsent`.
+
+#### What is recorded
+
+Only allowlisted fields are sent:
+- Issue type, tool name, and normalized error code.
+- MCP version, client name, and client version.
+- The short summary provided by the assistant.
+
+The summary must not contain flag names, project IDs, code, URLs, or tokens. Raw error messages are never sent.
+
+#### Parameters
+
+- `issueType` (required): `tool_error`, `unsupported_action`, or `unexpected_result`.
+- `summary` (required): One or two sentences describing what went wrong or what was requested (max 500 characters).
+- `tool` (optional): Name of the MCP tool involved, for example `create_flag`. Omit for unsupported requests.
+- `errorCode` (optional): Normalized error code from the failed tool result, for example `HTTP_500` or `VALIDATION_ERROR`.
+
+#### Usage example
+
+**Agent prompt**
+
+```
+The set_flag_rollout call failed with HTTP_500. Use send_feedback to report it,
+then tell me what happened.
+```
+
+**Tool payload**
+
+```json
+{
+  "issueType": "tool_error",
+  "tool": "set_flag_rollout",
+  "errorCode": "HTTP_500",
+  "summary": "Configuring a gradual rollout failed with a server error even though the flag exists in the environment."
+}
+```
+
+**Tool output**
+
+Returns a confirmation that feedback was sent (or would be sent in `--dry-run` mode), or a message that feedback is disabled because the user has not opted in. Structured content includes `success`, `sent`, and `dryRun`.
+
 ## MCP resources
 
 The server registers MCP [resources](https://modelcontextprotocol.io/docs/concepts/resources) for reading project and feature flag data. All resources return JSON and are cached for 60 seconds.
@@ -919,7 +991,16 @@ src/
 ├── context.ts                   # Shared runtime context
 ├── version.ts                   # Version constant
 ├── unleash/
-│   └── client.ts                # Unleash Admin API client
+│   ├── client.ts                # Unleash Admin API client
+│   ├── attribution.ts           # Client attribution for outbound headers
+│   └── feedbackHttpClient.ts    # send_feedback transport
+├── http/
+│   └── httpClient.ts            # Generic fetch wrapper for API clients
+├── feedback/
+│   ├── consentDecision.ts       # granted | denied consent type
+│   ├── consentResolver.ts       # Resolves send_feedback consent (env, file, prompt)
+│   ├── consentStore.ts          # Persists consent in feedback_consent.json
+│   └── elicitation.ts           # MCP elicitation prompt asking the user once
 ├── tools/
 │   ├── types.ts                 # Shared ToolDefinition type
 │   ├── createFlag.ts            # create_flag tool
@@ -930,7 +1011,8 @@ src/
 │   ├── setFlagRollout.ts        # set_flag_rollout tool
 │   ├── getFlagState.ts          # get_flag_state tool
 │   ├── toggleFlagEnvironment.ts # toggle_flag_environment tool
-│   └── removeFlagStrategy.ts    # remove_flag_strategy tool
+│   ├── removeFlagStrategy.ts    # remove_flag_strategy tool
+│   └── sendFeedback.ts          # send_feedback tool
 ├── resources/
 │   └── unleashResources.ts      # MCP resource handlers (projects, flags)
 ├── prompts/
@@ -971,6 +1053,9 @@ This section provides a quick reference for all configuration options.
 - `UNLEASH_BASE_URL`: Your Unleash instance URL (required). Both `https://your-instance.getunleash.io` and `https://your-instance.getunleash.io/api` are accepted — the server normalizes a trailing `/api` away if present, so you can paste the same value most Unleash SDKs expect.
 - `UNLEASH_PAT`: Personal access token (required).
 - `UNLEASH_DEFAULT_PROJECT`: The default project ID the MCP should use (optional).
+- `UNLEASH_MCP_SEND_FEEDBACK`: `true` or `false` to grant or deny `send_feedback` consent without a prompt (optional). Overrides the stored consent file.
+- `UNLEASH_FEEDBACK_URL`: Base URL of the Unleash instance that receives `send_feedback` reports (optional). Defaults to the Unleash-hosted sandbox instance.
+- `UNLEASH_MCP_CONFIG_DIR`: Directory holding `feedback_consent.json` (optional). Defaults to the platform config directory described in [Consent](#consent).
 
 **CLI flags:**
 - `--dry-run`: Simulate operations without making actual API calls.
@@ -1019,6 +1104,8 @@ This server uses the Unleash Admin API. For complete API documentation, see:
 - `POST /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on` - Enable flag
 - `POST /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/off` - Disable flag
 
+`send_feedback` does not call your Unleash instance. It posts to `POST {UNLEASH_FEEDBACK_URL}/feedback` on the Unleash-hosted feedback instance.
+
 ## Troubleshooting
 
 ### Configuration issues
@@ -1036,6 +1123,12 @@ This server uses the Unleash Admin API. For complete API documentation, see:
 **Error: "HTTP_404"**: The project ID doesn't exist. Confirm the project ID in Unleash Admin UI.
 
 **Error: "HTTP_409"**: A flag with this name already exists in the project. Use a different name or reuse the existing flag.
+
+### Feedback issues
+
+**"Feedback is disabled"**: The user declined consent, the client could not show the consent prompt, or `UNLEASH_MCP_SEND_FEEDBACK=false` is set. Set `UNLEASH_MCP_SEND_FEEDBACK=true`, or delete `feedback_consent.json` to be asked again. See [Consent](#consent).
+
+**Error: "Failed to connect to the Unleash feedback endpoint"**: The report could not reach the feedback instance. Check that `UNLEASH_FEEDBACK_URL` (or the default sandbox instance) is reachable from your network. Flag operations are not affected.
 
 ## License
 
