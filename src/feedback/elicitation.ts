@@ -9,7 +9,7 @@ export const CONSENT_PROMPT_TIMEOUT_MS = 60_000;
 export function buildConsentPromptMessage(consentFileLocation: string): string {
   return [
     'Send anonymous reports to Unleash to help improve this MCP?',
-    'Reports never include Never flag names, project IDs, code, URLs, or tokens.',
+    'Reports never include flag names, project IDs, code, URLs, or tokens.',
     `Your choice takes effect immediately and is stored in ${consentFileLocation} for future sessions.`,
   ].join('\n');
 }

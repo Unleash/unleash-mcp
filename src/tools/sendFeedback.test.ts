@@ -2,7 +2,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { ServerContext } from '../context.js';
 import type { FeedbackConsentDecision } from '../feedback/consentDecision.js';
 import { FeedbackConsentResolver } from '../feedback/consentResolver.js';
+import type { ConsentStore } from '../feedback/consentStore.js';
 import type { AskUser } from '../feedback/elicitation.js';
+import {
+  createFakeConsentStore,
+  FAKE_CONSENT_WRITE_ERROR,
+} from '../test-utils/fakeConsentStore.js';
 import { silentLogger as logger } from '../test-utils/silentLogger.js';
 import type { ClientInfo } from '../unleash/attribution.js';
 import type { UnleashClient } from '../unleash/client.js';
@@ -28,6 +33,7 @@ function createContext(
     dryRun?: boolean;
     consent?: FeedbackConsentDecision | 'undecided';
     askUser?: AskUser;
+    store?: ConsentStore;
   } = {},
 ): ServerContext {
   const consent = overrides.consent ?? 'granted';
@@ -35,7 +41,7 @@ function createContext(
   const feedbackConsentResolver = new FeedbackConsentResolver({
     initialConsent: consent === 'undecided' ? undefined : consent,
     askUser: overrides.askUser ?? (async () => undefined),
-    store: { location: 'feedback_consent.json', read: () => null, write: () => true },
+    store: overrides.store ?? createFakeConsentStore().store,
     logger,
   });
   return {
@@ -202,6 +208,63 @@ describe('send_feedback', () => {
     expect(askUser).toHaveBeenCalledTimes(1);
     expect(sendFeedbackRequest).not.toHaveBeenCalled();
     expect(result.structuredContent).toEqual({ success: true, sent: false, dryRun: true });
+  });
+
+  it.each([
+    { answer: 'granted', sent: true },
+    { answer: 'denied', sent: false },
+  ] as const)('reports the store error in the result when the $answer decision cannot be saved', async ({
+    answer,
+    sent,
+  }) => {
+    sendFeedbackRequest.mockResolvedValue(undefined);
+    const context = createContext({
+      consent: 'undecided',
+      askUser: async () => answer,
+      store: createFakeConsentStore({ writable: false }).store,
+    });
+
+    const result = await sendFeedback(context, defaultInput);
+
+    expect(sendFeedbackRequest).toHaveBeenCalledTimes(sent ? 1 : 0);
+    expect(result.isError).toBeFalsy();
+    expect(result).toMatchObject({
+      content: [
+        { type: 'text' },
+        { type: 'text', text: expect.stringContaining(FAKE_CONSENT_WRITE_ERROR) },
+      ],
+      structuredContent: {
+        success: true,
+        sent,
+        warning: expect.stringContaining(FAKE_CONSENT_WRITE_ERROR),
+      },
+    });
+  });
+
+  it('keeps the store warning on the error result when the send fails', async () => {
+    sendFeedbackRequest.mockRejectedValue(
+      new CustomError('NETWORK_ERROR', 'Failed to connect to the Unleash feedback endpoint'),
+    );
+    const context = createContext({
+      consent: 'undecided',
+      askUser: async () => 'granted',
+      store: createFakeConsentStore({ writable: false }).store,
+    });
+
+    const result = await sendFeedback(context, defaultInput);
+
+    expect(result).toMatchObject({
+      isError: true,
+      content: [
+        { type: 'text' },
+        { type: 'text', text: expect.stringContaining(FAKE_CONSENT_WRITE_ERROR) },
+      ],
+      structuredContent: {
+        success: false,
+        error: { code: 'NETWORK_ERROR' },
+        warning: expect.stringContaining(FAKE_CONSENT_WRITE_ERROR),
+      },
+    });
   });
 
   it('rejects invalid input once consent is granted', async () => {

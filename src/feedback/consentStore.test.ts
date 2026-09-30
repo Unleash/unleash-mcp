@@ -2,13 +2,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { silentLogger as logger } from '../test-utils/silentLogger.js';
-import {
-  CONSENT_VERSION,
-  type ConsentRecord,
-  FileConsentStore,
-  resolveConfigDir,
-} from './consentStore.js';
+import { CONSENT_VERSION, FileConsentStore, resolveConfigDir } from './consentStore.js';
 
 let tmpDir: string;
 
@@ -21,21 +15,35 @@ afterEach(() => {
 });
 
 describe('FileConsentStore', () => {
-  it('yields null when the file does not exist', () => {
-    const store = new FileConsentStore(logger, path.join(tmpDir, 'feedback_consent.json'));
+  it('yields no record when the file does not exist', () => {
+    const store = new FileConsentStore(path.join(tmpDir, 'feedback_consent.json'));
 
-    expect(store.read()).toBeNull();
+    expect(store.read()).toEqual({ ok: true, record: null });
   });
 
-  it('yields null for a file that is not JSON', () => {
+  it('reports an error when the file cannot be read', () => {
+    const location = path.join(tmpDir, 'feedback_consent.json');
+    fs.mkdirSync(location);
+    const store = new FileConsentStore(location);
+
+    expect(store.read()).toMatchObject({
+      ok: false,
+      error: expect.stringContaining(`Could not read consent file ${location}`),
+    });
+  });
+
+  it('reports an error for a file that is not JSON', () => {
     const location = path.join(tmpDir, 'feedback_consent.json');
     fs.writeFileSync(location, 'not json');
-    const store = new FileConsentStore(logger, location);
+    const store = new FileConsentStore(location);
 
-    expect(store.read()).toBeNull();
+    expect(store.read()).toEqual({
+      ok: false,
+      error: `Consent file ${location} has unexpected contents`,
+    });
   });
 
-  it('yields null for a record with a mismatched consent version', () => {
+  it('reports an error for a record with a mismatched consent version', () => {
     const location = path.join(tmpDir, 'feedback_consent.json');
     fs.writeFileSync(
       location,
@@ -45,12 +53,12 @@ describe('FileConsentStore', () => {
         consentVersion: CONSENT_VERSION + 1,
       }),
     );
-    const store = new FileConsentStore(logger, location);
+    const store = new FileConsentStore(location);
 
-    expect(store.read()).toBeNull();
+    expect(store.read()).toMatchObject({ ok: false });
   });
 
-  it('yields null for a record with an unexpected feedback value', () => {
+  it('reports an error for a record with an unexpected feedback value', () => {
     const location = path.join(tmpDir, 'feedback_consent.json');
     fs.writeFileSync(
       location,
@@ -60,53 +68,62 @@ describe('FileConsentStore', () => {
         consentVersion: CONSENT_VERSION,
       }),
     );
-    const store = new FileConsentStore(logger, location);
+    const store = new FileConsentStore(location);
 
-    expect(store.read()).toBeNull();
+    expect(store.read()).toMatchObject({ ok: false });
   });
 
   it('persists a granted decision and reads it back', () => {
     const location = path.join(tmpDir, 'feedback_consent.json');
-    const store = new FileConsentStore(logger, location);
+    const store = new FileConsentStore(location);
 
     const written = store.write('granted');
-    const record = store.read();
+    const result = store.read();
 
-    expect(written).toBe(true);
-    expect(record).toMatchObject({ consent: 'granted', consentVersion: CONSENT_VERSION });
-    expect(typeof (record as ConsentRecord).decidedAt).toBe('string');
+    expect(written).toEqual({ ok: true });
+    expect(result).toMatchObject({
+      ok: true,
+      record: {
+        consent: 'granted',
+        consentVersion: CONSENT_VERSION,
+        decidedAt: expect.any(String),
+      },
+    });
   });
 
   it('creates missing parent directories', () => {
     const location = path.join(tmpDir, 'a', 'b', 'c', 'feedback_consent.json');
-    const store = new FileConsentStore(logger, location);
+    const store = new FileConsentStore(location);
 
     const written = store.write('granted');
 
-    expect(written).toBe(true);
-    expect(store.read()).toMatchObject({ consent: 'granted' });
+    expect(written).toEqual({ ok: true });
+    expect(store.read()).toMatchObject({ ok: true, record: { consent: 'granted' } });
   });
 
   it('overwrites an earlier decision with a later one', () => {
     const location = path.join(tmpDir, 'feedback_consent.json');
-    const store = new FileConsentStore(logger, location);
+    const store = new FileConsentStore(location);
 
     store.write('granted');
     store.write('denied');
 
-    expect(store.read()).toMatchObject({ consent: 'denied' });
+    expect(store.read()).toMatchObject({ ok: true, record: { consent: 'denied' } });
   });
 
   it('leaves no state behind when the write fails', () => {
     const blocker = path.join(tmpDir, 'blocker');
     fs.writeFileSync(blocker, 'not a directory'); // creates a file
     const location = path.join(blocker, 'nested', 'feedback_consent.json'); // blocker is a file, path is invalid
-    const store = new FileConsentStore(logger, location);
+    const store = new FileConsentStore(location);
 
     const written = store.write('granted');
 
-    expect(written).toBe(false);
-    expect(store.read()).toBeNull();
+    expect(written).toMatchObject({
+      ok: false,
+      error: expect.stringContaining(`Could not save feedback consent to ${location}`),
+    });
+    expect(fs.existsSync(location)).toBe(false);
     const tmpFiles = fs.readdirSync(tmpDir).filter((entry) => entry.endsWith('.tmp'));
     expect(tmpFiles).toEqual([]);
   });
