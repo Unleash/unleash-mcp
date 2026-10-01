@@ -96,7 +96,12 @@ describe('send_feedback', () => {
     expect(result.isError).toBeFalsy();
     expect(sendFeedbackRequest).toHaveBeenCalledTimes(1);
     expect(sendFeedbackRequest).toHaveBeenCalledWith(JSON.stringify(expectedReport));
-    expect(result.structuredContent).toEqual({ success: true, sent: true, dryRun: false });
+    expect(result.structuredContent).toEqual({
+      success: true,
+      sent: true,
+      dryRun: false,
+      message: 'Feedback sent to Unleash.',
+    });
   });
 
   it('skips transmission and reports a dry run when dry-run mode is on', async () => {
@@ -106,7 +111,12 @@ describe('send_feedback', () => {
 
     expect(result.isError).toBeFalsy();
     expect(sendFeedbackRequest).not.toHaveBeenCalled();
-    expect(result.structuredContent).toEqual({ success: true, sent: false, dryRun: true });
+    expect(result.structuredContent).toEqual({
+      success: true,
+      sent: false,
+      dryRun: true,
+      message: '[DRY_RUN] Would send Feedback to Unleash.',
+    });
   });
 
   it('returns error on http client failure', async () => {
@@ -173,7 +183,13 @@ describe('send_feedback', () => {
 
     expect(result.isError).toBeFalsy();
     expect(sendFeedbackRequest).not.toHaveBeenCalled();
-    expect(result.structuredContent).toEqual({ success: true, sent: false, dryRun: false });
+    expect(result.structuredContent).toEqual({
+      success: true,
+      sent: false,
+      dryRun: false,
+      message:
+        'Feedback is disabled: the user has not opted in to sending feedback to Unleash. Do not call send_feedback again in this session.',
+    });
   });
 
   it('sends when the user grants consent at the prompt', async () => {
@@ -186,7 +202,12 @@ describe('send_feedback', () => {
     const result = await sendFeedback(context, defaultInput);
 
     expect(sendFeedbackRequest).toHaveBeenCalledTimes(1);
-    expect(result.structuredContent).toEqual({ success: true, sent: true, dryRun: false });
+    expect(result.structuredContent).toEqual({
+      success: true,
+      sent: true,
+      dryRun: false,
+      message: 'Feedback sent to Unleash.',
+    });
   });
 
   it('does not send when the consent prompt is unanswered', async () => {
@@ -196,7 +217,13 @@ describe('send_feedback', () => {
 
     expect(result.isError).toBeFalsy();
     expect(sendFeedbackRequest).not.toHaveBeenCalled();
-    expect(result.structuredContent).toEqual({ success: true, sent: false, dryRun: false });
+    expect(result.structuredContent).toEqual({
+      success: true,
+      sent: false,
+      dryRun: false,
+      message:
+        'Feedback is disabled: the user has not opted in to sending feedback to Unleash. Do not call send_feedback again in this session.',
+    });
   });
 
   it('asks for consent in dry-run mode but never sends', async () => {
@@ -207,7 +234,12 @@ describe('send_feedback', () => {
 
     expect(askUser).toHaveBeenCalledTimes(1);
     expect(sendFeedbackRequest).not.toHaveBeenCalled();
-    expect(result.structuredContent).toEqual({ success: true, sent: false, dryRun: true });
+    expect(result.structuredContent).toEqual({
+      success: true,
+      sent: false,
+      dryRun: true,
+      message: '[DRY_RUN] Would send Feedback to Unleash.',
+    });
   });
 
   it.each([
