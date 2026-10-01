@@ -109,9 +109,15 @@ function buildOutputMessage(outcome: SendFeedbackOutcome, dryRun: boolean): stri
 }
 
 function buildFeedbackResult(outcome: SendFeedbackOutcome, dryRun: boolean): CallToolResult {
+  const outputMessage = buildOutputMessage(outcome, dryRun);
   return {
-    content: [{ type: 'text', text: buildOutputMessage(outcome, dryRun) }],
-    structuredContent: { success: true, sent: outcome === 'sent' && !dryRun, dryRun },
+    content: [{ type: 'text', text: outputMessage }],
+    structuredContent: {
+      success: true,
+      sent: outcome === 'sent' && !dryRun,
+      dryRun,
+      message: outputMessage,
+    },
   };
 }
 
