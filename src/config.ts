@@ -7,7 +7,7 @@ import { parseAttributionEnv } from './unleash/attribution.js';
 // quiet: true — dotenv's default tip log writes to stdout, which corrupts the MCP stdio JSON-RPC stream
 dotenv.config({ quiet: true });
 
-export const DEFAULT_FEEDBACK_BASE_URL = 'https://sandbox.getunleash.io/enterprise';
+export const DEFAULT_FEEDBACK_BASE_URL = 'https://eu.app.unleash-hosted.com/hosted';
 
 const feedbackBaseUrlSchema = z.preprocess(
   (value) => (typeof value === 'string' && value.trim() === '' ? undefined : value),

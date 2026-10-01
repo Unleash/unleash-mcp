@@ -1054,7 +1054,7 @@ This section provides a quick reference for all configuration options.
 - `UNLEASH_PAT`: Personal access token (required).
 - `UNLEASH_DEFAULT_PROJECT`: The default project ID the MCP should use (optional).
 - `UNLEASH_MCP_SEND_FEEDBACK`: `true` or `false` to grant or deny `send_feedback` consent without a prompt (optional). Overrides the stored consent file.
-- `UNLEASH_FEEDBACK_URL`: Base URL of the Unleash instance that receives `send_feedback` reports (optional). Defaults to the Unleash-hosted sandbox instance.
+- `UNLEASH_FEEDBACK_URL`: Base URL of the Unleash instance that receives `send_feedback` reports (optional). Defaults to the Unleash-hosted production instance.
 - `UNLEASH_MCP_CONFIG_DIR`: Directory holding `feedback_consent.json` (optional). Defaults to the platform config directory described in [Consent](#consent).
 
 **CLI flags:**
@@ -1128,7 +1128,7 @@ This server uses the Unleash Admin API. For complete API documentation, see:
 
 **"Feedback is disabled"**: The user declined consent, the client could not show the consent prompt, or `UNLEASH_MCP_SEND_FEEDBACK=false` is set. Set `UNLEASH_MCP_SEND_FEEDBACK=true`, or delete `feedback_consent.json` to be asked again. See [Consent](#consent).
 
-**Error: "Failed to connect to the Unleash feedback endpoint"**: The report could not reach the feedback instance. Check that `UNLEASH_FEEDBACK_URL` (or the default sandbox instance) is reachable from your network. Flag operations are not affected.
+**Error: "Failed to connect to the Unleash feedback endpoint"**: The report could not reach the feedback instance. Check that `UNLEASH_FEEDBACK_URL` (or the default production instance) is reachable from your network. Flag operations are not affected.
 
 ## License
 
