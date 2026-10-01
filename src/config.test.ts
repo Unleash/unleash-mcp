@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  DEFAULT_FEEDBACK_BASE_URL,
   hasTrailingApiSegment,
   loadConfig,
   normalizeBaseUrl,
@@ -109,10 +108,10 @@ describe('hasTrailingApiSegment', () => {
 });
 
 describe('resolveFeedbackBaseUrl', () => {
-  it('defaults to the sandbox when no URL is configured', () => {
-    expect(resolveFeedbackBaseUrl()).toBe(DEFAULT_FEEDBACK_BASE_URL);
-    expect(resolveFeedbackBaseUrl('')).toBe(DEFAULT_FEEDBACK_BASE_URL);
-    expect(resolveFeedbackBaseUrl('  ')).toBe(DEFAULT_FEEDBACK_BASE_URL);
+  it('defaults to the production instance when no URL is configured', () => {
+    expect(resolveFeedbackBaseUrl()).toBe('https://eu.app.unleash-hosted.com/hosted');
+    expect(resolveFeedbackBaseUrl('')).toBe('https://eu.app.unleash-hosted.com/hosted');
+    expect(resolveFeedbackBaseUrl('  ')).toBe('https://eu.app.unleash-hosted.com/hosted');
   });
 
   it('accepts an http(s) instance base URL', () => {

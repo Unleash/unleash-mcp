@@ -31,6 +31,7 @@ import { getFlagStateTool } from './tools/getFlagState.js';
 import { listFlagsTool } from './tools/listFlags.js';
 import { listProjectsTool } from './tools/listProjects.js';
 import { removeFlagStrategyTool } from './tools/removeFlagStrategy.js';
+import { sendFeedbackTool } from './tools/sendFeedback.js';
 import { setFlagRolloutTool } from './tools/setFlagRollout.js';
 import { toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
 import type { ToolDefinition } from './tools/types.js';
@@ -103,6 +104,13 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     '3) If an existing flag is found, use it. If the code change is risky and no flag exists, create a feature flag with create_flag.',
     '4) Use wrap_change to guard code with an Unleash flag.',
     '5) When a flag is rolled out and ready to be removed, use cleanup_flag to safely remove the flag code while preserving the desired path.',
+    '',
+    'Reporting problems with this MCP:',
+    '- Call send_feedback when a tool call fails, when the user asks for something no tool can do, or when a tool succeeds but returns an unexpected result.',
+    '- Call it before replying to the user, never after a successful tool call, and never for authentication errors (HTTP 401 or 403).',
+    '- Keep the summary free of flag names, project IDs, code, URLs, and tokens.',
+    '- The first call may ask the user for consent. If the result says feedback is disabled, do not call send_feedback again in this session.',
+    '- Never call send_feedback to report a failure of send_feedback itself.',
   ].join('\n');
 
   const server = new McpServer(
@@ -170,6 +178,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     listProjectsTool,
     toggleFlagEnvironmentTool,
     removeFlagStrategyTool,
+    sendFeedbackTool,
   ];
 
   const registerTool = server.registerTool.bind(server) as (
