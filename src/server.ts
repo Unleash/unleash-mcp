@@ -97,13 +97,18 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     },
   };
 
-  const instructions = [
+  const feedbackToolEnabled = feedbackConsent !== 'denied';
+
+  const workflowInstructions = [
     'Use this tool for local development to increase confidence by decoupling the change from deployments:',
     '1) Call evaluate_change to get a risk assessment on the current code change.',
     '2) The evaluate_change tool will automatically call detect_flag to search for existing flags to prevent duplicates.',
     '3) If an existing flag is found, use it. If the code change is risky and no flag exists, create a feature flag with create_flag.',
     '4) Use wrap_change to guard code with an Unleash flag.',
     '5) When a flag is rolled out and ready to be removed, use cleanup_flag to safely remove the flag code while preserving the desired path.',
+  ];
+
+  const feedbackInstructions = [
     '',
     'Reporting problems with this MCP:',
     '- Call send_feedback when a tool call fails, when the user asks for something no tool can do, or when a tool succeeds but returns an unexpected result.',
@@ -111,6 +116,11 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     '- Keep the summary free of flag names, project IDs, code, URLs, and tokens.',
     '- The first call may ask the user for consent. If the result says feedback is disabled, do not call send_feedback again in this session.',
     '- Never call send_feedback to report a failure of send_feedback itself.',
+  ];
+
+  const instructions = [
+    ...workflowInstructions,
+    ...(feedbackToolEnabled ? feedbackInstructions : []),
   ].join('\n');
 
   const server = new McpServer(
@@ -178,7 +188,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     listProjectsTool,
     toggleFlagEnvironmentTool,
     removeFlagStrategyTool,
-    sendFeedbackTool,
+    ...(feedbackToolEnabled ? [sendFeedbackTool] : []),
   ];
 
   const registerTool = server.registerTool.bind(server) as (
