@@ -31,7 +31,7 @@ The MCP server exposes the following tools:
 - `toggle_flag_environment`: Enables or disables a feature flag in an environment.
 - `remove_flag_strategy`: Deletes a feature flag's strategy from an environment.
 - `cleanup_flag`: Generates instructions for safely removing flagged code paths.
-- `send_feedback`: Reports a failed tool call, an unsupported request, or an unexpected result to Unleash so the MCP can be improved. Requires the user's consent.
+- `send_feedback`: Reports a failed tool call, an unsupported request, or an unexpected result to Unleash so the MCP can be improved. Requires the user's consent. Not listed when consent is denied up front through `UNLEASH_MCP_SEND_FEEDBACK=false` or the `feedbackConsent` server option.
 
 ### Core workflow
 
@@ -910,9 +910,9 @@ Set `UNLEASH_MCP_CONFIG_DIR` to keep the file in a different directory. Delete t
 
 If the user declines, the tool returns a message saying feedback is disabled and the assistant should not call it again in that session. If the client does not support elicitation, or the prompt is cancelled or not answered within 60 seconds, feedback stays disabled for the current session and nothing is stored, so the question is asked again in the next session.
 
-Set `UNLEASH_MCP_SEND_FEEDBACK=true` or `UNLEASH_MCP_SEND_FEEDBACK=false` to grant or deny consent without a prompt. The environment variable overrides the consent file. This is useful for clients that do not support elicitation and for CI setups.
+Set `UNLEASH_MCP_SEND_FEEDBACK=true` or `UNLEASH_MCP_SEND_FEEDBACK=false` to grant or deny consent without a prompt. The environment variable overrides the consent file. This is useful for clients that do not support elicitation and for CI setups. When consent is denied this way, the `send_feedback` tool is left out of the tool list and the server instructions do not mention it, so the assistant never attempts to call it.
 
-When the server is embedded in an HTTP host through `createMcpHandler`, consent defaults to denied unless the host passes `feedbackConsent`.
+When the server is embedded in an HTTP host through `createMcpHandler`, consent defaults to denied unless the host passes `feedbackConsent`, so `send_feedback` is not exposed to remote clients by default.
 
 #### What is recorded
 
