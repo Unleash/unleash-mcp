@@ -36,6 +36,27 @@
           "format": "string",
           "isSecret": false,
           "name": "UNLEASH_DEFAULT_PROJECT"
+        },
+        {
+          "description": "true or false to grant or deny send_feedback consent without a prompt",
+          "isRequired": false,
+          "format": "boolean",
+          "isSecret": false,
+          "name": "UNLEASH_MCP_SEND_FEEDBACK"
+        },
+        {
+          "description": "Base URL of the Unleash instance that receives send_feedback reports (defaults to the production instance)",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false,
+          "name": "UNLEASH_FEEDBACK_URL"
+        },
+        {
+          "description": "Directory holding feedback_consent.json (defaults to the platform config directory)",
+          "isRequired": false,
+          "format": "filepath",
+          "isSecret": false,
+          "name": "UNLEASH_MCP_CONFIG_DIR"
         }
       ]
     }
