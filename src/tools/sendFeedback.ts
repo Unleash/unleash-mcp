@@ -1,6 +1,7 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { handleToolError, type ServerContext } from '../context.js';
+import type { FeedbackConsentDecision } from '../feedback/consentDecision.js';
 import { type ClientInfo, sanitize } from '../unleash/attribution.js';
 import { VERSION } from '../version.js';
 
@@ -114,6 +115,14 @@ function buildFeedbackResult(outcome: SendFeedbackOutcome, dryRun: boolean): Cal
   };
 }
 
+function withWarning(result: CallToolResult, warning: string): CallToolResult {
+  return {
+    ...result,
+    content: [...result.content, { type: 'text', text: warning }],
+    structuredContent: { ...result.structuredContent, warning },
+  };
+}
+
 async function sendGrantedFeedback(context: ServerContext, args: unknown): Promise<CallToolResult> {
   const input = sendFeedbackSchema.parse(args);
   const clientInfo = context.config.server.attributionEnabled ? context.getClientInfo() : undefined;
@@ -127,22 +136,28 @@ async function sendGrantedFeedback(context: ServerContext, args: unknown): Promi
   return buildFeedbackResult('sent', context.config.server.dryRun);
 }
 
+async function buildConsentedResult(
+  context: ServerContext,
+  args: unknown,
+  consent: FeedbackConsentDecision,
+): Promise<CallToolResult> {
+  try {
+    return consent === 'granted'
+      ? await sendGrantedFeedback(context, args)
+      : buildFeedbackResult('denied', context.config.server.dryRun);
+  } catch (error) {
+    return handleToolError(context, error, 'send_feedback');
+  }
+}
+
 export async function sendFeedback(
   context: ServerContext,
   args: unknown,
   _progressToken?: string | number,
 ): Promise<CallToolResult> {
-  try {
-    const consent = await context.feedbackConsentResolver.resolve();
-    switch (consent) {
-      case 'granted':
-        return await sendGrantedFeedback(context, args);
-      case 'denied':
-        return buildFeedbackResult('denied', context.config.server.dryRun);
-    }
-  } catch (error) {
-    return handleToolError(context, error, 'send_feedback');
-  }
+  const { consent, warning } = await context.feedbackConsentResolver.resolve();
+  const result = await buildConsentedResult(context, args, consent);
+  return warning ? withWarning(result, warning) : result;
 }
 
 export const sendFeedbackTool = {

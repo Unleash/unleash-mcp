@@ -1,28 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
+import {
+  createFakeConsentStore,
+  FAKE_CONSENT_WRITE_ERROR,
+} from '../test-utils/fakeConsentStore.js';
 import { silentLogger as logger } from '../test-utils/silentLogger.js';
 import type { FeedbackConsentDecision } from './consentDecision.js';
 import { FeedbackConsentResolver } from './consentResolver.js';
-import { CONSENT_VERSION, type ConsentRecord, type ConsentStore } from './consentStore.js';
-
-function createStore(overrides: { stored?: FeedbackConsentDecision; writable?: boolean } = {}) {
-  const record: ConsentRecord | null = overrides.stored
-    ? {
-        consent: overrides.stored,
-        decidedAt: '2026-09-21T10:00:00.000Z',
-        consentVersion: CONSENT_VERSION,
-      }
-    : null;
-  const written: FeedbackConsentDecision[] = [];
-  const store: ConsentStore = {
-    location: 'feedback_consent.json',
-    read: () => record,
-    write: (consent) => {
-      written.push(consent);
-      return overrides.writable ?? true;
-    },
-  };
-  return { store, written };
-}
+import type { ConsentStore } from './consentStore.js';
 
 function createResolver(
   overrides: {
@@ -38,7 +22,7 @@ function createResolver(
   const resolver = new FeedbackConsentResolver({
     initialConsent: overrides.initialConsent,
     askUser,
-    store: overrides.store ?? createStore().store,
+    store: overrides.store ?? createFakeConsentStore().store,
     logger,
   });
   return { resolver, askUser };
@@ -51,15 +35,15 @@ describe('FeedbackConsentResolver', () => {
   ])('returns the initial %s consent without asking', async (initialConsent) => {
     const { resolver, askUser } = createResolver({ initialConsent, answer: 'granted' });
 
-    await expect(resolver.resolve()).resolves.toBe(initialConsent);
+    await expect(resolver.resolve()).resolves.toEqual({ consent: initialConsent });
     expect(askUser).not.toHaveBeenCalled();
   });
 
   it('uses the stored decision before asking', async () => {
-    const { store } = createStore({ stored: 'denied' });
+    const { store } = createFakeConsentStore({ stored: 'denied' });
     const { resolver, askUser } = createResolver({ store, answer: 'granted' });
 
-    await expect(resolver.resolve()).resolves.toBe('denied');
+    await expect(resolver.resolve()).resolves.toEqual({ consent: 'denied' });
     expect(askUser).not.toHaveBeenCalled();
   });
 
@@ -67,11 +51,11 @@ describe('FeedbackConsentResolver', () => {
     'granted',
     'denied',
   ])('persists a %s answer and does not ask again', async (answer) => {
-    const { store, written } = createStore();
+    const { store, written } = createFakeConsentStore();
     const { resolver, askUser } = createResolver({ store, answer });
 
-    await expect(resolver.resolve()).resolves.toBe(answer);
-    await expect(resolver.resolve()).resolves.toBe(answer);
+    await expect(resolver.resolve()).resolves.toEqual({ consent: answer });
+    await expect(resolver.resolve()).resolves.toEqual({ consent: answer });
 
     expect(askUser).toHaveBeenCalledTimes(1);
     expect(written).toEqual([answer]);
@@ -81,11 +65,11 @@ describe('FeedbackConsentResolver', () => {
     { label: 'unanswered', answer: undefined },
     { label: 'failing', answer: new Error('transport closed') },
   ])('denies for the session without persisting when the prompt is $label', async ({ answer }) => {
-    const { store, written } = createStore();
+    const { store, written } = createFakeConsentStore();
     const { resolver, askUser } = createResolver({ store, answer });
 
-    await expect(resolver.resolve()).resolves.toBe('denied');
-    await expect(resolver.resolve()).resolves.toBe('denied');
+    await expect(resolver.resolve()).resolves.toEqual({ consent: 'denied' });
+    await expect(resolver.resolve()).resolves.toEqual({ consent: 'denied' });
 
     expect(askUser).toHaveBeenCalledTimes(1);
     expect(written).toEqual([]);
@@ -96,16 +80,28 @@ describe('FeedbackConsentResolver', () => {
 
     const results = await Promise.all([resolver.resolve(), resolver.resolve()]);
 
-    expect(results).toEqual(['granted', 'granted']);
+    expect(results).toEqual([{ consent: 'granted' }, { consent: 'granted' }]);
     expect(askUser).toHaveBeenCalledTimes(1);
   });
 
-  it('keeps the answer in memory when the store cannot persist it', async () => {
-    const { store } = createStore({ writable: false });
+  it('asks the user when the store cannot be read', async () => {
+    const { store, written } = createFakeConsentStore({ readable: false });
     const { resolver, askUser } = createResolver({ store, answer: 'granted' });
 
-    await expect(resolver.resolve()).resolves.toBe('granted');
-    await expect(resolver.resolve()).resolves.toBe('granted');
+    await expect(resolver.resolve()).resolves.toEqual({ consent: 'granted' });
+    expect(askUser).toHaveBeenCalledTimes(1);
+    expect(written).toEqual(['granted']);
+  });
+
+  it('reports the store error only on the call that failed to persist the answer', async () => {
+    const { store } = createFakeConsentStore({ writable: false });
+    const { resolver, askUser } = createResolver({ store, answer: 'granted' });
+
+    await expect(resolver.resolve()).resolves.toEqual({
+      consent: 'granted',
+      warning: `${FAKE_CONSENT_WRITE_ERROR}. The consent decision is remembered for this session only; the user will be asked again next time.`,
+    });
+    await expect(resolver.resolve()).resolves.toEqual({ consent: 'granted' });
     expect(askUser).toHaveBeenCalledTimes(1);
   });
 });
