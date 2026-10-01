@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { z } from 'zod';
-import type { Logger } from '../context.js';
 import { describeError } from '../utils/errors.js';
 import type { FeedbackConsentDecision } from './consentDecision.js';
 
@@ -17,10 +16,14 @@ const consentRecordSchema = z.object({
 
 export type ConsentRecord = z.infer<typeof consentRecordSchema>;
 
+export type ConsentStoreFailure = { ok: false; error: string };
+export type ConsentReadResult = { ok: true; record: ConsentRecord | null } | ConsentStoreFailure;
+export type ConsentWriteResult = { ok: true } | ConsentStoreFailure;
+
 export interface ConsentStore {
   readonly location: string;
-  read(): ConsentRecord | null;
-  write(consent: FeedbackConsentDecision): boolean;
+  read(): ConsentReadResult;
+  write(consent: FeedbackConsentDecision): ConsentWriteResult;
 }
 
 export function resolveConfigDir(
@@ -45,33 +48,33 @@ export function resolveConfigDir(
 
 export class FileConsentStore implements ConsentStore {
   readonly location: string;
-  private readonly logger: Logger;
 
-  constructor(logger: Logger, location: string) {
-    this.logger = logger;
+  constructor(location: string) {
     this.location = location;
   }
 
-  read(): ConsentRecord | null {
+  read(): ConsentReadResult {
     let raw: string;
     try {
       raw = fs.readFileSync(this.location, 'utf8');
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
-        this.logger.warn(`Could not read consent file ${this.location}: ${describeError(error)}`);
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        return { ok: true, record: null };
       }
-      return null;
+      return {
+        ok: false,
+        error: `Could not read consent file ${this.location}: ${describeError(error)}`,
+      };
     }
 
     const parsed = consentRecordSchema.safeParse(parseJson(raw));
     if (!parsed.success) {
-      this.logger.warn(`Ignoring consent file ${this.location}: unexpected contents`);
-      return null;
+      return { ok: false, error: `Consent file ${this.location} has unexpected contents` };
     }
-    return parsed.data;
+    return { ok: true, record: parsed.data };
   }
 
-  write(consent: FeedbackConsentDecision): boolean {
+  write(consent: FeedbackConsentDecision): ConsentWriteResult {
     const record: ConsentRecord = {
       consent,
       decidedAt: new Date().toISOString(),
@@ -82,15 +85,15 @@ export class FileConsentStore implements ConsentStore {
       fs.mkdirSync(path.dirname(this.location), { recursive: true });
       fs.writeFileSync(tempPath, `${JSON.stringify(record, null, 2)}\n`, { mode: 0o600 });
       fs.renameSync(tempPath, this.location);
-      return true;
+      return { ok: true };
     } catch (error) {
-      this.logger.warn(
-        `Could not save feedback consent to ${this.location}; remembering it for this session only: ${describeError(error)}`,
-      );
       try {
         fs.rmSync(tempPath, { force: true });
       } catch {}
-      return false;
+      return {
+        ok: false,
+        error: `Could not save feedback consent to ${this.location}: ${describeError(error)}. Make sure the directory exists and is writable.`,
+      };
     }
   }
 }

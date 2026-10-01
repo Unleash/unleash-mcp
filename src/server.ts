@@ -77,7 +77,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
   const feedbackConsent = options.feedbackConsent;
   const logger = options.logger ?? createLogger(logLevel);
   const configDir = options.configDir ?? resolveConfigDir();
-  const consentStore = new FileConsentStore(logger, path.join(configDir, CONSENT_FILE_NAME));
+  const consentStore = new FileConsentStore(path.join(configDir, CONSENT_FILE_NAME));
 
   // Build a Config object for ServerContext. The pat field is a placeholder —
   // no tool reads config.unleash.pat; auth is handled via authHeaders in UnleashClient.

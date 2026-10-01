@@ -11,9 +11,14 @@ export interface FeedbackConsentResolverOptions {
   logger: Logger;
 }
 
+export interface FeedbackConsentResolution {
+  consent: FeedbackConsentDecision;
+  warning?: string;
+}
+
 export class FeedbackConsentResolver {
   private consent?: FeedbackConsentDecision;
-  private pendingPrompt: Promise<FeedbackConsentDecision> | null = null;
+  private pendingPrompt: Promise<FeedbackConsentResolution> | null = null;
   private readonly askUser: AskUser;
   private readonly consentStore: ConsentStore;
   private readonly logger: Logger;
@@ -25,22 +30,24 @@ export class FeedbackConsentResolver {
     this.logger = options.logger;
   }
 
-  async resolve(): Promise<FeedbackConsentDecision> {
-    if (this.consent) return this.consent;
+  async resolve(): Promise<FeedbackConsentResolution> {
+    if (this.consent) return { consent: this.consent };
     if (this.pendingPrompt) return this.pendingPrompt;
 
-    const storedRecord = this.consentStore.read();
-    if (storedRecord) {
-      this.consent = storedRecord.consent;
+    const stored = this.consentStore.read();
+    if (!stored.ok) {
+      this.logger.warn(stored.error);
+    } else if (stored.record) {
+      this.consent = stored.record.consent;
       this.logger.info(`Feedback consent: ${this.consent} (from ${this.consentStore.location})`);
-      return this.consent;
+      return { consent: this.consent };
     }
 
     this.pendingPrompt = this.promptUser();
     return this.pendingPrompt;
   }
 
-  private async promptUser(): Promise<FeedbackConsentDecision> {
+  private async promptUser(): Promise<FeedbackConsentResolution> {
     const answer = await this.askUser().catch((error: unknown) => {
       this.logger.warn(`Feedback consent prompt failed: ${describeError(error)}`);
       return undefined;
@@ -48,16 +55,17 @@ export class FeedbackConsentResolver {
     if (!answer) return this.denyForThisSession();
 
     this.consent = answer;
+    this.logger.info(`Feedback consent ${answer} by user`);
     const persisted = this.consentStore.write(answer);
-    this.logger.info(
-      `Feedback consent ${answer} by user${persisted ? '' : ' (remembered for this session only)'}`,
-    );
-    return answer;
+    if (persisted.ok) return { consent: answer };
+    const warning = `${persisted.error}. The consent decision is remembered for this session only; the user will be asked again next time.`;
+    this.logger.warn(warning);
+    return { consent: answer, warning };
   }
 
-  private denyForThisSession(): FeedbackConsentDecision {
+  private denyForThisSession(): FeedbackConsentResolution {
     this.consent = 'denied';
     this.logger.info('No feedback consent recorded; feedback stays disabled for this session');
-    return 'denied';
+    return { consent: 'denied' };
   }
 }
