@@ -41,6 +41,7 @@ function createContext(
   const feedbackConsentResolver = new FeedbackConsentResolver({
     initialConsent: consent === 'undecided' ? undefined : consent,
     askUser: overrides.askUser ?? (async () => undefined),
+    clientShowsConsentPrompt: () => true,
     store: overrides.store ?? createFakeConsentStore().store,
     logger,
   });
