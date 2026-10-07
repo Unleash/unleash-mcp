@@ -8,6 +8,7 @@ import type { FeedbackConsentDecision } from './feedback/consentDecision.js';
 import { FeedbackConsentResolver } from './feedback/consentResolver.js';
 import { CONSENT_FILE_NAME, FileConsentStore, resolveConfigDir } from './feedback/consentStore.js';
 import { createElicitationConsentPrompt } from './feedback/elicitation.js';
+import { showsConsentPrompt } from './feedback/showsConsentPrompt.js';
 import {
   extractFlagNameFromFeatureUri,
   extractProjectIdFromFeatureUri,
@@ -159,6 +160,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
   const feedbackConsentResolver = new FeedbackConsentResolver({
     initialConsent: feedbackConsent,
     askUser: createElicitationConsentPrompt(server, consentStore.location, logger),
+    clientShowsConsentPrompt: () => showsConsentPrompt(getClientInfo()?.name),
     store: consentStore,
     logger,
   });

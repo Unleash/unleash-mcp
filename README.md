@@ -912,6 +912,8 @@ If the user declines, the tool returns a message saying feedback is disabled and
 
 Set `UNLEASH_MCP_SEND_FEEDBACK=true` or `UNLEASH_MCP_SEND_FEEDBACK=false` to grant or deny consent without a prompt. The environment variable overrides the consent file. This is useful for clients that do not support elicitation and for CI setups. When consent is denied this way, the `send_feedback` tool is left out of the tool list and the server instructions do not mention it, so the assistant never attempts to call it.
 
+OpenCode and Google Gemini or Antigravity never show the prompt to the user (OpenCode auto-accepts, Antigravity cancels). For these clients, and for clients that report no name, the server skips the prompt and ignores the consent file, since a stored grant may not have come from the user. Feedback stays off unless `UNLEASH_MCP_SEND_FEEDBACK=true` is set. All other clients use the decision stored in the consent file.
+
 When the server is embedded in an HTTP host through `createMcpHandler`, consent defaults to denied unless the host passes `feedbackConsent`, so `send_feedback` is not exposed to remote clients by default.
 
 #### What is recorded
@@ -1000,6 +1002,7 @@ src/
 │   ├── consentDecision.ts       # granted | denied consent type
 │   ├── consentResolver.ts       # Resolves send_feedback consent (env, file, prompt)
 │   ├── consentStore.ts          # Persists consent in feedback_consent.json
+│   ├── showsConsentPrompt.ts    # Clients whose consent prompt never reaches the user
 │   └── elicitation.ts           # MCP elicitation prompt asking the user once
 ├── tools/
 │   ├── types.ts                 # Shared ToolDefinition type

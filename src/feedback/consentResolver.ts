@@ -7,6 +7,7 @@ import type { AskUser } from './elicitation.js';
 export interface FeedbackConsentResolverOptions {
   initialConsent?: FeedbackConsentDecision;
   askUser: AskUser;
+  clientShowsConsentPrompt: () => boolean;
   store: ConsentStore;
   logger: Logger;
 }
@@ -18,6 +19,7 @@ export interface FeedbackConsentResolution {
 
 export class FeedbackConsentResolver {
   private consent?: FeedbackConsentDecision;
+  private readonly clientShowsConsentPrompt: () => boolean;
   private pendingPrompt: Promise<FeedbackConsentResolution> | null = null;
   private readonly askUser: AskUser;
   private readonly consentStore: ConsentStore;
@@ -26,12 +28,20 @@ export class FeedbackConsentResolver {
   constructor(options: FeedbackConsentResolverOptions) {
     this.consent = options.initialConsent;
     this.askUser = options.askUser;
+    this.clientShowsConsentPrompt = options.clientShowsConsentPrompt;
     this.consentStore = options.store;
     this.logger = options.logger;
   }
 
   async resolve(): Promise<FeedbackConsentResolution> {
     if (this.consent) return { consent: this.consent };
+    if (!this.clientShowsConsentPrompt()) {
+      this.logger.info(
+        'Client cannot show the feedback consent prompt; set UNLEASH_MCP_SEND_FEEDBACK=true to opt in',
+      );
+      this.consent = 'denied';
+      return { consent: this.consent };
+    }
     if (this.pendingPrompt) return this.pendingPrompt;
 
     const stored = this.consentStore.read();

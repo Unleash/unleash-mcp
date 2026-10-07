@@ -13,6 +13,7 @@ function createResolver(
     initialConsent?: FeedbackConsentDecision;
     answer?: FeedbackConsentDecision | Error;
     store?: ConsentStore;
+    clientShowsConsentPrompt?: boolean;
   } = {},
 ) {
   const answer = overrides.answer;
@@ -22,6 +23,7 @@ function createResolver(
   const resolver = new FeedbackConsentResolver({
     initialConsent: overrides.initialConsent,
     askUser,
+    clientShowsConsentPrompt: () => overrides.clientShowsConsentPrompt ?? true,
     store: overrides.store ?? createFakeConsentStore().store,
     logger,
   });
@@ -37,6 +39,27 @@ describe('FeedbackConsentResolver', () => {
 
     await expect(resolver.resolve()).resolves.toEqual({ consent: initialConsent });
     expect(askUser).not.toHaveBeenCalled();
+  });
+
+  it('denies without asking or touching the store when the client cannot show the prompt', async () => {
+    const { store, written } = createFakeConsentStore({ stored: 'granted' });
+    const { resolver } = createResolver({
+      store,
+      answer: 'granted',
+      clientShowsConsentPrompt: false,
+    });
+
+    await expect(resolver.resolve()).resolves.toEqual({ consent: 'denied' });
+    expect(written).toEqual([]);
+  });
+
+  it('honours explicit consent when the client cannot show the prompt', async () => {
+    const { resolver } = createResolver({
+      initialConsent: 'granted',
+      clientShowsConsentPrompt: false,
+    });
+
+    await expect(resolver.resolve()).resolves.toEqual({ consent: 'granted' });
   });
 
   it('uses the stored decision before asking', async () => {
