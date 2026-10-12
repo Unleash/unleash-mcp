@@ -116,7 +116,7 @@ export const listProjectsTool = {
   title: 'List Unleash projects',
   annotations: { readOnlyHint: true },
   description:
-    'List Unleash projects available to the configured token, with optional pagination. Use this for discovery before scoping flag operations to a specific project. Returns project id, name, description, mode, creation time, and URL.',
+    'List Unleash projects available to the configured token, with optional pagination. Use this for discovery before scoping flag operations to a specific project. Returns project id, name, description, creation time, and URL.',
   inputSchema: listProjectsSchema,
   implementation: listProjects,
 };
