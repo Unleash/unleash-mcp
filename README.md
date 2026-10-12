@@ -747,7 +747,7 @@ Use list_projects to see which projects are available.
 
 **Tool output**
 
-Returns a text summary plus structured content with `order`, `limit`, `offset`, `nextOffset`, `totalProjects`, and the `projects` array (each with id, name, description, mode, creation time, and URL).
+Returns a text summary plus structured content with `order`, `limit`, `offset`, `nextOffset`, `totalProjects`, and the `projects` array (each with id, name, description, creation time, and URL).
 
 ### Toggle flag environment
 
