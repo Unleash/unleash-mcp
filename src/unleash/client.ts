@@ -40,7 +40,6 @@ export interface UnleashProjectSummary {
   id: string;
   name: string;
   description?: string;
-  mode?: string;
   createdAt: string;
   url: string;
 }
@@ -208,12 +207,11 @@ export class UnleashClient {
         id?: string;
         name?: string;
         description?: string;
-        mode?: string;
         createdAt?: string;
         url?: string;
       }>;
     }>(
-      '/api/admin/projects',
+      '/api/admin/projects?view=core',
       { method: 'GET' },
       {
         errorMessage: 'Failed to list projects',
@@ -231,7 +229,6 @@ export class UnleashClient {
         id,
         name: project.name ?? project.id ?? 'Unnamed project',
         description: project.description,
-        mode: project.mode,
         createdAt: project.createdAt ?? new Date(0).toISOString(),
         url: project.url ?? `${this.baseUrl}/projects/${encodeURIComponent(id)}`,
       };
