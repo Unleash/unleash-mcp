@@ -464,7 +464,7 @@ export class UnleashClient {
         project?: string;
       }>;
     }>(
-      `/api/admin/projects/${encodeURIComponent(projectId)}/features`,
+      `/api/admin/projects/${encodeURIComponent(projectId)}/features?view=core`,
       { method: 'GET' },
       {
         errorMessage: `Failed to list feature flags for project ${projectId}`,
