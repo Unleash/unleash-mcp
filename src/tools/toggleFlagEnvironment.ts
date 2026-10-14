@@ -6,7 +6,7 @@ import {
   resolveProjectId,
   type ServerContext,
 } from '../context.js';
-import { createFlagResourceLink } from '../utils/streaming.js';
+import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
 
 const toggleFlagEnvironmentSchema = z.object({
@@ -65,7 +65,7 @@ export async function toggleFlagEnvironment(
       `${input.enabled ? 'Enabled' : 'Disabled'} "${input.featureName}" in "${input.environment}"`,
     );
 
-    const { url, resource } = createFlagResourceLink(
+    const { url, resourceUri } = createFlagLinks(
       context.config.unleash.baseUrl,
       projectId,
       input.featureName,
@@ -95,7 +95,7 @@ export async function toggleFlagEnvironment(
       links: {
         ui: url,
         api: apiUrl,
-        resourceUri: resource.uri,
+        resourceUri,
       },
     });
   } catch (error) {

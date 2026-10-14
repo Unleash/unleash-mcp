@@ -7,7 +7,7 @@ import {
   type ServerContext,
 } from '../context.js';
 import type { FeatureFlagType } from '../unleash/client.js';
-import { createFlagResourceLink, formatFlagCreatedMessage } from '../utils/streaming.js';
+import { createFlagLinks, formatFlagCreatedMessage } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
 
 /**
@@ -52,7 +52,7 @@ type CreateFeatureFlagInput = z.infer<typeof createFeatureFlagSchema>;
  * - Provide a simple interface for creating feature flags
  * - Validate inputs before making API calls
  * - Stream progress to provide visibility during creation
- * - Return both human-readable output and structured resource links
+ * - Return the created flag and its links as JSON
  *
  * Best Practices (from https://docs.getunleash.io/topics/feature-flags/best-practices-using-feature-flags-at-scale):
  * - Choose the right flag type for your use case
@@ -94,8 +94,8 @@ export async function createFlag(
       `Feature flag "${input.name}" created successfully`,
     );
 
-    // Create resource link
-    const { url, resource } = createFlagResourceLink(
+    // Build the UI URL and resource URI
+    const { url, resourceUri } = createFlagLinks(
       context.config.unleash.baseUrl,
       projectId,
       response.name,
@@ -127,7 +127,7 @@ export async function createFlag(
       links: {
         ui: url,
         api: apiUrl,
-        resourceUri: resource.uri,
+        resourceUri,
       },
     });
   } catch (error) {

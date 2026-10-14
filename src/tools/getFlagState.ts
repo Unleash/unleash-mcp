@@ -7,7 +7,7 @@ import {
   type ServerContext,
 } from '../context.js';
 import type { FeatureDetails } from '../unleash/client.js';
-import { createFlagResourceLink } from '../utils/streaming.js';
+import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
 
 const getFlagStateSchema = z.object({
@@ -60,7 +60,7 @@ export async function getFlagState(
       `Fetched feature "${input.featureName}" (${environments.length} environment${environments.length === 1 ? '' : 's'} considered)`,
     );
 
-    const { url, resource } = createFlagResourceLink(
+    const { url, resourceUri } = createFlagLinks(
       context.config.unleash.baseUrl,
       projectId,
       input.featureName,
@@ -84,7 +84,7 @@ export async function getFlagState(
       links: {
         ui: url,
         api: apiUrl,
-        resourceUri: resource.uri,
+        resourceUri,
       },
     });
   } catch (error) {

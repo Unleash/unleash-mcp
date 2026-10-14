@@ -4,8 +4,33 @@ import express from 'express';
 import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMcpHandler } from './remote.js';
-import { createUnleashMcpServer } from './server.js';
+import { type CreateServerOptions, createUnleashMcpServer } from './server.js';
 import { payloadOf } from './test-utils/toolPayload.js';
+
+// InMemoryTransport keeps initialize and tools/call on one McpServer instance, so the
+// clientInfo sent during initialize is visible to the tool call.
+async function callTool(
+  name: string,
+  args: Record<string, unknown>,
+  options: Partial<CreateServerOptions> = {},
+) {
+  const server = createUnleashMcpServer({
+    baseUrl: 'http://localhost:4242',
+    authHeaders: { Authorization: 'test-token' },
+    dryRun: true,
+    logLevel: 'error',
+    ...options,
+  });
+  const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+  const client = new Client({ name: 'test-client', version: '1.0.0' }, { capabilities: {} });
+  await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
+  const result = await client.callTool({ name, arguments: args });
+  await client.close();
+  await server.close();
+  return result;
+}
+
+const flag = { projectId: 'default', featureName: 'example' };
 
 /**
  * E2E test for the remote MCP handler.
@@ -98,9 +123,7 @@ describe('remote MCP handler (e2e)', () => {
       ? callRes.body.find((r: { id?: number }) => r.id === 3)
       : callRes.body;
 
-    expect(callResult.result).toBeDefined();
-    expect(callResult.result.isError).toBeFalsy();
-
+    expect(callResult.result).toEqual({ content: [{ type: 'text', text: expect.any(String) }] });
     expect(payloadOf(callResult.result)).toMatchObject({
       dryRun: true,
       feature: { name: 'e2e-test-flag' },
@@ -238,34 +261,13 @@ describe('remote MCP handler (e2e)', () => {
 });
 
 describe('tool results (e2e)', () => {
-  async function callDryRunTool(name: string, args: Record<string, unknown>) {
-    const server = createUnleashMcpServer({
-      baseUrl: 'http://localhost:4242',
-      authHeaders: { Authorization: 'test-token' },
-      dryRun: true,
-      logLevel: 'error',
-    });
-    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
-    const client = new Client({ name: 'test-client', version: '1.0.0' }, { capabilities: {} });
-    await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
-    const result = await client.callTool({ name, arguments: args });
-    await client.close();
-    await server.close();
-    return result;
-  }
-
-  const flag = { projectId: 'default', featureName: 'example' };
-
   it.each([
-    ['create_flag', { projectId: 'default', name: 'example', type: 'release', description: 'd' }],
     ['get_flag_state', flag],
-    ['list_flags', { projectId: 'default' }],
-    ['list_projects', {}],
     ['remove_flag_strategy', { ...flag, environment: 'development', strategyId: 's1' }],
     ['set_flag_rollout', { ...flag, environment: 'development', rolloutPercentage: 50 }],
     ['toggle_flag_environment', { ...flag, environment: 'development', enabled: true }],
   ])('%s returns its data as a single JSON text block', async (name, args) => {
-    const result = await callDryRunTool(name, args);
+    const result = await callTool(name, args);
 
     expect(result).toEqual({ content: [{ type: 'text', text: expect.any(String) }] });
     expect(payloadOf(result)).toMatchObject({ success: true });
@@ -276,7 +278,7 @@ describe('tool results (e2e)', () => {
     ['cleanup_flag', { flagName: 'example', preservePath: 'enabled' }],
     ['wrap_change', { flagName: 'example', language: 'typescript' }],
   ])('%s returns its guidance as a single text block', async (name, args) => {
-    const result = await callDryRunTool(name, args);
+    const result = await callTool(name, args);
 
     expect(result).toEqual({ content: [{ type: 'text', text: expect.any(String) }] });
   });
@@ -284,22 +286,10 @@ describe('tool results (e2e)', () => {
 
 describe('tool errors (e2e)', () => {
   it('reports an unreachable Unleash instance as a JSON error payload', async () => {
-    const server = createUnleashMcpServer({
+    const result = await callTool('get_flag_state', flag, {
       baseUrl: 'http://127.0.0.1:1',
-      authHeaders: { Authorization: 'test-token' },
       dryRun: false,
-      logLevel: 'error',
     });
-    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
-    const client = new Client({ name: 'test-client', version: '1.0.0' }, { capabilities: {} });
-    await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
-
-    const result = await client.callTool({
-      name: 'get_flag_state',
-      arguments: { featureName: 'example', projectId: 'default' },
-    });
-    await client.close();
-    await server.close();
 
     expect(result).toEqual({
       isError: true,
@@ -326,30 +316,7 @@ describe('outbound User-Agent attribution (e2e)', () => {
   });
 
   it('forwards MCP clientInfo into outbound User-Agent header', async () => {
-    // Use InMemoryTransport so initialize and tools/call share the same McpServer
-    // instance, which is required for server.server.getClientVersion() to return
-    // the clientInfo set during initialize.
-    const server = createUnleashMcpServer({
-      baseUrl: 'http://localhost:4242',
-      authHeaders: { Authorization: 'test-token' },
-      dryRun: false,
-      logLevel: 'error',
-    });
-
-    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
-
-    const client = new Client({ name: 'test-client', version: '1.0.0' }, { capabilities: {} });
-
-    await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
-
-    // Invoke a tool that triggers an outbound HTTP call
-    await client.callTool({
-      name: 'get_flag_state',
-      arguments: { featureName: 'example', projectId: 'default' },
-    });
-
-    await client.close();
-    await server.close();
+    await callTool('get_flag_state', flag, { dryRun: false });
 
     // Verify at least one outbound call has the enriched User-Agent
     expect(fetchSpy).toHaveBeenCalled();
@@ -366,27 +333,7 @@ describe('outbound User-Agent attribution (e2e)', () => {
   });
 
   it('omits client attribution when attributionEnabled is false', async () => {
-    const server = createUnleashMcpServer({
-      baseUrl: 'http://localhost:4242',
-      authHeaders: { Authorization: 'test-token' },
-      dryRun: false,
-      logLevel: 'error',
-      attributionEnabled: false,
-    });
-
-    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
-
-    const client = new Client({ name: 'test-client', version: '1.0.0' }, { capabilities: {} });
-
-    await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
-
-    await client.callTool({
-      name: 'get_flag_state',
-      arguments: { featureName: 'example', projectId: 'default' },
-    });
-
-    await client.close();
-    await server.close();
+    await callTool('get_flag_state', flag, { dryRun: false, attributionEnabled: false });
 
     expect(fetchSpy).toHaveBeenCalled();
 

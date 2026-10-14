@@ -7,7 +7,7 @@ import {
   type ServerContext,
 } from '../context.js';
 import type { FeatureDetails } from '../unleash/client.js';
-import { createFlagResourceLink } from '../utils/streaming.js';
+import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
 
 const removeFlagStrategySchema = z.object({
@@ -69,7 +69,7 @@ export async function removeFlagStrategy(
 
     const remainingStrategies = matchingEnvironment?.strategies?.length ?? 0;
 
-    const { url, resource } = createFlagResourceLink(
+    const { url, resourceUri } = createFlagLinks(
       context.config.unleash.baseUrl,
       projectId,
       input.featureName,
@@ -93,7 +93,7 @@ export async function removeFlagStrategy(
       links: {
         ui: url,
         api: apiUrl,
-        resourceUri: resource.uri,
+        resourceUri,
       },
     });
   } catch (error) {

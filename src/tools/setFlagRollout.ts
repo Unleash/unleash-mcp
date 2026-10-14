@@ -7,7 +7,7 @@ import {
   type ServerContext,
 } from '../context.js';
 import type { StrategyVariant, StrategyVariantPayload } from '../unleash/client.js';
-import { createFlagResourceLink } from '../utils/streaming.js';
+import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
 
 const variantPayloadSchema = z.object({
@@ -101,7 +101,7 @@ export async function setFlagRollout(
       `${mode}Strategy configured for "${input.featureName}" in "${input.environment}"`,
     );
 
-    const { url, resource } = createFlagResourceLink(
+    const { url, resourceUri } = createFlagLinks(
       context.config.unleash.baseUrl,
       projectId,
       input.featureName,
@@ -130,7 +130,7 @@ export async function setFlagRollout(
       links: {
         ui: url,
         api: apiUrl,
-        resourceUri: resource.uri,
+        resourceUri,
       },
     });
   } catch (error) {

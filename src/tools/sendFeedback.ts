@@ -109,7 +109,9 @@ function buildOutputMessage(outcome: SendFeedbackOutcome, dryRun: boolean): stri
   }
 }
 
-function feedbackOutcome(outcome: SendFeedbackOutcome, dryRun: boolean): Record<string, unknown> {
+type FeedbackPayload = { success: true; sent: boolean; dryRun: boolean; message: string };
+
+function feedbackOutcome(outcome: SendFeedbackOutcome, dryRun: boolean): FeedbackPayload {
   return {
     success: true,
     sent: outcome === 'sent' && !dryRun,
@@ -121,7 +123,7 @@ function feedbackOutcome(outcome: SendFeedbackOutcome, dryRun: boolean): Record<
 async function sendGrantedFeedback(
   context: ServerContext,
   args: unknown,
-): Promise<Record<string, unknown>> {
+): Promise<FeedbackPayload> {
   const input = sendFeedbackSchema.parse(args);
   const clientInfo = context.config.server.attributionEnabled ? context.getClientInfo() : undefined;
   const report = buildFeedbackReport(input, { mcpVersion: VERSION, clientInfo });
@@ -138,15 +140,13 @@ async function buildConsentedPayload(
   context: ServerContext,
   args: unknown,
   consent: FeedbackConsentDecision,
-): Promise<{ payload: Record<string, unknown>; isError: boolean }> {
+): Promise<FeedbackPayload | ReturnType<typeof toolErrorPayload>> {
   try {
-    const payload =
-      consent === 'granted'
-        ? await sendGrantedFeedback(context, args)
-        : feedbackOutcome('denied', context.config.server.dryRun);
-    return { payload, isError: false };
+    return consent === 'granted'
+      ? await sendGrantedFeedback(context, args)
+      : feedbackOutcome('denied', context.config.server.dryRun);
   } catch (error) {
-    return { payload: toolErrorPayload(context, error, 'send_feedback'), isError: true };
+    return toolErrorPayload(context, error, 'send_feedback');
   }
 }
 
@@ -156,8 +156,8 @@ export async function sendFeedback(
   _progressToken?: string | number,
 ): Promise<CallToolResult> {
   const { consent, warning } = await context.feedbackConsentResolver.resolve();
-  const { payload, isError } = await buildConsentedPayload(context, args, consent);
-  return { ...jsonResult(warning ? { ...payload, warning } : payload), isError };
+  const payload = await buildConsentedPayload(context, args, consent);
+  return { ...jsonResult(warning ? { ...payload, warning } : payload), isError: !payload.success };
 }
 
 export const sendFeedbackTool = {
