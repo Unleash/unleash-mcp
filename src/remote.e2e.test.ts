@@ -5,7 +5,6 @@ import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMcpHandler } from './remote.js';
 import { type CreateServerOptions, createUnleashMcpServer } from './server.js';
-import { payloadOf } from './test-utils/toolPayload.js';
 
 // InMemoryTransport keeps initialize and tools/call on one McpServer instance, so the
 // clientInfo sent during initialize is visible to the tool call.
@@ -123,8 +122,10 @@ describe('remote MCP handler (e2e)', () => {
       ? callRes.body.find((r: { id?: number }) => r.id === 3)
       : callRes.body;
 
-    expect(callResult.result).toEqual({ content: [{ type: 'text', text: expect.any(String) }] });
-    expect(payloadOf(callResult.result)).toMatchObject({
+    expect(callResult.result.content).toEqual([
+      { type: 'text', text: JSON.stringify(callResult.result.structuredContent) },
+    ]);
+    expect(callResult.result.structuredContent).toMatchObject({
       dryRun: true,
       feature: { name: 'e2e-test-flag' },
     });
@@ -161,16 +162,15 @@ describe('remote MCP handler (e2e)', () => {
 
     expect(callResult.result).toBeDefined();
     expect(callResult.result.isError).toBeFalsy();
-    expect(payloadOf(callResult.result)).toMatchObject({
+    expect(callResult.result.structuredContent).toMatchObject({
       success: true,
       projectId: 'default',
       archived: false,
       flags: expect.any(Array),
     });
-    const { flags } = payloadOf<{ flags: { archived?: boolean }[] }>(callResult.result);
-    expect(flags.length).toBeGreaterThan(0);
+    expect(callResult.result.structuredContent.flags.length).toBeGreaterThan(0);
     // Active path: every returned flag should have archived !== true
-    for (const flag of flags) {
+    for (const flag of callResult.result.structuredContent.flags) {
       expect(flag.archived).not.toBe(true);
     }
   });
@@ -206,16 +206,15 @@ describe('remote MCP handler (e2e)', () => {
 
     expect(callResult.result).toBeDefined();
     expect(callResult.result.isError).toBeFalsy();
-    expect(payloadOf(callResult.result)).toMatchObject({
+    expect(callResult.result.structuredContent).toMatchObject({
       success: true,
       projectId: 'default',
       archived: true,
       flags: expect.any(Array),
     });
-    const { flags } = payloadOf<{ flags: { archived?: boolean }[] }>(callResult.result);
-    expect(flags.length).toBeGreaterThan(0);
+    expect(callResult.result.structuredContent.flags.length).toBeGreaterThan(0);
     // Archived path: every returned flag should be archived
-    for (const flag of flags) {
+    for (const flag of callResult.result.structuredContent.flags) {
       expect(flag.archived).toBe(true);
     }
   });
@@ -251,12 +250,11 @@ describe('remote MCP handler (e2e)', () => {
 
     expect(callResult.result).toBeDefined();
     expect(callResult.result.isError).toBeFalsy();
-    expect(payloadOf(callResult.result)).toMatchObject({
+    expect(callResult.result.structuredContent).toMatchObject({
       success: true,
       projects: expect.any(Array),
     });
-    const { projects } = payloadOf<{ projects: unknown[] }>(callResult.result);
-    expect(projects.length).toBeGreaterThan(0);
+    expect(callResult.result.structuredContent.projects.length).toBeGreaterThan(0);
   });
 });
 
@@ -266,18 +264,20 @@ describe('tool results (e2e)', () => {
     ['remove_flag_strategy', { ...flag, environment: 'development', strategyId: 's1' }],
     ['set_flag_rollout', { ...flag, environment: 'development', rolloutPercentage: 50 }],
     ['toggle_flag_environment', { ...flag, environment: 'development', enabled: true }],
-  ])('%s returns its data as a single JSON text block', async (name, args) => {
+  ])('%s gives every client the same JSON data', async (name, args) => {
     const result = await callTool(name, args);
 
-    expect(result).toEqual({ content: [{ type: 'text', text: expect.any(String) }] });
-    expect(payloadOf(result)).toMatchObject({ success: true });
+    expect(result.content).toEqual([
+      { type: 'text', text: JSON.stringify(result.structuredContent) },
+    ]);
+    expect(result.structuredContent).toMatchObject({ success: true });
   });
 
   it.each([
     ['cleanup_flag', { flagName: 'example' }],
     ['cleanup_flag', { flagName: 'example', preservePath: 'enabled' }],
     ['wrap_change', { flagName: 'example', language: 'typescript' }],
-  ])('%s returns its guidance as a single text block', async (name, args) => {
+  ])('%s delivers its guidance only as text', async (name, args) => {
     const result = await callTool(name, args);
 
     expect(result).toEqual({ content: [{ type: 'text', text: expect.any(String) }] });
@@ -291,11 +291,11 @@ describe('tool errors (e2e)', () => {
       dryRun: false,
     });
 
-    expect(result).toEqual({
-      isError: true,
-      content: [{ type: 'text', text: expect.any(String) }],
+    expect(result.isError).toBe(true);
+    expect(result.structuredContent).toMatchObject({
+      success: false,
+      error: { code: 'NETWORK_ERROR' },
     });
-    expect(payloadOf(result)).toMatchObject({ success: false, error: { code: 'NETWORK_ERROR' } });
   });
 });
 

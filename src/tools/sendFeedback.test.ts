@@ -9,7 +9,6 @@ import {
   FAKE_CONSENT_WRITE_ERROR,
 } from '../test-utils/fakeConsentStore.js';
 import { silentLogger as logger } from '../test-utils/silentLogger.js';
-import { payloadOf } from '../test-utils/toolPayload.js';
 import type { ClientInfo } from '../unleash/attribution.js';
 import type { UnleashClient } from '../unleash/client.js';
 import { CustomError } from '../utils/errors.js';
@@ -98,7 +97,7 @@ describe('send_feedback', () => {
     expect(result.isError).toBeFalsy();
     expect(sendFeedbackRequest).toHaveBeenCalledTimes(1);
     expect(sendFeedbackRequest).toHaveBeenCalledWith(JSON.stringify(expectedReport));
-    expect(payloadOf(result)).toEqual({
+    expect(result.structuredContent).toEqual({
       success: true,
       sent: true,
       dryRun: false,
@@ -113,7 +112,7 @@ describe('send_feedback', () => {
 
     expect(result.isError).toBeFalsy();
     expect(sendFeedbackRequest).not.toHaveBeenCalled();
-    expect(payloadOf(result)).toEqual({
+    expect(result.structuredContent).toEqual({
       success: true,
       sent: false,
       dryRun: true,
@@ -134,7 +133,7 @@ describe('send_feedback', () => {
     const result = await sendFeedback(context, defaultInput);
 
     expect(result.isError).toBe(true);
-    expect(payloadOf(result)).toEqual({
+    expect(result.structuredContent).toEqual({
       success: false,
       error: {
         code: 'NETWORK_ERROR',
@@ -179,7 +178,7 @@ describe('send_feedback', () => {
 
     expect(result.isError).toBeFalsy();
     expect(sendFeedbackRequest).not.toHaveBeenCalled();
-    expect(payloadOf(result)).toEqual({
+    expect(result.structuredContent).toEqual({
       success: true,
       sent: false,
       dryRun: false,
@@ -198,7 +197,7 @@ describe('send_feedback', () => {
     const result = await sendFeedback(context, defaultInput);
 
     expect(sendFeedbackRequest).toHaveBeenCalledTimes(1);
-    expect(payloadOf(result)).toEqual({
+    expect(result.structuredContent).toEqual({
       success: true,
       sent: true,
       dryRun: false,
@@ -213,7 +212,7 @@ describe('send_feedback', () => {
 
     expect(result.isError).toBeFalsy();
     expect(sendFeedbackRequest).not.toHaveBeenCalled();
-    expect(payloadOf(result)).toEqual({
+    expect(result.structuredContent).toEqual({
       success: true,
       sent: false,
       dryRun: false,
@@ -230,7 +229,7 @@ describe('send_feedback', () => {
 
     expect(askUser).toHaveBeenCalledTimes(1);
     expect(sendFeedbackRequest).not.toHaveBeenCalled();
-    expect(payloadOf(result)).toEqual({
+    expect(result.structuredContent).toEqual({
       success: true,
       sent: false,
       dryRun: true,
@@ -256,7 +255,7 @@ describe('send_feedback', () => {
 
     expect(sendFeedbackRequest).toHaveBeenCalledTimes(sent ? 1 : 0);
     expect(result.isError).toBeFalsy();
-    expect(payloadOf(result)).toMatchObject({
+    expect(result.structuredContent).toMatchObject({
       success: true,
       sent,
       warning: expect.stringContaining(FAKE_CONSENT_WRITE_ERROR),
@@ -276,7 +275,7 @@ describe('send_feedback', () => {
     const result = await sendFeedback(context, defaultInput);
 
     expect(result.isError).toBe(true);
-    expect(payloadOf(result)).toMatchObject({
+    expect(result.structuredContent).toMatchObject({
       success: false,
       error: { code: 'NETWORK_ERROR' },
       warning: expect.stringContaining(FAKE_CONSENT_WRITE_ERROR),
@@ -290,7 +289,7 @@ describe('send_feedback', () => {
     const result = await sendFeedback(context, { ...defaultInput, tool: 'Create-Flag' });
 
     expect(result.isError).toBe(true);
-    expect(payloadOf(result)).toMatchObject({ error: { code: 'VALIDATION_ERROR' } });
+    expect(result.structuredContent).toMatchObject({ error: { code: 'VALIDATION_ERROR' } });
     expect(askUser).toHaveBeenCalledTimes(1);
     expect(sendFeedbackRequest).not.toHaveBeenCalled();
   });
