@@ -94,7 +94,6 @@ export async function createFlag(
       `Feature flag "${input.name}" created successfully`,
     );
 
-    // Build the UI URL and resource URI
     const { url, resourceUri } = createFlagLinks(
       context.config.unleash.baseUrl,
       projectId,
