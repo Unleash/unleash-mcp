@@ -8,6 +8,7 @@ import {
 } from '../context.js';
 import type { FeatureDetails } from '../unleash/client.js';
 import { createFlagResourceLink } from '../utils/streaming.js';
+import { jsonResult } from '../utils/toolResult.js';
 
 const removeFlagStrategySchema = z.object({
   projectId: z
@@ -80,14 +81,7 @@ export async function removeFlagStrategy(
       input.environment,
     )}/strategies/${encodeURIComponent(input.strategyId)}`;
 
-    const messageLines = [
-      `Removed strategy "${input.strategyId}" from "${input.featureName}" in "${input.environment}".`,
-      `Remaining strategies in environment: ${remainingStrategies}`,
-      `View feature: ${url}`,
-      `Delete endpoint (used): ${apiUrl}`,
-    ];
-
-    const structuredContent = {
+    return jsonResult({
       success: true,
       dryRun: context.config.server.dryRun,
       projectId,
@@ -101,24 +95,7 @@ export async function removeFlagStrategy(
         api: apiUrl,
         resourceUri: resource.uri,
       },
-    };
-
-    return {
-      content: [
-        {
-          type: 'text',
-          text: messageLines.join('\n'),
-        },
-        {
-          type: 'resource_link',
-          name: feature.name,
-          uri: resource.uri,
-          mimeType: resource.mimeType,
-          title: resource.text,
-        },
-      ],
-      structuredContent,
-    };
+    });
   } catch (error) {
     return handleToolError(context, error, 'remove_flag_strategy');
   }

@@ -1,8 +1,9 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { handleToolError, type ServerContext } from '../context.js';
+import { type ServerContext, toolErrorPayload } from '../context.js';
 import type { FeedbackConsentDecision } from '../feedback/consentDecision.js';
 import { type ClientInfo, sanitize } from '../unleash/attribution.js';
+import { jsonResult } from '../utils/toolResult.js';
 import { VERSION } from '../version.js';
 
 /**
@@ -13,7 +14,7 @@ import { VERSION } from '../version.js';
  * The tool validates its input, builds an allowlisted report, and posts it as
  * the `areasForImprovement` text through `FeedbackHttpClient`, which owns the
  * wire format of the hosted Unleash feedback endpoint (DX-4860). A failed
- * transmission surfaces as a tool error via `handleToolError`; there is no
+ * transmission surfaces as a tool error via `toolErrorPayload`; there is no
  * local fallback. Nothing is sent until the user grants consent (DX-4859).
  */
 
@@ -108,28 +109,19 @@ function buildOutputMessage(outcome: SendFeedbackOutcome, dryRun: boolean): stri
   }
 }
 
-function buildFeedbackResult(outcome: SendFeedbackOutcome, dryRun: boolean): CallToolResult {
-  const outputMessage = buildOutputMessage(outcome, dryRun);
+function feedbackOutcome(outcome: SendFeedbackOutcome, dryRun: boolean): Record<string, unknown> {
   return {
-    content: [{ type: 'text', text: outputMessage }],
-    structuredContent: {
-      success: true,
-      sent: outcome === 'sent' && !dryRun,
-      dryRun,
-      message: outputMessage,
-    },
+    success: true,
+    sent: outcome === 'sent' && !dryRun,
+    dryRun,
+    message: buildOutputMessage(outcome, dryRun),
   };
 }
 
-function withWarning(result: CallToolResult, warning: string): CallToolResult {
-  return {
-    ...result,
-    content: [...result.content, { type: 'text', text: warning }],
-    structuredContent: { ...result.structuredContent, warning },
-  };
-}
-
-async function sendGrantedFeedback(context: ServerContext, args: unknown): Promise<CallToolResult> {
+async function sendGrantedFeedback(
+  context: ServerContext,
+  args: unknown,
+): Promise<Record<string, unknown>> {
   const input = sendFeedbackSchema.parse(args);
   const clientInfo = context.config.server.attributionEnabled ? context.getClientInfo() : undefined;
   const report = buildFeedbackReport(input, { mcpVersion: VERSION, clientInfo });
@@ -139,20 +131,22 @@ async function sendGrantedFeedback(context: ServerContext, args: unknown): Promi
   } else {
     await context.feedbackClient.send(areasForImprovement);
   }
-  return buildFeedbackResult('sent', context.config.server.dryRun);
+  return feedbackOutcome('sent', context.config.server.dryRun);
 }
 
-async function buildConsentedResult(
+async function buildConsentedPayload(
   context: ServerContext,
   args: unknown,
   consent: FeedbackConsentDecision,
-): Promise<CallToolResult> {
+): Promise<{ payload: Record<string, unknown>; isError: boolean }> {
   try {
-    return consent === 'granted'
-      ? await sendGrantedFeedback(context, args)
-      : buildFeedbackResult('denied', context.config.server.dryRun);
+    const payload =
+      consent === 'granted'
+        ? await sendGrantedFeedback(context, args)
+        : feedbackOutcome('denied', context.config.server.dryRun);
+    return { payload, isError: false };
   } catch (error) {
-    return handleToolError(context, error, 'send_feedback');
+    return { payload: toolErrorPayload(context, error, 'send_feedback'), isError: true };
   }
 }
 
@@ -162,8 +156,8 @@ export async function sendFeedback(
   _progressToken?: string | number,
 ): Promise<CallToolResult> {
   const { consent, warning } = await context.feedbackConsentResolver.resolve();
-  const result = await buildConsentedResult(context, args, consent);
-  return warning ? withWarning(result, warning) : result;
+  const { payload, isError } = await buildConsentedPayload(context, args, consent);
+  return { ...jsonResult(warning ? { ...payload, warning } : payload), isError };
 }
 
 export const sendFeedbackTool = {

@@ -5,6 +5,7 @@ import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMcpHandler } from './remote.js';
 import { createUnleashMcpServer } from './server.js';
+import { payloadOf } from './test-utils/toolPayload.js';
 
 /**
  * E2E test for the remote MCP handler.
@@ -100,11 +101,9 @@ describe('remote MCP handler (e2e)', () => {
     expect(callResult.result).toBeDefined();
     expect(callResult.result.isError).toBeFalsy();
 
-    expect(callResult.result).toMatchObject({
-      content: expect.arrayContaining([
-        { type: 'text', text: expect.stringContaining('e2e-test-flag') },
-        { type: 'text', text: expect.stringContaining('DRY RUN') },
-      ]),
+    expect(payloadOf(callResult.result)).toMatchObject({
+      dryRun: true,
+      feature: { name: 'e2e-test-flag' },
     });
   });
 
@@ -139,15 +138,16 @@ describe('remote MCP handler (e2e)', () => {
 
     expect(callResult.result).toBeDefined();
     expect(callResult.result.isError).toBeFalsy();
-    expect(callResult.result.structuredContent).toMatchObject({
+    expect(payloadOf(callResult.result)).toMatchObject({
       success: true,
       projectId: 'default',
       archived: false,
       flags: expect.any(Array),
     });
-    expect(callResult.result.structuredContent.flags.length).toBeGreaterThan(0);
+    const { flags } = payloadOf<{ flags: { archived?: boolean }[] }>(callResult.result);
+    expect(flags.length).toBeGreaterThan(0);
     // Active path: every returned flag should have archived !== true
-    for (const flag of callResult.result.structuredContent.flags) {
+    for (const flag of flags) {
       expect(flag.archived).not.toBe(true);
     }
   });
@@ -183,15 +183,16 @@ describe('remote MCP handler (e2e)', () => {
 
     expect(callResult.result).toBeDefined();
     expect(callResult.result.isError).toBeFalsy();
-    expect(callResult.result.structuredContent).toMatchObject({
+    expect(payloadOf(callResult.result)).toMatchObject({
       success: true,
       projectId: 'default',
       archived: true,
       flags: expect.any(Array),
     });
-    expect(callResult.result.structuredContent.flags.length).toBeGreaterThan(0);
+    const { flags } = payloadOf<{ flags: { archived?: boolean }[] }>(callResult.result);
+    expect(flags.length).toBeGreaterThan(0);
     // Archived path: every returned flag should be archived
-    for (const flag of callResult.result.structuredContent.flags) {
+    for (const flag of flags) {
       expect(flag.archived).toBe(true);
     }
   });
@@ -227,11 +228,84 @@ describe('remote MCP handler (e2e)', () => {
 
     expect(callResult.result).toBeDefined();
     expect(callResult.result.isError).toBeFalsy();
-    expect(callResult.result.structuredContent).toMatchObject({
+    expect(payloadOf(callResult.result)).toMatchObject({
       success: true,
       projects: expect.any(Array),
     });
-    expect(callResult.result.structuredContent.projects.length).toBeGreaterThan(0);
+    const { projects } = payloadOf<{ projects: unknown[] }>(callResult.result);
+    expect(projects.length).toBeGreaterThan(0);
+  });
+});
+
+describe('tool results (e2e)', () => {
+  async function callDryRunTool(name: string, args: Record<string, unknown>) {
+    const server = createUnleashMcpServer({
+      baseUrl: 'http://localhost:4242',
+      authHeaders: { Authorization: 'test-token' },
+      dryRun: true,
+      logLevel: 'error',
+    });
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    const client = new Client({ name: 'test-client', version: '1.0.0' }, { capabilities: {} });
+    await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
+    const result = await client.callTool({ name, arguments: args });
+    await client.close();
+    await server.close();
+    return result;
+  }
+
+  const flag = { projectId: 'default', featureName: 'example' };
+
+  it.each([
+    ['create_flag', { projectId: 'default', name: 'example', type: 'release', description: 'd' }],
+    ['get_flag_state', flag],
+    ['list_flags', { projectId: 'default' }],
+    ['list_projects', {}],
+    ['remove_flag_strategy', { ...flag, environment: 'development', strategyId: 's1' }],
+    ['set_flag_rollout', { ...flag, environment: 'development', rolloutPercentage: 50 }],
+    ['toggle_flag_environment', { ...flag, environment: 'development', enabled: true }],
+  ])('%s returns its data as a single JSON text block', async (name, args) => {
+    const result = await callDryRunTool(name, args);
+
+    expect(result).toEqual({ content: [{ type: 'text', text: expect.any(String) }] });
+    expect(payloadOf(result)).toMatchObject({ success: true });
+  });
+
+  it.each([
+    ['cleanup_flag', { flagName: 'example' }],
+    ['cleanup_flag', { flagName: 'example', preservePath: 'enabled' }],
+    ['wrap_change', { flagName: 'example', language: 'typescript' }],
+  ])('%s returns its guidance as a single text block', async (name, args) => {
+    const result = await callDryRunTool(name, args);
+
+    expect(result).toEqual({ content: [{ type: 'text', text: expect.any(String) }] });
+  });
+});
+
+describe('tool errors (e2e)', () => {
+  it('reports an unreachable Unleash instance as a JSON error payload', async () => {
+    const server = createUnleashMcpServer({
+      baseUrl: 'http://127.0.0.1:1',
+      authHeaders: { Authorization: 'test-token' },
+      dryRun: false,
+      logLevel: 'error',
+    });
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    const client = new Client({ name: 'test-client', version: '1.0.0' }, { capabilities: {} });
+    await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
+
+    const result = await client.callTool({
+      name: 'get_flag_state',
+      arguments: { featureName: 'example', projectId: 'default' },
+    });
+    await client.close();
+    await server.close();
+
+    expect(result).toEqual({
+      isError: true,
+      content: [{ type: 'text', text: expect.any(String) }],
+    });
+    expect(payloadOf(result)).toMatchObject({ success: false, error: { code: 'NETWORK_ERROR' } });
   });
 });
 

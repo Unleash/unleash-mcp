@@ -8,6 +8,7 @@ import {
 } from '../context.js';
 import type { FeatureFlagType } from '../unleash/client.js';
 import { createFlagResourceLink, formatFlagCreatedMessage } from '../utils/streaming.js';
+import { jsonResult } from '../utils/toolResult.js';
 
 /**
  * Input schema for the create_flag tool.
@@ -112,7 +113,7 @@ export async function createFlag(
 
     const apiUrl = `${context.config.unleash.baseUrl}/api/admin/projects/${projectId}/features/${response.name}`;
 
-    const structuredContent = {
+    return jsonResult({
       success: true,
       dryRun: context.config.server.dryRun,
       feature: {
@@ -128,25 +129,7 @@ export async function createFlag(
         api: apiUrl,
         resourceUri: resource.uri,
       },
-    };
-
-    // Return response with both text and resource link
-    return {
-      content: [
-        {
-          type: 'text',
-          text: `${message}\nAdmin API: ${apiUrl}`,
-        },
-        {
-          type: 'resource_link',
-          name: response.name,
-          uri: resource.uri,
-          mimeType: resource.mimeType,
-          title: resource.text,
-        },
-      ],
-      structuredContent,
-    };
+    });
   } catch (error) {
     // Handle errors consistently
     return handleToolError(context, error, 'create_flag');
