@@ -148,6 +148,20 @@ export async function askForProjectId(context: ServerContext): Promise<CallToolR
 }
 
 /**
+ * Build a CallToolResult that sends the agent to search_flags for the project of an existing flag.
+ */
+export function askToFindFlagProject(featureName: string): CallToolResult {
+  return {
+    content: [
+      {
+        type: 'text' as const,
+        text: `Call search_flags with the query "${featureName}" to find the project of this flag, then call this tool again with that projectId.`,
+      },
+    ],
+  };
+}
+
+/**
  * Normalize and log a tool error, returning the payload the tool reports for it.
  */
 export function toolErrorPayload(

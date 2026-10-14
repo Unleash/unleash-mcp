@@ -94,6 +94,7 @@ describe('remote MCP handler (e2e)', () => {
       'list_flags',
       'list_projects',
       'remove_flag_strategy',
+      'search_flags',
       'set_flag_rollout',
       'toggle_flag_environment',
       'wrap_change',
@@ -281,6 +282,75 @@ describe('tool results (e2e)', () => {
     const result = await callTool(name, args);
 
     expect(result).toEqual({ content: [{ type: 'text', text: expect.any(String) }] });
+  });
+});
+
+describe('flag search (e2e)', () => {
+  let fetchSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    // An Unleash with two projects, whose search matches the query against flag names.
+    const flags = [
+      {
+        name: 'example',
+        project: 'pricing',
+        type: 'release',
+        description: 'Example',
+        stale: false,
+        createdBy: { id: 1, name: 'Ada' },
+        environments: [{ name: 'development', enabled: true, type: 'development' }],
+      },
+      { name: 'other', project: 'web', environments: [] },
+    ];
+    fetchSpy = vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
+      const url = new URL(String(input));
+      const query = url.searchParams.get('query') ?? '';
+      const matches = flags.filter((flag) => flag.name.includes(query));
+      const body =
+        url.pathname === '/api/admin/search/features'
+          ? { features: matches, total: matches.length }
+          : { projects: [{ id: 'pricing' }, { id: 'web' }] };
+      return new Response(JSON.stringify(body), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    });
+  });
+
+  afterEach(() => {
+    fetchSpy.mockRestore();
+  });
+
+  it('finds flags in any project by part of their name', async () => {
+    const result = await callTool('search_flags', { query: 'exam' }, { dryRun: false });
+
+    expect(result.structuredContent).toEqual({
+      success: true,
+      total: 1,
+      flags: [
+        {
+          name: 'example',
+          project: 'pricing',
+          type: 'release',
+          description: 'Example',
+          stale: false,
+          environments: [{ name: 'development', enabled: true }],
+        },
+      ],
+    });
+  });
+
+  it.each([
+    ['get_flag_state', {}],
+    ['remove_flag_strategy', { environment: 'development', strategyId: 's1' }],
+    ['set_flag_rollout', { environment: 'development', rolloutPercentage: 50 }],
+    ['toggle_flag_environment', { environment: 'development', enabled: true }],
+  ])('%s points to search_flags when the project is unknown', async (name, args) => {
+    const result = await callTool(name, { featureName: 'example', ...args }, { dryRun: false });
+
+    expect(result.content).toEqual([
+      { type: 'text', text: expect.stringContaining('search_flags') },
+    ]);
   });
 });
 
