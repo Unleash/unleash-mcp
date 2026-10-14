@@ -26,6 +26,7 @@ The MCP server exposes the following tools:
 - `wrap_change`: Provides guidance on how to wrap a change in a feature flag.
 - `set_flag_rollout`: Configures rollout strategies for a feature flag (does not enable the flag).
 - `get_flag_state`: Surfaces a feature flag's metadata and its activation strategies.
+- `get_segments`: Describes the segments that flag strategies refer to by ID.
 - `list_flags`: Lists all feature flags in a project, with optional pagination and sort order.
 - `list_projects`: Lists Unleash projects available to the configured token, with optional pagination.
 - `toggle_flag_environment`: Enables or disables a feature flag in an environment.
@@ -673,6 +674,18 @@ Use get_flag_state with:
 
 Returns a JSON object with the full feature object (all environments and strategy details), the environments matching the filter, and UI and API links.
 
+### Get segments
+
+The `get_segments` tool describes the segments that flag strategies refer to. A strategy from `get_flag_state` lists its segments only by ID; this tool returns what each one is.
+
+#### Parameters
+
+- `segmentIds` (required): Segment IDs, as listed in the `segments` field of a flag strategy.
+
+#### Tool output
+
+Returns a JSON object with `segments`, in the order of the IDs given. Each segment has its `id`, `name`, `description`, `project`, and the `constraints` that decide who it includes.
+
 ### List flags
 
 The `list_flags` tool enumerates the feature flags in a project and returns a structured inventory with pagination and sort order. Active and archived flags are returned separately: call it once with `archived: false` (the default) and once with `archived: true` to assemble a full inventory for audit workflows.
@@ -1102,6 +1115,7 @@ This server uses the Unleash Admin API. For complete API documentation, see:
 - `GET /api/admin/projects/{projectId}/features` - List feature flags
 - `POST /api/admin/projects/{projectId}/features` - Create feature flag
 - `GET /api/admin/projects/{projectId}/features/{featureName}` - Get flag details
+- `GET /api/admin/segments/{id}` - Get segment
 - `POST /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies` - Add rollout strategy
 - `DELETE /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies/{strategyId}` - Remove strategy
 - `POST /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on` - Enable flag

@@ -91,6 +91,7 @@ describe('remote MCP handler (e2e)', () => {
       'detect_flag',
       'evaluate_change',
       'get_flag_state',
+      'get_segments',
       'list_flags',
       'list_projects',
       'remove_flag_strategy',
@@ -281,6 +282,56 @@ describe('tool results (e2e)', () => {
     const result = await callTool(name, args);
 
     expect(result).toEqual({ content: [{ type: 'text', text: expect.any(String) }] });
+  });
+});
+
+describe('segments (e2e)', () => {
+  let fetchSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    const segments: Record<string, object> = {
+      '3': {
+        id: 3,
+        name: 'beta-users',
+        description: 'Opted into beta',
+        project: 'pricing',
+        constraints: [{ contextName: 'userId', operator: 'IN', values: ['1', '2'] }],
+        createdBy: 'ada',
+        createdAt: '2026-10-01T00:00:00.000Z',
+        usedInFeatures: 4,
+        usedInProjects: 1,
+      },
+      '5': { id: 5, name: 'internal', constraints: [], createdAt: '2026-10-02T00:00:00.000Z' },
+    };
+    fetchSpy = vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
+      const segment = segments[new URL(String(input)).pathname.split('/').pop() ?? ''];
+      return new Response(JSON.stringify(segment ?? {}), {
+        status: segment ? 200 : 404,
+        headers: { 'content-type': 'application/json' },
+      });
+    });
+  });
+
+  afterEach(() => {
+    fetchSpy.mockRestore();
+  });
+
+  it('describes the segments a strategy refers to by ID', async () => {
+    const result = await callTool('get_segments', { segmentIds: [5, 3] }, { dryRun: false });
+
+    expect(result.structuredContent).toEqual({
+      success: true,
+      segments: [
+        { id: 5, name: 'internal', constraints: [] },
+        {
+          id: 3,
+          name: 'beta-users',
+          description: 'Opted into beta',
+          project: 'pricing',
+          constraints: [{ contextName: 'userId', operator: 'IN', values: ['1', '2'] }],
+        },
+      ],
+    });
   });
 });
 

@@ -91,6 +91,14 @@ export interface FeatureStrategy {
   parameters: Record<string, string>;
 }
 
+export interface Segment {
+  id: number;
+  name: string;
+  description?: string | null;
+  project?: string | null;
+  constraints: Array<Record<string, unknown>>;
+}
+
 export interface FeatureEnvironment {
   name: string;
   enabled: boolean;
@@ -358,6 +366,25 @@ export class UnleashClient {
         networkErrorMessage: `Failed to connect to Unleash API while fetching feature ${featureName}`,
       },
     );
+  }
+
+  /**
+   * Keeps what defines a segment; Unleash also returns its creator and how often it is used.
+   */
+  async getSegment(id: number): Promise<Segment> {
+    if (this.dryRun) {
+      return { id, name: `Dry-run segment ${id}`, constraints: [] };
+    }
+
+    const { name, description, project, constraints } = await this.requestJson<Segment>(
+      `/api/admin/segments/${id}`,
+      { method: 'GET' },
+      {
+        errorMessage: `Failed to fetch segment ${id}`,
+        networkErrorMessage: `Failed to connect to Unleash API while fetching segment ${id}`,
+      },
+    );
+    return { id, name, description, project, constraints };
   }
 
   async deleteFeatureStrategy(
