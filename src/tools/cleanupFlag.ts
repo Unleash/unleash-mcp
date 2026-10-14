@@ -121,13 +121,6 @@ export async function cleanupFlag(context: ServerContext, args: unknown): Promis
           text: guidance,
         },
       ],
-      structuredContent: {
-        success: true,
-        flagName: input.flagName,
-        preservePath: input.preservePath,
-        targetFiles: input.files,
-        detectedLanguage,
-      },
     };
   } catch (error) {
     return handleToolError(context, error, 'cleanup_flag');
@@ -198,13 +191,6 @@ This context can help the user make an informed decision.
         text: guidance,
       },
     ],
-    structuredContent: {
-      success: true,
-      requiresUserInput: true,
-      flagName,
-      targetFiles: files,
-      nextStep: 'Ask user which path to preserve using AskUserQuestion tool',
-    },
   };
 }
 

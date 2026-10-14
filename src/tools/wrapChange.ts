@@ -127,21 +127,6 @@ export async function wrapChange(context: ServerContext, args: unknown): Promise
           text: guidanceDocument,
         },
       ],
-      structuredContent: {
-        success: true,
-        flagName: input.flagName,
-        detectedLanguage: language,
-        languageDisplayName: metadata.displayName,
-        templates: formattedTemplates,
-        recommendedTemplate: {
-          pattern: recommendedTemplate.pattern,
-          framework: recommendedTemplate.framework,
-          import: recommendedTemplate.import,
-          usage: recommendedTemplate.usage,
-        },
-        supportedPatterns: allTemplates.map((t) => t.pattern),
-        sdkDocumentation: metadata.unleashSdk.docsUrl,
-      },
     };
   } catch (error) {
     return handleToolError(context, error, 'wrap_change');

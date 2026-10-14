@@ -278,7 +278,7 @@ Use create_flag with:
 
 **Tool output**
 
-On success, the tool returns a JSON object containing the new feature flag's URL in the Unleash Admin UI, an MCP resource link for programmatic access, creation timestamp, and configuration details.
+On success, the tool returns a JSON object containing the new feature flag's URL in the Unleash Admin UI, its MCP resource URI, creation timestamp, and configuration details.
 
 ### Evaluate change
 
@@ -633,11 +633,11 @@ Use set_flag_rollout with:
 
 **Tool output**
 
-Returns a confirmation with the configured percentage, a link to the flag in the Unleash Admin UI, the Admin API strategies URL, and an MCP resource link for the flag.
+Returns a JSON object with the configured percentage, the saved strategy, a link to the flag in the Unleash Admin UI, the Admin API strategies URL, and the flag's MCP resource URI.
 
 ### Get flag state
 
-The `get_flag_state` tool fetches a feature flag's current metadata and environment strategies from the Unleash Admin API. It returns the flag's type, enabled/archived status, impression data setting, and a per-environment summary of active strategies and variants.
+The `get_flag_state` tool fetches a feature flag's current metadata and environment strategies from the Unleash Admin API. It returns the flag's type, enabled/archived status, impression data setting, and each environment's strategies and variants.
 
 #### When to use
 
@@ -671,7 +671,7 @@ Use get_flag_state with:
 
 **Tool output**
 
-Returns a text summary of the flag (type, enabled/archived/impression-data, project, environment summaries with strategy counts) along with UI and API links. The structured output includes the full feature object with all environments and strategy details.
+Returns a JSON object with the full feature object (all environments and strategy details), the environments matching the filter, and UI and API links.
 
 ### List flags
 
@@ -712,7 +712,7 @@ Use list_flags with:
 
 **Tool output**
 
-Returns a text summary plus structured content with `projectId`, `archived`, `order`, `limit`, `offset`, `nextOffset`, `totalFlags`, and the `flags` array (each with name, type, project, archived status, and links). Use `nextOffset` to page through large projects.
+Returns a JSON object with `projectId`, `archived`, `order`, `limit`, `offset`, `nextOffset`, `totalFlags`, and the `flags` array (each with name, type, project, archived status, and links). Use `nextOffset` to page through large projects.
 
 ### List projects
 
@@ -747,7 +747,7 @@ Use list_projects to see which projects are available.
 
 **Tool output**
 
-Returns a text summary plus structured content with `order`, `limit`, `offset`, `nextOffset`, `totalProjects`, and the `projects` array (each with id, name, description, creation time, and URL).
+Returns a JSON object with `order`, `limit`, `offset`, `nextOffset`, `totalProjects`, and the `projects` array (each with id, name, description, creation time, and URL).
 
 ### Toggle flag environment
 
@@ -788,7 +788,7 @@ Use toggle_flag_environment with:
 
 **Tool output**
 
-Returns a confirmation of the new state, a summary of the environment (enabled/disabled, strategy count), and links to the flag in the Unleash Admin UI and Admin API.
+Returns a JSON object with the new enabled state, the updated feature object, and links to the flag in the Unleash Admin UI and Admin API.
 
 ### Remove flag strategy
 
@@ -827,7 +827,7 @@ then use remove_flag_strategy to delete the old strategy.
 
 **Tool output**
 
-Returns a confirmation of removal, a count of remaining strategies in the environment, and links to the flag in the Unleash Admin UI and Admin API.
+Returns a JSON object with the removed strategy ID, the count of remaining strategies in the environment, the updated feature object, and links to the flag in the Unleash Admin UI and Admin API.
 
 ### Cleanup flag
 
@@ -954,7 +954,7 @@ then tell me what happened.
 
 **Tool output**
 
-Returns a confirmation that feedback was sent (or would be sent in `--dry-run` mode), or a message that feedback is disabled because the user has not opted in. Structured content includes `success`, `sent`, and `dryRun`.
+Returns a JSON object with `success`, `sent`, `dryRun`, and a `message` confirming that feedback was sent (or would be sent in `--dry-run` mode), or saying that feedback is disabled because the user has not opted in.
 
 ## MCP resources
 

@@ -5,7 +5,8 @@ import type { FeedbackConsentResolver } from './feedback/consentResolver.js';
 import type { ClientInfo } from './unleash/attribution.js';
 import type { FeatureFlagSummary, UnleashClient, UnleashProjectSummary } from './unleash/client.js';
 import type { FeedbackHttpClient } from './unleash/feedbackHttpClient.js';
-import { normalizeError } from './utils/errors.js';
+import { type NormalizedError, normalizeError } from './utils/errors.js';
+import { jsonResult } from './utils/toolResult.js';
 
 export interface ResourceCache {
   projects: { data: UnleashProjectSummary[]; fetchedAt: number } | null;
@@ -147,14 +148,13 @@ export async function askForProjectId(context: ServerContext): Promise<CallToolR
 }
 
 /**
- * Handle tool errors consistently by normalizing them and logging.
- * Returns a formatted error object suitable for MCP tool responses.
+ * Normalize and log a tool error, returning the payload the tool reports for it.
  */
-export function handleToolError(
+export function toolErrorPayload(
   context: ServerContext,
   error: unknown,
   toolName: string,
-): CallToolResult {
+): { success: false; error: NormalizedError } {
   const normalized = normalizeError(error);
 
   context.logger.error(`Error in ${toolName}:`, {
@@ -163,19 +163,13 @@ export function handleToolError(
     hint: normalized.hint,
   });
 
-  const hintSuffix = normalized.hint ? `\n\nHint: ${normalized.hint}` : '';
+  return { success: false, error: normalized };
+}
 
-  return {
-    isError: true,
-    content: [
-      {
-        type: 'text',
-        text: `Error: ${normalized.message}${hintSuffix}`,
-      },
-    ],
-    structuredContent: {
-      success: false,
-      error: normalized,
-    },
-  };
+export function handleToolError(
+  context: ServerContext,
+  error: unknown,
+  toolName: string,
+): CallToolResult {
+  return { isError: true, ...jsonResult(toolErrorPayload(context, error, toolName)) };
 }

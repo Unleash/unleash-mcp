@@ -6,8 +6,9 @@ import {
   resolveProjectId,
   type ServerContext,
 } from '../context.js';
-import type { FeatureDetails, FeatureEnvironment } from '../unleash/client.js';
-import { createFlagResourceLink } from '../utils/streaming.js';
+import type { FeatureDetails } from '../unleash/client.js';
+import { createFlagLinks } from '../utils/streaming.js';
+import { jsonResult } from '../utils/toolResult.js';
 
 const getFlagStateSchema = z.object({
   projectId: z
@@ -21,14 +22,6 @@ const getFlagStateSchema = z.object({
 });
 
 type GetFlagStateInput = z.infer<typeof getFlagStateSchema>;
-
-function summarizeEnvironment(env: FeatureEnvironment): string {
-  const status = env.enabled ? 'enabled' : 'disabled';
-  const strategyCount = env.strategies?.length ?? 0;
-  const enabledStrategies = env.strategies?.filter((s) => !s.disabled).length ?? 0;
-  const variants = env.variants?.length ?? 0;
-  return `${env.environment ?? env.name}: ${status} (${enabledStrategies}/${strategyCount} active strategies${variants ? `, ${variants} variants` : ''})`;
-}
 
 export async function getFlagState(
   context: ServerContext,
@@ -67,7 +60,7 @@ export async function getFlagState(
       `Fetched feature "${input.featureName}" (${environments.length} environment${environments.length === 1 ? '' : 's'} considered)`,
     );
 
-    const { url, resource } = createFlagResourceLink(
+    const { url, resourceUri } = createFlagLinks(
       context.config.unleash.baseUrl,
       projectId,
       input.featureName,
@@ -77,27 +70,11 @@ export async function getFlagState(
       projectId,
     )}/features/${encodeURIComponent(input.featureName)}`;
 
-    const environmentSummaries =
-      environments.length > 0
-        ? environments.map((env) => `- ${summarizeEnvironment(env)}`).join('\n')
-        : '- No environments matched the provided filters.';
-
-    const messageLines = [
-      `Feature "${feature.name}" (${feature.type ?? 'unknown type'})`,
-      `Enabled: ${feature.enabled ? 'yes' : 'no'} • Archived: ${feature.archived ? 'yes' : 'no'} • Impression data: ${feature.impressionData ? 'on' : 'off'}`,
-      `Project: ${feature.project ?? projectId}`,
-      `Environments:\n${environmentSummaries}`,
-      `View feature: ${url}`,
-      `Admin API: ${apiUrl}`,
-    ];
-
-    const summaryText = messageLines.join('\n');
-
     context.logger.info(
       `Retrieved feature state for "${input.featureName}"${input.environment ? ` (filtered to "${input.environment}")` : ''}`,
     );
 
-    const structuredContent = {
+    return jsonResult({
       success: true,
       projectId,
       featureName: feature.name,
@@ -107,26 +84,9 @@ export async function getFlagState(
       links: {
         ui: url,
         api: apiUrl,
-        resourceUri: resource.uri,
+        resourceUri,
       },
-    };
-
-    return {
-      content: [
-        {
-          type: 'text',
-          text: summaryText,
-        },
-        {
-          type: 'resource_link',
-          name: feature.name,
-          uri: resource.uri,
-          mimeType: resource.mimeType,
-          title: resource.text,
-        },
-      ],
-      structuredContent,
-    };
+    });
   } catch (error) {
     return handleToolError(context, error, 'get_flag_state');
   }
