@@ -7,7 +7,8 @@ import {
   type ServerContext,
 } from '../context.js';
 import type { FeatureFlagType } from '../unleash/client.js';
-import { createFlagResourceLink, formatFlagCreatedMessage } from '../utils/streaming.js';
+import { createFlagLinks, formatFlagCreatedMessage } from '../utils/streaming.js';
+import { jsonResult } from '../utils/toolResult.js';
 
 /**
  * Input schema for the create_flag tool.
@@ -51,7 +52,7 @@ type CreateFeatureFlagInput = z.infer<typeof createFeatureFlagSchema>;
  * - Provide a simple interface for creating feature flags
  * - Validate inputs before making API calls
  * - Stream progress to provide visibility during creation
- * - Return both human-readable output and structured resource links
+ * - Return the created flag and its links as JSON
  *
  * Best Practices (from https://docs.getunleash.io/topics/feature-flags/best-practices-using-feature-flags-at-scale):
  * - Choose the right flag type for your use case
@@ -93,8 +94,7 @@ export async function createFlag(
       `Feature flag "${input.name}" created successfully`,
     );
 
-    // Create resource link
-    const { url, resource } = createFlagResourceLink(
+    const { url, resourceUri } = createFlagLinks(
       context.config.unleash.baseUrl,
       projectId,
       response.name,
@@ -112,7 +112,7 @@ export async function createFlag(
 
     const apiUrl = `${context.config.unleash.baseUrl}/api/admin/projects/${projectId}/features/${response.name}`;
 
-    const structuredContent = {
+    return jsonResult({
       success: true,
       dryRun: context.config.server.dryRun,
       feature: {
@@ -126,27 +126,9 @@ export async function createFlag(
       links: {
         ui: url,
         api: apiUrl,
-        resourceUri: resource.uri,
+        resourceUri,
       },
-    };
-
-    // Return response with both text and resource link
-    return {
-      content: [
-        {
-          type: 'text',
-          text: `${message}\nAdmin API: ${apiUrl}`,
-        },
-        {
-          type: 'resource_link',
-          name: response.name,
-          uri: resource.uri,
-          mimeType: resource.mimeType,
-          title: resource.text,
-        },
-      ],
-      structuredContent,
-    };
+    });
   } catch (error) {
     // Handle errors consistently
     return handleToolError(context, error, 'create_flag');

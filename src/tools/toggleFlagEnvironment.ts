@@ -6,7 +6,8 @@ import {
   resolveProjectId,
   type ServerContext,
 } from '../context.js';
-import { createFlagResourceLink } from '../utils/streaming.js';
+import { createFlagLinks } from '../utils/streaming.js';
+import { jsonResult } from '../utils/toolResult.js';
 
 const toggleFlagEnvironmentSchema = z.object({
   projectId: z
@@ -64,7 +65,7 @@ export async function toggleFlagEnvironment(
       `${input.enabled ? 'Enabled' : 'Disabled'} "${input.featureName}" in "${input.environment}"`,
     );
 
-    const { url, resource } = createFlagResourceLink(
+    const { url, resourceUri } = createFlagLinks(
       context.config.unleash.baseUrl,
       projectId,
       input.featureName,
@@ -83,18 +84,7 @@ export async function toggleFlagEnvironment(
         return env.environment?.toLowerCase() === target || env.name.toLowerCase() === target;
       }) ?? null;
 
-    const messageLines = [
-      `${input.enabled ? 'Enabled' : 'Disabled'} "${input.featureName}" in "${input.environment}".`,
-      environmentState
-        ? `Environment state: ${environmentState.enabled ? 'enabled' : 'disabled'} • Strategies: ${
-            environmentState.strategies?.length ?? 0
-          }`
-        : 'Environment state could not be located in the response.',
-      `View feature: ${url}`,
-      `Admin API: ${apiUrl}`,
-    ];
-
-    const structuredContent = {
+    return jsonResult({
       success: true,
       dryRun: context.config.server.dryRun,
       projectId,
@@ -105,26 +95,9 @@ export async function toggleFlagEnvironment(
       links: {
         ui: url,
         api: apiUrl,
-        resourceUri: resource.uri,
+        resourceUri,
       },
-    };
-
-    return {
-      content: [
-        {
-          type: 'text',
-          text: messageLines.join('\n'),
-        },
-        {
-          type: 'resource_link',
-          name: feature.name,
-          uri: resource.uri,
-          mimeType: resource.mimeType,
-          title: resource.text,
-        },
-      ],
-      structuredContent,
-    };
+    });
   } catch (error) {
     return handleToolError(context, error, 'toggle_flag_environment');
   }

@@ -8,6 +8,7 @@ import {
 } from '../context.js';
 import { readFeatureFlagsResource } from '../resources/unleashResources.js';
 import type { FeatureFlagSummary } from '../unleash/client.js';
+import { jsonResult } from '../utils/toolResult.js';
 
 const listFlagsSchema = z.object({
   projectId: z
@@ -36,7 +37,9 @@ const listFlagsSchema = z.object({
     .int()
     .nonnegative()
     .optional()
-    .describe('Number of flags to skip for pagination (default: 0)'),
+    .describe(
+      'Number of flags to skip (default: 0). To get the next page, pass the nextOffset from the previous response; no nextOffset means this was the last page.',
+    ),
 });
 
 type ListFlagsInput = z.infer<typeof listFlagsSchema>;
@@ -91,56 +94,11 @@ export async function listFlags(
       `Listed ${envelope.flags.length} of ${envelope.totalFlags} ${filterLabel} flag${envelope.totalFlags === 1 ? '' : 's'}`,
     );
 
-    const paginationHint =
-      envelope.nextOffset != null
-        ? `, nextOffset=${envelope.nextOffset} (call again with offset=${envelope.nextOffset} for the next page)`
-        : '';
-
-    const flagLines =
-      envelope.flags.length > 0
-        ? envelope.flags.map((f) => {
-            const typeLabel = f.type ?? 'unknown';
-            const descriptionSuffix = f.description ? ` — ${f.description}` : '';
-            return `- ${f.name} (${typeLabel})${descriptionSuffix}`;
-          })
-        : [`- No ${filterLabel} flags found.`];
-
-    const counterpartHint = archivedRequested
-      ? ' Call again with archived=false (or omit the parameter) to see active flags.'
-      : ' Call again with archived=true to see archived flags.';
-
-    const summaryText = [
-      `Project "${projectId}" — ${envelope.totalFlags} ${filterLabel} flag${envelope.totalFlags === 1 ? '' : 's'} total.`,
-      `Showing ${envelope.flags.length}; order=${envelope.order}, offset=${envelope.offset}${paginationHint}.`,
-      `(Filter: archived=${envelope.archived}.${counterpartHint})`,
-      '',
-      `${filterLabel.charAt(0).toUpperCase()}${filterLabel.slice(1)} flags:`,
-      ...flagLines,
-    ].join('\n');
-
     context.logger.info(
       `Listed ${envelope.flags.length}/${envelope.totalFlags} ${filterLabel} feature flag(s) in project "${projectId}"`,
     );
 
-    return {
-      content: [
-        {
-          type: 'text',
-          text: summaryText,
-        },
-        {
-          type: 'resource_link',
-          name: `feature-flags-${projectId}-${filterLabel}`,
-          uri: resource.uri,
-          mimeType: resource.mimeType ?? 'application/json',
-          title: `${filterLabel.charAt(0).toUpperCase()}${filterLabel.slice(1)} feature flags in project ${projectId}`,
-        },
-      ],
-      structuredContent: {
-        success: true,
-        ...envelope,
-      },
-    };
+    return jsonResult({ success: true, ...envelope });
   } catch (error) {
     return handleToolError(context, error, 'list_flags');
   }

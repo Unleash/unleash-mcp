@@ -7,7 +7,8 @@ import {
   type ServerContext,
 } from '../context.js';
 import type { StrategyVariant, StrategyVariantPayload } from '../unleash/client.js';
-import { createFlagResourceLink } from '../utils/streaming.js';
+import { createFlagLinks } from '../utils/streaming.js';
+import { jsonResult } from '../utils/toolResult.js';
 
 const variantPayloadSchema = z.object({
   type: z.enum(['json', 'csv', 'string', 'number']).describe('Payload type'),
@@ -100,7 +101,7 @@ export async function setFlagRollout(
       `${mode}Strategy configured for "${input.featureName}" in "${input.environment}"`,
     );
 
-    const { url, resource } = createFlagResourceLink(
+    const { url, resourceUri } = createFlagLinks(
       context.config.unleash.baseUrl,
       projectId,
       input.featureName,
@@ -118,35 +119,20 @@ export async function setFlagRollout(
 
     context.logger.info(`${message}${input.disabled ? ' Strategy is marked as disabled.' : ''}`);
 
-    return {
-      content: [
-        {
-          type: 'text',
-          text: `${message}\nView feature: ${url}\nAdmin API: ${apiUrl}`,
-        },
-        {
-          type: 'resource_link',
-          name: input.featureName,
-          uri: resource.uri,
-          mimeType: resource.mimeType,
-          title: resource.text,
-        },
-      ],
-      structuredContent: {
-        success: true,
-        dryRun: context.config.server.dryRun,
-        projectId,
-        featureName: input.featureName,
-        environment: input.environment,
-        rolloutPercentage: input.rolloutPercentage,
-        strategy,
-        links: {
-          ui: url,
-          api: apiUrl,
-          resourceUri: resource.uri,
-        },
+    return jsonResult({
+      success: true,
+      dryRun: context.config.server.dryRun,
+      projectId,
+      featureName: input.featureName,
+      environment: input.environment,
+      rolloutPercentage: input.rolloutPercentage,
+      strategy,
+      links: {
+        ui: url,
+        api: apiUrl,
+        resourceUri,
       },
-    };
+    });
   } catch (error) {
     return handleToolError(context, error, 'set_flag_rollout');
   }

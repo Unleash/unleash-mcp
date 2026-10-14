@@ -46,23 +46,16 @@ export const notifyProgress = (mcpServer: McpServer) => {
 };
 
 /**
- * Helper to create resource links for created feature flags.
- * Returns both a human-readable URL and an MCP resource link.
+ * Build a flag's Admin UI URL and its MCP resource URI.
  */
-export function createFlagResourceLink(
+export function createFlagLinks(
   baseUrl: string,
   projectId: string,
   flagName: string,
-): { url: string; resource: { uri: string; mimeType?: string; text: string } } {
-  const url = `${baseUrl}/projects/${projectId}/features/${flagName}`;
-
+): { url: string; resourceUri: string } {
   return {
-    url,
-    resource: {
-      uri: buildFeatureFlagUri(projectId, flagName),
-      mimeType: 'application/json',
-      text: `Feature flag: ${flagName}`,
-    },
+    url: `${baseUrl}/projects/${projectId}/features/${flagName}`,
+    resourceUri: buildFeatureFlagUri(projectId, flagName),
   };
 }
 

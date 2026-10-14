@@ -141,12 +141,6 @@ describe('send_feedback', () => {
         hint: 'Check that the configured feedback URL is reachable.',
       },
     });
-    expect(result.content).toMatchObject([
-      {
-        type: 'text',
-        text: expect.stringContaining('Error: Failed to connect to the Unleash feedback endpoint'),
-      },
-    ]);
   });
 
   it('reports an unsupported request with null tool and error code', async () => {
@@ -261,16 +255,10 @@ describe('send_feedback', () => {
 
     expect(sendFeedbackRequest).toHaveBeenCalledTimes(sent ? 1 : 0);
     expect(result.isError).toBeFalsy();
-    expect(result).toMatchObject({
-      content: [
-        { type: 'text' },
-        { type: 'text', text: expect.stringContaining(FAKE_CONSENT_WRITE_ERROR) },
-      ],
-      structuredContent: {
-        success: true,
-        sent,
-        warning: expect.stringContaining(FAKE_CONSENT_WRITE_ERROR),
-      },
+    expect(result.structuredContent).toMatchObject({
+      success: true,
+      sent,
+      warning: expect.stringContaining(FAKE_CONSENT_WRITE_ERROR),
     });
   });
 
@@ -286,17 +274,11 @@ describe('send_feedback', () => {
 
     const result = await sendFeedback(context, defaultInput);
 
-    expect(result).toMatchObject({
-      isError: true,
-      content: [
-        { type: 'text' },
-        { type: 'text', text: expect.stringContaining(FAKE_CONSENT_WRITE_ERROR) },
-      ],
-      structuredContent: {
-        success: false,
-        error: { code: 'NETWORK_ERROR' },
-        warning: expect.stringContaining(FAKE_CONSENT_WRITE_ERROR),
-      },
+    expect(result.isError).toBe(true);
+    expect(result.structuredContent).toMatchObject({
+      success: false,
+      error: { code: 'NETWORK_ERROR' },
+      warning: expect.stringContaining(FAKE_CONSENT_WRITE_ERROR),
     });
   });
 
