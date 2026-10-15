@@ -161,6 +161,12 @@ export interface PlaygroundVariant {
   payload?: { type: string; value: string };
 }
 
+export interface PlaygroundStrategyVariant {
+  name: string;
+  enabled: boolean;
+  payload?: StrategyVariantPayload;
+}
+
 export interface PlaygroundConstraintResult {
   contextName: string;
   operator: string;
@@ -182,7 +188,7 @@ export type PlaygroundStrategyEvaluation =
   | {
       evaluationStatus: 'complete';
       enabled: boolean;
-      variant?: PlaygroundVariant | null;
+      variant?: PlaygroundStrategyVariant | null;
       variants?: StrategyVariant[];
     }
   | {
