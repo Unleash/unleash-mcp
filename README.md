@@ -27,6 +27,7 @@ The MCP server exposes the following tools:
 - `set_flag_rollout`: Configures rollout strategies for a feature flag (does not enable the flag).
 - `get_flag_state`: Surfaces a feature flag's metadata and its activation strategies.
 - `get_segments`: Describes the segments that flag strategies refer to by ID.
+- `evaluate_flag`: Evaluates a single feature flag against an Unleash context (for example a user ID and custom properties) in an environment, and explains which strategies matched.
 - `list_flags`: Lists all feature flags in a project, with optional pagination and sort order.
 - `search_flags`: Searches active feature flags in all projects by part of their name or description, or finds one flag and its project by its full name.
 - `list_projects`: Lists Unleash projects available to the configured token, with optional pagination.
@@ -687,6 +688,46 @@ The `get_segments` tool describes the segments that flag strategies refer to. A 
 
 Returns a JSON object with `segments`, in the order of the IDs given, and `errors`. Each segment has its `id`, `name`, `description`, `project`, and the `constraints` that decide who it includes. Each entry in `errors` has the `id` that could not be fetched and the `error` Unleash gave for it. If no segment could be fetched, the call is reported as an error.
 
+### Evaluate flag
+
+The `evaluate_flag` tool evaluates a single feature flag against an Unleash context in an environment, using the Unleash playground API. It returns whether the flag is enabled for that context, the variant it resolves to, and a per-strategy breakdown listing the constraints and segments that did not match. The project is resolved from the flag name.
+
+> **Alpha:** this tool uses `POST /api/admin/playground/features/{featureName}`, an alpha Unleash API that may change. It requires an Unleash version that provides this endpoint.
+
+#### When to use
+
+Use this tool to answer questions like "is `show-new-checkout` on for user `asdf`?" or to debug why a flag is off for a specific user. Use `get_flag_state` to inspect a flag's configuration instead.
+
+#### Parameters
+
+- `featureName` (required): Feature flag name.
+- `environment` (optional): Environment to evaluate in (defaults to `UNLEASH_DEFAULT_ENVIRONMENT`; required if that is not set).
+- `context` (optional): A flat Unleash context object. `userId`, `sessionId`, `remoteAddress`, `currentTime`, and `appName` are sent as standard fields; any other key (for example `tier`) is sent as a custom context property. Numbers and booleans are converted to strings. A nested `properties` object is also accepted.
+- `appName` (optional): Application name for the context (default: `unleash-mcp`).
+
+#### Usage example
+
+**Agent prompt**
+
+```
+Use evaluate_flag to check whether "show-new-checkout" is enabled in production
+for userId "asdf" on the "top" tier.
+```
+
+**Tool payload**
+
+```json
+{
+  "featureName": "show-new-checkout",
+  "environment": "production",
+  "context": { "userId": "asdf", "tier": "top" }
+}
+```
+
+**Tool output**
+
+Returns a text summary with the result (`ENABLED`, `DISABLED`, or `UNKNOWN` when a custom strategy cannot be evaluated), the variant, warnings when the flag is off in the environment or has an unsatisfied dependency, each strategy's outcome with its failing constraints and segments, the context that was sent, and a link to the flag in the Unleash Admin UI. The structured output includes the full playground response.
+
 ### List flags
 
 The `list_flags` tool enumerates the feature flags in a project and returns a structured inventory with pagination and sort order. Active and archived flags are returned separately: call it once with `archived: false` (the default) and once with `archived: true` to assemble a full inventory for audit workflows.
@@ -1043,6 +1084,7 @@ src/
 │   ├── listFlags.ts             # list_flags tool
 │   ├── listProjects.ts          # list_projects tool
 │   ├── searchFlags.ts           # search_flags tool
+│   ├── evaluateFlag.ts          # evaluate_flag tool
 │   ├── toggleFlagEnvironment.ts # toggle_flag_environment tool
 │   ├── removeFlagStrategy.ts    # remove_flag_strategy tool
 │   └── sendFeedback.ts          # send_feedback tool

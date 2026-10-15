@@ -28,6 +28,7 @@ import { cleanupFlagTool } from './tools/cleanupFlag.js';
 import { createFlagTool } from './tools/createFlag.js';
 import { detectFlagTool } from './tools/detectFlag.js';
 import { evaluateChangeTool } from './tools/evaluateChange.js';
+import { evaluateFlagTool } from './tools/evaluateFlag.js';
 import { getFlagStateTool } from './tools/getFlagState.js';
 import { getSegmentsTool } from './tools/getSegments.js';
 import { listFlagsTool } from './tools/listFlags.js';
@@ -189,6 +190,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     setFlagRolloutTool,
     getFlagStateTool,
     getSegmentsTool,
+    evaluateFlagTool,
     listFlagsTool,
     searchFlagsTool,
     listProjectsTool,
