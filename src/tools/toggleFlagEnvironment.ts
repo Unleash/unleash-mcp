@@ -1,7 +1,7 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import {
-  askForProjectId,
+  askToFindFlagProject,
   handleToolError,
   resolveProjectId,
   type ServerContext,
@@ -14,7 +14,7 @@ const toggleFlagEnvironmentSchema = z.object({
     .string()
     .optional()
     .describe(
-      'Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set)',
+      'Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set; search_flags finds it from the flag name)',
     ),
   featureName: z.string().min(1).describe('Feature flag name'),
   environment: z.string().min(1).describe('Environment to toggle'),
@@ -32,7 +32,7 @@ export async function toggleFlagEnvironment(
     const input: ToggleFlagEnvironmentInput = toggleFlagEnvironmentSchema.parse(args);
 
     const projectId = await resolveProjectId(input.projectId, context);
-    if (!projectId) return askForProjectId(context);
+    if (!projectId) return askToFindFlagProject(input.featureName);
     const action = input.enabled ? 'Enabling' : 'Disabling';
 
     await context.notifyProgress(

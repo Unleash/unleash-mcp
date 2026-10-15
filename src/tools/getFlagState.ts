@@ -1,7 +1,7 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import {
-  askForProjectId,
+  askToFindFlagProject,
   handleToolError,
   resolveProjectId,
   type ServerContext,
@@ -15,7 +15,7 @@ const getFlagStateSchema = z.object({
     .string()
     .optional()
     .describe(
-      'Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set)',
+      'Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set; search_flags finds it from the flag name)',
     ),
   featureName: z.string().min(1).describe('Feature flag name'),
   environment: z.string().optional().describe('Optional environment filter (case-insensitive)'),
@@ -32,7 +32,7 @@ export async function getFlagState(
     const input: GetFlagStateInput = getFlagStateSchema.parse(args);
 
     const projectId = await resolveProjectId(input.projectId, context);
-    if (!projectId) return askForProjectId(context);
+    if (!projectId) return askToFindFlagProject(input.featureName);
 
     await context.notifyProgress(
       progressToken,

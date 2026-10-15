@@ -55,6 +55,18 @@ export interface FeatureFlagSummary {
   url: string;
 }
 
+export interface FeatureFlagSearchResult {
+  total: number;
+  flags: Array<{
+    name: string;
+    project: string;
+    type?: FeatureFlagType;
+    description?: string | null;
+    stale?: boolean;
+    environments: Array<{ name: string; enabled: boolean }>;
+  }>;
+}
+
 export interface StrategyVariantPayload {
   type: 'json' | 'csv' | 'string' | 'number';
   value: string;
@@ -358,6 +370,38 @@ export class UnleashClient {
         networkErrorMessage: `Failed to connect to Unleash API while fetching feature ${featureName}`,
       },
     );
+  }
+
+  /**
+   * Search active flags in all projects by part of their name or description. Keeps only the
+   * fields an agent needs to pick a flag; search also returns tags, lifecycle, creator and more.
+   */
+  async searchFeatureFlags(query: string): Promise<FeatureFlagSearchResult> {
+    if (this.dryRun) {
+      return { total: 0, flags: [] };
+    }
+
+    const data = await this.requestJson<{
+      total: number;
+      features: Array<FeatureFlagSearchResult['flags'][number]>;
+    }>(
+      `/api/admin/search/features?${new URLSearchParams({ query }).toString()}`,
+      { method: 'GET' },
+      {
+        errorMessage: `Failed to search feature flags for "${query}"`,
+        networkErrorMessage: 'Failed to connect to Unleash API while searching feature flags',
+      },
+    );
+
+    const flags = data.features.map((flag) => ({
+      name: flag.name,
+      project: flag.project,
+      type: flag.type,
+      description: flag.description,
+      stale: flag.stale,
+      environments: flag.environments.map(({ name, enabled }) => ({ name, enabled })),
+    }));
+    return { total: data.total, flags };
   }
 
   async deleteFeatureStrategy(
