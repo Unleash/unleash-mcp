@@ -27,6 +27,7 @@ The MCP server exposes the following tools:
 - `set_flag_rollout`: Configures rollout strategies for a feature flag (does not enable the flag).
 - `get_flag_state`: Surfaces a feature flag's metadata and its activation strategies.
 - `get_flag_history`: Returns a feature flag's recent changes from the event log, each as a diff of what changed, who changed it, when, and in which environment.
+- `evaluate_flag`: Evaluates a single feature flag against an Unleash context (for example a user ID and custom properties) in an environment, and explains which strategies matched.
 - `list_flags`: Lists all feature flags in a project, with optional pagination and sort order.
 - `search_flags`: Searches active feature flags in all projects by part of their name or description, or finds one flag and its project by its full name.
 - `list_projects`: Lists Unleash projects available to the configured token, with optional pagination.
@@ -675,6 +676,46 @@ Use get_flag_state with:
 
 Returns a JSON object with the full feature object (all environments and strategy details), the environments matching the filter, and UI and API links.
 
+### Evaluate flag
+
+The `evaluate_flag` tool evaluates a single feature flag against an Unleash context in an environment, using the Unleash playground API. It returns whether the flag is enabled for that context, the variant it resolves to, and a per-strategy breakdown listing the constraints and segments that did not match. The project is resolved from the flag name.
+
+> **Alpha:** this tool uses `POST /api/admin/playground/features/{featureName}`, an alpha Unleash API that may change. It requires an Unleash version that provides this endpoint.
+
+#### When to use
+
+Use this tool to answer questions like "is `show-new-checkout` on for user `asdf`?" or to debug why a flag is off for a specific user. Use `get_flag_state` to inspect a flag's configuration instead.
+
+#### Parameters
+
+- `featureName` (required): Feature flag name.
+- `environment` (optional): Environment to evaluate in (defaults to `UNLEASH_DEFAULT_ENVIRONMENT`; required if that is not set).
+- `context` (optional): A flat Unleash context object. `userId`, `sessionId`, `remoteAddress`, `currentTime`, and `appName` are sent as standard fields; any other key (for example `tier`) is sent as a custom context property. Numbers and booleans are converted to strings. A nested `properties` object is also accepted.
+- `appName` (optional): Application name for the context (default: `unleash-mcp`).
+
+#### Usage example
+
+**Agent prompt**
+
+```
+Use evaluate_flag to check whether "show-new-checkout" is enabled in production
+for userId "asdf" on the "top" tier.
+```
+
+**Tool payload**
+
+```json
+{
+  "featureName": "show-new-checkout",
+  "environment": "production",
+  "context": { "userId": "asdf", "tier": "top" }
+}
+```
+
+**Tool output**
+
+Returns a text summary with the result (`ENABLED`, `DISABLED`, or `UNKNOWN` when a custom strategy cannot be evaluated), the variant, warnings when the flag is off in the environment or has an unsatisfied dependency, each strategy's outcome with its failing constraints and segments, the context that was sent, and a link to the flag in the Unleash Admin UI. The structured output includes the full playground response.
+
 ### Get flag history
 
 The `get_flag_history` tool fetches the most recent change events for a feature flag from the Unleash event log, newest first. Instead of returning each event's full before and after payloads, it computes a structural diff inside the tool and returns only the changed fields, so the agent reads the change itself without having to diff two large objects.
@@ -1063,6 +1104,7 @@ src/
 │   ├── cleanupFlag.ts           # cleanup_flag tool
 │   ├── setFlagRollout.ts        # set_flag_rollout tool
 │   ├── getFlagState.ts          # get_flag_state tool
+│   ├── evaluateFlag.ts          # evaluate_flag tool
 │   ├── getFlagHistory.ts        # get_flag_history tool
 │   ├── toggleFlagEnvironment.ts # toggle_flag_environment tool
 │   ├── removeFlagStrategy.ts    # remove_flag_strategy tool
