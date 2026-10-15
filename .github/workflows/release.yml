@@ -44,6 +44,9 @@ jobs:
           TMP_FILE=$(mktemp)
           jq --arg v "$PKG_VERSION" '.version=$v | .packages = (.packages | map(.version=$v))' server.json > "$TMP_FILE"
           mv "$TMP_FILE" server.json
+      - name: Wait for npm to finish processing the release
+        # npm publishes asynchronously; the registry rejects versions it cannot yet see on npm
+        run: timeout 15m sh -c 'until npm view "@unleash/mcp@$(jq -r .version package.json)" version; do sleep 15; done'
       # the guide suggests using --private-key-file but that isn't supported, so I'm using --private-key
       # official publishing guide: https://github.com/modelcontextprotocol/registry/blob/main/docs/guides/publishing/publish-server.md
       - name: Login to MCP Registry
