@@ -38,6 +38,11 @@ function isNoise(path: (string | number)[]): boolean {
 export function diffEventData(before: unknown, after: unknown): FieldChange[] {
   // microdiff requires objects/arrays; `?? {}` turns an absent side into a
   // create/delete expressed as additions/removals rather than a throw.
+  //
+  // Known limitation: a primitive on either side is not handled. Two strings make
+  // microdiff throw (it walks the string's indices with `in`), and two numbers or
+  // booleans silently diff to nothing. Unleash event payloads are always objects,
+  // so this is left as is rather than guarded.
   const differences = diff((before ?? {}) as object, (after ?? {}) as object);
 
   return differences
