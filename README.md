@@ -1026,6 +1026,9 @@ src/
 │   ├── cleanupFlag.ts           # cleanup_flag tool
 │   ├── setFlagRollout.ts        # set_flag_rollout tool
 │   ├── getFlagState.ts          # get_flag_state tool
+│   ├── getSegments.ts           # get_segments tool
+│   ├── listFlags.ts             # list_flags tool
+│   ├── listProjects.ts          # list_projects tool
 │   ├── toggleFlagEnvironment.ts # toggle_flag_environment tool
 │   ├── removeFlagStrategy.ts    # remove_flag_strategy tool
 │   └── sendFeedback.ts          # send_feedback tool
@@ -1049,6 +1052,7 @@ src/
 └── utils/
     ├── errors.ts                # Error normalization
     ├── streaming.ts             # Progress notifications
+    ├── toolResult.ts            # JSON tool results
     └── stdioLogging.ts          # Stdio protocol traffic logging
 ```
 
