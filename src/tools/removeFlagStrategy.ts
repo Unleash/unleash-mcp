@@ -1,7 +1,7 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import {
-  askForProjectId,
+  askToFindFlagProject,
   handleToolError,
   resolveProjectId,
   type ServerContext,
@@ -15,7 +15,7 @@ const removeFlagStrategySchema = z.object({
     .string()
     .optional()
     .describe(
-      'Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set)',
+      'Project ID where the feature flag resides (optional if UNLEASH_DEFAULT_PROJECT is set; search_flags finds it from the flag name)',
     ),
   featureName: z.string().min(1).describe('Feature flag name'),
   environment: z.string().min(1).describe('Environment from which to remove the strategy'),
@@ -33,7 +33,7 @@ export async function removeFlagStrategy(
     const input: RemoveFlagStrategyInput = removeFlagStrategySchema.parse(args);
 
     const projectId = await resolveProjectId(input.projectId, context);
-    if (!projectId) return askForProjectId(context);
+    if (!projectId) return askToFindFlagProject(input.featureName);
 
     await context.notifyProgress(
       progressToken,
