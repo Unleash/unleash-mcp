@@ -137,6 +137,95 @@ export interface FeatureDetails {
 }
 
 /**
+ * The Unleash context as modeled in client SDKs.
+ * Custom fields go in `properties`; values must be strings.
+ */
+export interface UnleashContext {
+  appName: string;
+  userId?: string;
+  sessionId?: string;
+  remoteAddress?: string;
+  currentTime?: string;
+  properties?: Record<string, string>;
+  [key: string]: unknown;
+}
+
+export interface PlaygroundFeatureRequest {
+  environment: string;
+  context: UnleashContext;
+}
+
+export interface PlaygroundVariant {
+  name: string;
+  enabled: boolean;
+  payload?: { type: string; value: string };
+}
+
+export interface PlaygroundStrategyVariant {
+  name: string;
+  enabled: boolean;
+  payload?: StrategyVariantPayload;
+}
+
+export interface PlaygroundConstraintResult {
+  contextName: string;
+  operator: string;
+  caseInsensitive?: boolean;
+  inverted?: boolean;
+  values?: string[];
+  value?: string;
+  result: boolean;
+}
+
+export interface PlaygroundSegmentResult {
+  id: number;
+  name: string;
+  result: boolean;
+  constraints: PlaygroundConstraintResult[];
+}
+
+export type PlaygroundStrategyEvaluation =
+  | {
+      evaluationStatus: 'complete';
+      enabled: boolean;
+      variant?: PlaygroundStrategyVariant | null;
+      variants?: StrategyVariant[];
+    }
+  | {
+      evaluationStatus: 'incomplete' | 'unevaluated';
+      enabled: false | 'unknown';
+    };
+
+export interface PlaygroundStrategyResult {
+  id: string;
+  name: string;
+  title?: string;
+  result: PlaygroundStrategyEvaluation;
+  disabled: boolean | null;
+  segments: PlaygroundSegmentResult[];
+  constraints: PlaygroundConstraintResult[];
+  parameters: Record<string, string>;
+  links: { edit: string };
+}
+
+export interface PlaygroundFeatureResponse {
+  input: PlaygroundFeatureRequest;
+  feature: {
+    name: string;
+    projectId: string;
+    isEnabled: boolean;
+    isEnabledInCurrentEnvironment: boolean;
+    hasUnsatisfiedDependency?: boolean;
+    variant: PlaygroundVariant | null;
+    variants: StrategyVariant[];
+    strategies: {
+      result: boolean | 'unknown';
+      data: PlaygroundStrategyResult[];
+    };
+  };
+}
+
+/**
  * Minimal Unleash Admin API client focused on feature flag creation.
  * Uses native fetch (Node 18+) for HTTP requests.
  */
@@ -402,6 +491,43 @@ export class UnleashClient {
       environments: flag.environments.map(({ name, enabled }) => ({ name, enabled })),
     }));
     return { total: data.total, flags };
+  }
+
+  /**
+   * Evaluate a single feature flag against a context in an environment
+   * (alpha playground endpoint). The project is resolved server-side.
+   */
+  async evaluateFeature(
+    featureName: string,
+    request: PlaygroundFeatureRequest,
+  ): Promise<PlaygroundFeatureResponse> {
+    if (this.dryRun) {
+      return {
+        input: request,
+        feature: {
+          name: featureName,
+          projectId: 'default',
+          isEnabled: false,
+          isEnabledInCurrentEnvironment: false,
+          hasUnsatisfiedDependency: false,
+          variant: { name: 'disabled', enabled: false },
+          variants: [],
+          strategies: { result: false, data: [] },
+        },
+      };
+    }
+
+    return this.requestJson<PlaygroundFeatureResponse>(
+      `/api/admin/playground/features/${encodeURIComponent(featureName)}`,
+      {
+        method: 'POST',
+        body: JSON.stringify(request),
+      },
+      {
+        errorMessage: `Failed to evaluate feature ${featureName} in ${request.environment}`,
+        networkErrorMessage: `Failed to connect to Unleash API while evaluating feature ${featureName}`,
+      },
+    );
   }
 
   async deleteFeatureStrategy(
