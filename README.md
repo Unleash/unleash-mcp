@@ -27,7 +27,6 @@ The MCP server exposes the following tools:
 - `set_flag_rollout`: Configures rollout strategies for a feature flag (does not enable the flag).
 - `get_flag_state`: Surfaces a feature flag's metadata and its activation strategies.
 - `get_flag_history`: Returns a feature flag's recent changes from the event log, each as a diff of what changed, who changed it, when, and in which environment.
-- `get_segments`: Describes the segments that flag strategies refer to by ID.
 - `evaluate_flag`: Evaluates a single feature flag against an Unleash context (for example a user ID and custom properties) in an environment, and explains which strategies matched.
 - `list_flags`: Lists all feature flags in a project, with optional pagination and sort order.
 - `search_flags`: Searches active feature flags in all projects by part of their name or description, or finds one flag and its project by its full name.
@@ -652,6 +651,7 @@ Use this tool to inspect a flag before modifying it, to check how many strategie
 - `featureName` (required): Feature flag name.
 - `projectId` (optional): Project ID (defaults to `UNLEASH_DEFAULT_PROJECT`).
 - `environment` (optional): Filter results to a single environment (case-insensitive).
+- `includeSegments` (optional): Also return the segments that the strategies in the matching environments use.
 
 #### Usage example
 
@@ -677,17 +677,7 @@ Use get_flag_state with:
 
 Returns a JSON object with the full feature object (all environments and strategy details), the environments matching the filter, and UI and API links.
 
-### Get segments
-
-The `get_segments` tool describes the segments that flag strategies refer to. A strategy from `get_flag_state` lists its segments only by ID; this tool returns what each one is.
-
-#### Parameters
-
-- `segmentIds` (required): Segment IDs, as listed in the `segments` field of a flag strategy. At most 20; an ID given twice is fetched once.
-
-#### Tool output
-
-Returns a JSON object with `segments`, in the order of the IDs given, and `errors`. Each segment has its `id`, `name`, `description`, `project`, and the `constraints` that decide who it includes. Each entry in `errors` has the `id` that could not be fetched and the `error` Unleash gave for it. If no segment could be fetched, the call is reported as an error.
+Strategies list their segments only by ID. When the matching environments use segments, the output includes a `hint` naming them. With `includeSegments`, it instead includes `segments`, each with its `id`, `name`, `description`, `project`, and the `constraints` that decide who it includes. Segments that could not be fetched are listed under `segmentErrors`, each with the `error` Unleash gave, and do not fail the call.
 
 ### Evaluate flag
 
@@ -1117,7 +1107,6 @@ src/
 │   ├── cleanupFlag.ts           # cleanup_flag tool
 │   ├── setFlagRollout.ts        # set_flag_rollout tool
 │   ├── getFlagState.ts          # get_flag_state tool
-│   ├── getSegments.ts           # get_segments tool
 │   ├── listFlags.ts             # list_flags tool
 │   ├── listProjects.ts          # list_projects tool
 │   ├── searchFlags.ts           # search_flags tool
