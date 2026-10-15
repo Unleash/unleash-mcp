@@ -680,11 +680,11 @@ The `get_segments` tool describes the segments that flag strategies refer to. A 
 
 #### Parameters
 
-- `segmentIds` (required): Segment IDs, as listed in the `segments` field of a flag strategy.
+- `segmentIds` (required): Segment IDs, as listed in the `segments` field of a flag strategy. At most 20; an ID given twice is fetched once.
 
 #### Tool output
 
-Returns a JSON object with `segments`, in the order of the IDs given. Each segment has its `id`, `name`, `description`, `project`, and the `constraints` that decide who it includes.
+Returns a JSON object with `segments`, in the order of the IDs given, and `errors`. Each segment has its `id`, `name`, `description`, `project`, and the `constraints` that decide who it includes. Each entry in `errors` has the `id` that could not be fetched and the `error` Unleash gave for it. If no segment could be fetched, the call is reported as an error.
 
 ### List flags
 
