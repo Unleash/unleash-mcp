@@ -140,6 +140,22 @@ export interface FeatureDetails {
  * Minimal Unleash Admin API client focused on feature flag creation.
  * Uses native fetch (Node 18+) for HTTP requests.
  */
+export interface FeatureEvent {
+  id: number;
+  createdAt: string;
+  type: string;
+  createdBy: string;
+  environment?: string | null;
+  featureName?: string | null;
+  data?: unknown;
+  preData?: unknown;
+}
+
+export interface FeatureEventsResult {
+  events: FeatureEvent[];
+  total: number;
+}
+
 export class UnleashClient {
   private readonly baseUrl: string;
   private readonly authHeaders: Record<string, string>;
@@ -368,6 +384,47 @@ export class UnleashClient {
       {
         errorMessage: `Failed to fetch feature ${featureName} in project ${projectId}`,
         networkErrorMessage: `Failed to connect to Unleash API while fetching feature ${featureName}`,
+      },
+    );
+  }
+
+  /**
+   * Fetch the most recent change events for a single feature flag, newest first.
+   * Endpoint: GET /api/admin/search/events?feature=IS:{name}&limit={limit}
+   *
+   * Returns the raw events including `preData`/`data`; the caller computes the diff.
+   */
+  async getFeatureEvents(featureName: string, limit: number): Promise<FeatureEventsResult> {
+    if (this.dryRun) {
+      return {
+        total: 1,
+        events: [
+          {
+            id: 1,
+            createdAt: new Date().toISOString(),
+            type: 'feature-strategy-update',
+            createdBy: 'dry-run@example.com',
+            environment: 'development',
+            featureName,
+            preData: { parameters: { rollout: '50' } },
+            data: { parameters: { rollout: '100' } },
+          },
+        ],
+      };
+    }
+
+    const params = new URLSearchParams({
+      feature: `IS:${featureName}`,
+      limit: String(limit),
+      offset: '0',
+    });
+
+    return this.requestJson<FeatureEventsResult>(
+      `/api/admin/search/events?${params.toString()}`,
+      { method: 'GET' },
+      {
+        errorMessage: `Failed to fetch events for feature ${featureName}`,
+        networkErrorMessage: `Failed to connect to Unleash API while fetching events for ${featureName}`,
       },
     );
   }

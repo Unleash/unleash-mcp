@@ -90,6 +90,7 @@ describe('remote MCP handler (e2e)', () => {
       'create_flag',
       'detect_flag',
       'evaluate_change',
+      'get_flag_history',
       'get_flag_state',
       'list_flags',
       'list_projects',
