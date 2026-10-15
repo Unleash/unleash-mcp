@@ -4,6 +4,7 @@ import { createFlagTool } from './createFlag.js';
 import { detectFlagTool } from './detectFlag.js';
 import { evaluateChangeTool } from './evaluateChange.js';
 import { evaluateFlagTool } from './evaluateFlag.js';
+import { getFlagHistoryTool } from './getFlagHistory.js';
 import { getFlagStateTool } from './getFlagState.js';
 import { getSegmentsTool } from './getSegments.js';
 import { listFlagsTool } from './listFlags.js';
@@ -26,6 +27,7 @@ const tools = [
   getFlagStateTool,
   getSegmentsTool,
   evaluateFlagTool,
+  getFlagHistoryTool,
   listFlagsTool,
   searchFlagsTool,
   listProjectsTool,
@@ -65,6 +67,7 @@ describe('tool annotations', () => {
         'detect_flag',
         'evaluate_change',
         'evaluate_flag',
+        'get_flag_history',
         'get_flag_state',
         'get_segments',
         'list_flags',

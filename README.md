@@ -26,6 +26,7 @@ The MCP server exposes the following tools:
 - `wrap_change`: Provides guidance on how to wrap a change in a feature flag.
 - `set_flag_rollout`: Configures rollout strategies for a feature flag (does not enable the flag).
 - `get_flag_state`: Surfaces a feature flag's metadata and its activation strategies.
+- `get_flag_history`: Returns a feature flag's recent changes from the event log, each as a diff of what changed, who changed it, when, and in which environment.
 - `get_segments`: Describes the segments that flag strategies refer to by ID.
 - `evaluate_flag`: Evaluates a single feature flag against an Unleash context (for example a user ID and custom properties) in an environment, and explains which strategies matched.
 - `list_flags`: Lists all feature flags in a project, with optional pagination and sort order.
@@ -728,6 +729,42 @@ for userId "asdf" on the "top" tier.
 
 Returns a text summary with the result (`ENABLED`, `DISABLED`, or `UNKNOWN` when a custom strategy cannot be evaluated), the variant, warnings when the flag is off in the environment or has an unsatisfied dependency, each strategy's outcome with its failing constraints and segments, the context that was sent, and a link to the flag in the Unleash Admin UI. The structured output includes the full playground response.
 
+### Get flag history
+
+The `get_flag_history` tool fetches the most recent change events for a feature flag from the Unleash event log, newest first. Instead of returning each event's full before and after payloads, it computes a structural diff inside the tool and returns only the changed fields, so the agent reads the change itself without having to diff two large objects.
+
+#### When to use
+
+Use this tool before editing or toggling a flag to see what changed recently and who changed it, or to explain why a flag is in its current state. Pair it with `get_flag_state` when the current configuration alone does not answer the question.
+
+#### Parameters
+
+- `featureName` (required): Feature flag name.
+- `limit` (optional): Maximum number of most recent changes to return, between 1 and 100 (default: 20).
+
+#### Usage example
+
+**Agent prompt**
+
+```
+Use get_flag_history with:
+- featureName: "new-checkout-flow"
+- limit: 10
+```
+
+**Tool payload**
+
+```json
+{
+  "featureName": "new-checkout-flow",
+  "limit": 10
+}
+```
+
+**Tool output**
+
+Returns a JSON object with `featureName`, `total` (every change on record for the flag), and `events`. Each event has `createdAt`, `createdBy`, `type`, `environment`, and `changes`: a list of changed leaves with `path` (for example `["parameters", "rollout"]`), `before`, and `after`. Added fields have `before: undefined`, removed fields have `after: undefined`. Fields that change on their own, such as `createdAt` and `lastSeenAt`, are stripped from the diff. Events with no payload, such as enabling or disabling an environment, have an empty `changes` list; the `type` describes them. When `total` is larger than the number of events returned, raise `limit`.
+
 ### List flags
 
 The `list_flags` tool enumerates the feature flags in a project and returns a structured inventory with pagination and sort order. Active and archived flags are returned separately: call it once with `archived: false` (the default) and once with `archived: true` to assemble a full inventory for audit workflows.
@@ -1085,6 +1122,7 @@ src/
 │   ├── listProjects.ts          # list_projects tool
 │   ├── searchFlags.ts           # search_flags tool
 │   ├── evaluateFlag.ts          # evaluate_flag tool
+│   ├── getFlagHistory.ts        # get_flag_history tool
 │   ├── toggleFlagEnvironment.ts # toggle_flag_environment tool
 │   ├── removeFlagStrategy.ts    # remove_flag_strategy tool
 │   └── sendFeedback.ts          # send_feedback tool
@@ -1177,6 +1215,7 @@ This server uses the Unleash Admin API. For complete API documentation, see:
 - `GET /api/admin/projects/{projectId}/features/{featureName}` - Get flag details
 - `GET /api/admin/segments/{id}` - Get segment
 - `GET /api/admin/search/features` - Search feature flags
+- `GET /api/admin/search/events` - Fetch a feature flag's change events
 - `POST /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies` - Add rollout strategy
 - `DELETE /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies/{strategyId}` - Remove strategy
 - `POST /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on` - Enable flag
