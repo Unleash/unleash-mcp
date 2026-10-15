@@ -49,7 +49,7 @@ This is an MCP server with a dual-mode architecture (stdio + remote HTTP). A tra
 - `src/server.ts` — Transport-agnostic server factory (`createUnleashMcpServer`)
 - `src/remote.ts` — HTTP request handler (`createMcpHandler`) for embedded mode
 - `src/index.ts` — Stdio CLI entry point
-- `src/tools/` — One file per MCP tool (createFlag, evaluateChange, detectFlag, wrapChange, cleanupFlag, setFlagRollout, getFlagState, evaluateFlag, toggleFlagEnvironment, removeFlagStrategy, sendFeedback). `sendFeedback` transmits reports via `FeedbackHttpClient` (DX-4860) only after `FeedbackConsentResolver` (`src/feedback/`) resolves user consent (DX-4859).
+- `src/tools/` — One file per MCP tool (createFlag, evaluateChange, detectFlag, wrapChange, cleanupFlag, setFlagRollout, getFlagState, getFlagHistory, evaluateFlag, toggleFlagEnvironment, removeFlagStrategy, listFlags, listProjects, searchFlags, sendFeedback). `sendFeedback` transmits reports via `FeedbackHttpClient` (DX-4860) only after `FeedbackConsentResolver` (`src/feedback/`) resolves user consent (DX-4859).
 - `src/feedback/` — Consent resolution (`FeedbackConsentResolver`), consent persistence (`FileConsentStore`), and the MCP elicitation prompt used to ask the user once.
 - `src/unleash/client.ts` — Unleash Admin API client
 - `src/evaluation/` — Risk assessment and flag detection patterns (used by evaluateChange)
@@ -59,7 +59,7 @@ This is an MCP server with a dual-mode architecture (stdio + remote HTTP). A tra
 - `src/prompts/` — Markdown prompt formatting utilities
 - `src/resources/` — MCP resource handlers for projects and feature flags
 - `src/http/` — Generic `HttpClient` (fetch wrapper, header merging, error normalization) for API-specific clients
-- `src/utils/` — Error normalization, streaming/progress notifications, stdio logging
+- `src/utils/` — Error normalization, streaming/progress notifications, stdio logging, JSON tool results
 
 ## Code Style
 

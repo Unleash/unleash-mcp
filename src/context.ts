@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { inspect } from 'node:util';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { Config } from './config.js';
 import type { FeedbackConsentResolver } from './feedback/consentResolver.js';
@@ -56,9 +57,13 @@ export function createLogger(logLevel: string): Logger {
     return levelIndex >= currentLevelIndex;
   }
 
+  // String() would print objects as "[object Object]"; inspect keeps their fields on one line.
+  const formatArg = (arg: unknown): string =>
+    typeof arg === 'string' ? arg : inspect(arg, { breakLength: Infinity });
+
   // Write logs to a file when provided; otherwise use stderr. Never write to stdout.
   const writeLog = (prefix: string, message: string, args: unknown[]): void => {
-    const line = `${prefix} ${message}${args.length ? ` ${args.map(String).join(' ')}` : ''}\n`;
+    const line = `${prefix} ${message}${args.length ? ` ${args.map(formatArg).join(' ')}` : ''}\n`;
     if (appLogFile) {
       try {
         fs.appendFileSync(appLogFile, line);

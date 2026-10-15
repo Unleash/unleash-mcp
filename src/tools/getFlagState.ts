@@ -5,8 +5,10 @@ import {
   handleToolError,
   resolveProjectId,
   type ServerContext,
+  toolErrorPayload,
 } from '../context.js';
-import type { FeatureDetails } from '../unleash/client.js';
+import type { FeatureDetails, FeatureEnvironment, Segment } from '../unleash/client.js';
+import type { NormalizedError } from '../utils/errors.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
 
@@ -19,6 +21,12 @@ const getFlagStateSchema = z.object({
     ),
   featureName: z.string().min(1).describe('Feature flag name'),
   environment: z.string().optional().describe('Optional environment filter (case-insensitive)'),
+  includeSegments: z
+    .boolean()
+    .optional()
+    .describe(
+      'Also return the segments the strategies use, with the constraints that decide who each one includes. Set it when you need to know who a strategy targets.',
+    ),
   includeParentOptions: z
     .boolean()
     .optional()
@@ -74,6 +82,33 @@ async function fetchParentVariantOptions(
 }
 
 type GetFlagStateInput = z.infer<typeof getFlagStateSchema>;
+type SegmentError = { id: number; error: NormalizedError };
+
+function segmentIdsOf(environments: FeatureEnvironment[]): number[] {
+  const ids = environments.flatMap((env) =>
+    (env.strategies ?? []).flatMap((strategy) => strategy.segments ?? []),
+  );
+  return [...new Set(ids)];
+}
+
+async function fetchSegments(
+  context: ServerContext,
+  ids: number[],
+): Promise<{ segments: Segment[]; segmentErrors: SegmentError[] }> {
+  const results = await Promise.allSettled(ids.map((id) => context.unleashClient.getSegment(id)));
+
+  const segments: Segment[] = [];
+  const segmentErrors: SegmentError[] = [];
+  for (const [index, result] of results.entries()) {
+    if (result.status === 'fulfilled') {
+      segments.push(result.value);
+    } else {
+      const { error } = toolErrorPayload(context, result.reason, 'get_flag_state');
+      segmentErrors.push({ id: ids[index], error });
+    }
+  }
+  return { segments, segmentErrors };
+}
 
 export async function getFlagState(
   context: ServerContext,
@@ -120,6 +155,11 @@ export async function getFlagState(
       );
     }
 
+    const segmentIds = segmentIdsOf(environments);
+    const segmentDetails = input.includeSegments
+      ? await fetchSegments(context, segmentIds)
+      : undefined;
+
     await context.notifyProgress(
       progressToken,
       100,
@@ -148,6 +188,11 @@ export async function getFlagState(
       environmentFilter: input.environment,
       feature: feature as FeatureDetails,
       environments,
+      ...segmentDetails,
+      ...(!input.includeSegments &&
+        segmentIds.length > 0 && {
+          hint: `Strategies use segments ${segmentIds.join(', ')}. Call again with includeSegments: true to see who they target.`,
+        }),
       ...(parentOptions !== undefined && { parentOptions }),
       ...(parentVariantOptions !== undefined && { parentVariantOptions }),
       links: {
@@ -166,7 +211,7 @@ export const getFlagStateTool = {
   title: 'Get flag state',
   annotations: { readOnlyHint: true },
   description:
-    'Fetch the current feature flag metadata, environment strategies and parent dependencies from the Unleash Admin API. Set includeParentOptions to list flags this flag could depend on, and parentVariantsOf to list the variants a dependency on that parent can require.',
+    'Fetch the current feature flag metadata, environment strategies and parent dependencies from the Unleash Admin API. Strategies list their segments by ID; set includeSegments to also get what each segment targets. Set includeParentOptions to list flags this flag could depend on, and parentVariantsOf to list the variants a dependency on that parent can require.',
   inputSchema: getFlagStateSchema,
   implementation: getFlagState,
 };
