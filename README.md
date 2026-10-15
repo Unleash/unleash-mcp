@@ -651,6 +651,7 @@ Use this tool to inspect a flag before modifying it, to check how many strategie
 - `featureName` (required): Feature flag name.
 - `projectId` (optional): Project ID (defaults to `UNLEASH_DEFAULT_PROJECT`).
 - `environment` (optional): Filter results to a single environment (case-insensitive).
+- `includeSegments` (optional): Also return the segments that the strategies in the matching environments use.
 
 #### Usage example
 
@@ -675,6 +676,8 @@ Use get_flag_state with:
 **Tool output**
 
 Returns a JSON object with the full feature object (all environments and strategy details), the environments matching the filter, and UI and API links.
+
+Strategies list their segments only by ID. When the matching environments use segments, the output includes a `hint` naming them. With `includeSegments`, it instead includes `segments`, each with its `id`, `name`, `description`, `project`, and the `constraints` that decide who it includes. Segments that could not be fetched are listed under `segmentErrors`, each with the `error` Unleash gave, and do not fail the call.
 
 ### Evaluate flag
 
@@ -1104,6 +1107,9 @@ src/
 │   ├── cleanupFlag.ts           # cleanup_flag tool
 │   ├── setFlagRollout.ts        # set_flag_rollout tool
 │   ├── getFlagState.ts          # get_flag_state tool
+│   ├── listFlags.ts             # list_flags tool
+│   ├── listProjects.ts          # list_projects tool
+│   ├── searchFlags.ts           # search_flags tool
 │   ├── evaluateFlag.ts          # evaluate_flag tool
 │   ├── getFlagHistory.ts        # get_flag_history tool
 │   ├── toggleFlagEnvironment.ts # toggle_flag_environment tool
@@ -1129,6 +1135,7 @@ src/
 └── utils/
     ├── errors.ts                # Error normalization
     ├── streaming.ts             # Progress notifications
+    ├── toolResult.ts            # JSON tool results
     └── stdioLogging.ts          # Stdio protocol traffic logging
 ```
 
@@ -1195,6 +1202,7 @@ This server uses the Unleash Admin API. For complete API documentation, see:
 - `GET /api/admin/projects/{projectId}/features` - List feature flags
 - `POST /api/admin/projects/{projectId}/features` - Create feature flag
 - `GET /api/admin/projects/{projectId}/features/{featureName}` - Get flag details
+- `GET /api/admin/segments/{id}` - Get segment
 - `GET /api/admin/search/features` - Search feature flags
 - `GET /api/admin/search/events` - Fetch a feature flag's change events
 - `POST /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies` - Add rollout strategy
