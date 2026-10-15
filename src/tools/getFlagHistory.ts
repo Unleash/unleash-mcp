@@ -65,7 +65,7 @@ export async function getFlagHistory(
       success: true,
       featureName: input.featureName,
       // `total` is every change on record; `events` is the capped, newest-first slice.
-      // When total > events.length, narrow the request (lower activity window) or raise limit.
+      // When total > events.length, raise `limit` to see older changes.
       total,
       events: changes,
     });
