@@ -27,6 +27,12 @@ const getFlagStateSchema = z.object({
     .describe(
       'Also return the segments the strategies use, with the constraints that decide who each one includes. Set it when you need to know who a strategy targets.',
     ),
+  includeContextFields: z
+    .boolean()
+    .optional()
+    .describe(
+      'Also return contextFields: the context fields that constraints in this project can use, with their legal values and whether each can set rollout stickiness. Set it when you need to know what a strategy can target.',
+    ),
   includeParentOptions: z
     .boolean()
     .optional()
@@ -128,10 +134,13 @@ export async function getFlagState(
       `Fetching feature "${input.featureName}" in project "${projectId}"...`,
     );
 
-    const [feature, parentOptions] = await Promise.all([
+    const [feature, parentOptions, contextFields] = await Promise.all([
       context.unleashClient.getFeature(projectId, input.featureName),
       input.includeParentOptions
         ? context.unleashClient.getParentFeatureOptions(projectId, input.featureName)
+        : Promise.resolve(undefined),
+      input.includeContextFields
+        ? context.unleashClient.getContextFields(projectId)
         : Promise.resolve(undefined),
     ]);
 
@@ -193,6 +202,7 @@ export async function getFlagState(
         segmentIds.length > 0 && {
           hint: `Strategies use segments ${segmentIds.join(', ')}. Call again with includeSegments: true to see who they target.`,
         }),
+      ...(contextFields !== undefined && { contextFields }),
       ...(parentOptions !== undefined && { parentOptions }),
       ...(parentVariantOptions !== undefined && { parentVariantOptions }),
       links: {
@@ -211,7 +221,7 @@ export const getFlagStateTool = {
   title: 'Get flag state',
   annotations: { readOnlyHint: true },
   description:
-    'Fetch the current feature flag metadata, environment strategies and parent dependencies from the Unleash Admin API. Strategies list their segments by ID; set includeSegments to also get what each segment targets. Set includeParentOptions to list flags this flag could depend on, and parentVariantsOf to list the variants a dependency on that parent can require.',
+    'Fetch the current feature flag metadata, environment strategies and parent dependencies from the Unleash Admin API. Strategies list their segments by ID; set includeSegments to also get what each segment targets. Set includeContextFields to list the context fields its constraints can use. Set includeParentOptions to list flags this flag could depend on, and parentVariantsOf to list the variants a dependency on that parent can require.',
   inputSchema: getFlagStateSchema,
   implementation: getFlagState,
 };
