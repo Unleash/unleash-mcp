@@ -27,7 +27,59 @@ const getFlagStateSchema = z.object({
     .describe(
       'Also return the segments the strategies use, with the constraints that decide who each one includes. Set it when you need to know who a strategy targets.',
     ),
+  includeParentOptions: z
+    .boolean()
+    .optional()
+    .describe(
+      "Also return parentOptions: names of active flags in this project that could become this flag's parent (flags that already depend on another flag are excluded). Unleash allows one parent per flag, so a parent can only be added when feature.dependencies and feature.children are both empty. The current parent, if any, is always returned in feature.dependencies.",
+    ),
+  parentVariantsOf: z
+    .string()
+    .min(1)
+    .optional()
+    .describe(
+      'Also return parentVariantOptions: variant names of this parent flag that a dependency can require. Pass a name from parentOptions or from feature.dependencies.',
+    ),
 });
+
+interface ParentVariantOptions {
+  parent: string;
+  variants: string[];
+  hint?: string;
+}
+
+async function fetchParentVariantOptions(
+  context: ServerContext,
+  projectId: string,
+  feature: FeatureDetails,
+  parent: string,
+  candidates: string[] | undefined,
+): Promise<ParentVariantOptions> {
+  const currentParent = feature.dependencies?.[0]?.feature;
+
+  // The parent-variants endpoint returns [] for unknown flags, so check a candidate against the
+  // parent list to tell "no variants" apart from "not a valid parent".
+  if (parent !== currentParent) {
+    const parentOptions =
+      candidates ?? (await context.unleashClient.getParentFeatureOptions(projectId, feature.name));
+    if (!parentOptions.includes(parent)) {
+      return {
+        parent,
+        variants: [],
+        hint: `"${parent}" is not a valid parent for "${feature.name}": it must be an active flag in project "${projectId}" that does not itself depend on another flag. Set includeParentOptions to list valid parents.`,
+      };
+    }
+  }
+
+  const variants = await context.unleashClient.getParentVariantOptions(projectId, parent);
+  return {
+    parent,
+    variants,
+    ...(variants.length === 0 && {
+      hint: `"${parent}" has no variants. A dependency on it can only require it to be enabled or disabled.`,
+    }),
+  };
+}
 
 type GetFlagStateInput = z.infer<typeof getFlagStateSchema>;
 type SegmentError = { id: number; error: NormalizedError };
@@ -76,7 +128,22 @@ export async function getFlagState(
       `Fetching feature "${input.featureName}" in project "${projectId}"...`,
     );
 
-    const feature = await context.unleashClient.getFeature(projectId, input.featureName);
+    const [feature, parentOptions] = await Promise.all([
+      context.unleashClient.getFeature(projectId, input.featureName),
+      input.includeParentOptions
+        ? context.unleashClient.getParentFeatureOptions(projectId, input.featureName)
+        : Promise.resolve(undefined),
+    ]);
+
+    const parentVariantOptions = input.parentVariantsOf
+      ? await fetchParentVariantOptions(
+          context,
+          projectId,
+          feature,
+          input.parentVariantsOf,
+          parentOptions,
+        )
+      : undefined;
 
     let environments = feature.environments ?? [];
 
@@ -126,6 +193,8 @@ export async function getFlagState(
         segmentIds.length > 0 && {
           hint: `Strategies use segments ${segmentIds.join(', ')}. Call again with includeSegments: true to see who they target.`,
         }),
+      ...(parentOptions !== undefined && { parentOptions }),
+      ...(parentVariantOptions !== undefined && { parentVariantOptions }),
       links: {
         ui: url,
         api: apiUrl,
@@ -142,7 +211,7 @@ export const getFlagStateTool = {
   title: 'Get flag state',
   annotations: { readOnlyHint: true },
   description:
-    'Fetch the current feature flag metadata and environment strategies from the Unleash Admin API. Strategies list their segments by ID; set includeSegments to also get what each segment targets.',
+    'Fetch the current feature flag metadata, environment strategies and parent dependencies from the Unleash Admin API. Strategies list their segments by ID; set includeSegments to also get what each segment targets. Set includeParentOptions to list flags this flag could depend on, and parentVariantsOf to list the variants a dependency on that parent can require.',
   inputSchema: getFlagStateSchema,
   implementation: getFlagState,
 };

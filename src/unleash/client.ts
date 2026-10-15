@@ -141,7 +141,17 @@ export interface FeatureDetails {
   environments?: FeatureEnvironment[];
   tags?: Array<{ type?: string; value?: string }>;
   links?: Array<{ id: string; url: string; title?: string | null }>;
+  /** Parent flags this flag depends on. Unleash allows at most one parent. */
+  dependencies?: FeatureDependency[];
+  /** Names of flags that depend on this flag. */
+  children?: string[];
   [key: string]: unknown;
+}
+
+export interface FeatureDependency {
+  feature: string;
+  enabled?: boolean;
+  variants?: string[];
 }
 
 /**
@@ -541,6 +551,45 @@ export class UnleashClient {
       {
         errorMessage: `Failed to fetch events for feature ${featureName}`,
         networkErrorMessage: `Failed to connect to Unleash API while fetching events for ${featureName}`,
+      },
+    );
+  }
+
+  /**
+   * Flags in the same project that can become the parent of `childFeature`. The API excludes
+   * the child itself, archived flags and flags that already have a parent. It does not check
+   * whether `childFeature` can take a parent (it must have no parent and no children).
+   */
+  async getParentFeatureOptions(projectId: string, childFeature: string): Promise<string[]> {
+    if (this.dryRun) {
+      return ['dry-run-parent-a', 'dry-run-parent-b'];
+    }
+
+    return this.requestJson<string[]>(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/features/${encodeURIComponent(childFeature)}/parents`,
+      { method: 'GET' },
+      {
+        errorMessage: `Failed to fetch parent options for ${childFeature} in project ${projectId}`,
+        networkErrorMessage: `Failed to connect to Unleash API while fetching parent options for ${childFeature}`,
+      },
+    );
+  }
+
+  /**
+   * Variant names a dependency on `parentFeature` can require. Includes both feature environment
+   * variants and strategy variants across all environments.
+   */
+  async getParentVariantOptions(projectId: string, parentFeature: string): Promise<string[]> {
+    if (this.dryRun) {
+      return ['dry-run-variant-a', 'dry-run-variant-b'];
+    }
+
+    return this.requestJson<string[]>(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/features/${encodeURIComponent(parentFeature)}/parent-variants`,
+      { method: 'GET' },
+      {
+        errorMessage: `Failed to fetch parent variant options for ${parentFeature} in project ${projectId}`,
+        networkErrorMessage: `Failed to connect to Unleash API while fetching parent variant options for ${parentFeature}`,
       },
     );
   }
