@@ -28,6 +28,7 @@ The MCP server exposes the following tools:
 - `get_flag_state`: Surfaces a feature flag's metadata and its activation strategies.
 - `get_segments`: Describes the segments that flag strategies refer to by ID.
 - `list_flags`: Lists all feature flags in a project, with optional pagination and sort order.
+- `search_flags`: Searches active feature flags in all projects by part of their name or description, or finds one flag and its project by its full name.
 - `list_projects`: Lists Unleash projects available to the configured token, with optional pagination.
 - `toggle_flag_environment`: Enables or disables a feature flag in an environment.
 - `remove_flag_strategy`: Deletes a feature flag's strategy from an environment.
@@ -727,6 +728,18 @@ Use list_flags with:
 
 Returns a JSON object with `projectId`, `archived`, `order`, `limit`, `offset`, `nextOffset`, `totalFlags`, and the `flags` array (each with name, type, project, archived status, and links). Use `nextOffset` to page through large projects.
 
+### Search flags
+
+The `search_flags` tool searches active feature flags in all projects by part of their name or description. Given a flag's full name, it returns that flag and the project it is in, which the other flag tools need as `projectId`.
+
+#### Parameters
+
+- `query` (required): Part of a flag name or description, or a full flag name.
+
+#### Tool output
+
+Returns a JSON object with `total`, the number of matching flags, and `flags`. Each flag has its name, project, type, description, whether it is stale, and whether it is enabled in each environment. When `total` is larger than the number of flags returned, a longer query narrows the results.
+
 ### List projects
 
 The `list_projects` tool enumerates the Unleash projects available to the configured token, with pagination and sort order.
@@ -1029,6 +1042,7 @@ src/
 │   ├── getSegments.ts           # get_segments tool
 │   ├── listFlags.ts             # list_flags tool
 │   ├── listProjects.ts          # list_projects tool
+│   ├── searchFlags.ts           # search_flags tool
 │   ├── toggleFlagEnvironment.ts # toggle_flag_environment tool
 │   ├── removeFlagStrategy.ts    # remove_flag_strategy tool
 │   └── sendFeedback.ts          # send_feedback tool
@@ -1120,6 +1134,7 @@ This server uses the Unleash Admin API. For complete API documentation, see:
 - `POST /api/admin/projects/{projectId}/features` - Create feature flag
 - `GET /api/admin/projects/{projectId}/features/{featureName}` - Get flag details
 - `GET /api/admin/segments/{id}` - Get segment
+- `GET /api/admin/search/features` - Search feature flags
 - `POST /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies` - Add rollout strategy
 - `DELETE /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies/{strategyId}` - Remove strategy
 - `POST /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on` - Enable flag

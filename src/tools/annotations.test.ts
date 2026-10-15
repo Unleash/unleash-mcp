@@ -8,6 +8,7 @@ import { getSegmentsTool } from './getSegments.js';
 import { listFlagsTool } from './listFlags.js';
 import { listProjectsTool } from './listProjects.js';
 import { removeFlagStrategyTool } from './removeFlagStrategy.js';
+import { searchFlagsTool } from './searchFlags.js';
 import { sendFeedbackTool } from './sendFeedback.js';
 import { setFlagRolloutTool } from './setFlagRollout.js';
 import { toggleFlagEnvironmentTool } from './toggleFlagEnvironment.js';
@@ -24,6 +25,7 @@ const tools = [
   getFlagStateTool,
   getSegmentsTool,
   listFlagsTool,
+  searchFlagsTool,
   listProjectsTool,
   toggleFlagEnvironmentTool,
   removeFlagStrategyTool,
@@ -64,6 +66,7 @@ describe('tool annotations', () => {
         'get_segments',
         'list_flags',
         'list_projects',
+        'search_flags',
         'wrap_change',
       ].sort(),
     );
