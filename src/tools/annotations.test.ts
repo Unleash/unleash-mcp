@@ -14,6 +14,7 @@ import { sendFeedbackTool } from './sendFeedback.js';
 import { setFlagRolloutTool } from './setFlagRollout.js';
 import { toggleFlagEnvironmentTool } from './toggleFlagEnvironment.js';
 import type { ToolDefinition } from './types.js';
+import { updateFlagLifecycleTool } from './updateFlagLifecycle.js';
 import { wrapChangeTool } from './wrapChange.js';
 
 const tools = [
@@ -31,6 +32,7 @@ const tools = [
   listProjectsTool,
   toggleFlagEnvironmentTool,
   removeFlagStrategyTool,
+  updateFlagLifecycleTool,
   sendFeedbackTool,
 ] as ToolDefinition[];
 
@@ -73,6 +75,10 @@ describe('tool annotations', () => {
         'wrap_change',
       ].sort(),
     );
-    expect(destructive).toEqual(['remove_flag_strategy', 'set_flag_rollout']);
+    expect(destructive).toEqual([
+      'remove_flag_strategy',
+      'set_flag_rollout',
+      'update_flag_lifecycle',
+    ]);
   });
 });

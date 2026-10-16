@@ -99,6 +99,7 @@ describe('remote MCP handler (e2e)', () => {
       'search_flags',
       'set_flag_rollout',
       'toggle_flag_environment',
+      'update_flag_lifecycle',
       'wrap_change',
     ]);
 
@@ -270,6 +271,7 @@ describe('tool results (e2e)', () => {
       { ...flag, environments: [{ environment: 'development', rolloutPercentage: 50 }] },
     ],
     ['toggle_flag_environment', { ...flag, environment: 'development', enabled: true }],
+    ['update_flag_lifecycle', { ...flag, action: 'complete', status: 'kept' }],
   ])('%s gives every client the same JSON data', async (name, args) => {
     const result = await callTool(name, args);
 
