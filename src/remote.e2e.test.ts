@@ -265,7 +265,10 @@ describe('tool results (e2e)', () => {
   it.each([
     ['get_flag_state', flag],
     ['remove_flag_strategy', { ...flag, environment: 'development', strategyId: 's1' }],
-    ['set_flag_rollout', { ...flag, environment: 'development', rolloutPercentage: 50 }],
+    [
+      'set_flag_rollout',
+      { ...flag, environments: [{ environment: 'development', rolloutPercentage: 50 }] },
+    ],
     ['toggle_flag_environment', { ...flag, environment: 'development', enabled: true }],
   ])('%s gives every client the same JSON data', async (name, args) => {
     const result = await callTool(name, args);

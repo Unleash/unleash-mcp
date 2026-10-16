@@ -43,6 +43,7 @@ import { wrapChangeTool } from './tools/wrapChange.js';
 import type { ClientInfo } from './unleash/attribution.js';
 import { UnleashClient } from './unleash/client.js';
 import { FeedbackHttpClient } from './unleash/feedbackHttpClient.js';
+import { createChoicePrompt } from './utils/choicePrompt.js';
 import { notifyProgress } from './utils/streaming.js';
 import { VERSION } from './version.js';
 
@@ -176,6 +177,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     logger,
     cache: { projects: null, featureFlags: new Map() },
     getClientInfo,
+    askUserToChoose: createChoicePrompt(server, () => getClientInfo()?.name, logger),
     notifyProgress: notifyProgress(server),
   };
 

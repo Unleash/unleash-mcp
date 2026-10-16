@@ -81,12 +81,44 @@ export interface StrategyVariant {
   [key: string]: unknown;
 }
 
-export interface SetFlagRolloutOptions {
-  rolloutPercentage: number;
-  groupId?: string;
-  stickiness?: string;
-  title?: string;
-  disabled?: boolean;
+export const CONSTRAINT_OPERATORS = [
+  'IN',
+  'NOT_IN',
+  'STR_STARTS_WITH',
+  'STR_ENDS_WITH',
+  'STR_CONTAINS',
+  'NUM_EQ',
+  'NUM_GT',
+  'NUM_GTE',
+  'NUM_LT',
+  'NUM_LTE',
+  'DATE_AFTER',
+  'DATE_BEFORE',
+  'SEMVER_EQ',
+  'SEMVER_GT',
+  'SEMVER_GTE',
+  'SEMVER_LT',
+  'SEMVER_LTE',
+  'REGEX',
+] as const;
+
+export type ConstraintOperator = (typeof CONSTRAINT_OPERATORS)[number];
+
+export interface StrategyConstraint {
+  contextName: string;
+  operator: ConstraintOperator;
+  values?: string[];
+  value?: string;
+  inverted?: boolean;
+  caseInsensitive?: boolean;
+}
+
+export interface FlexibleRolloutStrategy {
+  title?: string | null;
+  disabled?: boolean | null;
+  parameters: Record<string, string>;
+  constraints: StrategyConstraint[];
+  segments: number[];
   variants?: StrategyVariant[];
 }
 
@@ -98,7 +130,7 @@ export interface FeatureStrategy {
   featureName?: string;
   sortOrder?: number;
   segments?: number[];
-  constraints?: Array<Record<string, unknown>>;
+  constraints?: StrategyConstraint[];
   variants?: StrategyVariant[];
   parameters: Record<string, string>;
 }
@@ -110,6 +142,8 @@ export interface Segment {
   project?: string | null;
   constraints: Array<Record<string, unknown>>;
 }
+
+export type SegmentSummary = Omit<Segment, 'constraints'>;
 
 export interface ContextField {
   name: string;
@@ -271,6 +305,24 @@ export interface FeatureEventsResult {
   total: number;
 }
 
+/** Unleash puts the specific reason in `details` and a generic summary in `message`. */
+function errorMessageFrom(rawBody: string, fallback: string): string {
+  try {
+    const parsed = JSON.parse(rawBody) as {
+      message?: string;
+      details?: Array<{ message?: string }>;
+    };
+    const details = Array.isArray(parsed.details)
+      ? parsed.details
+          .map((detail) => detail.message)
+          .filter((detail): detail is string => Boolean(detail))
+      : [];
+    return details.length > 0 ? details.join(', ') : (parsed.message ?? fallback);
+  } catch {
+    return rawBody && rawBody.length < 200 ? `${fallback}: ${rawBody}` : fallback;
+  }
+}
+
 export class UnleashClient {
   private readonly baseUrl: string;
   private readonly authHeaders: Record<string, string>;
@@ -418,37 +470,16 @@ export class UnleashClient {
       : this.fetchProjectFeatureFlags(projectId);
   }
 
-  async setFlexibleRolloutStrategy(
+  async addFlexibleRolloutStrategy(
     projectId: string,
     featureName: string,
     environment: string,
-    options: SetFlagRolloutOptions,
+    strategy: FlexibleRolloutStrategy,
   ): Promise<FeatureStrategy> {
-    const rollout = Math.min(100, Math.max(0, options.rolloutPercentage));
-    const parameters: Record<string, string> = {
-      rollout: rollout.toString(),
-      groupId: options.groupId ?? featureName,
-      stickiness: options.stickiness ?? 'default',
-    };
-
-    const payload = {
-      name: 'flexibleRollout',
-      title: options.title,
-      disabled: options.disabled,
-      parameters,
-      ...(options.variants && options.variants.length > 0 ? { variants: options.variants } : {}),
-    };
+    const payload = { name: 'flexibleRollout', ...strategy };
 
     if (this.dryRun) {
-      return {
-        id: 'dry-run-strategy',
-        name: payload.name,
-        title: payload.title ?? null,
-        disabled: payload.disabled ?? false,
-        featureName,
-        parameters,
-        variants: payload.variants ?? [],
-      };
+      return { id: 'dry-run-strategy', featureName, ...payload };
     }
 
     return this.requestJson<FeatureStrategy>(
@@ -458,8 +489,51 @@ export class UnleashClient {
         body: JSON.stringify(payload),
       },
       {
-        errorMessage: `Failed to configure flexibleRollout strategy for feature ${featureName} in ${environment}`,
+        errorMessage: `Failed to add a flexibleRollout strategy to feature ${featureName} in ${environment}`,
         networkErrorMessage: `Failed to connect to Unleash API while configuring strategy for feature ${featureName}`,
+      },
+    );
+  }
+
+  /** Unleash replaces the whole strategy, so `strategy` must carry every field to keep. */
+  async replaceFlexibleRolloutStrategy(
+    projectId: string,
+    featureName: string,
+    environment: string,
+    strategyId: string,
+    strategy: FlexibleRolloutStrategy,
+  ): Promise<FeatureStrategy> {
+    const payload = { name: 'flexibleRollout', ...strategy };
+
+    if (this.dryRun) {
+      return { id: strategyId, featureName, ...payload };
+    }
+
+    return this.requestJson<FeatureStrategy>(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/features/${encodeURIComponent(featureName)}/environments/${encodeURIComponent(environment)}/strategies/${encodeURIComponent(strategyId)}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(payload),
+      },
+      {
+        errorMessage: `Failed to update strategy ${strategyId} of feature ${featureName} in ${environment}`,
+        networkErrorMessage: `Failed to connect to Unleash API while configuring strategy for feature ${featureName}`,
+      },
+    );
+  }
+
+  /** Checks value formats and the field's legal values with Unleash's own rules. */
+  async validateConstraint(constraint: StrategyConstraint): Promise<void> {
+    if (this.dryRun) {
+      return;
+    }
+
+    await this.request(
+      '/api/admin/constraints/validate',
+      { method: 'POST', body: JSON.stringify(constraint) },
+      {
+        errorMessage: `Invalid constraint on ${constraint.contextName}`,
+        networkErrorMessage: 'Failed to connect to Unleash API while validating a constraint',
       },
     );
   }
@@ -520,6 +594,28 @@ export class UnleashClient {
       },
     );
     return { id, name, description, project, constraints };
+  }
+
+  /** Leaves out segment constraints, which can hold many values each. */
+  async listSegments(): Promise<SegmentSummary[]> {
+    if (this.dryRun) {
+      return [{ id: 1, name: 'Dry-run segment', project: null }];
+    }
+
+    const { segments } = await this.requestJson<{ segments: Segment[] }>(
+      '/api/admin/segments',
+      { method: 'GET' },
+      {
+        errorMessage: 'Failed to list segments',
+        networkErrorMessage: 'Failed to connect to Unleash API while listing segments',
+      },
+    );
+    return segments.map(({ id, name, description, project }) => ({
+      id,
+      name,
+      description,
+      project,
+    }));
   }
 
   /**
@@ -719,30 +815,10 @@ export class UnleashClient {
 
       if (!response.ok) {
         const rawBody = await response.text();
-        let message = `Failed to delete strategy ${strategyId} from feature ${featureName} in ${environment}: ${response.status} ${response.statusText}`;
-
-        try {
-          const parsed = JSON.parse(rawBody) as {
-            message?: string;
-            details?: Array<{ message?: string }>;
-          };
-
-          if (parsed.message) {
-            message = parsed.message;
-          } else if (parsed.details && Array.isArray(parsed.details)) {
-            const detailMessages = parsed.details
-              .map((detail) => detail.message)
-              .filter((detail): detail is string => Boolean(detail));
-
-            if (detailMessages.length > 0) {
-              message = detailMessages.join(', ');
-            }
-          }
-        } catch {
-          if (rawBody && rawBody.length < 200) {
-            message += `: ${rawBody}`;
-          }
-        }
+        const message = errorMessageFrom(
+          rawBody,
+          `Failed to delete strategy ${strategyId} from feature ${featureName} in ${environment}: ${response.status} ${response.statusText}`,
+        );
 
         throw new CustomError(`HTTP_${response.status}`, message);
       }
@@ -938,30 +1014,10 @@ export class UnleashClient {
 
       if (!response.ok) {
         const rawBody = await response.text();
-        let message = `${options.errorMessage}: ${response.status} ${response.statusText}`;
-
-        try {
-          const parsed = JSON.parse(rawBody) as {
-            message?: string;
-            details?: Array<{ message?: string }>;
-          };
-
-          if (parsed.message) {
-            message = parsed.message;
-          } else if (parsed.details && Array.isArray(parsed.details)) {
-            const detailMessages = parsed.details
-              .map((detail) => detail.message)
-              .filter((detail): detail is string => Boolean(detail));
-
-            if (detailMessages.length > 0) {
-              message = detailMessages.join(', ');
-            }
-          }
-        } catch {
-          if (rawBody && rawBody.length < 200) {
-            message += `: ${rawBody}`;
-          }
-        }
+        const message = errorMessageFrom(
+          rawBody,
+          `${options.errorMessage}: ${response.status} ${response.statusText}`,
+        );
 
         throw new CustomError(`HTTP_${response.status}`, message);
       }
@@ -1012,30 +1068,10 @@ export class UnleashClient {
 
       if (!response.ok) {
         const rawBody = await response.text();
-        let message = `${options.errorMessage}: ${response.status} ${response.statusText}`;
-
-        try {
-          const parsed = JSON.parse(rawBody) as {
-            message?: string;
-            details?: Array<{ message?: string }>;
-          };
-
-          if (parsed.message) {
-            message = parsed.message;
-          } else if (parsed.details && Array.isArray(parsed.details)) {
-            const detailMessages = parsed.details
-              .map((detail) => detail.message)
-              .filter((detail): detail is string => Boolean(detail));
-
-            if (detailMessages.length > 0) {
-              message = detailMessages.join(', ');
-            }
-          }
-        } catch {
-          if (rawBody && rawBody.length < 200) {
-            message += `: ${rawBody}`;
-          }
-        }
+        const message = errorMessageFrom(
+          rawBody,
+          `${options.errorMessage}: ${response.status} ${response.statusText}`,
+        );
 
         throw new CustomError(`HTTP_${response.status}`, message);
       }

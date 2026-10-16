@@ -24,7 +24,7 @@ The MCP server exposes the following tools:
 - `evaluate_change`: Scores risk and recommends feature flag usage.
 - `detect_flag`: Discovers existing feature flags to avoid duplicates.
 - `wrap_change`: Provides guidance on how to wrap a change in a feature flag.
-- `set_flag_rollout`: Configures rollout strategies for a feature flag (does not enable the flag).
+- `set_flag_rollout`: Sets who gets a feature flag in each environment: rollout percentage, segments, constraints, and whether the environment is on.
 - `get_flag_state`: Surfaces a feature flag's metadata and its activation strategies.
 - `get_flag_history`: Returns a feature flag's recent changes from the event log, each as a diff of what changed, who changed it, when, and in which environment.
 - `evaluate_flag`: Evaluates a single feature flag against an Unleash context (for example a user ID and custom properties) in an environment, and explains which strategies matched.
@@ -593,33 +593,43 @@ Returns a comprehensive, markdown-formatted string that guides the user on how t
 
 ### Set flag rollout
 
-The `set_flag_rollout` tool configures a `flexibleRollout` strategy on a feature flag environment. It sets the rollout percentage, stickiness, and optional strategy-level variants. This does not enable the flag; use `toggle_flag_environment` to turn it on.
+The `set_flag_rollout` tool sets who gets a feature flag in one or more environments: a rollout percentage, optionally narrowed to [segments](https://docs.getunleash.io/concepts/segments) and to [constraints](https://docs.getunleash.io/concepts/activation-strategies#constraints) on context fields, and whether each environment is on.
+
+It checks the whole request before changing anything: every environment, segment name, context field and constraint value. When a segment name or the strategy to change is unclear, it asks the user to pick from a list, if the MCP client can show forms. Otherwise the error lists the valid options for the agent to put to the user.
+
+In each environment:
+- With no strategies, it adds a `flexibleRollout` strategy. The rollout defaults to 100%, and stickiness defaults to `default`.
+- With one `flexibleRollout` strategy, it updates that strategy. Fields you leave out keep their value, so `{ rolloutPercentage: 100 }` moves a rollout to 100% and keeps its segments, constraints, stickiness and variants.
+- With several, it needs `strategyId`.
+- It saves the strategy before turning the environment on. Otherwise Unleash adds its own 100% strategy when an environment without strategies is turned on.
 
 #### When to use
 
-Use this tool after creating a flag with `create_flag` to configure how traffic is distributed before enabling it. Also use it to update an existing rollout percentage or add variants.
+Use it after `create_flag` to roll the flag out, and later to change who gets it, such as moving from 30% to 100%.
 
 #### Parameters
 
 - `featureName` (required): Feature flag name.
-- `environment` (required): Target environment (for example, `"production"`, `"development"`).
-- `rolloutPercentage` (required): Percentage of traffic to receive the feature (0-100).
 - `projectId` (optional): Project ID (defaults to `UNLEASH_DEFAULT_PROJECT`).
-- `groupId` (optional): Stickiness bucketing key (defaults to the feature name).
-- `stickiness` (optional): Stickiness field (defaults to `"default"`).
-- `title` (optional): Descriptive title for the strategy.
-- `disabled` (optional): Create the strategy in a disabled state (defaults to false).
-- `variants` (optional): List of strategy-level variants, each with `name`, `weight` (0-1000), optional `weightType` (`"variable"` or `"fix"`), `stickiness`, and `payload` (`{type, value}`).
+- `environments` (required): One entry per environment, each with:
+  - `environment` (required): Environment name, such as `"production"`.
+  - `rolloutPercentage` (optional): Percentage of the targeted users who get the flag (0-100).
+  - `segments` (optional): Segment names, as the user said them. Case, spaces and hyphens don't matter. `[]` removes all segments.
+  - `constraints` (optional): Constraints, each with `contextName`, `operator` (any Unleash constraint operator), `values` or `value`, `inverted` and `caseInsensitive`. `[]` removes all constraints.
+  - `strategyId` (optional): The strategy to change when the environment has more than one.
+  - `stickiness` (optional): Stickiness field. A new strategy uses `"default"`.
+  - `groupId` (optional): Group ID for stickiness bucketing. A new strategy uses the flag name.
+  - `title` (optional): Descriptive title for the strategy.
+  - `strategyDisabled` (optional): Pause the strategy without deleting it. This is not the same as `enabled: false`, which turns the flag off in the environment.
+  - `variants` (optional): Strategy variants, each with `name`, `weight` (0-1000), `weightType`, `stickiness` and `payload`. `[]` removes all variants.
+  - `enabled` (optional): Turn the environment on or off once the strategy is saved. `true` also turns on the strategy if it was disabled, unless `strategyDisabled` is passed.
 
 #### Usage example
 
 **Agent prompt**
 
 ```
-Use set_flag_rollout with:
-- featureName: "new-checkout-flow"
-- environment: "production"
-- rolloutPercentage: 25
+Turn on new-checkout-flow in development, and roll it out to 30% of beta users in production.
 ```
 
 **Tool payload**
@@ -627,16 +637,42 @@ Use set_flag_rollout with:
 ```json
 {
   "featureName": "new-checkout-flow",
-  "environment": "production",
-  "rolloutPercentage": 25,
   "projectId": "ecommerce",
-  "stickiness": "userId"
+  "environments": [
+    { "environment": "development", "enabled": true },
+    {
+      "environment": "production",
+      "rolloutPercentage": 30,
+      "segments": ["beta users"],
+      "enabled": true
+    }
+  ]
 }
 ```
 
 **Tool output**
 
-Returns a JSON object with the configured percentage, the saved strategy, a link to the flag in the Unleash Admin UI, the Admin API strategies URL, and the flag's MCP resource URI.
+For each environment, it returns whether the strategy was added, updated or left unchanged, whether the environment is on, and the saved rollout percentage, segment names and constraints. An update also shows the previous values. Notes flag anything that limits the rollout, such as the environment being off or other strategies that still apply. The result also links to the flag in the Unleash Admin UI, the Admin API and the flag's MCP resource URI.
+
+#### Errors
+
+If the request has problems, nothing is changed. The error code is `INVALID_ROLLOUT`, and `problems` lists every problem at once, each with its environment, code, message, hint and, where there are any, the valid `options`:
+
+| Code | When |
+|---|---|
+| `ENVIRONMENT_NOT_FOUND` | The flag has no environment with that name. The options list its environments. |
+| `DUPLICATE_ENVIRONMENT` | The same environment appears in more than one entry. |
+| `SEGMENT_NOT_FOUND` | No segment the project can use matches the name, several do, or the match belongs to another project. The options list the names that matched, or else every segment the project can use. |
+| `CONTEXT_FIELD_NOT_FOUND` | The project has no context field with that name. The hint gives the right name when only the case differs, and otherwise links to where the field can be created. The options list the project's fields. |
+| `INVALID_CONSTRAINT` | A constraint has no value, or Unleash rejects its value, such as text for `NUM_GT` or a value outside the field's legal values. |
+| `STRATEGY_NOT_CHOSEN` | The environment has several `flexibleRollout` strategies and no `strategyId`, or `strategyId` matches none of them. The options list them. |
+| `STRATEGY_NOT_FOUND` | `strategyId` matches no strategy, and the environment has no `flexibleRollout` strategy to pick from instead. |
+| `STRATEGY_NOT_SUPPORTED` | The strategy to change is not a `flexibleRollout` strategy. |
+| `LAST_STRATEGY_PAUSED` | `strategyDisabled: true` would pause the only active strategy in an environment that stays on. Unleash turns an environment off when its last active strategy is paused, and turning it on again adds the project's default strategy. |
+
+Other errors:
+- `HTTP_404` when the flag is not in the project. The hint points to `create_flag` and `search_flags`.
+- If saving fails partway through, the error keeps Unleash's code and adds `failedEnvironment`, `applied` (the environments that were saved) and `notChanged`.
 
 ### Get flag state
 
@@ -893,7 +929,7 @@ The `remove_flag_strategy` tool deletes a strategy configuration from a feature 
 
 #### When to use
 
-Use this tool to clean up stale strategies, or to replace an existing strategy by removing the old one and configuring a new one with `set_flag_rollout`.
+Use this tool to clean up stale strategies, or to replace a strategy that `set_flag_rollout` can't change (one that isn't a `flexibleRollout`) by removing it and calling `set_flag_rollout` again.
 
 #### Parameters
 
