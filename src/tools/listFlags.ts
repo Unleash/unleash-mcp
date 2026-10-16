@@ -109,7 +109,7 @@ export const listFlagsTool = {
   title: 'List feature flags',
   annotations: { readOnlyHint: true },
   description:
-    'List feature flags in an Unleash project, with optional pagination and sort order. By default returns active flags only; set archived=true to list archived flags instead (active and archived flags are disjoint result sets in Unleash and cannot be combined in one response). Use this to discover flags before creating new ones, audit flag inventory for cleanup (call twice — once for active, once for archived), or scope a workflow to a specific project. Returns name, type, description, archived status, and URL for each flag.',
+    'List feature flags in an Unleash project, with optional pagination and sort order. By default returns active flags only; set archived=true to list archived flags instead (active and archived flags are disjoint result sets in Unleash and cannot be combined in one response). Use this to discover flags before creating new ones, audit flag inventory for cleanup (call twice — once for active, once for archived), or scope a workflow to a specific project. Returns name, type, description, archived status, and URL for each flag. Each active flag also has stale, potentiallyStale, its lifecycle stage, when it last changed (lastChangedAt), and each environment with its type, whether it is on and when an SDK last saw it. That is enough to pick cleanup candidates from the list alone, such as flags that are on in production and have not changed for 30 days; call get_flag_state only on those candidates to check their strategies. Older Unleash versions leave these fields out.',
   inputSchema: listFlagsSchema,
   implementation: listFlags,
 };
