@@ -1,4 +1,5 @@
 import { CustomError } from '../utils/errors.js';
+import { diffEventData, type FieldChange } from '../utils/eventDiff.js';
 import { VERSION } from '../version.js';
 import { buildClientAttribution, type ClientInfo } from './attribution.js';
 
@@ -187,7 +188,52 @@ export interface FeatureDetails {
   dependencies?: FeatureDependency[];
   /** Names of flags that depend on this flag. */
   children?: string[];
+  /** The stage the flag is in now. */
+  lifecycle?: FeatureLifecycleEntry;
   [key: string]: unknown;
+}
+
+export type FeatureLifecycleStage = 'initial' | 'pre-live' | 'live' | 'completed' | 'archived';
+
+export interface FeatureLifecycleEntry {
+  stage: FeatureLifecycleStage;
+  /** Detail for the stage, e.g. `kept` or `discarded` for `completed`. */
+  status?: string | null;
+  enteredStageAt: string;
+}
+
+export interface CompleteFeatureRequest {
+  status: 'kept' | 'discarded';
+  statusValue?: string;
+}
+
+export interface ValidateArchiveResult {
+  /** Parents whose children would be orphaned because the children aren't archived with them. */
+  parentsWithChildFeatures: string[];
+  /** Whether archiving would delete any dependency links. */
+  hasDeletedDependencies: boolean;
+}
+
+export type FeaturePresence = 'active' | 'archived' | 'missing';
+
+export interface FeatureLifecycleSnapshot {
+  presence: FeaturePresence;
+  stage?: FeatureLifecycleStage;
+  status?: string | null;
+  stale?: boolean;
+}
+
+/**
+ * The lifecycle endpoints return no body and some succeed without doing anything, so each
+ * mutation reads the flag before and after the call to report what actually changed.
+ */
+export interface LifecycleTransitionResult {
+  /** True when `changes` is not empty. */
+  changed: boolean;
+  /** The snapshot fields that differ between `before` and `after`. */
+  changes: FieldChange[];
+  before: FeatureLifecycleSnapshot;
+  after: FeatureLifecycleSnapshot;
 }
 
 export interface FeatureDependency {
@@ -550,6 +596,7 @@ export class UnleashClient {
         impressionData: false,
         stale: false,
         createdAt: new Date().toISOString(),
+        lifecycle: { stage: 'initial', enteredStageAt: new Date().toISOString() },
         environments: [
           {
             name: 'development',
@@ -868,6 +915,266 @@ export class UnleashClient {
     );
   }
 
+  /**
+   * One entry per lifecycle stage the flag has entered, oldest first.
+   */
+  async getFeatureLifecycle(
+    projectId: string,
+    featureName: string,
+  ): Promise<FeatureLifecycleEntry[]> {
+    if (this.dryRun) {
+      return [{ stage: 'initial', enteredStageAt: new Date().toISOString() }];
+    }
+
+    return this.requestJson<FeatureLifecycleEntry[]>(
+      `${this.featurePath(projectId, featureName)}/lifecycle`,
+      { method: 'GET' },
+      {
+        errorMessage: `Failed to fetch lifecycle for feature ${featureName} in project ${projectId}`,
+        networkErrorMessage: `Failed to connect to Unleash API while fetching lifecycle for feature ${featureName}`,
+      },
+    );
+  }
+
+  /**
+   * Report which dependency links archiving `featureNames` would break, without archiving.
+   */
+  async validateArchiveFeatures(
+    projectId: string,
+    featureNames: string[],
+  ): Promise<ValidateArchiveResult> {
+    if (this.dryRun) {
+      return { parentsWithChildFeatures: [], hasDeletedDependencies: false };
+    }
+
+    return this.requestJson<ValidateArchiveResult>(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/archive/validate`,
+      { method: 'POST', body: JSON.stringify({ features: featureNames }) },
+      {
+        errorMessage: `Failed to validate archiving ${featureNames.join(', ')} in project ${projectId}`,
+        networkErrorMessage: 'Failed to connect to Unleash API while validating archive',
+      },
+    );
+  }
+
+  async completeFeature(
+    projectId: string,
+    featureName: string,
+    request: CompleteFeatureRequest,
+  ): Promise<LifecycleTransitionResult> {
+    if (this.dryRun) {
+      return this.dryRunTransition(
+        { presence: 'active', stage: 'live', stale: false },
+        { presence: 'active', stage: 'completed', status: request.status, stale: false },
+      );
+    }
+
+    return this.transition(projectId, featureName, () =>
+      this.request(
+        `${this.featurePath(projectId, featureName)}/lifecycle/complete`,
+        { method: 'POST', body: JSON.stringify(request) },
+        {
+          errorMessage: `Failed to complete feature ${featureName}`,
+          networkErrorMessage: `Failed to connect to Unleash API while completing feature ${featureName}`,
+        },
+      ),
+    );
+  }
+
+  async uncompleteFeature(
+    projectId: string,
+    featureName: string,
+  ): Promise<LifecycleTransitionResult> {
+    if (this.dryRun) {
+      return this.dryRunTransition(
+        { presence: 'active', stage: 'completed', status: 'kept', stale: false },
+        { presence: 'active', stage: 'live', stale: false },
+      );
+    }
+
+    return this.transition(projectId, featureName, () =>
+      this.request(
+        `${this.featurePath(projectId, featureName)}/lifecycle/uncomplete`,
+        { method: 'POST' },
+        {
+          errorMessage: `Failed to uncomplete feature ${featureName}`,
+          networkErrorMessage: `Failed to connect to Unleash API while uncompleting feature ${featureName}`,
+        },
+      ),
+    );
+  }
+
+  /**
+   * Archive the flag. The API uses DELETE on the feature path, but the flag is only archived.
+   */
+  async archiveFeature(projectId: string, featureName: string): Promise<LifecycleTransitionResult> {
+    if (this.dryRun) {
+      return this.dryRunTransition(
+        { presence: 'active', stage: 'initial', stale: false },
+        { presence: 'archived', stage: 'archived', stale: false },
+      );
+    }
+
+    return this.transition(projectId, featureName, () =>
+      this.request(
+        this.featurePath(projectId, featureName),
+        { method: 'DELETE' },
+        {
+          errorMessage: `Failed to archive feature ${featureName}`,
+          networkErrorMessage: `Failed to connect to Unleash API while archiving feature ${featureName}`,
+        },
+      ),
+    );
+  }
+
+  /**
+   * The revive path has no project; `projectId` is used to read the flag before and after.
+   */
+  async reviveFeature(projectId: string, featureName: string): Promise<LifecycleTransitionResult> {
+    if (this.dryRun) {
+      return this.dryRunTransition(
+        { presence: 'archived', stage: 'archived', stale: false },
+        { presence: 'active', stage: 'initial', stale: false },
+      );
+    }
+
+    return this.transition(projectId, featureName, () =>
+      this.request(
+        `/api/admin/archive/revive/${encodeURIComponent(featureName)}`,
+        { method: 'POST' },
+        {
+          errorMessage: `Failed to revive feature ${featureName}`,
+          networkErrorMessage: `Failed to connect to Unleash API while reviving feature ${featureName}`,
+        },
+      ),
+    );
+  }
+
+  /**
+   * Permanently delete an archived flag. The API succeeds without deleting anything when the
+   * flag is not archived, which shows up here as `changed: false`. The delete path has no
+   * project; `projectId` is used to read the flag before and after.
+   */
+  async deleteArchivedFeature(
+    projectId: string,
+    featureName: string,
+  ): Promise<LifecycleTransitionResult> {
+    if (this.dryRun) {
+      return this.dryRunTransition(
+        { presence: 'archived', stage: 'archived', stale: false },
+        { presence: 'missing' },
+      );
+    }
+
+    return this.transition(projectId, featureName, () =>
+      this.request(
+        `/api/admin/archive/${encodeURIComponent(featureName)}`,
+        { method: 'DELETE' },
+        {
+          errorMessage: `Failed to delete feature ${featureName}`,
+          networkErrorMessage: `Failed to connect to Unleash API while deleting feature ${featureName}`,
+        },
+      ),
+    );
+  }
+
+  /**
+   * Unleash has no single-flag stale endpoint, so this calls the batch one with one name.
+   * The batch endpoint ignores flags that don't exist.
+   */
+  async setFeatureStale(
+    projectId: string,
+    featureName: string,
+    stale: boolean,
+  ): Promise<LifecycleTransitionResult> {
+    if (this.dryRun) {
+      return this.dryRunTransition(
+        { presence: 'active', stage: 'live', stale: !stale },
+        { presence: 'active', stage: 'live', stale },
+      );
+    }
+
+    return this.transition(projectId, featureName, () =>
+      this.request(
+        `/api/admin/projects/${encodeURIComponent(projectId)}/stale`,
+        { method: 'POST', body: JSON.stringify({ features: [featureName], stale }) },
+        {
+          errorMessage: `Failed to mark feature ${featureName} as ${stale ? 'stale' : 'not stale'}`,
+          networkErrorMessage: `Failed to connect to Unleash API while updating stale for feature ${featureName}`,
+        },
+      ),
+    );
+  }
+
+  private featurePath(projectId: string, featureName: string): string {
+    return `/api/admin/projects/${encodeURIComponent(projectId)}/features/${encodeURIComponent(featureName)}`;
+  }
+
+  private async transition(
+    projectId: string,
+    featureName: string,
+    mutate: () => Promise<void>,
+  ): Promise<LifecycleTransitionResult> {
+    const before = await this.getLifecycleSnapshot(projectId, featureName);
+    await mutate();
+    const after = await this.getLifecycleSnapshot(projectId, featureName);
+    return compareSnapshots(before, after);
+  }
+
+  private dryRunTransition(
+    before: FeatureLifecycleSnapshot,
+    after: FeatureLifecycleSnapshot,
+  ): LifecycleTransitionResult {
+    return compareSnapshots(before, after);
+  }
+
+  /**
+   * Where the flag is now. Falls back to searching archived flags when the feature endpoint
+   * returns 404, since that endpoint may not serve archived flags.
+   */
+  private async getLifecycleSnapshot(
+    projectId: string,
+    featureName: string,
+  ): Promise<FeatureLifecycleSnapshot> {
+    try {
+      const feature = await this.getFeature(projectId, featureName);
+      if (feature.archived) {
+        return { presence: 'archived', stage: 'archived', stale: feature.stale };
+      }
+      return {
+        presence: 'active',
+        stage: feature.lifecycle?.stage,
+        status: feature.lifecycle?.status,
+        stale: feature.stale,
+      };
+    } catch (error) {
+      if (!(error instanceof CustomError) || error.code !== 'HTTP_404') {
+        throw error;
+      }
+    }
+
+    const params = new URLSearchParams({
+      project: `IS:${projectId}`,
+      archived: 'IS:true',
+      query: featureName,
+    });
+    const data = await this.requestJson<{
+      features?: Array<{ name?: string; stale?: boolean }>;
+    }>(
+      `/api/admin/search/features?${params.toString()}`,
+      { method: 'GET' },
+      {
+        errorMessage: `Failed to look up archived feature ${featureName} in project ${projectId}`,
+        networkErrorMessage: `Failed to connect to Unleash API while looking up feature ${featureName}`,
+      },
+    );
+
+    const archived = data.features?.find((feature) => feature.name === featureName);
+    return archived
+      ? { presence: 'archived', stage: 'archived', stale: archived.stale }
+      : { presence: 'missing' };
+  }
+
   private async fetchProjectFeatureFlags(projectId: string): Promise<FeatureFlagSummary[]> {
     const data = await this.requestJson<{
       features?: Array<{
@@ -1098,4 +1405,24 @@ export class UnleashClient {
       throw error;
     }
   }
+}
+
+function compareSnapshots(
+  before: FeatureLifecycleSnapshot,
+  after: FeatureLifecycleSnapshot,
+): LifecycleTransitionResult {
+  const compactBefore = withoutEmptyFields(before);
+  const compactAfter = withoutEmptyFields(after);
+  const changes = diffEventData(compactBefore, compactAfter);
+  return { changed: changes.length > 0, changes, before: compactBefore, after: compactAfter };
+}
+
+/**
+ * Drops `undefined` and `null` fields so an absent status and a `null` status don't diff as a
+ * change.
+ */
+function withoutEmptyFields(snapshot: FeatureLifecycleSnapshot): FeatureLifecycleSnapshot {
+  return Object.fromEntries(
+    Object.entries(snapshot).filter(([, value]) => value !== undefined && value !== null),
+  ) as FeatureLifecycleSnapshot;
 }
