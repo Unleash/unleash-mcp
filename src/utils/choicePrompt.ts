@@ -1,7 +1,7 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { Logger } from '../context.js';
-import { showsConsentPrompt } from '../feedback/showsConsentPrompt.js';
 import { describeError } from './errors.js';
+import { showsElicitationForms } from './showsElicitationForms.js';
 
 export interface Choice {
   key: string;
@@ -24,7 +24,7 @@ export function createChoicePrompt(
     // Some clients declare elicitation but never show the form; asking them would only time out.
     if (
       !server.server.getClientCapabilities()?.elicitation?.form ||
-      !showsConsentPrompt(getClientName())
+      !showsElicitationForms(getClientName())
     ) {
       return undefined;
     }

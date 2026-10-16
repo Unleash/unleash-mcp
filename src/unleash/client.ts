@@ -846,12 +846,15 @@ export class UnleashClient {
     featureName: string,
     environment: string,
     enabled: boolean,
+    { activateDisabledStrategies = false }: { activateDisabledStrategies?: boolean } = {},
   ): Promise<void> {
     if (this.dryRun) {
       return;
     }
 
-    const path = `/api/admin/projects/${encodeURIComponent(projectId)}/features/${encodeURIComponent(featureName)}/environments/${encodeURIComponent(environment)}/${enabled ? 'on' : 'off'}`;
+    // Unleash turns on every disabled strategy instead of adding its default one.
+    const query = activateDisabledStrategies ? '?shouldActivateDisabledStrategies=true' : '';
+    const path = `/api/admin/projects/${encodeURIComponent(projectId)}/features/${encodeURIComponent(featureName)}/environments/${encodeURIComponent(environment)}/${enabled ? 'on' : 'off'}${query}`;
 
     await this.request(
       path,

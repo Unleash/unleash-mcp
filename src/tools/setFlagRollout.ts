@@ -29,7 +29,7 @@ const CONSTRAINTS_DOCS = 'https://docs.getunleash.io/concepts/activation-strateg
 const CONTEXT_DOCS = 'https://docs.getunleash.io/concepts/unleash-context';
 const NONE_OF_THESE = '__none__';
 
-const constraintSchema = z.object({
+const constraintSchema = z.strictObject({
   contextName: z
     .string()
     .min(1)
@@ -49,12 +49,12 @@ const constraintSchema = z.object({
   caseInsensitive: z.boolean().optional().describe('Ignore case when matching text'),
 });
 
-const variantPayloadSchema = z.object({
+const variantPayloadSchema = z.strictObject({
   type: z.enum(['json', 'csv', 'string', 'number']).describe('Payload type'),
   value: z.string().min(1).describe('Serialized payload value'),
 }) satisfies z.ZodType<StrategyVariantPayload>;
 
-const variantSchema = z.object({
+const variantSchema = z.strictObject({
   name: z.string().min(1).describe('Variant name (unique within this feature)'),
   weight: z.number().int().min(0).max(1000).describe('Variant weight (0-1000)'),
   weightType: z.enum(['variable', 'fix']).optional().describe('Variant weight type'),
@@ -66,7 +66,7 @@ const variantSchema = z.object({
   payload: variantPayloadSchema.optional(),
 });
 
-const environmentRolloutSchema = z.object({
+const environmentRolloutSchema = z.strictObject({
   environment: z.string().min(1).describe('Environment name, such as "production"'),
   rolloutPercentage: z
     .number()
@@ -121,11 +121,11 @@ const environmentRolloutSchema = z.object({
     .boolean()
     .optional()
     .describe(
-      'Turn the flag on or off in this environment once the strategy is saved. true also turns on the strategy if it was disabled, unless strategyDisabled is passed. Leave it out to keep it as it is.',
+      'Turn the flag on or off in this environment. true also turns on the strategy if it was disabled, unless strategyDisabled is passed. Leave it out to keep it as it is.',
     ),
 });
 
-const setFlagRolloutSchema = z.object({
+const setFlagRolloutSchema = z.strictObject({
   projectId: z
     .string()
     .optional()
@@ -316,16 +316,16 @@ function pickStrategy(
       environment: env,
       code: 'STRATEGY_NOT_FOUND',
       message: `"${env}" has no strategy with ID ${entry.strategyId}.`,
-      hint: 'Leave out strategyId to add a new strategy.',
+      hint:
+        strategies.length === 0
+          ? 'Leave out strategyId to add a new strategy.'
+          : `"${env}" has no flexibleRollout strategy, the only kind set_flag_rollout changes. Change its strategies in the Unleash UI, or remove them with remove_flag_strategy and call set_flag_rollout again without strategyId.`,
     });
     return undefined;
   }
 
+  if (!changesStrategy(entry)) return { kind: 'keep' };
   if (strategies.length === 0) return { kind: 'add' };
-  // Turning on an environment whose strategies are all disabled makes Unleash add a 100% rollout,
-  // so turn on one of the disabled strategies instead.
-  const turnsOnDisabledOnly = entry.enabled && strategies.every((strategy) => strategy.disabled);
-  if (!changesStrategy(entry) && !turnsOnDisabledOnly) return { kind: 'keep' };
   if (flexible.length === 1) return { kind: 'replace', strategy: flexible[0] };
   if (flexible.length === 0) {
     findings.problems.push(notFlexibleRollout(env, strategies[0]));
@@ -394,7 +394,7 @@ function resolveSegments(
       },
       hintOnceDeclined:
         'The user was shown these segments and picked none. Ask them who should get the flag and target those users with constraints instead.',
-      title: `Segment for "${name}"`,
+      title: `Segment for "${name}" in ${environment}`,
       options: candidates.map((segment) => ({
         value: segment.name,
         label: segment.description ? `${segment.name}: ${segment.description}` : segment.name,
@@ -406,7 +406,8 @@ function resolveSegments(
     });
   }
 
-  return ids.length === entry.segments.length ? ids : undefined;
+  // Two names can match the same segment, and Unleash fails on a repeated segment ID.
+  return ids.length === entry.segments.length ? [...new Set(ids)] : undefined;
 }
 
 function shapeConstraint(
@@ -510,7 +511,6 @@ async function checkConstraints(
   return constraints.length === results.length ? constraints : undefined;
 }
 
-/** Checks every entry against Unleash before anything is written. */
 /**
  * Unleash turns an environment off when its last active strategy is paused, and turning it back on
  * with only paused strategies adds the default strategy, so the environment cannot stay on that way.
@@ -527,6 +527,7 @@ function pausesLastActiveStrategy(
   );
 }
 
+/** Checks every entry against Unleash before anything is written. */
 async function plan(
   context: ServerContext,
   entries: EnvironmentRollout[],
@@ -659,6 +660,12 @@ async function apply(
 ): Promise<AppliedEnvironment> {
   const { entry, environment, target } = plan;
   const env = environment.name;
+  const enabled = entry.enabled ?? environment.enabled;
+
+  // Turn off first, so the new strategy never goes live in an environment that is being turned off.
+  if (!enabled && environment.enabled) {
+    await context.unleashClient.toggleFeatureEnvironment(projectId, featureName, env, false);
+  }
 
   let saved: FeatureStrategy | undefined;
   if (target.kind === 'add') {
@@ -678,15 +685,28 @@ async function apply(
     );
   }
 
-  // Strategy first, then enable: enabling an environment without strategies makes Unleash add a
-  // 100% rollout of its own.
-  const enabled = entry.enabled ?? environment.enabled;
-  if (enabled !== environment.enabled) {
-    await context.unleashClient.toggleFeatureEnvironment(projectId, featureName, env, enabled);
+  const notes: string[] = [];
+  const strategies = [
+    ...(environment.strategies ?? []).filter((strategy) => strategy.id !== saved?.id),
+    ...(saved ? [saved] : []),
+  ];
+  const onlyPaused = strategies.length > 0 && strategies.every((strategy) => strategy.disabled);
+  // Turn on after saving, or Unleash adds the project's default strategy next to the new one.
+  if (enabled && !environment.enabled) {
+    await context.unleashClient.toggleFeatureEnvironment(projectId, featureName, env, true, {
+      activateDisabledStrategies: onlyPaused,
+    });
+    if (strategies.length === 0) {
+      notes.push(
+        `"${env}" had no strategies, so Unleash gave it the project's default strategy. get_flag_state shows it.`,
+      );
+    }
+    if (onlyPaused) {
+      notes.push(`Every strategy in "${env}" was disabled, so Unleash turned them all back on.`);
+    }
   }
 
-  const notes: string[] = [];
-  if (saved?.disabled) {
+  if (saved?.disabled && entry.strategyDisabled === undefined) {
     notes.push('This strategy is disabled, so it has no effect. Pass enabled: true to turn it on.');
   }
   const others = (environment.strategies ?? []).filter(
@@ -697,7 +717,7 @@ async function apply(
       `"${env}" has ${others} other active strateg${others === 1 ? 'y' : 'ies'}; a user who matches any strategy gets the flag.`,
     );
   }
-  if (!enabled) {
+  if (!enabled && entry.enabled === undefined) {
     notes.push(`The flag is off in "${env}". Pass enabled: true to turn it on.`);
   }
 
@@ -728,6 +748,59 @@ async function fetchFeature(
     }
     throw error;
   }
+}
+
+async function loadLookups(
+  context: ServerContext,
+  projectId: string,
+  featureName: string,
+  entries: EnvironmentRollout[],
+): Promise<Lookups> {
+  const baseUrl = context.config.unleash.baseUrl;
+  const feature = await fetchFeature(context, projectId, featureName);
+  if (context.config.server.dryRun) return dryRunLookups(feature, entries, projectId, baseUrl);
+
+  const needsSegments =
+    entries.some((entry) => entry.segments?.length) ||
+    (feature.environments ?? []).some((env) =>
+      env.strategies?.some((strategy) => strategy.segments?.length),
+    );
+  const needsContextFields = entries.some((entry) => entry.constraints?.length);
+  const [segments, contextFields] = await Promise.all([
+    needsSegments ? context.unleashClient.listSegments() : [],
+    needsContextFields ? context.unleashClient.getContextFields(projectId) : [],
+  ]);
+  return { projectId, baseUrl, feature, segments, contextFields };
+}
+
+/** Dry run calls no API, so every name in the request counts as found. */
+function dryRunLookups(
+  feature: FeatureDetails,
+  entries: EnvironmentRollout[],
+  projectId: string,
+  baseUrl: string,
+): Lookups {
+  const environments = new Set(entries.map((entry) => entry.environment));
+  const segments = new Set(entries.flatMap((entry) => entry.segments ?? []));
+  const contextNames = new Set(
+    entries.flatMap((entry) => (entry.constraints ?? []).map(({ contextName }) => contextName)),
+  );
+  return {
+    projectId,
+    baseUrl,
+    feature: {
+      ...feature,
+      environments: [...environments].map((name) => ({
+        name,
+        environment: name,
+        featureName: feature.name,
+        enabled: false,
+        strategies: [],
+      })),
+    },
+    segments: [...segments].map((name, index) => ({ id: index + 1, name, project: null })),
+    contextFields: [...contextNames].map((name) => ({ name, legalValues: [] })),
+  };
 }
 
 function problemsResult(
@@ -771,25 +844,7 @@ export async function setFlagRollout(
       `${mode}Checking the rollout for "${input.featureName}"...`,
     );
 
-    const feature = await fetchFeature(context, projectId, input.featureName);
-    const needsSegments =
-      input.environments.some((entry) => entry.segments?.length) ||
-      (feature.environments ?? []).some((env) =>
-        env.strategies?.some((strategy) => strategy.segments?.length),
-      );
-    const needsContextFields = input.environments.some((entry) => entry.constraints?.length);
-    const [segments, contextFields] = await Promise.all([
-      needsSegments ? context.unleashClient.listSegments() : [],
-      needsContextFields ? context.unleashClient.getContextFields(projectId) : [],
-    ]);
-    const lookups: Lookups = {
-      projectId,
-      baseUrl: context.config.unleash.baseUrl,
-      feature,
-      segments,
-      contextFields,
-    };
-
+    let lookups = await loadLookups(context, projectId, input.featureName, input.environments);
     let checked = await plan(context, input.environments, lookups);
     let asked = false;
     if (checked.problems.length === 0 && checked.choosables.length > 0) {
@@ -801,6 +856,8 @@ export async function setFlagRollout(
       );
       if (answered) {
         asked = true;
+        // Fetch again, or the update would undo strategy edits made while the form was open.
+        lookups = await loadLookups(context, projectId, input.featureName, answered);
         checked = await plan(context, answered, lookups);
       }
     }
@@ -823,7 +880,9 @@ export async function setFlagRollout(
     const applied: AppliedEnvironment[] = [];
     for (const [index, environmentPlan] of checked.plans.entries()) {
       try {
-        applied.push(await apply(context, projectId, input.featureName, environmentPlan, segments));
+        applied.push(
+          await apply(context, projectId, input.featureName, environmentPlan, lookups.segments),
+        );
       } catch (error) {
         const failed = environmentPlan.environment.name;
         return {
@@ -883,7 +942,7 @@ export const setFlagRolloutTool = {
   description:
     'Set who gets a feature flag in one or more environments: a rollout percentage, optionally narrowed to segments and to constraints on context fields, and whether the environment is on. ' +
     'Pass segment and context field names as the user said them; do not look them up first. Nothing is changed until every name checks out. When a name does not match, the user is asked to pick, or the error lists the valid options. ' +
-    'An environment without strategies gets a new flexibleRollout strategy. With one, that strategy is updated and fields you leave out keep their value; with several, pass strategyId.',
+    'An environment without strategies gets a new flexibleRollout strategy when the entry sets any strategy field; turning it on with only enabled gives it the project default strategy. With one, that strategy is updated and fields you leave out keep their value; with several, pass strategyId.',
   inputSchema: setFlagRolloutSchema,
   implementation: setFlagRollout,
 };

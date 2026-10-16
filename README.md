@@ -598,10 +598,11 @@ The `set_flag_rollout` tool sets who gets a feature flag in one or more environm
 It checks the whole request before changing anything: every environment, segment name, context field and constraint value. When a segment name or the strategy to change is unclear, it asks the user to pick from a list, if the MCP client can show forms. Otherwise the error lists the valid options for the agent to put to the user.
 
 In each environment:
-- With no strategies, it adds a `flexibleRollout` strategy. The rollout defaults to 100%, and stickiness defaults to `default`.
+- With no strategies, it adds a `flexibleRollout` strategy when the entry sets any strategy field. The rollout defaults to 100% of the targeted users, and stickiness defaults to `default`. An entry with only `enabled: true` adds nothing, so Unleash gives the environment the project's default strategy.
 - With one `flexibleRollout` strategy, it updates that strategy. Fields you leave out keep their value, so `{ rolloutPercentage: 100 }` moves a rollout to 100% and keeps its segments, constraints, stickiness and variants.
 - With several, it needs `strategyId`.
-- It saves the strategy before turning the environment on. Otherwise Unleash adds its own 100% strategy when an environment without strategies is turned on.
+- It saves the strategy before turning the environment on, so Unleash doesn't add the project's default strategy next to it. Turning an environment off happens before the save, so the new strategy never goes live there.
+- Turning on an environment whose strategies are all disabled turns them all back on.
 
 #### When to use
 
@@ -622,7 +623,7 @@ Use it after `create_flag` to roll the flag out, and later to change who gets it
   - `title` (optional): Descriptive title for the strategy.
   - `strategyDisabled` (optional): Pause the strategy without deleting it. This is not the same as `enabled: false`, which turns the flag off in the environment.
   - `variants` (optional): Strategy variants, each with `name`, `weight` (0-1000), `weightType`, `stickiness` and `payload`. `[]` removes all variants.
-  - `enabled` (optional): Turn the environment on or off once the strategy is saved. `true` also turns on the strategy if it was disabled, unless `strategyDisabled` is passed.
+  - `enabled` (optional): Turn the environment on or off. `true` also turns on the strategy if it was disabled, unless `strategyDisabled` is passed.
 
 #### Usage example
 
@@ -671,6 +672,7 @@ If the request has problems, nothing is changed. The error code is `INVALID_ROLL
 | `LAST_STRATEGY_PAUSED` | `strategyDisabled: true` would pause the only active strategy in an environment that stays on. Unleash turns an environment off when its last active strategy is paused, and turning it on again adds the project's default strategy. |
 
 Other errors:
+- `VALIDATION_ERROR` for a field the tool doesn't know, such as a misspelt one, so it is never ignored.
 - `HTTP_404` when the flag is not in the project. The hint points to `create_flag` and `search_flags`.
 - If saving fails partway through, the error keeps Unleash's code and adds `failedEnvironment`, `applied` (the environments that were saved) and `notChanged`.
 
@@ -1135,7 +1137,6 @@ src/
 │   ├── consentDecision.ts       # granted | denied consent type
 │   ├── consentResolver.ts       # Resolves send_feedback consent (env, file, prompt)
 │   ├── consentStore.ts          # Persists consent in feedback_consent.json
-│   ├── showsConsentPrompt.ts    # Clients whose consent prompt never reaches the user
 │   └── elicitation.ts           # MCP elicitation prompt asking the user once
 ├── tools/
 │   ├── types.ts                 # Shared ToolDefinition type
@@ -1175,6 +1176,7 @@ src/
     ├── errors.ts                # Error normalization
     ├── streaming.ts             # Progress notifications
     ├── toolResult.ts            # JSON tool results
+    ├── showsElicitationForms.ts # Clients whose elicitation forms never reach the user
     └── stdioLogging.ts          # Stdio protocol traffic logging
 ```
 
