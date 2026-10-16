@@ -222,26 +222,24 @@ describe('UnleashClient lifecycle', () => {
     expect(calls()[3].url).toBe(archivedSearchUrl);
   });
 
-  it('ignores search results that only partly match the name', async () => {
+  it('treats a partial name match as a missing flag and sends no change', async () => {
     fetchMock
       .mockResolvedValueOnce(notFound())
-      .mockResolvedValueOnce(json({ features: [{ name: 'my-flag-2' }] }))
-      .mockResolvedValueOnce(empty())
-      .mockResolvedValueOnce(notFound())
-      .mockResolvedValueOnce(json({ features: [] }));
+      .mockResolvedValueOnce(json({ features: [{ name: 'my-flag-2' }] }));
 
-    const result = await client.reviveFeature('p1', 'my-flag');
+    await expect(client.reviveFeature('p1', 'my-flag')).rejects.toMatchObject({
+      code: 'FLAG_NOT_FOUND',
+    });
+    expect(calls()).toHaveLength(2);
+  });
 
-    expect(result).toEqual({
-      changed: false,
-      changes: [],
-      before: { presence: 'missing' },
-      after: { presence: 'missing' },
+  it('refuses to mark a missing flag stale instead of reporting no change', async () => {
+    fetchMock.mockResolvedValueOnce(notFound()).mockResolvedValueOnce(json({ features: [] }));
+
+    await expect(client.setFeatureStale('p1', 'my-flag', true)).rejects.toMatchObject({
+      code: 'FLAG_NOT_FOUND',
     });
-    expect(calls()[2]).toMatchObject({
-      url: `${base}/api/admin/archive/revive/my-flag`,
-      method: 'POST',
-    });
+    expect(calls()).toHaveLength(2);
   });
 
   it('reports no change when deleting an active flag', async () => {

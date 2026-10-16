@@ -26,6 +26,7 @@ function createContext(
     parentsWithChildFeatures: [],
     hasDeletedDependencies: false,
   },
+  children: string[] = [],
 ) {
   const client = {
     findFeatureProject: vi.fn(async (name: string) =>
@@ -37,6 +38,7 @@ function createContext(
     reviveFeature: vi.fn(async () => result),
     setFeatureStale: vi.fn(async () => result),
     validateArchiveFeatures: vi.fn(async () => validation),
+    getFeature: vi.fn(async () => ({ name: featureName, children })),
   };
   const context: ServerContext = {
     config: {
@@ -86,9 +88,11 @@ describe('update_flag_lifecycle', () => {
     });
     expect(result.structuredContent).toMatchObject({
       changed: true,
-      summary: 'Changed from live to completed (kept).',
+      sent: { status: 'kept', statusValue: 'variant-b' },
+      summary: 'Stage changed from live to completed (kept).',
     });
     const help = helpOf(result.structuredContent);
+    expect(help).toContainEqual(expect.stringContaining('statusValue "variant-b"'));
     expect(help).toContainEqual(expect.stringContaining('preservePath: "enabled"'));
     expect(help).toContainEqual(expect.stringContaining('action: "archive"'));
     expect(help).toContainEqual(expect.stringContaining('action: "uncomplete"'));
@@ -169,7 +173,7 @@ describe('update_flag_lifecycle', () => {
     const result = await updateFlagLifecycle(context, { featureName, action: 'archive' });
 
     expect(helpOf(result.structuredContent)).toContainEqual(
-      `Remove the flag from code: call cleanup_flag with { flagName: "${featureName}" }`,
+      `If code still references it, remove it: call cleanup_flag with { flagName: "${featureName}" }`,
     );
   });
 
@@ -190,7 +194,7 @@ describe('update_flag_lifecycle', () => {
 
     expect(result.structuredContent).toMatchObject({
       changed: false,
-      summary: 'No change: the flag was already completed (kept).',
+      summary: 'No change. Stage: completed (kept). Stale: no.',
     });
     expect(helpOf(result.structuredContent)[0]).toBe(
       'The flag was already in the requested state. Do not retry.',
@@ -237,36 +241,52 @@ describe('update_flag_lifecycle', () => {
 
     expect(result.isError).toBe(true);
     expect(result.structuredContent).toMatchObject({ error: { code: 'VALIDATION_ERROR' } });
+    expect(client.findFeatureProject).not.toHaveBeenCalled();
     expect(client.completeFeature).not.toHaveBeenCalled();
   });
 
-  it('refuses to archive a flag other flags depend on', async () => {
+  it('names the flags that block archiving', async () => {
     const { context, client } = createContext(
       transition({ presence: 'active' }, { presence: 'archived' }),
       { parentsWithChildFeatures: [featureName], hasDeletedDependencies: true },
+      ['checkout-child', 'checkout-banner'],
     );
 
     const result = await updateFlagLifecycle(context, { featureName, action: 'archive' });
 
     expect(result.isError).toBe(true);
     expect(result.structuredContent).toMatchObject({
-      error: { code: 'ARCHIVE_WOULD_ORPHAN_CHILDREN' },
+      error: {
+        code: 'ARCHIVE_WOULD_ORPHAN_CHILDREN',
+        message: `"${featureName}" was not archived. Flags that depend on it: checkout-child, checkout-banner.`,
+      },
     });
     expect(client.archiveFeature).not.toHaveBeenCalled();
   });
 
-  it('mentions the stale marker in the summary', async () => {
+  it.each([
+    ['mark_stale', false, true, 'Marked stale. Stage unchanged: live.'],
+    ['unmark_stale', true, false, 'Cleared stale marker. Stage unchanged: live.'],
+  ] as const)('keeps the stale marker apart from the stage on %s', async (action, staleBefore, staleAfter, summary) => {
     const { context } = createContext(
       transition(
-        { presence: 'active', stage: 'live', stale: false },
-        { presence: 'active', stage: 'live', stale: true },
+        { presence: 'active', stage: 'live', stale: staleBefore },
+        { presence: 'active', stage: 'live', stale: staleAfter },
       ),
     );
 
-    const result = await updateFlagLifecycle(context, { featureName, action: 'mark_stale' });
+    const result = await updateFlagLifecycle(context, { featureName, action });
 
-    expect(result.structuredContent).toMatchObject({
-      summary: 'Changed from live to live, stale.',
-    });
+    expect(result.structuredContent).toMatchObject({ summary });
+  });
+
+  it('does not echo what was sent for actions other than complete', async () => {
+    const { context } = createContext(
+      transition({ presence: 'active', stage: 'live' }, { presence: 'archived' }),
+    );
+
+    const result = await updateFlagLifecycle(context, { featureName, action: 'archive' });
+
+    expect(result.structuredContent).not.toHaveProperty('sent');
   });
 });

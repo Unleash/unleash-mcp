@@ -33,7 +33,9 @@ const updateFlagLifecycleSchema = z.object({
     .string()
     .min(1)
     .optional()
-    .describe('Optional detail for "complete", e.g. the variant that was kept'),
+    .describe(
+      'Optional detail for "complete", e.g. the variant that was kept. Unleash stores it but does not return it, so the result echoes it under "sent".',
+    ),
 });
 
 type UpdateFlagLifecycleInput = z.infer<typeof updateFlagLifecycleSchema>;
@@ -45,6 +47,7 @@ export async function updateFlagLifecycle(
 ): Promise<CallToolResult> {
   try {
     const input: UpdateFlagLifecycleInput = updateFlagLifecycleSchema.parse(args);
+    ensureStatusWhenCompleting(input);
 
     const projectId = await findProjectId(context, input);
 
@@ -79,13 +82,31 @@ export async function updateFlagLifecycle(
       changed: result.changed,
       before: result.before,
       after: result.after,
+      ...sentDetails(input),
       summary: summarize(result),
-      help: buildHelp(projectId, input.featureName, result),
+      help: buildHelp(projectId, input, result),
       links: { ui: url, resourceUri },
     });
   } catch (error) {
     return handleToolError(context, error, 'update_flag_lifecycle');
   }
+}
+
+function ensureStatusWhenCompleting(input: UpdateFlagLifecycleInput): void {
+  if (input.action === 'complete') {
+    requireStatus(input);
+  }
+}
+
+function requireStatus(input: UpdateFlagLifecycleInput): 'kept' | 'discarded' {
+  if (!input.status) {
+    throw new CustomError(
+      'VALIDATION_ERROR',
+      'status is required when action is "complete".',
+      'Set status to "kept" if the feature stays in the product, or "discarded" if it was removed.',
+    );
+  }
+  return input.status;
 }
 
 async function findProjectId(
@@ -115,15 +136,8 @@ async function applyAction(
 
   switch (input.action) {
     case 'complete':
-      if (!input.status) {
-        throw new CustomError(
-          'VALIDATION_ERROR',
-          'status is required when action is "complete".',
-          'Set status to "kept" if the feature stays in the product, or "discarded" if it was removed.',
-        );
-      }
       return client.completeFeature(projectId, featureName, {
-        status: input.status,
+        status: requireStatus(input),
         statusValue: input.statusValue,
       });
     case 'uncomplete':
@@ -146,34 +160,53 @@ async function ensureNoOrphanedChildren(
   featureName: string,
 ): Promise<void> {
   const validation = await context.unleashClient.validateArchiveFeatures(projectId, [featureName]);
-  if (validation.parentsWithChildFeatures.includes(featureName)) {
-    throw new CustomError(
-      'ARCHIVE_WOULD_ORPHAN_CHILDREN',
-      `"${featureName}" was not archived: other flags depend on it.`,
-      `Call get_flag_state for "${featureName}" to see its children, then archive them or remove their dependency on it first.`,
-    );
-  }
+  if (!validation.parentsWithChildFeatures.includes(featureName)) return;
+
+  const { children = [] } = await context.unleashClient.getFeature(projectId, featureName);
+  throw new CustomError(
+    'ARCHIVE_WOULD_ORPHAN_CHILDREN',
+    `"${featureName}" was not archived. Flags that depend on it: ${children.join(', ')}.`,
+    `Archive those flags, or remove their dependency on "${featureName}", then retry.`,
+  );
 }
 
-function describeSnapshot(snapshot: FeatureLifecycleSnapshot): string {
+function describeStage(snapshot: FeatureLifecycleSnapshot): string {
   if (snapshot.presence !== 'active') return snapshot.presence;
 
   const stage = snapshot.stage ?? 'active';
   const status = snapshot.status ? ` (${snapshot.status})` : '';
-  const stale = snapshot.stale ? ', stale' : '';
-  return `${stage}${status}${stale}`;
+  return `${stage}${status}`;
 }
 
-function summarize(result: LifecycleTransitionResult): string {
-  if (!result.changed) {
-    return `No change: the flag was already ${describeSnapshot(result.after)}.`;
+function summarize({ changed, before, after }: LifecycleTransitionResult): string {
+  const stageBefore = describeStage(before);
+  const stageAfter = describeStage(after);
+
+  if (!changed) {
+    return `No change. Stage: ${stageAfter}. Stale: ${after.stale ? 'yes' : 'no'}.`;
   }
-  return `Changed from ${describeSnapshot(result.before)} to ${describeSnapshot(result.after)}.`;
+
+  const sentences: string[] = [];
+  if (stageBefore !== stageAfter) {
+    sentences.push(`Stage changed from ${stageBefore} to ${stageAfter}.`);
+  }
+  if (Boolean(before.stale) !== Boolean(after.stale)) {
+    sentences.push(after.stale ? 'Marked stale.' : 'Cleared stale marker.');
+  }
+  if (stageBefore === stageAfter) {
+    sentences.push(`Stage unchanged: ${stageAfter}.`);
+  }
+  return sentences.join(' ');
+}
+
+function sentDetails(input: UpdateFlagLifecycleInput) {
+  if (input.action !== 'complete') return {};
+  return { sent: { status: input.status, statusValue: input.statusValue } };
 }
 
 function buildHelp(
   projectId: string,
-  featureName: string,
+  { featureName, action, statusValue }: UpdateFlagLifecycleInput,
   { changed, before, after }: LifecycleTransitionResult,
 ): string[] {
   const lifecycleCall = (action: LifecycleAction, extra = '') =>
@@ -184,10 +217,17 @@ function buildHelp(
     help.push('The flag was already in the requested state. Do not retry.');
   }
 
-  if (after.stage === 'completed' || after.stage === 'archived') {
+  if (action === 'complete' && statusValue) {
     help.push(
-      `Remove the flag from code: ${cleanupCall(featureName, after.status ?? before.status)}`,
+      `Unleash stores statusValue "${statusValue}" but does not return it, so "after" cannot show it.`,
     );
+  }
+
+  const cleanup = cleanupCall(featureName, after.status ?? before.status);
+  if (after.stage === 'completed') {
+    help.push(`Remove the flag from code: ${cleanup}`);
+  } else if (after.stage === 'archived') {
+    help.push(`If code still references it, remove it: ${cleanup}`);
   }
 
   if (after.presence === 'archived') {

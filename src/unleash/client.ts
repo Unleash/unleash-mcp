@@ -1145,6 +1145,13 @@ export class UnleashClient {
     mutate: () => Promise<void>,
   ): Promise<LifecycleTransitionResult> {
     const before = await this.getLifecycleSnapshot(projectId, featureName);
+    if (before.presence === 'missing') {
+      throw new CustomError(
+        'FLAG_NOT_FOUND',
+        `No flag named "${featureName}" exists in project "${projectId}", active or archived.`,
+        'Search for the flag by name to find its exact name and project.',
+      );
+    }
     await mutate();
     const after = await this.getLifecycleSnapshot(projectId, featureName);
     return compareSnapshots(before, after);
