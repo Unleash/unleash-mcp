@@ -652,6 +652,7 @@ Use this tool to inspect a flag before modifying it, to check how many strategie
 - `projectId` (optional): Project ID (defaults to `UNLEASH_DEFAULT_PROJECT`).
 - `environment` (optional): Filter results to a single environment (case-insensitive).
 - `includeSegments` (optional): Also return the segments that the strategies in the matching environments use.
+- `includeContextFields` (optional): Also return the context fields that constraints in the flag's project can use.
 
 #### Usage example
 
@@ -678,6 +679,8 @@ Use get_flag_state with:
 Returns a JSON object with the full feature object (all environments and strategy details), the environments matching the filter, and UI and API links.
 
 Strategies list their segments only by ID. When the matching environments use segments, the output includes a `hint` naming them. With `includeSegments`, it instead includes `segments`, each with its `id`, `name`, `description`, `project`, and the `constraints` that decide who it includes. Segments that could not be fetched are listed under `segmentErrors`, each with the `error` Unleash gave, and do not fail the call.
+
+With `includeContextFields`, the output includes `contextFields`: the root context fields plus the project's own, each with its `name`, `description`, `legalValues`, whether it can set rollout `stickiness`, and the `project` it belongs to if it is project-specific.
 
 ### Evaluate flag
 
