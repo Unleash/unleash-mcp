@@ -73,6 +73,6 @@ describe('tool annotations', () => {
         'wrap_change',
       ].sort(),
     );
-    expect(destructive).toEqual(['remove_flag_strategy']);
+    expect(destructive).toEqual(['remove_flag_strategy', 'set_flag_rollout']);
   });
 });

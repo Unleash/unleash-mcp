@@ -64,6 +64,7 @@ function createContext(
     logger,
     cache: { projects: null, featureFlags: new Map() },
     getClientInfo: () => overrides.clientInfo,
+    askUserToChoose: async () => undefined,
     notifyProgress: async () => {},
   };
 }

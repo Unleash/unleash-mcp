@@ -6,6 +6,7 @@ import type { FeedbackConsentResolver } from './feedback/consentResolver.js';
 import type { ClientInfo } from './unleash/attribution.js';
 import type { FeatureFlagSummary, UnleashClient, UnleashProjectSummary } from './unleash/client.js';
 import type { FeedbackHttpClient } from './unleash/feedbackHttpClient.js';
+import type { AskUserToChoose } from './utils/choicePrompt.js';
 import { type NormalizedError, normalizeError } from './utils/errors.js';
 import { jsonResult } from './utils/toolResult.js';
 
@@ -26,6 +27,7 @@ export interface ServerContext {
   logger: Logger;
   cache: ResourceCache;
   getClientInfo: () => ClientInfo | undefined;
+  askUserToChoose: AskUserToChoose;
   notifyProgress: (
     progressToken: string | number | undefined,
     current: number,
