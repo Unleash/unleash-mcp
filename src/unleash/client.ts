@@ -804,6 +804,35 @@ export class UnleashClient {
   }
 
   /**
+   * Flag names are unique across projects, so the name alone identifies the project. Search
+   * leaves out archived flags unless asked for them, so they are looked up second.
+   */
+  async findFeatureProject(featureName: string): Promise<string | undefined> {
+    if (this.dryRun) {
+      return 'default';
+    }
+
+    const activeProject = await this.searchProjectOf(featureName, {});
+    return activeProject ?? this.searchProjectOf(featureName, { archived: 'IS:true' });
+  }
+
+  private async searchProjectOf(
+    featureName: string,
+    filters: Record<string, string>,
+  ): Promise<string | undefined> {
+    const params = new URLSearchParams({ query: featureName, ...filters });
+    const data = await this.requestJson<{ features?: Array<{ name?: string; project?: string }> }>(
+      `/api/admin/search/features?${params.toString()}`,
+      { method: 'GET' },
+      {
+        errorMessage: `Failed to look up the project of feature ${featureName}`,
+        networkErrorMessage: `Failed to connect to Unleash API while looking up feature ${featureName}`,
+      },
+    );
+    return data.features?.find((feature) => feature.name === featureName)?.project;
+  }
+
+  /**
    * Evaluate a single feature flag against a context in an environment
    * (alpha playground endpoint). The project is resolved server-side.
    */

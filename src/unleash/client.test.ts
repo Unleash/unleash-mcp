@@ -107,6 +107,41 @@ describe('UnleashClient lifecycle', () => {
     expect(calls()).toEqual([{ url: `${featureUrl}/lifecycle`, method: 'GET', body: undefined }]);
   });
 
+  it('finds the project of an active flag by its exact name', async () => {
+    fetchMock.mockResolvedValueOnce(
+      json({
+        features: [
+          { name: 'my-flag-2', project: 'other' },
+          { name: 'my-flag', project: 'p1' },
+        ],
+      }),
+    );
+
+    await expect(client.findFeatureProject('my-flag')).resolves.toBe('p1');
+    expect(calls()).toEqual([
+      { url: `${base}/api/admin/search/features?query=my-flag`, method: 'GET', body: undefined },
+    ]);
+  });
+
+  it('finds the project of an archived flag', async () => {
+    fetchMock
+      .mockResolvedValueOnce(json({ features: [] }))
+      .mockResolvedValueOnce(json({ features: [{ name: 'my-flag', project: 'p1' }] }));
+
+    await expect(client.findFeatureProject('my-flag')).resolves.toBe('p1');
+    expect(calls()[1].url).toBe(
+      `${base}/api/admin/search/features?query=my-flag&archived=IS%3Atrue`,
+    );
+  });
+
+  it('finds no project for a flag that does not exist', async () => {
+    fetchMock
+      .mockResolvedValueOnce(json({ features: [] }))
+      .mockResolvedValueOnce(json({ features: [] }));
+
+    await expect(client.findFeatureProject('my-flag')).resolves.toBeUndefined();
+  });
+
   it('validates archiving', async () => {
     const report = { parentsWithChildFeatures: ['my-flag'], hasDeletedDependencies: true };
     fetchMock.mockResolvedValueOnce(json(report));

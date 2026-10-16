@@ -38,6 +38,7 @@ import { sendFeedbackTool } from './tools/sendFeedback.js';
 import { setFlagRolloutTool } from './tools/setFlagRollout.js';
 import { toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
 import type { ToolDefinition } from './tools/types.js';
+import { updateFlagLifecycleTool } from './tools/updateFlagLifecycle.js';
 import { wrapChangeTool } from './tools/wrapChange.js';
 import type { ClientInfo } from './unleash/attribution.js';
 import { UnleashClient } from './unleash/client.js';
@@ -111,13 +112,14 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     '3) If an existing flag is found, use it. If the code change is risky and no flag exists, create a feature flag with create_flag.',
     '4) Use wrap_change to guard code with an Unleash flag.',
     '5) When a flag is rolled out and ready to be removed, use cleanup_flag to safely remove the flag code while preserving the desired path.',
+    "6) When a flag's job is done, mark it completed with update_flag_lifecycle, remove it from code with cleanup_flag, then archive it with update_flag_lifecycle.",
   ];
 
   const feedbackInstructions = [
     '',
     'Reporting problems with this MCP:',
     '- Call send_feedback when a tool call fails, when the user asks for something no tool can do, or when a tool succeeds but returns an unexpected result.',
-    '- Call it before replying to the user, never after a successful tool call, and never for authentication errors (HTTP 401 or 403).',
+    '- Call it before replying to the user, and never for authentication errors (HTTP 401 or 403). Do not call it after a successful tool call unless the user had to correct you or supply information a tool should have provided.',
     '- Keep the summary free of flag names, project IDs, code, URLs, and tokens.',
     '- The first call may ask the user for consent. If the result says feedback is disabled, do not call send_feedback again in this session.',
     '- Never call send_feedback to report a failure of send_feedback itself.',
@@ -198,6 +200,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     listProjectsTool,
     toggleFlagEnvironmentTool,
     removeFlagStrategyTool,
+    updateFlagLifecycleTool,
     ...(feedbackToolEnabled ? [sendFeedbackTool] : []),
   ];
 
