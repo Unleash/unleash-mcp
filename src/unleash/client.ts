@@ -111,6 +111,14 @@ export interface Segment {
   constraints: Array<Record<string, unknown>>;
 }
 
+export interface ContextField {
+  name: string;
+  description?: string | null;
+  stickiness?: boolean;
+  project?: string;
+  legalValues?: Array<{ value: string; description?: string }>;
+}
+
 export interface FeatureEnvironment {
   name: string;
   enabled: boolean;
@@ -512,6 +520,32 @@ export class UnleashClient {
       },
     );
     return { id, name, description, project, constraints };
+  }
+
+  /**
+   * Context fields that constraints in `projectId` can use: the root fields plus the project's
+   * own. Keeps what a constraint needs; Unleash also returns usage counts and sort order.
+   */
+  async getContextFields(projectId: string): Promise<ContextField[]> {
+    if (this.dryRun) {
+      return [{ name: 'userId', stickiness: true, legalValues: [] }];
+    }
+
+    const fields = await this.requestJson<ContextField[]>(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/context?include=root`,
+      { method: 'GET' },
+      {
+        errorMessage: `Failed to fetch context fields for project ${projectId}`,
+        networkErrorMessage: `Failed to connect to Unleash API while fetching context fields for project ${projectId}`,
+      },
+    );
+    return fields.map(({ name, description, stickiness, project, legalValues }) => ({
+      name,
+      description,
+      stickiness,
+      project,
+      legalValues,
+    }));
   }
 
   /**
