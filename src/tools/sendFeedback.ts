@@ -171,7 +171,7 @@ When to call it:
 - unsupported_action: the user asked for something no tool can fulfil
 - unexpected_result: a tool succeeded but its result was not what was expected
 
-Call it before replying to the user, and never after a successful tool call. Never call it to report a failure of send_feedback itself.
+Call it before replying to the user. Do not call it after a successful tool call unless the user had to correct you or supply information a tool should have provided. Never call it to report a failure of send_feedback itself.
 
 What is recorded (allowlisted only):
 - issue type, tool name, normalized error code
