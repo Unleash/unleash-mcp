@@ -33,6 +33,7 @@ The MCP server exposes the following tools:
 - `list_projects`: Lists Unleash projects available to the configured token, with optional pagination.
 - `toggle_flag_environment`: Enables or disables a feature flag in an environment.
 - `remove_flag_strategy`: Deletes a feature flag's strategy from an environment.
+- `update_flag_lifecycle`: Completes, uncompletes, archives, or revives a feature flag, or marks it as stale.
 - `cleanup_flag`: Generates instructions for safely removing flagged code paths.
 - `send_feedback`: Reports a failed tool call, an unsupported request, or an unexpected result to Unleash so the MCP can be improved. Requires the user's consent. Not listed when consent is denied up front through `UNLEASH_MCP_SEND_FEEDBACK=false` or the `feedbackConsent` server option.
 
@@ -964,6 +965,50 @@ then use remove_flag_strategy to delete the old strategy.
 
 Returns a JSON object with the removed strategy ID, the count of remaining strategies in the environment, the updated feature object, and links to the flag in the Unleash Admin UI and Admin API.
 
+### Update flag lifecycle
+
+The `update_flag_lifecycle` tool moves a feature flag through its lifecycle. Unleash sets the `initial`, `pre-live`, and `live` stages from SDK metrics, so this tool only changes what the API allows: completing, archiving, and undoing either, plus the stale marker.
+
+#### When to use
+
+Use this tool when a flag's job is done. The recommended order is: `complete`, then `cleanup_flag` to remove the flag from code, then `archive`.
+
+#### Parameters
+
+- `featureName` (required): Feature flag name.
+- `action` (required): One of:
+  - `complete`: marks the flag as completed. Requires `status`.
+  - `uncomplete`: undoes `complete`.
+  - `archive`: archives the flag so SDKs stop receiving it. Refused when other flags depend on it.
+  - `revive`: restores an archived flag.
+  - `mark_stale` / `unmark_stale`: sets or clears the stale marker, which is independent of the stage.
+- `status` (required for `complete`): `"kept"` if the feature stays in the product, `"discarded"` if it was removed.
+- `statusValue` (optional): Detail for `complete`, for example the variant that was kept.
+- `projectId` (optional): Project ID. When omitted, the tool finds the project from the flag name, since flag names are unique across projects.
+
+#### Usage example
+
+**Agent prompt**
+
+```
+The new checkout flow is fully rolled out. Mark "new-checkout-flow" as completed and kept.
+```
+
+**Tool payload**
+
+```json
+{
+  "featureName": "new-checkout-flow",
+  "action": "complete",
+  "status": "kept",
+  "projectId": "ecommerce"
+}
+```
+
+**Tool output**
+
+Returns a JSON object with `changed`, the flag's lifecycle state `before` and `after` the call, a one-line `summary`, and `help` with the next tool calls. When the flag reaches `completed` or `archived`, `help` suggests calling `cleanup_flag`, with `preservePath` set from the completion status (`kept` keeps the enabled path, `discarded` keeps the disabled path). When the flag was already in the requested state, `changed` is `false` and nothing is modified.
+
 ### Cleanup flag
 
 The `cleanup_flag` tool generates step-by-step instructions for safely removing feature flag code from the codebase while preserving the desired code path.
@@ -1154,6 +1199,7 @@ src/
 │   ├── getFlagHistory.ts        # get_flag_history tool
 │   ├── toggleFlagEnvironment.ts # toggle_flag_environment tool
 │   ├── removeFlagStrategy.ts    # remove_flag_strategy tool
+│   ├── updateFlagLifecycle.ts   # update_flag_lifecycle tool
 │   └── sendFeedback.ts          # send_feedback tool
 ├── resources/
 │   └── unleashResources.ts      # MCP resource handlers (projects, flags)
@@ -1250,6 +1296,12 @@ This server uses the Unleash Admin API. For complete API documentation, see:
 - `DELETE /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies/{strategyId}` - Remove strategy
 - `POST /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on` - Enable flag
 - `POST /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/off` - Disable flag
+- `POST /api/admin/projects/{projectId}/features/{featureName}/lifecycle/complete` - Complete flag
+- `POST /api/admin/projects/{projectId}/features/{featureName}/lifecycle/uncomplete` - Uncomplete flag
+- `POST /api/admin/projects/{projectId}/archive/validate` - Check dependencies before archiving
+- `DELETE /api/admin/projects/{projectId}/features/{featureName}` - Archive flag
+- `POST /api/admin/archive/revive/{featureName}` - Revive archived flag
+- `POST /api/admin/projects/{projectId}/stale` - Mark flag as stale or not stale
 
 `send_feedback` does not call your Unleash instance. It posts to `POST {UNLEASH_FEEDBACK_URL}/feedback` on the Unleash-hosted feedback instance.
 
