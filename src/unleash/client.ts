@@ -52,6 +52,16 @@ export interface FeatureFlagSummary {
   archived?: boolean;
   impressionData?: boolean;
   createdAt?: string;
+  stale?: boolean;
+  potentiallyStale?: boolean;
+  lastChangedAt?: string | null;
+  lifecycle?: { stage: string; enteredStageAt: string };
+  environments?: Array<{
+    name: string;
+    type?: string;
+    enabled: boolean;
+    lastSeenAt?: string | null;
+  }>;
   url: string;
 }
 
@@ -870,15 +880,9 @@ export class UnleashClient {
 
   private async fetchProjectFeatureFlags(projectId: string): Promise<FeatureFlagSummary[]> {
     const data = await this.requestJson<{
-      features?: Array<{
-        name?: string;
-        description?: string;
-        type?: FeatureFlagType;
-        archived?: boolean;
-        impressionData?: boolean;
-        createdAt?: string;
-        project?: string;
-      }>;
+      features?: Array<
+        Omit<FeatureFlagSummary, 'name' | 'project' | 'url'> & { name?: string; project?: string }
+      >;
     }>(
       `/api/admin/projects/${encodeURIComponent(projectId)}/features?view=core`,
       { method: 'GET' },
@@ -901,6 +905,22 @@ export class UnleashClient {
           archived: feature.archived,
           impressionData: feature.impressionData,
           createdAt: feature.createdAt,
+          stale: feature.stale,
+          potentiallyStale: feature.potentiallyStale,
+          lastChangedAt: feature.lastChangedAt,
+          lifecycle: feature.lifecycle && {
+            stage: feature.lifecycle.stage,
+            enteredStageAt: feature.lifecycle.enteredStageAt,
+          },
+          // Unleash versions before these fields send an empty list, and every project has an environment.
+          ...(feature.environments?.length && {
+            environments: feature.environments.map(({ name, type, enabled, lastSeenAt }) => ({
+              name,
+              type,
+              enabled,
+              lastSeenAt,
+            })),
+          }),
           url: `${this.baseUrl}/projects/${encodeURIComponent(project)}/features/${encodeURIComponent(name)}`,
         };
       });

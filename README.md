@@ -837,6 +837,8 @@ Use list_flags with:
 
 Returns a JSON object with `projectId`, `archived`, `order`, `limit`, `offset`, `nextOffset`, `totalFlags`, and the `flags` array (each with name, type, project, archived status, and links). Use `nextOffset` to page through large projects.
 
+On Unleash versions that send them, each active flag also has `stale`, `potentiallyStale`, `lifecycle` (its stage and when it entered it), `lastChangedAt` (its latest event), and `environments`, each with its type, whether it is on and `lastSeenAt`. An agent can pick cleanup candidates from the list alone, such as flags that are on in production and unchanged for 30 days, and then call `get_flag_state` on those candidates only.
+
 ### Search flags
 
 The `search_flags` tool searches active feature flags in all projects by part of their name or description. Given a flag's full name, it returns that flag and the project it is in, which the other flag tools need as `projectId`.
