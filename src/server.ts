@@ -8,7 +8,6 @@ import type { FeedbackConsentDecision } from './feedback/consentDecision.js';
 import { FeedbackConsentResolver } from './feedback/consentResolver.js';
 import { CONSENT_FILE_NAME, FileConsentStore, resolveConfigDir } from './feedback/consentStore.js';
 import { createElicitationConsentPrompt } from './feedback/elicitation.js';
-import { showsConsentPrompt } from './feedback/showsConsentPrompt.js';
 import {
   extractFlagNameFromFeatureUri,
   extractProjectIdFromFeatureUri,
@@ -43,6 +42,8 @@ import { wrapChangeTool } from './tools/wrapChange.js';
 import type { ClientInfo } from './unleash/attribution.js';
 import { UnleashClient } from './unleash/client.js';
 import { FeedbackHttpClient } from './unleash/feedbackHttpClient.js';
+import { createChoicePrompt } from './utils/choicePrompt.js';
+import { showsElicitationForms } from './utils/showsElicitationForms.js';
 import { notifyProgress } from './utils/streaming.js';
 import { VERSION } from './version.js';
 
@@ -163,7 +164,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
   const feedbackConsentResolver = new FeedbackConsentResolver({
     initialConsent: feedbackConsent,
     askUser: createElicitationConsentPrompt(server, consentStore.location, logger),
-    clientShowsConsentPrompt: () => showsConsentPrompt(getClientInfo()?.name),
+    clientShowsConsentPrompt: () => showsElicitationForms(getClientInfo()?.name),
     store: consentStore,
     logger,
   });
@@ -176,6 +177,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     logger,
     cache: { projects: null, featureFlags: new Map() },
     getClientInfo,
+    askUserToChoose: createChoicePrompt(server, () => getClientInfo()?.name, logger),
     notifyProgress: notifyProgress(server),
   };
 
