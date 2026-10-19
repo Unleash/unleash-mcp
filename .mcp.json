@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "unleash-dev": {
+      "command": "node",
+      "args": ["--env-file-if-exists=.env", "src/index.ts"]
+    }
+  }
+}
