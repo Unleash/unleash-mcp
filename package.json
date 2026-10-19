@@ -9,17 +9,21 @@
   "scripts": {
     "start": "node src/index.ts",
     "typecheck": "tsc",
-    "test": "tsc && node --test"
+    "test": "tsc && node --test",
+    "spec:update": "curl -sSf https://sandbox.getunleash.io/enterprise/docs/openapi.json -o src/unleash/openapi.json && npm run spec:generate",
+    "spec:generate": "openapi-typescript src/unleash/openapi.json -o src/unleash/api.d.ts"
   },
   "engines": {
     "node": ">=24"
   },
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.32.1"
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "openapi-fetch": "^0.17.0"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
-    "typescript": "^7.0.2"
+    "openapi-typescript": "^7.13.0",
+    "typescript": "^5.9.3"
   }
 }

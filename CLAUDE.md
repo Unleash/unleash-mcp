@@ -15,6 +15,8 @@ npm install   # Install dependencies
 npm start     # Run the stdio server from source (Node runs TypeScript directly, no build step)
 npm test      # Typecheck (tsc) then run tests with the Node test runner
 npm run typecheck
+npm run spec:update     # Download the OpenAPI spec (gitignored) and regenerate src/unleash/api.d.ts (generated, don't edit)
+npm run spec:generate   # Regenerate from an already downloaded spec
 ```
 
 Never write to stdout in stdio mode (it breaks the MCP handshake).
