@@ -3,10 +3,17 @@ import { test } from 'node:test';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { createServer } from './server.ts';
+import { createUnleashClient } from './unleash/client.ts';
+
+const unleash = createUnleashClient({
+  baseUrl: 'https://unleash.example',
+  headers: {},
+  fetch: async () => Response.json({}),
+});
 
 const connectClient = async (): Promise<Client> => {
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
-  await createServer().connect(serverTransport);
+  await createServer(unleash).connect(serverTransport);
   const client = new Client({ name: 'test-client', version: '0.0.0' });
   await client.connect(clientTransport);
   return client;
