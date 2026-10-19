@@ -42,3 +42,8 @@ for a short time (e.g. what the next increment contains).
 - The generated types are checked in; the spec itself (`src/unleash/openapi.json`, downloaded from `https://sandbox.getunleash.io/enterprise/docs/openapi.json`) is gitignored. Types are regenerated deliberately with `npm run spec:update`, not on install.
 - `openapi-typescript` is a regular dev dependency. That pins the project's TypeScript to 5.x: the generator needs the TS compiler API that TypeScript 7 (the native port) no longer ships, and npm cannot nest a conflicting peer dependency. Revisit when the generator supports TypeScript 7.
 - Generated types describe what Unleash returns; the token-efficient shaping of tool output stays hand-written on top.
+
+## 2026-10-19 — Dev server in Claude Code
+
+- Register the dev server with a checked-in project `.mcp.json` (name `unleash-dev`, runs `src/index.ts` directly). Secrets come from the gitignored `.env` via `node --env-file-if-exists`.
+- Start with plain `claude`, which asks to approve the project server once. `claude --mcp-config .mcp.json --strict-mcp-config` skips that prompt.
