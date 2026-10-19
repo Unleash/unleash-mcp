@@ -1,13 +1,23 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import pkg from '../package.json' with { type: 'json' };
+import { releaseInput } from './tools/releaseInput.ts';
+import { releaseOutput } from './tools/releaseOutput.ts';
+import { createRelease } from './tools/release.ts';
 import type { UnleashClient } from './unleash/client.ts';
 
-export const createServer = (_unleash: UnleashClient): McpServer => {
+export const createServer = (unleash: UnleashClient): McpServer => {
   const server = new McpServer({ name: 'unleash-mcp', version: pkg.version });
+  const release = createRelease(unleash);
 
-  server.registerTool('ping', { description: 'Dummy tool: replies with pong.' }, async () => ({
-    content: [{ type: 'text', text: 'pong' }],
-  }));
+  server.registerTool(
+    'release',
+    {
+      description: 'Release a feature flag to a percentage of users in an environment.',
+      inputSchema: releaseInput,
+      outputSchema: releaseOutput,
+    },
+    async (input) => ({ structuredContent: await release(input), content: [] }),
+  );
 
   return server;
 };

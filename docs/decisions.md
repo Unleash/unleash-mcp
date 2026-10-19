@@ -47,3 +47,8 @@ for a short time (e.g. what the next increment contains).
 
 - Register the dev server with a checked-in project `.mcp.json` (name `unleash-dev`, runs `src/index.ts` directly). Secrets come from the gitignored `.env` via `node --env-file-if-exists`.
 - Start with plain `claude`, which asks to approve the project server once. `claude --mcp-config .mcp.json --strict-mcp-config` skips that prompt.
+
+## 2026-10-19 — Tool module naming
+
+- Each tool is split into input schema, logic and output schema. Files and exports carry the tool name (`releaseInput.ts`, `release.ts`, `releaseOutput.ts`), not generic names like `input.ts`: with multiple tools and input files, generic names make searching difficult.
+- Tool output is structured, not text: the logic returns the output object, declared as `outputSchema` and returned as `structuredContent`. For now only `structuredContent` is returned, no text block; add one back if a client we care about does not show the model structured content. No prose rendering.
