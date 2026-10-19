@@ -34,3 +34,11 @@ for a short time (e.g. what the next increment contains).
 
 - We are going to distribute this one as local (stdio) and remote (Streamable HTTP).
 - We build remote first, since it's easier to maintain in the long term going this way.
+
+## 2026-10-19 — Unleash HTTP client
+
+- Generate the HTTP client from the Unleash OpenAPI spec: generated types plus a thin typed fetch wrapper. Rejected: a hand-written client like `main` (types drift from the API), a full client generator (391 generated functions, mostly unused), and dynamic calls from the spec at runtime (pushes the whole API surface onto the agent).
+- `openapi-typescript` generates types only (`src/unleash/api.d.ts`, checked in, no runtime code); `openapi-fetch` is the thin typed wrapper over Node's `fetch`. Unused endpoints cost nothing at runtime.
+- The generated types are checked in; the spec itself (`src/unleash/openapi.json`, downloaded from `https://sandbox.getunleash.io/enterprise/docs/openapi.json`) is gitignored. Types are regenerated deliberately with `npm run spec:update`, not on install.
+- `openapi-typescript` is a regular dev dependency. That pins the project's TypeScript to 5.x: the generator needs the TS compiler API that TypeScript 7 (the native port) no longer ships, and npm cannot nest a conflicting peer dependency. Revisit when the generator supports TypeScript 7.
+- Generated types describe what Unleash returns; the token-efficient shaping of tool output stays hand-written on top.
