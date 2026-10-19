@@ -26,11 +26,19 @@ test('client completes the MCP handshake with the server', async () => {
   await client.close();
 });
 
-test('ping tool replies with pong', async () => {
+test('release tool reports the rollout', async () => {
   const client = await connectClient();
 
-  const result = await client.callTool({ name: 'ping', arguments: {} });
+  const result = await client.callTool({
+    name: 'release',
+    arguments: { project: 'shop', flag: 'checkout-v2', environment: 'production', rollout: 50 },
+  });
 
-  assert.deepEqual(result.content, [{ type: 'text', text: 'pong' }]);
+  assert.deepEqual(result.structuredContent, {
+    kind: 'released',
+    flag: 'checkout-v2',
+    environment: 'production',
+    rollout: 50,
+  });
   await client.close();
 });
