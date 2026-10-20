@@ -46,6 +46,18 @@ test('releases an existing flag', async () => {
   assert.deepEqual(output, { kind: 'released', flag: { status: 'existing', name: flag }, environment: 'development', rollout: 50 });
 });
 
+test('asks which project when none is given', async () => {
+  const release = createRelease(unleash);
+
+  const output = await release({ flag, environment: 'development', rollout: 50 });
+
+  assert.equal(output.kind, 'choose');
+  assert.equal(output.input, 'project');
+  assert.equal(output.message, 'Which project?');
+  // The sandbox project list changes between recordings, so only the fixture project is checked.
+  assert.ok(output.options.includes(project));
+});
+
 const unleashError = (name: string, message: string) => ({ id: '0b84c7fd-5278-4087-832d-0b502c7929b3', name, message, details: [{ message }] });
 
 const features = `/api/admin/projects/${project}/features`;
@@ -125,4 +137,32 @@ test('fails on an error reply without a body', async () => {
   const output = await release({ project, flag, environment: 'development', rollout: 50 });
 
   assert.deepEqual(output, { kind: 'failed', status: 503, name: 'UnknownError', reasons: [] });
+});
+
+test('uses the only project when none is given', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const release = createRelease(unleash);
+  stub.intercept({ path: '/api/admin/projects', method: 'GET' }).reply(200, { version: 1, projects: [{ id: project, name: project }] });
+  stub.intercept({ path: feature, method: 'GET' }).reply(200, { name: flag });
+  stub.intercept({ path: `${base}/strategies`, method: 'POST' }).reply(200, {});
+  stub.intercept({ path: `${base}/on`, method: 'POST' }).reply(200, {});
+
+  const output = await release({ flag, environment: 'development', rollout: 50 });
+
+  assert.deepEqual(output, { kind: 'released', flag: { status: 'existing', name: flag }, environment: 'development', rollout: 50 });
+});
+
+test('fails with the Unleash error when the projects cannot be listed', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const release = createRelease(unleash);
+  stub.intercept({ path: '/api/admin/projects', method: 'GET' }).reply(401, unleashError('AuthenticationRequired', 'You must log in to use Unleash'));
+
+  const output = await release({ flag, environment: 'development', rollout: 50 });
+
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 401,
+    name: 'AuthenticationRequired',
+    reasons: ['You must log in to use Unleash'],
+  });
 });
