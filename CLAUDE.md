@@ -1,27 +1,30 @@
 # CLAUDE.md
 
-Unleash MCP Server v2: an AI-agent-friendly interface to Unleash, built in small increments on the `v2` branch.
+Unleash MCP Server v2: an interface to Unleash that can replace the UI, built for AI agents. Developed on the `v2` branch.
 
-## When writing to decisions.md
+## Working agreements
 
-- Be VERY succinct.
-- Only register decisions that affect the future of the project, don't register specific implementation details. Good: "we are going to implement three layered architecture". Bad: "A "no" to a confirm ends the workflow with a `declined` outcome instead of asking again."
-
-## When working on a task
-
-- Read `docs/decisions.md`.
-- When your task is done, register all decisions made by the driver in their own words. Never guess: ask clarifying questions and record the answer there.
+- Work in small increments (1–200 LOC).
+- Never guess: ask clarifying questions.
+- Self-check each increment with the `unleash-internal:code-review` skill.
+- Leave increments uncommitted; the driver reviews and commits.
+- When a task is done, run the `record-decision` skill.
 
 ## Commands
 
 ```bash
-npm install   # Install dependencies
-npm start     # Run the stdio server from source (Node runs TypeScript directly, no build step)
-npm test      # Typecheck (tsc) then run tests with the Node test runner, replaying recorded snapshots (no network)
-npm run test:record     # Run tests against the real Unleash (.env) and re-record the snapshots
+npm install
+npm start               # stdio server from source
+npm test                # typecheck + tests, replaying recorded snapshots
 npm run typecheck
-npm run spec:update     # Download the OpenAPI spec (gitignored) and regenerate src/unleash/api.d.ts (generated, don't edit)
-npm run spec:generate   # Regenerate from an already downloaded spec
+npm run test:record     # see the record-snapshots skill
+npm run spec:update     # see the update-openapi-spec skill
+npm run spec:generate
 ```
 
-Never write to stdout in stdio mode (it breaks the MCP handshake).
+## Where things live
+
+- `docs/decisions.md`: why things are the way they are. Read it before starting a task.
+- `docs/development.md`: local setup and running the dev server in Claude Code.
+- `.claude/rules/`: path-scoped coding rules, loaded automatically.
+- `.claude/skills/`: `record-decision`, `record-snapshots`, `update-openapi-spec`.
