@@ -65,3 +65,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 ## 2026-10-20 — Agent instructions
 
 - No duplicated information, progressive disclosure: `docs/decisions.md` holds the why, `.claude/rules/` the what, `.claude/skills/` the procedures, `CLAUDE.md` only the always-on essentials.
+
+## 2026-10-20 — Core views
+
+- Always prefer Unleash's `view=core` query param where an endpoint offers it. Core views skip derived fields (counts, members, health) that MCP tools never consume, so they are cheaper for Unleash and smaller to read.
