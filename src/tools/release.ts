@@ -16,21 +16,21 @@ export const createRelease =
         parameters: { rollout: String(input.rollout), stickiness: 'default', groupId: input.flag },
       },
     });
-    if (added.error) return failed(added);
+    if (!added.response.ok) return failed(added);
 
     const enabled = await unleash.POST(enable, { params: { path } });
-    if (enabled.error) return failed(enabled);
+    if (!enabled.response.ok) return failed(enabled);
 
     return { kind: 'released', flag: input.flag, environment: input.environment, rollout: input.rollout };
   };
 
 // Unleash puts the useful error messages in `details`, which the OpenAPI spec omits.
 type UnleashError = { name?: string; details?: { message: string }[] };
-type FailedCall = { response: Response; error: UnleashError };
+type FailedCall = { response: Response; error?: UnleashError };
 
 const failed = ({ response, error }: FailedCall): ReleaseResult => ({
   kind: 'failed',
   status: response.status,
-  name: error.name ?? 'UnknownError',
-  reasons: error.details?.map((d) => d.message) ?? [],
+  name: error?.name ?? 'UnknownError',
+  reasons: error?.details?.map((d) => d.message) ?? [],
 });
