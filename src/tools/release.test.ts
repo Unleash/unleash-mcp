@@ -61,6 +61,14 @@ test('releases to several audiences', async () => {
   });
 });
 
+test('removes the audiences a release leaves out', async () => {
+  const release = createRelease(unleash);
+
+  const output = await release({ project, flag, environment: 'development', targets: [{ name: 'Beta testers' }] });
+
+  assert.deepEqual(output, { kind: 'released', flag: { status: 'existing', name: flag }, environment: 'development', targets: [{ name: 'Beta testers', rollout: 100 }] });
+});
+
 test('asks which project when none is given', async () => {
   const release = createRelease(unleash);
 
@@ -109,6 +117,46 @@ test('fails with the Unleash error when the environment cannot be enabled', asyn
     name: 'UnknownError',
     reasons: ['connect ECONNREFUSED 10.0.0.5:5432'],
   });
+});
+
+const development = (...strategyIds: string[]) => ({
+  name: flag,
+  environments: [{ name: 'development', enabled: true, strategies: strategyIds.map((id) => ({ id, name: 'flexibleRollout' })) }],
+});
+
+test('fails with the Unleash error when an audience cannot be changed', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const release = createRelease(unleash);
+  stub.intercept({ path: feature, method: 'GET' }).reply(200, development('s1'));
+  stub.intercept({ path: `${base}/strategies/s1`, method: 'PUT' }).reply(403, unleashError('PermissionError', 'You need the UPDATE_FEATURE_STRATEGY permission'));
+
+  const output = await release({ project, flag, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
+
+  assert.deepEqual(output, { kind: 'failed', status: 403, name: 'PermissionError', reasons: ['You need the UPDATE_FEATURE_STRATEGY permission'] });
+});
+
+test('fails with the Unleash error when a left out audience cannot be removed', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const release = createRelease(unleash);
+  stub.intercept({ path: feature, method: 'GET' }).reply(200, development('s1', 's2'));
+  stub.intercept({ path: `${base}/strategies/s1`, method: 'PUT' }).reply(200, {});
+  stub.intercept({ path: `${base}/strategies/s2`, method: 'DELETE' }).reply(403, unleashError('PermissionError', 'You need the DELETE_FEATURE_STRATEGY permission'));
+
+  const output = await release({ project, flag, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
+
+  assert.deepEqual(output, { kind: 'failed', status: 403, name: 'PermissionError', reasons: ['You need the DELETE_FEATURE_STRATEGY permission'] });
+});
+
+// No stub for enabling: a request to turn the environment on would fail the release.
+test('leaves an enabled environment as it is', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const release = createRelease(unleash);
+  stub.intercept({ path: feature, method: 'GET' }).reply(200, development('s1'));
+  stub.intercept({ path: `${base}/strategies/s1`, method: 'PUT' }).reply(200, {});
+
+  const output = await release({ project, flag, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
+
+  assert.equal(output.kind, 'released');
 });
 
 test('fails on an error reply without a body', async () => {

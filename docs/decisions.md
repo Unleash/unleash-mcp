@@ -54,6 +54,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - We will not maintain manual fetch mocks. We use undici's `SnapshotAgent`: tests are recorded against the real Unleash sandbox and replayed from checked-in snapshots. Both use the same config as the server.
 - Tests must be subsecond. Pay attention to anything that may slow them down, e.g. I/O over network, timers, process spawning.
 - Snapshots are for happy path tests only. Error cases intercept the requests and reply as Unleash would, so the snapshot does not change when error coverage grows.
+- For now, recorded tests assert the tool output only and do not read Unleash state back, to keep snapshots small. Reading back only proves anything while recording; revisit if a recording ever bakes in wrong behaviour.
 
 ## 2026-10-20 — Release tool
 
@@ -61,6 +62,11 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Supersedes the above: instead of assuming the flag is going to be created, ask the user for confirmation first. Port the spike's functionality, not its code (throwaway).
 - The confirmation is a round-trip through the agent: the tool writes nothing and answers with a confirmation, the agent asks the user and calls again. It works with every client. Rejected: MCP elicitation (only clients that support it).
 - The caller confirms with `createFlag: true`. Rejected: the spike's `confirm: ['createFlag']` list.
+- The caller describes the end result of the release, and the tool figures it out in a stateless fashion: the targets replace what the environment had. Existing strategies are reused by position so their history survives.
+- Each target has a required name. The agent knows why it is adding an audience, so it should say so; a generated label would only repeat the configuration. Rejected: an optional name, with or without a generated summary as fallback.
+- `released` echoes the targets as applied, so the agent gets back the shape it sent. Rejected: one summary line per target.
+- For now, problems are returned one at a time with `choose`/`confirm`. Not decided long-term. Rejected for now: the spike's list of all decisions at once.
+- Left out of scope for now, to tackle incrementally: segments in targets, context field and legal value checks, change requests, an optional or invalid environment, flag type `release` on create, reporting already applied writes on failure, and the spike's open gaps (open draft change requests, no atomicity, concurrent edits, overwriting non gradual rollout strategies, dry run). See `docs/release-spike-report.md`.
 
 ## 2026-10-20 — Agent instructions
 
