@@ -3,7 +3,7 @@ import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import express from 'express';
 import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createMcpHandler } from './remote.js';
+import { createMcpHandler, type ToolCall } from './remote.js';
 import { type CreateServerOptions, createUnleashMcpServer } from './server.js';
 
 // InMemoryTransport keeps initialize and tools/call on one McpServer instance, so the
@@ -363,5 +363,70 @@ describe('outbound User-Agent attribution (e2e)', () => {
       return /^unleash-mcp\/[\w.-]+ \(MCP Server\)$/.test(headers['User-Agent'] ?? '');
     });
     expect(baseCall).toBeDefined();
+  });
+});
+
+describe('tool call reporting (e2e)', () => {
+  function postToRecordingHandler(message: object) {
+    const toolCalls: ToolCall[] = [];
+    const handler = createMcpHandler({
+      baseUrl: 'http://127.0.0.1:1',
+      onToolCall: (call) => toolCalls.push(call),
+    });
+    const app = express();
+    app.use(express.json());
+    app.post('/', async (req, res) => {
+      await handler(req, res, { authHeaders: {}, parsedBody: req.body });
+    });
+    const response = request(app)
+      .post('/')
+      .set('Accept', 'application/json, text/event-stream')
+      .send({ jsonrpc: '2.0', id: 1, ...message });
+    return { response, toolCalls };
+  }
+
+  it.each([
+    [
+      'a successful call',
+      { name: 'wrap_change', arguments: { flagName: 'example', language: 'typescript' } },
+      { tool: 'wrap_change', outcome: 'succeeded' },
+    ],
+    [
+      'a call the tool reports as failed',
+      { name: 'get_flag_state', arguments: flag },
+      { tool: 'get_flag_state', outcome: 'failed', errorCode: 'NETWORK_ERROR' },
+    ],
+    [
+      'a call whose arguments break the input schema',
+      { name: 'get_flag_state', arguments: {} },
+      { tool: 'get_flag_state', outcome: 'failed', errorCode: 'INVALID_PARAMS' },
+    ],
+    [
+      'a call to a tool that does not exist',
+      { name: 'delete_everything', arguments: {} },
+      { tool: 'delete_everything', outcome: 'failed', errorCode: 'INVALID_PARAMS' },
+    ],
+    [
+      'a call the protocol rejects',
+      { name: 'get_flag_state', arguments: 'example' },
+      { tool: 'get_flag_state', outcome: 'failed', errorCode: 'JSONRPC_-32603' },
+    ],
+  ])('reports %s', async (_, params, expected) => {
+    const { response, toolCalls } = postToRecordingHandler({ method: 'tools/call', params });
+
+    await response.expect(200);
+
+    expect(toolCalls).toEqual([expected]);
+  });
+
+  it('reports nothing for requests that are not tool calls', async () => {
+    const { response, toolCalls } = postToRecordingHandler({
+      method: 'prompts/get',
+      params: { name: 'example' },
+    });
+
+    await response.expect(200);
+
+    expect(toolCalls).toEqual([]);
   });
 });

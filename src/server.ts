@@ -3,7 +3,7 @@ import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mc
 import type { Variables } from '@modelcontextprotocol/sdk/shared/uriTemplate.js';
 import { UriTemplate } from '@modelcontextprotocol/sdk/shared/uriTemplate.js';
 import { type Config, normalizeBaseUrl, resolveFeedbackBaseUrl } from './config.js';
-import { createLogger, type Logger, type ServerContext } from './context.js';
+import { createLogger, handleToolError, type Logger, type ServerContext } from './context.js';
 import type { FeedbackConsentDecision } from './feedback/consentDecision.js';
 import { FeedbackConsentResolver } from './feedback/consentResolver.js';
 import { CONSENT_FILE_NAME, FileConsentStore, resolveConfigDir } from './feedback/consentStore.js';
@@ -225,7 +225,9 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
         annotations: tool.annotations,
       },
       (args: unknown, extra: ProgressExtra) =>
-        tool.implementation(context, args, extra._meta?.progressToken),
+        tool
+          .implementation(context, args, extra._meta?.progressToken)
+          .catch((error) => handleToolError(context, error, tool.name)),
     );
   });
 

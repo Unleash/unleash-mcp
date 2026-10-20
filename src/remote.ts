@@ -1,8 +1,25 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
+import {
+  isJSONRPCErrorResponse,
+  isJSONRPCRequest,
+  isJSONRPCResultResponse,
+  type JSONRPCErrorResponse,
+  type JSONRPCResultResponse,
+  type RequestId,
+} from '@modelcontextprotocol/sdk/types.js';
+import { z } from 'zod';
 import { type CreateServerOptions, createUnleashMcpServer } from './server.js';
 
-export type RemoteHandlerOptions = Omit<CreateServerOptions, 'authHeaders'>;
+export type ToolCall =
+  | { tool: string; outcome: 'succeeded' }
+  | { tool: string; outcome: 'failed'; errorCode: string };
+
+export type RemoteHandlerOptions = Omit<CreateServerOptions, 'authHeaders'> & {
+  /** Called once for every tools/call request, after its response is sent. */
+  onToolCall?: (call: ToolCall) => void;
+};
 
 export type McpRequestHandler = (
   req: IncomingMessage,
@@ -30,7 +47,10 @@ export type McpRequestHandler = (
  * });
  * ```
  */
-export function createMcpHandler(defaults: RemoteHandlerOptions): McpRequestHandler {
+export function createMcpHandler({
+  onToolCall,
+  ...defaults
+}: RemoteHandlerOptions): McpRequestHandler {
   return async (req, res, options) => {
     const server = createUnleashMcpServer({
       ...defaults,
@@ -43,6 +63,10 @@ export function createMcpHandler(defaults: RemoteHandlerOptions): McpRequestHand
       enableJsonResponse: true,
     });
 
+    if (onToolCall) {
+      reportToolCalls(transport, options.parsedBody, onToolCall);
+    }
+
     res.on('close', () => {
       transport.close().catch(() => {});
       server.close().catch(() => {});
@@ -50,5 +74,59 @@ export function createMcpHandler(defaults: RemoteHandlerOptions): McpRequestHand
 
     await server.connect(transport);
     await transport.handleRequest(req, res, options.parsedBody);
+  };
+}
+
+// Reads the responses instead of wrapping the tools, because the SDK answers unknown
+// tools and arguments that fail the input schema itself, before any tool code runs.
+function reportToolCalls(
+  transport: Transport,
+  body: unknown,
+  onToolCall: (call: ToolCall) => void,
+): void {
+  const toolNames = new Map<RequestId, string>();
+  for (const message of Array.isArray(body) ? body : [body]) {
+    if (
+      isJSONRPCRequest(message) &&
+      message.method === 'tools/call' &&
+      typeof message.params?.name === 'string'
+    ) {
+      toolNames.set(message.id, message.params.name);
+    }
+  }
+
+  const send = transport.send.bind(transport);
+  transport.send = async (message, sendOptions) => {
+    await send(message, sendOptions);
+    const isResponse = isJSONRPCResultResponse(message) || isJSONRPCErrorResponse(message);
+    if (isResponse && message.id !== undefined) {
+      const tool = toolNames.get(message.id);
+      if (tool) {
+        onToolCall(toToolCall(tool, message));
+      }
+    }
+  };
+}
+
+const ToolErrorSchema = z.object({ error: z.object({ code: z.string() }) });
+
+function toToolCall(
+  tool: string,
+  response: JSONRPCResultResponse | JSONRPCErrorResponse,
+): ToolCall {
+  if (isJSONRPCErrorResponse(response)) {
+    return { tool, outcome: 'failed', errorCode: `JSONRPC_${response.error.code}` };
+  }
+  if (response.result.isError !== true) {
+    return { tool, outcome: 'succeeded' };
+  }
+
+  // Every tool error carries a code, since the server turns a throw into handleToolError.
+  // One without a code came from the SDK, which uses InvalidParams for unknown tools and bad arguments.
+  const toolError = ToolErrorSchema.safeParse(response.result.structuredContent);
+  return {
+    tool,
+    outcome: 'failed',
+    errorCode: toolError.success ? toolError.data.error.code : 'INVALID_PARAMS',
   };
 }
