@@ -9,6 +9,7 @@ const enable = '/api/admin/projects/{projectId}/features/{featureName}/environme
 
 type FlagStatus = Extract<ReleaseResult, { kind: 'released' }>['flag']['status'];
 type Failed = Extract<ReleaseResult, { kind: 'failed' }>;
+type Confirm = Extract<ReleaseResult, { kind: 'confirm' }>;
 // Unleash puts the useful error messages in `details`, which the OpenAPI spec omits.
 type UnleashError = { name?: string; details?: { message: string }[] };
 type FailedCall = { response: Response; error?: UnleashError };
@@ -40,10 +41,13 @@ export const createRelease =
     };
   };
 
-const ensureFlag = async (unleash: UnleashClient, input: ReleaseInput): Promise<FlagStatus | Failed> => {
+const ensureFlag = async (unleash: UnleashClient, input: ReleaseInput): Promise<FlagStatus | Failed | Confirm> => {
   const found = await unleash.GET(feature, { params: { path: { projectId: input.project, featureName: input.flag } } });
   if (found.response.ok) return 'existing';
   if (found.response.status !== 404) return failed(found);
+  if (!input.createFlag) {
+    return { kind: 'confirm', input: 'createFlag', message: `Flag "${input.flag}" does not exist in project ${input.project}. Create it?` };
+  }
 
   const created = await unleash.POST(features, { params: { path: { projectId: input.project } }, body: { name: input.flag } });
   if (!created.response.ok) return failed(created);

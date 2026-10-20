@@ -58,6 +58,9 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 ## 2026-10-20 — Release tool
 
 - A flag might or might not exist. If it does not, then the release tool must create the flag.
+- Supersedes the above: instead of assuming the flag is going to be created, ask the user for confirmation first. Port the spike's functionality, not its code (throwaway).
+- The confirmation is a round-trip through the agent: the tool writes nothing and answers with a confirmation, the agent asks the user and calls again. It works with every client. Rejected: MCP elicitation (only clients that support it).
+- The caller confirms with `createFlag: true`. Rejected: the spike's `confirm: ['createFlag']` list.
 
 ## 2026-10-20 — Agent instructions
 

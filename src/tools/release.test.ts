@@ -18,10 +18,22 @@ const deleteFlag = async (): Promise<void> => {
 before(deleteFlag);
 after(close);
 
-test('creates the flag when it does not exist', async () => {
+test('asks to confirm before creating a missing flag', async () => {
   const release = createRelease(unleash);
 
   const output = await release({ project, flag, environment: 'development', rollout: 50 });
+
+  assert.deepEqual(output, {
+    kind: 'confirm',
+    input: 'createFlag',
+    message: `Flag "${flag}" does not exist in project ${project}. Create it?`,
+  });
+});
+
+test('creates the flag when confirmed', async () => {
+  const release = createRelease(unleash);
+
+  const output = await release({ project, flag, environment: 'development', rollout: 50, createFlag: true });
 
   assert.deepEqual(output, { kind: 'released', flag: { status: 'new', name: flag }, environment: 'development', rollout: 50 });
 });
@@ -61,7 +73,7 @@ test('fails with the Unleash error when the flag cannot be created', async () =>
   stub.intercept({ path: feature, method: 'GET' }).reply(404, unleashError('NotFoundError', `Could not find feature flag ${flag}`));
   stub.intercept({ path: features, method: 'POST' }).reply(403, unleashError('PermissionError', 'You need the CREATE_FEATURE permission'));
 
-  const output = await release({ project, flag, environment: 'development', rollout: 50 });
+  const output = await release({ project, flag, environment: 'development', rollout: 50, createFlag: true });
 
   assert.deepEqual(output, {
     kind: 'failed',
