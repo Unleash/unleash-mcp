@@ -1,6 +1,6 @@
 import type { UnleashClient } from '../unleash/client.ts';
 import type { Constraint, ReleaseInput, Target } from './releaseInput.ts';
-import type { ReleaseResult } from './releaseOutput.ts';
+import type { Choose, Confirm, Failed, ReleaseResult } from './releaseOutput.ts';
 
 const projects = '/api/admin/projects';
 const features = '/api/admin/projects/{projectId}/features';
@@ -8,39 +8,36 @@ const feature = '/api/admin/projects/{projectId}/features/{featureName}';
 const strategies = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies';
 const enable = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on';
 
-type FlagStatus = Extract<ReleaseResult, { kind: 'released' }>['flag']['status'];
-type Failed = Extract<ReleaseResult, { kind: 'failed' }>;
-type Confirm = Extract<ReleaseResult, { kind: 'confirm' }>;
-type Choose = Extract<ReleaseResult, { kind: 'choose' }>;
+type FlagStatus = "new" | "existing";
 // Unleash puts the useful error messages in `details`, which the OpenAPI spec omits.
 type UnleashError = { name?: string; details?: { message: string }[] };
 type FailedCall = { response: Response; error?: UnleashError };
 
 export const createRelease =
   (unleash: UnleashClient) =>
-  async (input: ReleaseInput): Promise<ReleaseResult> => {
-    const project = await pickProject(unleash, input);
-    if (typeof project !== 'string') return project;
+    async (input: ReleaseInput): Promise<ReleaseResult> => {
+      const project = await pickProject(unleash, input);
+      if (typeof project !== 'string') return project;
 
-    const status = await ensureFlag(unleash, project, input);
-    if (typeof status !== 'string') return status;
+      const status = await ensureFlag(unleash, project, input);
+      if (typeof status !== 'string') return status;
 
-    const path = { projectId: project, featureName: input.flag, environment: input.environment };
-    for (const target of input.targets) {
-      const added = await unleash.POST(strategies, { params: { path }, body: toStrategy(input.flag, target) });
-      if (!added.response.ok) return failed(added);
-    }
+      const path = { projectId: project, featureName: input.flag, environment: input.environment };
+      for (const target of input.targets) {
+        const added = await unleash.POST(strategies, { params: { path }, body: toStrategy(input.flag, target) });
+        if (!added.response.ok) return failed(added);
+      }
 
-    const enabled = await unleash.POST(enable, { params: { path } });
-    if (!enabled.response.ok) return failed(enabled);
+      const enabled = await unleash.POST(enable, { params: { path } });
+      if (!enabled.response.ok) return failed(enabled);
 
-    return {
-      kind: 'released',
-      flag: { status, name: input.flag },
-      environment: input.environment,
-      targets: input.targets.map((t) => ({ ...t, rollout: rolloutOf(t) })),
+      return {
+        kind: 'released',
+        flag: { status, name: input.flag },
+        environment: input.environment,
+        targets: input.targets.map((t) => ({ ...t, rollout: rolloutOf(t) })),
+      };
     };
-  };
 
 // With a single project there is nothing to choose, so it is used without asking.
 const pickProject = async (unleash: UnleashClient, input: ReleaseInput): Promise<string | Failed | Choose> => {
