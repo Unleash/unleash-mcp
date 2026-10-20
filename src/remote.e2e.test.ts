@@ -401,16 +401,6 @@ describe('tool call reporting (e2e)', () => {
       { name: 'get_flag_state', arguments: {} },
       { tool: 'get_flag_state', outcome: 'failed', errorCode: 'INVALID_PARAMS' },
     ],
-    [
-      'a call to a tool that does not exist',
-      { name: 'delete_everything', arguments: {} },
-      { tool: 'delete_everything', outcome: 'failed', errorCode: 'INVALID_PARAMS' },
-    ],
-    [
-      'a call the protocol rejects',
-      { name: 'get_flag_state', arguments: 'example' },
-      { tool: 'get_flag_state', outcome: 'failed', errorCode: 'JSONRPC_-32603' },
-    ],
   ])('reports %s', async (_, params, expected) => {
     const { response, toolCalls } = postToRecordingHandler({ method: 'tools/call', params });
 

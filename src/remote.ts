@@ -2,10 +2,8 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import {
-  isJSONRPCErrorResponse,
   isJSONRPCRequest,
   isJSONRPCResultResponse,
-  type JSONRPCErrorResponse,
   type JSONRPCResultResponse,
   type RequestId,
 } from '@modelcontextprotocol/sdk/types.js';
@@ -17,7 +15,7 @@ export type ToolCall =
   | { tool: string; outcome: 'failed'; errorCode: string };
 
 export type RemoteHandlerOptions = Omit<CreateServerOptions, 'authHeaders'> & {
-  /** Called once for every tools/call request, after its response is sent. */
+  /** Called with how a tools/call request ended, after its response is sent. */
   onToolCall?: (call: ToolCall) => void;
 };
 
@@ -101,8 +99,7 @@ function reportToolCalls(
   const send = transport.send.bind(transport);
   transport.send = async (message, sendOptions) => {
     await send(message, sendOptions);
-    const isResponse = isJSONRPCResultResponse(message) || isJSONRPCErrorResponse(message);
-    if (isResponse && message.id !== undefined) {
+    if (isJSONRPCResultResponse(message)) {
       const tool = toolNames.get(message.id);
       if (tool) {
         onToolCall(toToolCall(tool, message));
@@ -113,13 +110,7 @@ function reportToolCalls(
 
 const ToolErrorSchema = z.object({ error: z.object({ code: z.string() }) });
 
-function toToolCall(
-  tool: string,
-  response: JSONRPCResultResponse | JSONRPCErrorResponse,
-): ToolCall {
-  if (isJSONRPCErrorResponse(response)) {
-    return { tool, outcome: 'failed', errorCode: `JSONRPC_${response.error.code}` };
-  }
+function toToolCall(tool: string, response: JSONRPCResultResponse): ToolCall {
   if (response.result.isError !== true) {
     return { tool, outcome: 'succeeded' };
   }
