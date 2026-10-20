@@ -64,3 +64,13 @@ test('fails with the Unleash error when the environment cannot be enabled', asyn
     reasons: ['connect ECONNREFUSED 10.0.0.5:5432'],
   });
 });
+
+test('fails on an error reply without a body', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const release = createRelease(unleash);
+  stub.intercept({ path: `${base}/strategies`, method: 'POST' }).reply(503, '', { headers: { 'content-length': '0' } });
+
+  const output = await release({ project, flag, environment: 'development', rollout: 50 });
+
+  assert.deepEqual(output, { kind: 'failed', status: 503, name: 'UnknownError', reasons: [] });
+});
