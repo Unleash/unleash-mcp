@@ -157,7 +157,7 @@ test('fails on an error reply without a body', async () => {
 test('uses the only project when none is given', async () => {
   const { unleash, stub } = createStubbedClient();
   const release = createRelease(unleash);
-  stub.intercept({ path: '/api/admin/projects', method: 'GET' }).reply(200, { version: 1, projects: [{ id: project, name: project }] });
+  stub.intercept({ path: '/api/admin/projects?view=core', method: 'GET' }).reply(200, { version: 1, projects: [{ id: project, name: project }] });
   stub.intercept({ path: feature, method: 'GET' }).reply(200, { name: flag });
   stub.intercept({ path: `${base}/strategies`, method: 'POST' }).reply(200, {});
   stub.intercept({ path: `${base}/on`, method: 'POST' }).reply(200, {});
@@ -170,7 +170,7 @@ test('uses the only project when none is given', async () => {
 test('fails with the Unleash error when the projects cannot be listed', async () => {
   const { unleash, stub } = createStubbedClient();
   const release = createRelease(unleash);
-  stub.intercept({ path: '/api/admin/projects', method: 'GET' }).reply(401, unleashError('AuthenticationRequired', 'You must log in to use Unleash'));
+  stub.intercept({ path: '/api/admin/projects?view=core', method: 'GET' }).reply(401, unleashError('AuthenticationRequired', 'You must log in to use Unleash'));
 
   const output = await release({ flag, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
 

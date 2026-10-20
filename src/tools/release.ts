@@ -43,7 +43,7 @@ export const createRelease =
 const pickProject = async (unleash: UnleashClient, input: ReleaseInput): Promise<string | Failed | Choose> => {
   if (input.project) return input.project;
 
-  const listed = await unleash.GET(projects);
+  const listed = await unleash.GET(projects, { params: { query: { view: 'core' } } });
   if (!listed.response.ok || !listed.data) return failed(listed);
   const ids = listed.data.projects.map((p) => p.id);
   if (ids.length === 1) return ids[0]!;
