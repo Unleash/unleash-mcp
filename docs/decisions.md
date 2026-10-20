@@ -55,6 +55,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Tests must be subsecond. Pay attention to anything that may slow them down, e.g. I/O over network, timers, process spawning.
 - Snapshots are for happy path tests only. Error cases intercept the requests and reply as Unleash would, so the snapshot does not change when error coverage grows.
 - For now, recorded tests assert the tool output only and do not read Unleash state back, to keep snapshots small. Reading back only proves anything while recording; revisit if a recording ever bakes in wrong behaviour.
+- Test files that write to Unleash can use different flags, so files recording in parallel don't race on the same flag. Rejected: serializing the recording.
 
 ## 2026-10-20 — Release tool
 
