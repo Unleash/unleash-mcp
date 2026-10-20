@@ -13,6 +13,12 @@ const result = z.discriminatedUnion('kind', [
     message: z.string().describe('What to ask the user'),
   }),
   z.object({
+    kind: z.literal('choose'),
+    input: z.literal('project').describe('Input to set to one of the options'),
+    message: z.string().describe('What to ask the user'),
+    options: z.array(z.string()),
+  }),
+  z.object({
     kind: z.literal('failed'),
     status: z.number().describe('HTTP status from Unleash'),
     name: z.string().describe('Unleash error type, e.g. NotFoundError, PermissionError'),
