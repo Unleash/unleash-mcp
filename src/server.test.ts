@@ -35,10 +35,7 @@ test('release tool reports the rollout', async () => {
   });
 
   assert.deepEqual(result.structuredContent, {
-    kind: 'released',
-    flag: 'checkout-v2',
-    environment: 'production',
-    rollout: 50,
+    result: { kind: 'released', flag: 'checkout-v2', environment: 'production', rollout: 50 },
   });
   await client.close();
 });
