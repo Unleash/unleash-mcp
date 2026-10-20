@@ -26,16 +26,16 @@ test('client completes the MCP handshake with the server', async () => {
   await client.close();
 });
 
-test('release tool reports the rollout', async () => {
+test('release tool reports the targets', async () => {
   const client = await connectClient();
 
   const result = await client.callTool({
     name: 'release',
-    arguments: { project: 'shop', flag: 'checkout-v2', environment: 'production', rollout: 50 },
+    arguments: { project: 'shop', flag: 'checkout-v2', environment: 'production', targets: [{ name: 'Everyone', rollout: 50 }] },
   });
 
   assert.deepEqual(result.structuredContent, {
-    result: { kind: 'released', flag: { status: 'existing', name: 'checkout-v2' }, environment: 'production', rollout: 50 },
+    result: { kind: 'released', flag: { status: 'existing', name: 'checkout-v2' }, environment: 'production', targets: [{ name: 'Everyone', rollout: 50 }] },
   });
   await client.close();
 });
