@@ -6,9 +6,12 @@ const projects = '/api/admin/projects';
 const features = '/api/admin/projects/{projectId}/features';
 const feature = '/api/admin/projects/{projectId}/features/{featureName}';
 const strategies = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies';
+const strategy = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies/{strategyId}';
 const enable = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on';
 
 type FlagStatus = "new" | "existing";
+// The flag as the release finds it in the environment.
+type Flag = { status: FlagStatus; enabled: boolean; strategyIds: string[] };
 // Unleash puts the useful error messages in `details`, which the OpenAPI spec omits.
 type UnleashError = { name?: string; details?: { message: string }[] };
 type FailedCall = { response: Response; error?: UnleashError };
@@ -19,21 +22,33 @@ export const createRelease =
       const project = await pickProject(unleash, input);
       if (typeof project !== 'string') return project;
 
-      const status = await ensureFlag(unleash, project, input);
-      if (typeof status !== 'string') return status;
+      const flag = await ensureFlag(unleash, project, input);
+      if ('kind' in flag) return flag;
 
+      // Existing strategies are reused by position so their history survives. Surplus ones go last,
+      // so the environment never has zero strategies, which would make Unleash disable it.
       const path = { projectId: project, featureName: input.flag, environment: input.environment };
-      for (const target of input.targets) {
-        const added = await unleash.POST(strategies, { params: { path }, body: toStrategy(input.flag, target) });
-        if (!added.response.ok) return failed(added);
+      for (const [i, target] of input.targets.entries()) {
+        const id = flag.strategyIds[i];
+        const body = toStrategy(input.flag, target);
+        const written = id
+          ? await unleash.PUT(strategy, { params: { path: { ...path, strategyId: id } }, body })
+          : await unleash.POST(strategies, { params: { path }, body });
+        if (!written.response.ok) return failed(written);
+      }
+      for (const id of flag.strategyIds.slice(input.targets.length)) {
+        const deleted = await unleash.DELETE(strategy, { params: { path: { ...path, strategyId: id } } });
+        if (!deleted.response.ok) return failed(deleted);
       }
 
-      const enabled = await unleash.POST(enable, { params: { path } });
-      if (!enabled.response.ok) return failed(enabled);
+      if (!flag.enabled) {
+        const enabled = await unleash.POST(enable, { params: { path } });
+        if (!enabled.response.ok) return failed(enabled);
+      }
 
       return {
         kind: 'released',
-        flag: { status, name: input.flag },
+        flag: { status: flag.status, name: input.flag },
         environment: input.environment,
         targets: input.targets.map((t) => ({ ...t, rollout: rolloutOf(t) })),
       };
@@ -50,9 +65,13 @@ const pickProject = async (unleash: UnleashClient, input: ReleaseInput): Promise
   return { kind: 'choose', input: 'project', message: 'Which project?', options: ids };
 };
 
-const ensureFlag = async (unleash: UnleashClient, project: string, input: ReleaseInput): Promise<FlagStatus | Failed | Confirm> => {
+const ensureFlag = async (unleash: UnleashClient, project: string, input: ReleaseInput): Promise<Flag | Failed | Confirm> => {
   const found = await unleash.GET(feature, { params: { path: { projectId: project, featureName: input.flag } } });
-  if (found.response.ok) return 'existing';
+  if (found.response.ok) {
+    const environment = found.data?.environments?.find((e) => e.name === input.environment);
+    const strategyIds = environment?.strategies?.flatMap((s) => (s.id ? [s.id] : [])) ?? [];
+    return { status: 'existing', enabled: environment?.enabled ?? false, strategyIds };
+  }
   if (found.response.status !== 404) return failed(found);
   if (!input.createFlag) {
     return { kind: 'confirm', input: 'createFlag', message: `Flag "${input.flag}" does not exist in project ${project}. Create it?` };
@@ -60,7 +79,7 @@ const ensureFlag = async (unleash: UnleashClient, project: string, input: Releas
 
   const created = await unleash.POST(features, { params: { path: { projectId: project } }, body: { name: input.flag } });
   if (!created.response.ok) return failed(created);
-  return 'new';
+  return { status: 'new', enabled: false, strategyIds: [] };
 };
 
 const rolloutOf = (target: Target): number => target.rollout ?? 100;
