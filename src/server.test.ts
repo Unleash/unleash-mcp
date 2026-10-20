@@ -1,12 +1,27 @@
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { after, before, test } from 'node:test';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { createServer } from './server.ts';
-import { createStubbedClient } from './unleash/testClient.ts';
-import type { UnleashClient } from './unleash/client.ts';
+import { createRecordedClient } from './unleash/testClient.ts';
 
-const connectClient = async (unleash: UnleashClient): Promise<Client> => {
+const { unleash, close } = createRecordedClient(new URL('./server.snapshot.json', import.meta.url).pathname);
+const project = 'mcp-server';
+// Not `mcp-flag`: test files run in parallel while recording, and release.test.ts deletes that one.
+const flag = 'mcp-server-flag';
+
+// Archiving and then deleting from the archive removes the flag for good, so the release creates it.
+const deleteFlag = async (): Promise<void> => {
+  await unleash.DELETE('/api/admin/projects/{projectId}/features/{featureName}', {
+    params: { path: { projectId: project, featureName: flag } },
+  });
+  await unleash.DELETE('/api/admin/archive/{featureName}', { params: { path: { featureName: flag } } });
+};
+
+before(deleteFlag);
+after(close);
+
+const connectClient = async (): Promise<Client> => {
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
   await createServer(unleash).connect(serverTransport);
   const client = new Client({ name: 'test-client', version: '0.0.0' });
@@ -15,28 +30,22 @@ const connectClient = async (unleash: UnleashClient): Promise<Client> => {
 };
 
 test('client completes the MCP handshake with the server', async () => {
-  const client = await connectClient(createStubbedClient().unleash);
+  const client = await connectClient();
 
   assert.equal(client.getServerVersion()?.name, 'unleash-mcp');
   await client.close();
 });
 
 test('release tool reports the targets', async () => {
-  const { unleash, stub } = createStubbedClient();
-  const feature = '/api/admin/projects/shop/features/checkout-v2';
-  stub.intercept({ path: '/api/admin/environments/project/shop', method: 'GET' }).reply(200, { version: 1, environments: [{ name: 'production', enabled: true }] });
-  stub.intercept({ path: feature, method: 'GET' }).reply(200, { name: 'checkout-v2' });
-  stub.intercept({ path: `${feature}/environments/production/strategies`, method: 'POST' }).reply(200, {});
-  stub.intercept({ path: `${feature}/environments/production/on`, method: 'POST' }).reply(200, {});
-  const client = await connectClient(unleash);
+  const client = await connectClient();
 
   const result = await client.callTool({
     name: 'release',
-    arguments: { project: 'shop', flag: 'checkout-v2', environment: 'production', targets: [{ name: 'Everyone', rollout: 50 }] },
+    arguments: { project, flag, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }], createFlag: true },
   });
 
   assert.deepEqual(result.structuredContent, {
-    result: { kind: 'released', flag: { status: 'existing', name: 'checkout-v2' }, environment: 'production', targets: [{ name: 'Everyone', rollout: 50 }] },
+    result: { kind: 'released', flag: { status: 'new', name: flag }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] },
   });
   await client.close();
 });
