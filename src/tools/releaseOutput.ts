@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { target } from './releaseInput.ts';
 
 const flag = z.discriminatedUnion('status', [
   z.object({ status: z.literal('new'), name: z.string() }),
@@ -6,7 +7,12 @@ const flag = z.discriminatedUnion('status', [
 ]);
 
 const result = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('released'), flag, environment: z.string(), rollout: z.number() }),
+  z.object({
+    kind: z.literal('released'),
+    flag,
+    environment: z.string(),
+    targets: z.array(target.required({ rollout: true })).describe('The audiences that now get the feature'),
+  }),
   z.object({
     kind: z.literal('confirm'),
     input: z.literal('createFlag').describe('Input to set to true once the user confirms'),
