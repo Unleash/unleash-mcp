@@ -59,3 +59,7 @@ for a short time (e.g. what the next increment contains).
 - We will not maintain manual fetch mocks. We use undici's `SnapshotAgent`: tests are recorded against the real Unleash sandbox (project `mcp-server`, predefined flag `mcp-flag`) with `npm run test:record`, and `npm test` replays the checked-in snapshots. Both use the same config as the server.
 - Tests must be subsecond. Pay attention to anything that may slow them down, e.g. I/O over network, timers, process spawning.
 - Snapshots are for happy path tests only. Error cases intercept the requests and reply as Unleash would, so the snapshot does not change when error coverage grows.
+
+## 2026-10-20 — Release tool
+
+- A flag might or might not exist. If it does not, then the release tool must create the flag.

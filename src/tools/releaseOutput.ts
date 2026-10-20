@@ -1,7 +1,12 @@
 import { z } from 'zod';
 
+const flag = z.discriminatedUnion('status', [
+  z.object({ status: z.literal('new'), name: z.string() }),
+  z.object({ status: z.literal('existing'), name: z.string() }),
+]);
+
 const result = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('released'), flag: z.string(), environment: z.string(), rollout: z.number() }),
+  z.object({ kind: z.literal('released'), flag, environment: z.string(), rollout: z.number() }),
   z.object({
     kind: z.literal('failed'),
     status: z.number().describe('HTTP status from Unleash'),

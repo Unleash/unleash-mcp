@@ -7,36 +7,74 @@ const { unleash, close } = createRecordedClient(new URL('./release.snapshot.json
 const project = 'mcp-server';
 const flag = 'mcp-flag';
 
-const recreateFlag = async (): Promise<void> => {
+// Archiving and then deleting from the archive removes the flag for good, so the first release creates it.
+const deleteFlag = async (): Promise<void> => {
   await unleash.DELETE('/api/admin/projects/{projectId}/features/{featureName}', {
     params: { path: { projectId: project, featureName: flag } },
   });
   await unleash.DELETE('/api/admin/archive/{featureName}', { params: { path: { featureName: flag } } });
-  const { error } = await unleash.POST('/api/admin/projects/{projectId}/features', {
-    params: { path: { projectId: project } },
-    body: { name: flag },
-  });
-  if (error) throw new Error('create flag failed');
 };
 
-before(recreateFlag);
+before(deleteFlag);
 after(close);
 
-test('releases a flag to a percentage of users', async () => {
+test('creates the flag when it does not exist', async () => {
   const release = createRelease(unleash);
 
   const output = await release({ project, flag, environment: 'development', rollout: 50 });
 
-  assert.deepEqual(output, { kind: 'released', flag, environment: 'development', rollout: 50 });
+  assert.deepEqual(output, { kind: 'released', flag: { status: 'new', name: flag }, environment: 'development', rollout: 50 });
+});
+
+test('releases an existing flag', async () => {
+  const release = createRelease(unleash);
+
+  const output = await release({ project, flag, environment: 'development', rollout: 50 });
+
+  assert.deepEqual(output, { kind: 'released', flag: { status: 'existing', name: flag }, environment: 'development', rollout: 50 });
 });
 
 const unleashError = (name: string, message: string) => ({ id: '0b84c7fd-5278-4087-832d-0b502c7929b3', name, message, details: [{ message }] });
 
-const base = `/api/admin/projects/${project}/features/${flag}/environments/development`;
+const features = `/api/admin/projects/${project}/features`;
+const feature = `${features}/${flag}`;
+const base = `${feature}/environments/development`;
+
+test('fails with the Unleash error when the flag cannot be read', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const release = createRelease(unleash);
+  stub.intercept({ path: feature, method: 'GET' }).reply(401, unleashError('AuthenticationRequired', 'You must log in to use Unleash'));
+
+  const output = await release({ project, flag, environment: 'development', rollout: 50 });
+
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 401,
+    name: 'AuthenticationRequired',
+    reasons: ['You must log in to use Unleash'],
+  });
+});
+
+test('fails with the Unleash error when the flag cannot be created', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const release = createRelease(unleash);
+  stub.intercept({ path: feature, method: 'GET' }).reply(404, unleashError('NotFoundError', `Could not find feature flag ${flag}`));
+  stub.intercept({ path: features, method: 'POST' }).reply(403, unleashError('PermissionError', 'You need the CREATE_FEATURE permission'));
+
+  const output = await release({ project, flag, environment: 'development', rollout: 50 });
+
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 403,
+    name: 'PermissionError',
+    reasons: ['You need the CREATE_FEATURE permission'],
+  });
+});
 
 test('fails with the Unleash error when the rollout cannot be set', async () => {
   const { unleash, stub } = createStubbedClient();
   const release = createRelease(unleash);
+  stub.intercept({ path: feature, method: 'GET' }).reply(200, { name: flag });
   stub.intercept({ path: `${base}/strategies`, method: 'POST' }).reply(400, unleashError('BadDataError', 'You have not added the current environment to the project'));
 
   const output = await release({ project, flag, environment: 'development', rollout: 50 });
@@ -52,6 +90,7 @@ test('fails with the Unleash error when the rollout cannot be set', async () => 
 test('fails with the Unleash error when the environment cannot be enabled', async () => {
   const { unleash, stub } = createStubbedClient();
   const release = createRelease(unleash);
+  stub.intercept({ path: feature, method: 'GET' }).reply(200, { name: flag });
   stub.intercept({ path: `${base}/strategies`, method: 'POST' }).reply(200, {});
   stub.intercept({ path: `${base}/on`, method: 'POST' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
 
@@ -68,6 +107,7 @@ test('fails with the Unleash error when the environment cannot be enabled', asyn
 test('fails on an error reply without a body', async () => {
   const { unleash, stub } = createStubbedClient();
   const release = createRelease(unleash);
+  stub.intercept({ path: feature, method: 'GET' }).reply(200, { name: flag });
   stub.intercept({ path: `${base}/strategies`, method: 'POST' }).reply(503, '', { headers: { 'content-length': '0' } });
 
   const output = await release({ project, flag, environment: 'development', rollout: 50 });
