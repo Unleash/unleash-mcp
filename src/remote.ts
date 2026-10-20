@@ -94,6 +94,9 @@ function reportToolCalls(
       toolNames.set(message.id, message.params.name);
     }
   }
+  if (toolNames.size === 0) {
+    return;
+  }
 
   const send = transport.send.bind(transport);
   transport.send = async (message, sendOptions) => {
