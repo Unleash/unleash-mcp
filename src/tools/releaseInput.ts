@@ -31,7 +31,7 @@ export const target = z.object({
 export const releaseInput = {
   project: z.string().optional().describe('Project id. Leave out to choose from a list'),
   flag: z.string().describe('Feature flag name'),
-  environment: z.string().describe('Environment name'),
+  environment: z.string().optional().describe('Environment name. Leave out to choose from a list'),
   targets: z.array(target).min(1).describe('The audiences that get the feature, ORed. Replaces what the environment had'),
   createFlag: z.boolean().optional().describe('Set to true once the user has confirmed creating the missing flag'),
 };

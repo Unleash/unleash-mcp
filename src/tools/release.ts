@@ -2,6 +2,7 @@ import type { UnleashClient } from '../unleash/client.ts';
 import type { Constraint, ReleaseInput, Target } from './releaseInput.ts';
 import type { ReleaseResult } from './releaseOutput.ts';
 import { type Failed, toFailed } from './failed.ts';
+import { pickEnvironment } from './environment.ts';
 import { ensureFlag } from './flag.ts';
 import { pickProject } from './project.ts';
 
@@ -18,10 +19,14 @@ export const createRelease =
       if (pick.kind !== 'picked') return pick;
       const project = pick.project;
 
-      const flag = await ensureFlag(unleash, project, input);
+      const picked = await pickEnvironment(unleash, project, input.environment);
+      if (picked.kind !== 'picked') return picked;
+      const environment = picked.environment;
+
+      const flag = await ensureFlag(unleash, project, { ...input, environment });
       if (flag.kind === 'confirm' || flag.kind === 'failed') return flag;
 
-      const path = { projectId: project, featureName: input.flag, environment: input.environment };
+      const path = { projectId: project, featureName: input.flag, environment };
       const replaced = await replaceTargets(unleash, path, input.targets, flag.strategyIds);
       if (replaced.kind === 'failed') return replaced;
 
@@ -31,7 +36,7 @@ export const createRelease =
       return {
         kind: 'released',
         flag: { status: flag.kind, name: input.flag },
-        environment: input.environment,
+        environment,
         targets: input.targets.map((t) => ({ ...t, rollout: rolloutOf(t) })),
       };
     };
