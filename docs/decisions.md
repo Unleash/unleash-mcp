@@ -66,7 +66,8 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Each target has a required name. The agent knows why it is adding an audience, so it should say so; a generated label would only repeat the configuration. Rejected: an optional name, with or without a generated summary as fallback.
 - `released` echoes the targets as applied, so the agent gets back the shape it sent. Rejected: one summary line per target.
 - For now, problems are returned one at a time with `choose`/`confirm`. Not decided long-term. Rejected for now: the spike's list of all decisions at once.
-- Left out of scope for now, to tackle incrementally: segments in targets, context field and legal value checks, change requests, an optional or invalid environment, flag type `release` on create, reporting already applied writes on failure, and the spike's open gaps (open draft change requests, no atomicity, concurrent edits, overwriting non gradual rollout strategies, dry run). See `docs/release-spike-report.md`.
+- The environment is optional and checked against the project's enabled environments before any write. The tool always reads the project's environments, moreover because we'll want to present the options to the user. Rejected: reading them only when the environment is missing. With a single enabled environment, it is picked without asking, as with the project.
+- Left out of scope for now, to tackle incrementally: segments in targets, context field and legal value checks, change requests, paging long option lists, flag type `release` on create, reporting already applied writes on failure, and the spike's open gaps (open draft change requests, no atomicity, concurrent edits, overwriting non gradual rollout strategies, dry run). See `docs/release-spike-report.md`.
 
 ## 2026-10-20 — Agent instructions
 
