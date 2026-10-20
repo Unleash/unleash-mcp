@@ -52,8 +52,10 @@ for a short time (e.g. what the next increment contains).
 
 - Each tool is split into input schema, logic and output schema. Files and exports carry the tool name, not generic names like `input.ts`: with multiple tools, generic names make searching difficult.
 - Tool output is structured, not text. For now only `structuredContent` is returned, no text block; add one back if a client we care about does not show the model structured content.
+- Tools speak in outcomes, not Unleash internals: terms like strategies, ids and variants stay hidden from the agent, in outputs and errors alike.
 
 ## 2026-10-20 — Testing against Unleash
 
 - We will not maintain manual fetch mocks. We use undici's `SnapshotAgent`: tests are recorded against the real Unleash sandbox (project `mcp-server`, predefined flag `mcp-flag`) with `npm run test:record`, and `npm test` replays the checked-in snapshots. Both use the same config as the server.
 - Tests must be subsecond. Pay attention to anything that may slow them down, e.g. I/O over network, timers, process spawning.
+- Snapshots are for happy path tests only. Error cases intercept the requests and reply as Unleash would, so the snapshot does not change when error coverage grows.

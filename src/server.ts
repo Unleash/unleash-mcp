@@ -16,7 +16,10 @@ export const createServer = (unleash: UnleashClient): McpServer => {
       inputSchema: releaseInput,
       outputSchema: releaseOutput,
     },
-    async (input) => ({ structuredContent: await release(input), content: [] }),
+    async (input) => {
+      const result = await release(input);
+      return { structuredContent: { result }, isError: result.kind === 'failed', content: [] };
+    },
   );
 
   return server;
