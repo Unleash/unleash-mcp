@@ -1,0 +1,29 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { createStubbedClient } from '../unleash/testClient.ts';
+import { ensureFlag } from './flag.ts';
+
+const project = 'mcp-server';
+const flag = 'mcp-flag';
+const features = `/api/admin/projects/${project}/features`;
+const feature = `${features}/${flag}`;
+const unleashError = (name: string, message: string) => ({ id: '0b84c7fd-5278-4087-832d-0b502c7929b3', name, message, details: [{ message }] });
+
+test('fails with the Unleash error when the flag cannot be read', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: feature, method: 'GET' }).reply(401, unleashError('AuthenticationRequired', 'You must log in to use Unleash'));
+
+  const output = await ensureFlag(unleash, project, { flag });
+
+  assert.deepEqual(output, { kind: 'failed', status: 401, name: 'AuthenticationRequired', reasons: ['You must log in to use Unleash'] });
+});
+
+test('fails with the Unleash error when the flag cannot be created', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: feature, method: 'GET' }).reply(404, unleashError('NotFoundError', `Could not find feature flag ${flag}`));
+  stub.intercept({ path: features, method: 'POST' }).reply(403, unleashError('PermissionError', 'You need the CREATE_FEATURE permission'));
+
+  const output = await ensureFlag(unleash, project, { flag, createFlag: true });
+
+  assert.deepEqual(output, { kind: 'failed', status: 403, name: 'PermissionError', reasons: ['You need the CREATE_FEATURE permission'] });
+});

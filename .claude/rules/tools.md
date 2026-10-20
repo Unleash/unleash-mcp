@@ -8,5 +8,7 @@ paths:
 - Split each tool into input schema, logic and output schema. Files and exports carry the tool name (`releaseInput.ts`, not `input.ts`).
 - Return `structuredContent` only, no text block.
 - Keep output token efficient by returning minimal fields, shaped by hand on top of the generated Unleash types.
+- Every union tags its success case with a `kind`; never a bare string next to result objects.
+- A step (`project.ts`, `flag.ts`) lives in its own file with its tests, owns the agent-facing results it can produce, and reuses the shared ones (`failed.ts`). The tool function only composes steps.
 
-Why: `docs/decisions.md` (Tool structure, Unleash HTTP client).
+Why: `docs/decisions.md` (Tool structure, Unleash HTTP client, Tool layering).
