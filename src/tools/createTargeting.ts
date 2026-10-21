@@ -10,7 +10,14 @@ import {
 import type { StrategyConstraint } from '../unleash/client.js';
 import { CustomError } from '../utils/errors.js';
 import { jsonResult } from '../utils/toolResult.js';
-import { constraintSchema, shapeConstraint, unknownContextField } from './constraints.js';
+import {
+  type ConstraintInput,
+  type ConstraintProblem,
+  constraintSchema,
+  invalidConstraint,
+  shapeConstraint,
+  unknownContextField,
+} from './constraints.js';
 
 const contextFieldInputSchema = z.strictObject({
   name: z.string().min(1).describe('Context field name, such as "devMode"'),
@@ -63,10 +70,12 @@ const createTargetingSchema = z
 type Item = { kind: 'contextField' | 'segment'; name: string };
 type Owner = { scope: 'project' | 'global'; project?: string };
 
+const PROJECT_CONTEXT_SINCE = '7.4.0';
+
 const projectContextUnsupported = (projectId: string) =>
   new CustomError(
     'HTTP_404',
-    `Unleash has no project context endpoint for "${projectId}": Unleash is older than 7.4.0, which added project context fields.`,
+    `Unleash has no project context endpoint for "${projectId}": Unleash is older than ${PROJECT_CONTEXT_SINCE}, which added project context fields.`,
     'Ask the user whether they want a global field instead (scope: "global").',
   );
 
@@ -84,17 +93,76 @@ async function checkProjectExists(context: ServerContext, projectId: string): Pr
 }
 
 /** Unleash accepts a constraint on any name, so a misspelt field name would give a segment that never matches. */
+type UsableFields = { names: string[]; legalValues: Map<string, string[]> };
+
 async function usableFieldNames(
   context: ServerContext,
   newFields: string[],
   projectId: string | undefined,
-): Promise<string[]> {
+): Promise<UsableFields> {
   const existing = await context.unleashClient.getContextFields(projectId).catch((error) => {
     throw projectId && error instanceof CustomError && error.code === 'HTTP_404'
       ? projectContextUnsupported(projectId)
       : error;
   });
-  return [...existing.map(({ name }) => name), ...newFields];
+  return {
+    names: [...existing.map(({ name }) => name), ...newFields],
+    legalValues: new Map(
+      existing.map(({ name, legalValues }) => [name, legalValues?.map(({ value }) => value) ?? []]),
+    ),
+  };
+}
+
+/** Unleash cannot check legal values of a field that does not exist yet, so check them here. */
+function outsideNewFieldLegalValues(
+  constraint: StrategyConstraint,
+  field: { name: string; legalValues?: Array<{ value: string }> } | undefined,
+): ConstraintProblem | undefined {
+  const legal = field?.legalValues?.map(({ value }) => value) ?? [];
+  if (legal.length === 0) return undefined;
+
+  const given = constraint.values ?? (constraint.value !== undefined ? [constraint.value] : []);
+  const outside = given.filter((value) => !legal.includes(value));
+  if (outside.length === 0) return undefined;
+  return {
+    code: 'INVALID_CONSTRAINT',
+    message: `${outside.map((value) => `"${value}"`).join(', ')} not in the legal values of "${field?.name}".`,
+    hint: `"${field?.name}" only accepts the listed values.`,
+    options: legal,
+  };
+}
+
+async function checkConstraint(
+  context: ServerContext,
+  input: ConstraintInput,
+  newFields: Array<z.infer<typeof contextFieldInputSchema>>,
+  usable: UsableFields | undefined,
+  where: string,
+): Promise<{ constraint: StrategyConstraint } | { problem: ConstraintProblem }> {
+  const unknown = usable
+    ? unknownContextField(
+        input.contextName,
+        usable.names,
+        where,
+        `add "${input.contextName}" to contextFields in this call, or create it in Unleash (${context.config.unleash.baseUrl}/context/create)`,
+      )
+    : undefined;
+  if (unknown) return { problem: unknown };
+
+  const shaped = shapeConstraint(input);
+  if ('problem' in shaped || !usable) return shaped;
+
+  const invalid =
+    (await invalidConstraint(
+      context.unleashClient,
+      shaped.constraint,
+      usable.legalValues.get(input.contextName) ?? [],
+    )) ??
+    outsideNewFieldLegalValues(
+      shaped.constraint,
+      newFields.find(({ name }) => name === input.contextName),
+    );
+  return invalid ? { problem: invalid } : shaped;
 }
 
 async function explainContextFieldError(
@@ -154,29 +222,27 @@ export async function createTargeting(
           )
         : undefined;
     const where = projectId ? `in project "${projectId}"` : 'that every project can use';
-    const baseUrl = context.config.unleash.baseUrl;
 
     const shaped: Array<{ name: string; constraints: StrategyConstraint[] }> = [];
     for (const segment of segments) {
       const constraints: StrategyConstraint[] = [];
       for (const constraint of segment.constraints) {
-        const unknown = usable
-          ? unknownContextField(constraint.contextName, usable, where, baseUrl)
-          : undefined;
-        const result = unknown ?? shapeConstraint(constraint);
-        if ('message' in result) {
-          const listed = result.options ? ` Fields: ${result.options.join(', ')}.` : '';
+        const checked = await checkConstraint(context, constraint, fields, usable, where);
+        if ('problem' in checked) {
+          const { problem } = checked;
+          const label = problem.code === 'CONTEXT_FIELD_NOT_FOUND' ? 'Fields' : 'Legal values';
+          const listed = problem.options ? ` ${label}: ${problem.options.join(', ')}.` : '';
           return handleToolError(
             context,
             new CustomError(
-              result.code,
-              result.message,
-              `Nothing was created. ${result.hint}${listed}`,
+              problem.code,
+              problem.message,
+              `Nothing was created. ${problem.hint}${listed}`,
             ),
             'create_targeting',
           );
         }
-        constraints.push(result.constraint);
+        constraints.push(checked.constraint);
       }
       shaped.push({ name: segment.name, constraints });
     }
@@ -254,7 +320,7 @@ function failure(
 ): CallToolResult {
   const { success, error: normalized } = toolErrorPayload(context, error, 'create_targeting');
   const nothingRolledBack =
-    'Nothing was rolled back: everything in created exists in Unleash, and nothing in notAttempted was sent. Fix the error, then call create_targeting again with only the failed and notAttempted items.';
+    'Nothing was rolled back: everything in created exists in Unleash, and nothing in notAttempted was sent. Check whether the failed item exists in Unleash before retrying it, since a network error or timeout can leave it created. Then call create_targeting again with only the items that are missing.';
   return {
     isError: true,
     ...jsonResult({
@@ -280,7 +346,7 @@ Context fields come before segments in one call, so you can create a field and a
 
 Each item is its own API call and nothing is rolled back. The first failure stops the call; the reply lists what was created and which item failed.
 
-Afterwards, pass the field name as contextName in a constraint, or the segment name in segments, when you call set_flag_rollout. Project context fields need Unleash 7.4.0 or later.`,
+Afterwards, pass the field name as contextName in a constraint, or the segment name in segments, when you call set_flag_rollout. Project context fields need Unleash ${PROJECT_CONTEXT_SINCE} or later.`,
   inputSchema: createTargetingSchema,
   implementation: createTargeting,
 };

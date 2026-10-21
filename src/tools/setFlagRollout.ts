@@ -24,12 +24,12 @@ import { jsonResult } from '../utils/toolResult.js';
 import {
   type ConstraintInput,
   constraintSchema,
+  invalidConstraint,
   shapeConstraint,
   unknownContextField,
 } from './constraints.js';
 
 const SEGMENTS_DOCS = 'https://docs.getunleash.io/concepts/segments';
-const CONSTRAINTS_DOCS = 'https://docs.getunleash.io/concepts/activation-strategies#constraints';
 const NONE_OF_THESE = '__none__';
 
 const variantPayloadSchema = z.strictObject({
@@ -415,32 +415,18 @@ async function checkConstraint(
     input.contextName,
     fieldNames,
     `in project "${lookups.projectId}"`,
-    lookups.baseUrl,
+    `ask the user whether to create "${input.contextName}" with create_targeting or in Unleash (${lookups.baseUrl}/context/create)`,
   );
   if (unknown) return { problem: { environment, ...unknown } };
 
   const shaped = shapeConstraint(input);
-  if ('message' in shaped) return { problem: { environment, ...shaped } };
+  if ('problem' in shaped) return { problem: { environment, ...shaped.problem } };
 
-  try {
-    await context.unleashClient.validateConstraint(shaped.constraint);
-  } catch (error) {
-    if (!(error instanceof CustomError && error.code === 'HTTP_400')) throw error;
-    const field = lookups.contextFields.find((candidate) => candidate.name === input.contextName);
-    const legalValues = field?.legalValues?.map(({ value }) => value) ?? [];
-    return {
-      problem: {
-        environment,
-        code: 'INVALID_CONSTRAINT',
-        message: error.message,
-        hint:
-          legalValues.length > 0
-            ? `"${input.contextName}" only accepts the listed values.`
-            : `See ${CONSTRAINTS_DOCS}.`,
-        ...(legalValues.length > 0 && { options: legalValues }),
-      },
-    };
-  }
+  const field = lookups.contextFields.find((candidate) => candidate.name === input.contextName);
+  const legalValues = field?.legalValues?.map(({ value }) => value) ?? [];
+  const invalid = await invalidConstraint(context.unleashClient, shaped.constraint, legalValues);
+  if (invalid) return { problem: { environment, ...invalid } };
+
   return shaped;
 }
 
