@@ -621,7 +621,7 @@ Use it after `create_flag` to roll the flag out, and later to change who gets it
   - `segments` (optional): Segment names, as the user said them. Case, spaces and hyphens don't matter. `[]` removes all segments.
   - `constraints` (optional): Constraints, each with `contextName`, `operator` (any Unleash constraint operator), `values` or `value`, `inverted` and `caseInsensitive`. `[]` removes all constraints.
   - `strategyId` (optional): The strategy to change when the environment has more than one.
-  - `addStrategy` (optional): `true` adds a new `flexibleRollout` strategy next to the existing ones instead of changing one.
+  - `strategyMode` (optional): `"update"` (the default) changes an existing strategy. `"add"` adds a new `flexibleRollout` strategy next to the existing ones.
   - `stickiness` (optional): Stickiness field. A new strategy uses `"default"`.
   - `groupId` (optional): Group ID for stickiness bucketing. A new strategy uses the flag name.
   - `title` (optional): Descriptive title for the strategy.
@@ -672,7 +672,7 @@ If the request has problems, nothing is changed. The error code is `INVALID_ROLL
 | `INVALID_CONSTRAINT` | A constraint has no value, or Unleash rejects its value, such as text for `NUM_GT` or a value outside the field's legal values. |
 | `STRATEGY_NOT_CHOSEN` | The environment has several `flexibleRollout` strategies and no `strategyId`, or `strategyId` matches none of them. The options list them. |
 | `STRATEGY_NOT_FOUND` | `strategyId` matches no strategy, and the environment has no `flexibleRollout` strategy to pick from instead. |
-| `STRATEGY_CONFLICT` | The entry sets both `addStrategy` and `strategyId`. |
+| `STRATEGY_CONFLICT` | The entry sets both `strategyMode: "add"` and `strategyId`. |
 | `STRATEGY_NOT_SUPPORTED` | The strategy to change is not a `flexibleRollout` strategy. |
 | `LAST_STRATEGY_PAUSED` | `strategyDisabled: true` would pause the only active strategy in an environment that stays on. Unleash turns an environment off when its last active strategy is paused, and turning it on again adds the project's default strategy. |
 

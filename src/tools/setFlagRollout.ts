@@ -98,11 +98,11 @@ const environmentRolloutSchema = z.strictObject({
     .describe(
       'The strategy to change when the environment has more than one. get_flag_state lists strategy IDs.',
     ),
-  addStrategy: z
-    .boolean()
+  strategyMode: z
+    .enum(['update', 'add'])
     .optional()
     .describe(
-      'Add a new strategy next to the existing ones instead of changing one, for example to target customers while staff keep theirs. Leave out strategyId.',
+      '"update" (the default) changes an existing strategy. "add" adds a new strategy next to the existing ones, for example to target customers while staff keep theirs; leave out strategyId.',
     ),
   stickiness: z
     .string()
@@ -313,7 +313,7 @@ function pickStrategy(
         options: options.map(({ value, label }) => ({ strategyId: value, description: label })),
       },
       hintOnceDeclined:
-        'The user was shown these strategies and picked none. Ask them what they want to change, or pass addStrategy: true to add a new strategy instead.',
+        'The user was shown these strategies and picked none. Ask them what they want to change, or pass strategyMode: "add" to add a new strategy instead.',
       title: `Strategy to change in ${env}`,
       options,
       apply: (current, value) => ({ ...current, strategyId: value }),
@@ -321,16 +321,16 @@ function pickStrategy(
     return undefined;
   };
 
-  if (entry.addStrategy && entry.strategyId) {
+  if (entry.strategyMode === 'add' && entry.strategyId) {
     findings.problems.push({
       environment: env,
       code: 'STRATEGY_CONFLICT',
-      message: 'Pass either addStrategy or strategyId, not both.',
-      hint: 'addStrategy adds a new strategy; strategyId changes an existing one.',
+      message: 'Pass either strategyMode: "add" or strategyId, not both.',
+      hint: 'strategyMode: "add" adds a new strategy; strategyId changes an existing one.',
     });
     return undefined;
   }
-  if (entry.addStrategy) return { kind: 'add' };
+  if (entry.strategyMode === 'add') return { kind: 'add' };
   if (entry.strategyId) {
     const strategy = strategies.find((candidate) => candidate.id === entry.strategyId);
     if (strategy?.name === 'flexibleRollout') return { kind: 'replace', strategy };
