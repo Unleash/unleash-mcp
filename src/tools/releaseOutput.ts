@@ -14,10 +14,19 @@ const released = z.object({
   targets: z.array(target.required({ rollout: true })).describe('The audiences that now get the feature'),
 });
 
-const result = z.discriminatedUnion('kind', [released, failed]);
+const pendingChangeRequest = z.object({
+  kind: z.literal('pending_change_request'),
+  flag,
+  environment: z.string(),
+  changeRequest: z.object({ id: z.number(), state: z.string() }).describe('The change request holding the release, submitted for review'),
+  targets: z.array(target.required({ rollout: true })).describe('The audiences that get the feature once the change request is applied'),
+});
+
+const result = z.discriminatedUnion('kind', [released, pendingChangeRequest, failed]);
 
 // MCP requires an object output schema, so the union sits under `result`.
 export const releaseOutput = { result };
 
 export type Released = z.infer<typeof released>;
-export type ReleaseResult = Released | Failed;
+export type PendingChangeRequest = z.infer<typeof pendingChangeRequest>;
+export type ReleaseResult = Released | PendingChangeRequest | Failed;
