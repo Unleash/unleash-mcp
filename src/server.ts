@@ -144,6 +144,11 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
         resources: {},
       },
       instructions,
+      // Huge arrays or objects in one tool call can run the server out of memory
+      // (GHSA-46jr-4wx8-v453). 10,000 is the advisory's example. It fits one set_flag_rollout
+      // environment at Unleash's default limits, about 7,600 elements, but not two.
+      // Stdio gets the cap too, since no agent writes a call that big.
+      maxToolInputElements: 10_000,
     },
   );
 

@@ -305,6 +305,17 @@ describe('tool errors (e2e)', () => {
       error: { code: 'NETWORK_ERROR' },
     });
   });
+
+  it('refuses a tool call whose arguments hold more than 10,000 elements', async () => {
+    const files = Array(10_001).fill('file.ts');
+
+    const result = await callTool('evaluate_change', { files });
+
+    expect(result).toMatchObject({
+      isError: true,
+      content: [{ type: 'text', text: expect.stringContaining('maximum of 10000 elements') }],
+    });
+  });
 });
 
 describe('outbound User-Agent attribution (e2e)', () => {
