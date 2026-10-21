@@ -1,8 +1,8 @@
 # Search tool spike
 
-Throwaway spike of a read-only `search` tool for two jobs: finding the values other tools need (e.g. segment ids for `release`), and answering questions about the instance (e.g. which flags project X has). Port its findings, not its code.
+Throwaway spike of a read-only `search_spike` tool for two jobs: finding the values other tools need (e.g. segment ids for `release`), and answering questions about the instance (e.g. which flags project X has). Port its findings, not its code.
 
-Code: `src/tools/searchInput.ts`, `searchOutput.ts`, `search.ts`, registered in `src/server.ts`. No tests.
+Code: `src/tools/searchSpikeInput.ts`, `searchSpikeOutput.ts`, `searchSpike.ts`, registered in `src/server.ts`. No tests.
 
 ## Shape
 
