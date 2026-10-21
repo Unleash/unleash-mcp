@@ -15,8 +15,20 @@ const deleteFlag = async (): Promise<void> => {
   await unleash.DELETE('/api/admin/archive/{featureName}', { params: { path: { featureName: flag } } });
 };
 
-before(deleteFlag);
-after(close);
+const segment = 'mcp-beta';
+let segmentId: number | undefined;
+
+before(async () => {
+  await deleteFlag();
+  const created = await unleash.POST('/api/admin/segments', { body: { name: segment, constraints: [] } });
+  segmentId = created.data?.id;
+});
+// The flag goes first: Unleash may refuse to delete a segment that is in use.
+after(async () => {
+  await deleteFlag();
+  if (segmentId) await unleash.DELETE('/api/admin/segments/{id}', { params: { path: { id: segmentId } } });
+  await close();
+});
 
 test('asks to confirm before creating a missing flag', async () => {
   const release = createRelease(unleash);
@@ -58,6 +70,19 @@ test('releases to several audiences', async () => {
     flag: { status: 'existing', name: flag },
     environment: 'development',
     targets: [{ name: 'Everyone', rollout: 50 }, { name: 'Beta testers', rollout: 100, constraints: [beta], value: blue }],
+  });
+});
+
+test('releases to an audience defined in Unleash', async () => {
+  const release = createRelease(unleash);
+
+  const output = await release({ project, flag, environment: 'development', targets: [{ name: 'Beta testers', segments: [segment] }] });
+
+  assert.deepEqual(output, {
+    kind: 'released',
+    flag: { status: 'existing', name: flag },
+    environment: 'development',
+    targets: [{ name: 'Beta testers', rollout: 100, segments: [segment] }],
   });
 });
 
@@ -179,6 +204,20 @@ test('fails with the Unleash error when a left out audience cannot be removed', 
   assert.deepEqual(output, { kind: 'failed', status: 403, name: 'PermissionError', reasons: ['You need the DELETE_FEATURE_STRATEGY permission'] });
 });
 
+// The update only matches when it clears the segments, so leaving them out would fail the release.
+test('takes the segments away from an audience that no longer names them', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const release = createRelease(unleash);
+  stubEnvironments(stub);
+  stub.intercept({ path: feature, method: 'GET' }).reply(200, development('s1'));
+  const clearsSegments = (body: string): boolean => JSON.parse(body).segments?.length === 0;
+  stub.intercept({ path: `${base}/strategies/s1`, method: 'PUT', body: clearsSegments }).reply(200, {});
+
+  const output = await release({ project, flag, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
+
+  assert.equal(output.kind, 'released');
+});
+
 // No stub for enabling: a request to turn the environment on would fail the release.
 test('leaves an enabled environment as it is', async () => {
   const { unleash, stub } = createStubbedClient();
@@ -202,4 +241,21 @@ test('fails on an error reply without a body', async () => {
   const output = await release({ project, flag, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
 
   assert.deepEqual(output, { kind: 'failed', status: 503, name: 'UnknownError', reasons: [] });
+});
+
+// No stub for the flag: the release stops before reading or writing it.
+test('asks which segments before touching the flag when one is unknown', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const release = createRelease(unleash);
+  stubEnvironments(stub);
+  stub.intercept({ path: '/api/admin/segments', method: 'GET' }).reply(200, { segments: [{ id: 1, name: 'internal-beta', constraints: [] }] });
+
+  const output = await release({ project, flag, environment: 'development', targets: [{ name: 'Beta testers', segments: ['nope'] }] });
+
+  assert.deepEqual(output, {
+    kind: 'choose',
+    input: 'segments',
+    message: `Segment "nope" not found in project ${project}. Which segments?`,
+    options: ['internal-beta'],
+  });
 });
