@@ -102,9 +102,10 @@ async function buildDefaultStrategy(
   entry: DefaultStrategyInput,
   current: DefaultStrategy | undefined,
   lookups: Lookups,
-  problems: Problem[],
-): Promise<FlexibleRolloutStrategy> {
+): Promise<{ strategy: FlexibleRolloutStrategy } | { problems: Problem[] }> {
   const { environment } = entry;
+  const problems: Problem[] = [];
+  const base = current?.name === 'flexibleRollout' ? current : undefined;
   const { projectId, contextFields } = lookups;
   const usable = lookups.segments.filter(
     (segment) => !segment.project || segment.project === projectId,
@@ -148,18 +149,22 @@ async function buildDefaultStrategy(
     }
   }
 
+  if (problems.length > 0) return { problems };
+
   return {
-    title: current?.title,
-    disabled: current?.disabled,
-    variants: current?.variants,
-    parameters: {
-      ...current?.parameters,
-      rollout: String(entry.rolloutPercentage ?? current?.parameters?.rollout ?? 100),
-      stickiness: entry.stickiness ?? current?.parameters?.stickiness ?? lookups.projectStickiness,
+    strategy: {
+      title: base?.title,
+      disabled: base?.disabled,
+      variants: base?.variants,
+      parameters: {
+        ...base?.parameters,
+        rollout: String(entry.rolloutPercentage ?? base?.parameters?.rollout ?? 100),
+        stickiness: entry.stickiness ?? base?.parameters?.stickiness ?? lookups.projectStickiness,
+      },
+      constraints: entry.constraints ? constraints : (base?.constraints ?? []),
+      // Unleash fails to turn on a flag whose strategy lists the same segment twice.
+      segments: entry.segments ? [...new Set(segments)] : (base?.segments ?? []),
     },
-    constraints: entry.constraints ? constraints : (current?.constraints ?? []),
-    // Unleash fails to turn on a flag whose strategy lists the same segment twice.
-    segments: entry.segments ? [...new Set(segments)] : (current?.segments ?? []),
   };
 }
 
@@ -239,8 +244,9 @@ export async function updateProjectSettings(
     const strategies: Array<{ environment: string; strategy: FlexibleRolloutStrategy }> = [];
     for (const entry of defaultStrategies) {
       const current = currentDefault(entry.environment);
-      const strategy = await buildDefaultStrategy(context, entry, current, lookups, problems);
-      strategies.push({ environment: entry.environment, strategy });
+      const built = await buildDefaultStrategy(context, entry, current, lookups);
+      if ('problems' in built) problems.push(...built.problems);
+      else strategies.push({ environment: entry.environment, strategy: built.strategy });
     }
 
     if (problems.length > 0) {
@@ -273,7 +279,11 @@ export async function updateProjectSettings(
             {
               label: `default stickiness ${defaultStickiness}`,
               run: () =>
-                context.unleashClient.setProjectDefaultStickiness(projectId, defaultStickiness),
+                context.unleashClient.setProjectDefaultStickiness(
+                  projectId,
+                  before.name,
+                  defaultStickiness,
+                ),
             },
           ]
         : []),
@@ -340,10 +350,8 @@ export const updateProjectSettingsTool = {
   title: 'Update project settings',
   annotations: { readOnlyHint: false, destructiveHint: true },
   description:
-    'Change how flags in a project are set up. defaultStickiness is the context field that keeps a user in the same bucket for rollouts and variants. ' +
-    'addEnvironments makes existing environments available in the project; it cannot remove any. ' +
-    'defaultStrategies sets, per environment, the rollout percentage, segments (by name) and constraints that new flags start with. Fields you leave out keep their current value, and set_flag_rollout gives this strategy to an environment it turns on with only enabled. ' +
-    'It changes what real users get, so confirm with the user before something like 100% for everyone in production. ' +
+    'Change how flags in a project are set up. It changes what real users get, so confirm with the user before something like 100% for everyone in production. ' +
+    'set_flag_rollout gives a default strategy to an environment it turns on with only enabled. Fields you leave out keep their current value. ' +
     'Environments are added first, then the other settings. Nothing is changed until every name checks out. There is no rollback: if a step fails, the error lists what was applied.',
   inputSchema: updateProjectSettingsSchema,
   implementation: updateProjectSettings,

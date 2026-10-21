@@ -179,8 +179,6 @@ export interface UserPermission {
 
 export interface ProjectSettings {
   name: string;
-  description?: string | null;
-  mode: string;
   defaultStickiness: string;
   environments: Array<{ environment: string; defaultStrategy?: Omit<FeatureStrategy, 'id'> }>;
 }
@@ -659,7 +657,6 @@ export class UnleashClient {
     if (this.dryRun) {
       return {
         name: projectId,
-        mode: 'open',
         defaultStickiness: 'default',
         environments: ['development', 'production'].map((environment) => ({ environment })),
       };
@@ -687,12 +684,15 @@ export class UnleashClient {
   }
 
   /** The endpoint ignores fields we leave out. name is only sent because its schema requires it. */
-  async setProjectDefaultStickiness(projectId: string, defaultStickiness: string): Promise<void> {
+  async setProjectDefaultStickiness(
+    projectId: string,
+    name: string,
+    defaultStickiness: string,
+  ): Promise<void> {
     if (this.dryRun) {
       return;
     }
 
-    const { name } = await this.getProjectSettings(projectId);
     try {
       await this.request(
         `/api/admin/projects/${encodeURIComponent(projectId)}`,
@@ -703,7 +703,7 @@ export class UnleashClient {
         },
       );
     } catch (error) {
-      // The project was just fetched, so a 404 here means this Unleash has no such endpoint (open source).
+      // Callers fetch the project first, so a 404 here means this Unleash has no such endpoint (open source).
       if (error instanceof CustomError && error.code === 'HTTP_404') {
         throw new CustomError(
           error.code,
