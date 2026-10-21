@@ -1,8 +1,15 @@
 import type { UnleashClient } from '../unleash/client.ts';
-import type { SearchInput } from './searchInput.ts';
-import type { SearchOutput } from './searchOutput.ts';
+import type { Query, SearchInput } from './searchInput.ts';
+import type { SearchOutput, SearchResult } from './searchOutput.ts';
+import { searchProject } from './project.ts';
 
-// Not registered yet: the search tool is being designed. The spike lives in searchSpike.ts.
+// Queries are independent, so they run together and each one answers its HTTP failures on its own.
 export const createSearch =
-  (_unleash: UnleashClient) =>
-    async (_input: SearchInput): Promise<SearchOutput> => ({});
+  (unleash: UnleashClient) =>
+    async ({ queries }: SearchInput): Promise<SearchOutput> => ({ results: await Promise.all(queries.map((query) => search(unleash, query))) });
+
+const search = (unleash: UnleashClient, query: Query): Promise<SearchResult> => {
+  switch (query.kind) {
+    case 'project': return searchProject(unleash, query);
+  }
+};
