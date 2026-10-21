@@ -19,10 +19,10 @@
           "statusCode": 202,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Wed, 21 Oct 2026 10:06:07 GMT",
+            "date": "Wed, 21 Oct 2026 14:16:39 GMT",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19998",
+            "ratelimit-remaining": "19999",
             "ratelimit-reset": "60",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -37,7 +37,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-21T10:06:07.061Z"
+      "timestamp": "2026-10-21T14:16:39.093Z"
     }
   },
   {
@@ -60,10 +60,10 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Wed, 21 Oct 2026 10:06:07 GMT",
+            "date": "Wed, 21 Oct 2026 14:16:39 GMT",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19996",
+            "ratelimit-remaining": "19998",
             "ratelimit-reset": "60",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -78,7 +78,96 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-21T10:06:07.273Z"
+      "timestamp": "2026-10-21T14:16:39.434Z"
+    }
+  },
+  {
+    "hash": "Z33xUUfJs9kqghQI9hhOrW2nL22ngIVS3xVsdKYE15Q",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/ui-config",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Wed, 21 Oct 2026 14:16:39 GMT",
+            "etag": "W/\"1459-N25gTdTCiZHz/KCACRx4z1kALGk\"",
+            "ratelimit-limit": "20000",
+            "ratelimit-policy": "20000;w=60",
+            "ratelimit-remaining": "19996",
+            "ratelimit-reset": "60",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G1gUAGQzW/X6dum5G7oDfeeXoWGGPikCe9zCFokKx8paMsccS2uZkLbCT6AIMJsCsdtzJQBVVoZAXV+qtzE03KN1oAgH+MMkTb/B//QAFWzqwK2HxEpQwC5gq1B9g4/F0xQqS5kKmM3qW+/VLMF78znL9s0Mqh0GpQKmHzdbvr/O6ubLv9PXj81Tbq7VeVmer6y8KyvtOGLIq7TVSdeckPOVHUUlIscpqbLENfck2TSN2HX9Nff0K1tXD8M79vTCITRHNtfl1jnc5U187XRJj6M/YYyUoPoGEXuCCljrDM1y8cXoUhV1+Tet+uzh+j8KUEvsrHEd9fgLBvZoLLFKUpY3rZ0j1bXsKWonArhNhaNfxe15GeOpl7a9QOJWMHmO7Z45xKwlp4u+mNYysGMdXb/8G6EzPtAT9UKx2I6DUVrEK8t/wTQwRXsjSxUhl8Qk/Ur4R6ZNDIRa7RFEfotuvxQ1jq04PIuiS+fBZj1yIPAsOhlFT36j2JLhEXpBj6cVaQ6mzyBfVhjwHAQ9VN/AzgNBBdv7GgIFbNntm0EF13dlWZYl/BhQqEh8u4qlTD8KkGwejXzj9yo2VAh6ONpU+p6iNfh/Ead1stIySc9KspIyRdeRPMCYWGEzeDR6w9OKDqwscVE1ZjPs28T62m0ixig5OvKqWAbVwqHvac4nYtFNJ8dVIoqdbM4UfAN6pl8wZKrwMj3Gc2MJjVomXWLLUQlICJTWv4BadOdfMDG2hmSBBRCaYdjHymttouKOFjFwpMbOgZrk+kGXrSq6kkC1KrfYh70cy5G2nch+beyIV2lbqdSKH+CzMz6wnVc0SJJQakApWXw2EW+rJE6ew2RPcXYaOJ3fxXjHToe5I9bUTo4bpfREB3Y0lRxNzJf+EVOst3KghwaeyHcxT8GwHjhrJoeuozmuJTeUGM0u1fXNHPn/TI3frxO6vVof5yRq7gdjiW/iiXm8ZEnML0zHwUSpdFikiihTfBe47WxFbmUTn8ZDn5AobPSGJMVCrhnnSaJR9Czud04BPmxUSxzbzJ3ZUF1d0fAapceNLxWj38rpsiXL2Jd0yXK1o+05ohZW7LhYJGrptFek2yFH+xgooQnwzEepP1D6bJSN1aUVHjIQLyOyUjI6kb+ydUgfVA+sEqXaocgcjEcqedphsjGZPUi7Ercn68OrFtDlrQ5i0w5TyX8ZjFfcomXZecdLsmZ9l+MiGhlPKgcDN9fG7+cBD5IkjxZMCaHabTaxMsk5GpOELdjSkrrPeBKnv7JvydKO7w+UPmUO/o0MPRpWrB3NCMGgQYUJmD2bJ5Rho5TqFqiA1it3FIY3inlFZ+Ns+oVh7Ngh4LlNkqNfUpoHVMFxtWxd3na+i2HrjMb8wrjR9ypc4LlLTNi/HIaZZ2lxHMjkfOUdGffsQKUB/4YRehPl2AZaYkvYn3KeS+qZTM5Aypv4HDgrpLyfJ9Yh4LnJ6UDn0lmbvO3ZVvaKW6DxBgHMcnbAkM3OiMptxDAOs5v0aORrB9JX23MIjevI50B+2mFsaUVL7aDxxU7xBZe/sU6427F7QsOpqGwkWCLsMbLsfgFjsbKZUGyGuaR3iTMvgSLANtksuBhhrntzcJmWRl+2JBWIRs8T9m65d9TkYRDtd6FIInDmW8eki75y/6sxuJvnAdulMqHKRzSOexyf6XOSPHzOmJyhjBRQjV2oEN2co2vpwYkCodKa+iGgkdbDaBhBiqlNn1DJ56FaMufT+ki4lzIWIHOQluPxq6j5rJSbJOrF6M0Nc1mUE5O+iBr5zJpBivConXvu88tEEa6h2IeFaqb0xtqjuc4TQVlw3i6kFdVCBQ6GGvcXQwEapMUIFRic7BejizqEi1WsvPUi+vOGQurIJd+ugMBxr1D9+c1joPjeCanchJ1EqCDwNmE6/7sV2SsU0CXamcE5aXV15cWp0VvPi1MowNgCXUuldOEJNPlRfI/wme1L3tL0dP/CVynkIE07dhvYF5+r3CeieFgjOTm6cOLpQuIFBc8ffwvwn04l7rjNify6S5LbbhYPI1L2TLxm+q9BBQ+Xk8sSCqAeOdg8NP9dNymwqgzugaY8VcGGHlEPw8JDBeN97Bz302lUjQtY1UxLSYYh+z/zeDsZ39+NoYAtKm0SL9E6qIBMVszWUTQ/1HHt4Th0IhsMBTgrwfXAi7yXUKj+hJ/g796XWMSdQPUNrnxilOobiCpPNIrAqP3HP0/ux4+Pl3Rze/dwTw+TmEtpbPmryAo/CmB9LQMqWoCjGkZHjHqix3JCE7p7GOF27Ec3dH07enS+HD083t2NH/z2rrz28MNn/15P1lHWermoD8gBt7bHiFIFoIJdDgHCICVSka/cc0QXoNTaToxwIsZlWeK7MnKOTYZoherWxATPol9sD/6f14ALacjsTNNx+ZmoS0rLqEUo4jAPxmvVBGqNy4QsYHDwkhJ91SRGdZ4C0kKySKiuS7sCLqTQQy0NM+vTSNkUqtuyCLXU/2QqC8CBGxII1YRJzJyQ67K0MI7zOSeP25KUCOjAn4yJ0H/EAMXqv6v8CGKfiapHSb7O5qCWZZaHHAdNO8qhnckxR7nyNjJDAT2emikoJ43TXCaTUnd5IRrqwAdaRKN0wNCQk+gVqhIRME4eDtU32AwIxfum3+DYlShxNt57DAHhjZN0ZTMImfCoK2rhKZjyaNHAHkdjQK3SFJINKcqv0BSYcCiQFh6qyc3DTJanpBheilQA",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-21T14:16:39.548Z"
+    }
+  },
+  {
+    "hash": "_jJqT0bsXrUqt8WSp25X4grEJSQ-H24k8SLZY40jAXs",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/change-requests/config",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "205",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Wed, 21 Oct 2026 14:16:39 GMT",
+            "etag": "W/\"cd-w0FpbBEWKsI5UN3qk5/4JXjF9z4\"",
+            "ratelimit-limit": "20000",
+            "ratelimit-policy": "20000;w=60",
+            "ratelimit-remaining": "19995",
+            "ratelimit-reset": "60",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "W3siZW52aXJvbm1lbnQiOiJkZXZlbG9wbWVudCIsInR5cGUiOiJkZXZlbG9wbWVudCIsInJlcXVpcmVkQXBwcm92YWxzIjpudWxsLCJjaGFuZ2VSZXF1ZXN0RW5hYmxlZCI6ZmFsc2V9LHsiZW52aXJvbm1lbnQiOiJwcm9kdWN0aW9uIiwidHlwZSI6InByb2R1Y3Rpb24iLCJyZXF1aXJlZEFwcHJvdmFscyI6MSwiY2hhbmdlUmVxdWVzdEVuYWJsZWQiOnRydWV9XQ==",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-21T14:16:39.626Z"
     }
   },
   {
@@ -103,11 +192,11 @@
             "content-length": "206",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Wed, 21 Oct 2026 10:06:07 GMT",
+            "date": "Wed, 21 Oct 2026 14:16:39 GMT",
             "etag": "W/\"ce-BvC8r6UaJM9N1Q4bqLk00/BV1zA\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19994",
+            "ratelimit-remaining": "19996",
             "ratelimit-reset": "60",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -122,7 +211,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-21T10:06:07.355Z"
+      "timestamp": "2026-10-21T14:16:39.697Z"
     }
   },
   {
@@ -149,8 +238,8 @@
             "content-length": "178",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Wed, 21 Oct 2026 10:06:07 GMT",
-            "etag": "W/\"b2-4W/ADWXDDRlRn5LZO+9tsFcsL6s\"",
+            "date": "Wed, 21 Oct 2026 14:16:39 GMT",
+            "etag": "W/\"b2-tGJ9rTvCOrciKgdDxZRXfj3jbJ4\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
             "ratelimit-remaining": "19993",
@@ -163,12 +252,12 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLXNlcnZlci1mbGFnIiwiZGVzY3JpcHRpb24iOm51bGwsInR5cGUiOiJyZWxlYXNlIiwicHJvamVjdCI6Im1jcC1zZXJ2ZXIiLCJzdGFsZSI6ZmFsc2UsImNyZWF0ZWRBdCI6IjIwMjYtMTAtMjFUMTA6MDY6MDcuNDUyWiIsImltcHJlc3Npb25EYXRhIjpmYWxzZSwiYXJjaGl2ZWQiOmZhbHNlfQ==",
+          "body": "eyJuYW1lIjoibWNwLXNlcnZlci1mbGFnIiwiZGVzY3JpcHRpb24iOm51bGwsInR5cGUiOiJyZWxlYXNlIiwicHJvamVjdCI6Im1jcC1zZXJ2ZXIiLCJzdGFsZSI6ZmFsc2UsImNyZWF0ZWRBdCI6IjIwMjYtMTAtMjFUMTQ6MTY6MzkuODA0WiIsImltcHJlc3Npb25EYXRhIjpmYWxzZSwiYXJjaGl2ZWQiOmZhbHNlfQ==",
           "trailers": {}
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-21T10:06:07.483Z"
+      "timestamp": "2026-10-21T14:16:39.838Z"
     }
   },
   {
@@ -195,11 +284,11 @@
             "content-length": "236",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Wed, 21 Oct 2026 10:06:07 GMT",
-            "etag": "W/\"ec-RyogfaCV61SliOjK5jj9SznP1Us\"",
+            "date": "Wed, 21 Oct 2026 14:16:39 GMT",
+            "etag": "W/\"ec-0hbTQNjYc4X38GM1ZYFZ0NAKvl0\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19990",
+            "ratelimit-remaining": "19992",
             "ratelimit-reset": "60",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -209,12 +298,12 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJpZCI6IjAxTTVFWVNSODUxOTlOTTFBMUZUSDdKOEI3IiwibmFtZSI6ImZsZXhpYmxlUm9sbG91dCIsImNvbnN0cmFpbnRzIjpbXSwicGFyYW1ldGVycyI6eyJncm91cElkIjoibWNwLXNlcnZlci1mbGFnIiwicm9sbG91dCI6IjUwIiwic3RpY2tpbmVzcyI6ImRlZmF1bHQifSwidmFyaWFudHMiOltdLCJzZWdtZW50cyI6W10sInRpdGxlIjoiRXZlcnlvbmUiLCJkaXNhYmxlZCI6ZmFsc2UsInNvcnRPcmRlciI6MH0=",
+          "body": "eyJpZCI6IjAxTTVGRDRHOEtYQ1pTUTFQS0FaU1BYUDVZIiwibmFtZSI6ImZsZXhpYmxlUm9sbG91dCIsImNvbnN0cmFpbnRzIjpbXSwicGFyYW1ldGVycyI6eyJncm91cElkIjoibWNwLXNlcnZlci1mbGFnIiwicm9sbG91dCI6IjUwIiwic3RpY2tpbmVzcyI6ImRlZmF1bHQifSwidmFyaWFudHMiOltdLCJzZWdtZW50cyI6W10sInRpdGxlIjoiRXZlcnlvbmUiLCJkaXNhYmxlZCI6ZmFsc2UsInNvcnRPcmRlciI6MH0=",
           "trailers": {}
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-21T10:06:07.640Z"
+      "timestamp": "2026-10-21T14:16:39.950Z"
     }
   },
   {
@@ -238,10 +327,10 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Wed, 21 Oct 2026 10:06:07 GMT",
+            "date": "Wed, 21 Oct 2026 14:16:40 GMT",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19988",
+            "ratelimit-remaining": "19993",
             "ratelimit-reset": "60",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -256,7 +345,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-21T10:06:07.881Z"
+      "timestamp": "2026-10-21T14:16:40.109Z"
     }
   }
 ]
