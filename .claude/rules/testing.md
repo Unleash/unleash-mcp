@@ -11,5 +11,6 @@ paths:
 - Test files that write to Unleash use their own flag (e.g. `mcp-server-flag` in `server.test.ts`): files record in parallel.
 - Tests must be subsecond. Avoid network I/O, timers and process spawning.
 - Recorded tests assert the tool output only; don't read Unleash state back.
+- Setup and teardown use the `admin` client from `createRecordedClient`; the code under test uses `unleash`. Change requests are cancelled by their author, `unleash`.
 
-Why: `docs/decisions.md` (Testing against Unleash).
+Why: `docs/decisions.md` (Testing against Unleash, Admin client for test setup and teardown).
