@@ -22,6 +22,6 @@ const audiences = z.object({
 const result = z.discriminatedUnion('kind', [projects, environments, segments, flags, contextFields, audiences, failed]);
 
 // MCP requires an object output schema, so the union sits under `result`.
-export const searchOutput = { result };
+export const searchSpikeOutput = { result };
 
 export type SearchResult = z.infer<typeof result>;

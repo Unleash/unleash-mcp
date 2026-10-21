@@ -13,7 +13,7 @@ const audiences = z.object({ kind: z.literal('audiences'), project, flag: z.stri
 const lookup = z.discriminatedUnion('kind', [projects, environments, segments, flags, contextFields, audiences]);
 
 // MCP requires an object input schema, so the union sits under `lookup`.
-export const searchInput = { lookup };
+export const searchSpikeInput = { lookup };
 
-export type SearchInput = z.infer<z.ZodObject<typeof searchInput>>;
+export type SearchSpikeInput = z.infer<z.ZodObject<typeof searchSpikeInput>>;
 export type Lookup = z.infer<typeof lookup>;

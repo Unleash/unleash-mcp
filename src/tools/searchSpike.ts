@@ -1,15 +1,15 @@
 import type { components } from '../unleash/api.d.ts';
 import type { UnleashClient } from '../unleash/client.ts';
 import type { Constraint, Target } from './releaseInput.ts';
-import type { Lookup } from './searchInput.ts';
-import type { SearchResult } from './searchOutput.ts';
+import type { Lookup } from './searchSpikeInput.ts';
+import type { SearchResult } from './searchSpikeOutput.ts';
 import { toFailed } from './failed.ts';
 
 type Strategy = components['schemas']['featureStrategySchema'];
 type UnleashConstraint = components['schemas']['constraintSchema'];
 type LookupOf<K extends Lookup['kind']> = Extract<Lookup, { kind: K }>;
 
-export const createSearch =
+export const createSearchSpike =
   (unleash: UnleashClient) =>
     async ({ lookup }: { lookup: Lookup }): Promise<SearchResult> => {
       switch (lookup.kind) {

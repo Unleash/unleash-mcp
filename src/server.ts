@@ -3,9 +3,9 @@ import pkg from '../package.json' with { type: 'json' };
 import { releaseInput } from './tools/releaseInput.ts';
 import { releaseOutput } from './tools/releaseOutput.ts';
 import { createRelease } from './tools/release.ts';
-import { searchInput } from './tools/searchInput.ts';
-import { searchOutput } from './tools/searchOutput.ts';
-import { createSearch } from './tools/search.ts';
+import { searchSpikeInput } from './tools/searchSpikeInput.ts';
+import { searchSpikeOutput } from './tools/searchSpikeOutput.ts';
+import { createSearchSpike } from './tools/searchSpike.ts';
 import type { UnleashClient } from './unleash/client.ts';
 
 // At the time of this writing, 
@@ -18,7 +18,7 @@ const toToolResult = <T extends { kind: string }>(result: T) =>
 export const createServer = (unleash: UnleashClient): McpServer => {
   const server = new McpServer({ name: 'unleash-mcp', version: pkg.version });
   const release = createRelease(unleash);
-  const search = createSearch(unleash);
+  const searchSpike = createSearchSpike(unleash);
 
   server.registerTool(
     'release',
@@ -33,15 +33,15 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   );
 
   server.registerTool(
-    'search',
+    'search_spike',
     {
       description: 'Look up what is in Unleash: projects, enabled environments, segments, flags, context fields, or the audiences a flag has in an environment. Use it to find the values other tools need.',
-      inputSchema: searchInput,
-      outputSchema: searchOutput,
+      inputSchema: searchSpikeInput,
+      outputSchema: searchSpikeOutput,
       annotations: { readOnlyHint: true },
     },
     async (input) => {
-      return toToolResult(await search(input));
+      return toToolResult(await searchSpike(input));
     },
   );
 
