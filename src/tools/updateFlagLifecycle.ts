@@ -5,7 +5,7 @@ import type { FeatureLifecycleSnapshot, LifecycleTransitionResult } from '../unl
 import { CustomError } from '../utils/errors.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
-import { type PendingApproval, requestChange } from './changeRequests.js';
+import { findWaiting, type PendingApproval, requestChange } from './changeRequests.js';
 
 const ACTIONS = [
   'complete',
@@ -59,40 +59,15 @@ export async function updateFlagLifecycle(
       `Applying "${input.action}" to "${input.featureName}"...`,
     );
 
-    let result: LifecycleTransitionResult | undefined;
     if (input.action === 'archive') {
-      // Unleash refuses an archive while any environment needs approval, so the UI sends it
-      // through a production one first. This does the same.
-      const approval = await context.unleashClient.environmentsNeedingApproval(projectId);
-      const environment = (approval.find(({ type }) => type === 'production') ?? approval[0])
+      // Like the Unleash UI: while any environment has change requests on, archiving goes through
+      // one, in a production environment first, even for admins.
+      const configured = await context.unleashClient.changeRequestEnvironments(projectId);
+      const environment = (configured.find(({ type }) => type === 'production') ?? configured[0])
         ?.environment;
-      if (environment) {
-        const current = await context.unleashClient.getLifecycleSnapshot(
-          projectId,
-          input.featureName,
-        );
-        if (current.presence === 'archived') {
-          result = { changed: false, changes: [], before: current, after: current };
-        } else {
-          await ensureNoOrphanedChildren(context, projectId, input.featureName);
-          const pending: PendingApproval<{ action: 'archive' }> = {
-            outcome: 'pendingApproval',
-            requested: { action: 'archive' },
-            ...(await requestChange(context, projectId, environment, input.featureName, [
-              { action: 'archiveFeature' },
-            ])),
-          };
-          return jsonResult({
-            success: true,
-            projectId,
-            featureName: input.featureName,
-            action: input.action,
-            ...pending,
-          });
-        }
-      }
+      if (environment) return await archiveThroughApproval(context, projectId, input, environment);
     }
-    result ??= await applyAction(context, projectId, input);
+    const result = await applyAction(context, projectId, input);
 
     await context.notifyProgress(
       progressToken,
@@ -101,30 +76,92 @@ export async function updateFlagLifecycle(
       `Applied "${input.action}" to "${input.featureName}"`,
     );
 
-    const { url, resourceUri } = createFlagLinks(
-      context.config.unleash.baseUrl,
-      projectId,
-      input.featureName,
-    );
-
-    return jsonResult({
-      outcome: 'saved',
-      success: true,
-      dryRun: context.config.server.dryRun,
-      projectId,
-      featureName: input.featureName,
-      action: input.action,
-      changed: result.changed,
-      before: result.before,
-      after: result.after,
-      ...sentDetails(input),
-      summary: summarize(result),
-      help: buildHelp(projectId, input, result),
-      links: { ui: url, resourceUri },
-    });
+    return savedReply(context, projectId, input, result);
   } catch (error) {
     return handleToolError(context, error, 'update_flag_lifecycle');
   }
+}
+
+function savedReply(
+  context: ServerContext,
+  projectId: string,
+  input: UpdateFlagLifecycleInput,
+  result: LifecycleTransitionResult,
+): CallToolResult {
+  const { url, resourceUri } = createFlagLinks(
+    context.config.unleash.baseUrl,
+    projectId,
+    input.featureName,
+  );
+
+  return jsonResult({
+    outcome: 'saved',
+    success: true,
+    dryRun: context.config.server.dryRun,
+    projectId,
+    featureName: input.featureName,
+    action: input.action,
+    changed: result.changed,
+    before: result.before,
+    after: result.after,
+    ...sentDetails(input),
+    summary: summarize(result),
+    help: buildHelp(projectId, input, result),
+    links: { ui: url, resourceUri },
+  });
+}
+
+async function archiveThroughApproval(
+  context: ServerContext,
+  projectId: string,
+  input: UpdateFlagLifecycleInput,
+  environment: string,
+): Promise<CallToolResult> {
+  const { featureName } = input;
+  const current = await context.unleashClient.getLifecycleSnapshot(projectId, featureName);
+  if (current.presence === 'missing') {
+    throw new CustomError(
+      'FLAG_NOT_FOUND',
+      `No flag named "${featureName}" exists in project "${projectId}", active or archived.`,
+      'Search for the flag by name to find its exact name and project.',
+    );
+  }
+  if (current.presence === 'archived') {
+    return savedReply(context, projectId, input, {
+      changed: false,
+      changes: [],
+      before: current,
+      after: current,
+    });
+  }
+
+  await ensureNoOrphanedChildren(context, projectId, featureName);
+  const open = await context.unleashClient.openChangeRequests(projectId);
+  const pending: PendingApproval<{ action: 'archive' }> = {
+    outcome: 'pendingApproval',
+    requested: { action: 'archive' },
+    ...(await requestChange(
+      context,
+      projectId,
+      environment,
+      featureName,
+      findWaiting(open, environment, featureName),
+      [{ action: 'archiveFeature' }],
+    )),
+  };
+  const { url, resourceUri } = createFlagLinks(
+    context.config.unleash.baseUrl,
+    projectId,
+    featureName,
+  );
+  return jsonResult({
+    success: true,
+    projectId,
+    featureName,
+    action: input.action,
+    ...pending,
+    links: { ui: url, resourceUri },
+  });
 }
 
 function ensureStatusWhenCompleting(input: UpdateFlagLifecycleInput): void {

@@ -39,7 +39,7 @@ function createContext(
     setFeatureStale: vi.fn(async () => result),
     validateArchiveFeatures: vi.fn(async () => validation),
     getFeature: vi.fn(async () => ({ name: featureName, children })),
-    environmentsNeedingApproval: vi.fn(async () => []),
+    changeRequestEnvironments: vi.fn(async () => []),
   };
   const context: ServerContext = {
     config: {

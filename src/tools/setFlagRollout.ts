@@ -24,7 +24,16 @@ import {
 import { CustomError } from '../utils/errors.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
-import { type PendingApproval, requestChange, takesOnlyApproved } from './changeRequests.js';
+import {
+  approvalEnvironments,
+  changeRequestLink,
+  findWaiting,
+  isWaitingStrategy,
+  type PendingApproval,
+  requestChange,
+  type Waiting,
+  withWaitingChanges,
+} from './changeRequests.js';
 
 const SEGMENTS_DOCS = 'https://docs.getunleash.io/concepts/segments';
 const CONSTRAINTS_DOCS = 'https://docs.getunleash.io/concepts/activation-strategies#constraints';
@@ -192,9 +201,11 @@ interface Lookups {
   feature: FeatureDetails;
   segments: SegmentSummary[];
   contextFields: ContextField[];
+  /** By environment, for those where the caller's writes need approval. */
+  waiting: Map<string, Waiting>;
 }
 
-type AppliedEnvironment = SavedEnvironment | PendingEnvironment;
+type EnvironmentResult = SavedEnvironment | PendingEnvironment;
 
 interface SavedEnvironment {
   outcome: 'saved';
@@ -209,7 +220,7 @@ interface SavedEnvironment {
   notes?: string[];
 }
 
-type PendingEnvironment = { environment: string; enabled: boolean } & PendingApproval<{
+type PendingEnvironment = { environment: string } & PendingApproval<{
   enabled: boolean;
   strategyId?: string;
   rolloutPercentage?: number;
@@ -261,14 +272,17 @@ function describeConstraint(constraint: StrategyConstraint): string {
 function describeStrategy(strategy: FeatureStrategy, segments: SegmentSummary[]): string {
   const title = strategy.title ? `"${strategy.title}": ` : '';
   const disabled = strategy.disabled ? ' (disabled)' : '';
-  if (strategy.name !== 'flexibleRollout') return `${title}${strategy.name} strategy${disabled}`;
+  const waiting = isWaitingStrategy(strategy) ? ' (waiting for approval)' : '';
+  if (strategy.name !== 'flexibleRollout') {
+    return `${title}${strategy.name} strategy${disabled}${waiting}`;
+  }
 
   const targets = [
     ...(strategy.segments ?? []).map((id) => `segment ${segmentName(id, segments)}`),
     ...(strategy.constraints ?? []).map(describeConstraint),
   ];
   const who = targets.length > 0 ? targets.join(' and ') : 'everyone';
-  return `${title}${strategy.parameters.rollout ?? 100}% of ${who}${disabled}`;
+  return `${title}${strategy.parameters.rollout ?? 100}% of ${who}${disabled}${waiting}`;
 }
 
 function findEnvironment(feature: FeatureDetails, name: string): FeatureEnvironment | undefined {
@@ -683,77 +697,145 @@ function summarize(
   };
 }
 
-/** The same changes as applyDirectly, sent as one change request. */
+/** The environment's strategies once the change is in, and whether they are all paused. */
+function strategiesAfter(
+  environment: FeatureEnvironment,
+  replacedId: string | undefined,
+  strategy: { disabled?: boolean | null } | undefined,
+) {
+  const strategies = [
+    ...(environment.strategies ?? []).filter((candidate) => candidate.id !== replacedId),
+    ...(strategy ? [strategy] : []),
+  ];
+  return {
+    strategies,
+    onlyPaused: strategies.length > 0 && strategies.every((candidate) => candidate.disabled),
+  };
+}
+
+function rolloutNotes(
+  plan: EnvironmentPlan,
+  strategy: { disabled?: boolean | null } | undefined,
+  outcome: EnvironmentResult['outcome'],
+): string[] {
+  const { entry, environment, target } = plan;
+  const env = environment.name;
+  const enabled = entry.enabled ?? environment.enabled;
+  const replacedId = target.kind === 'replace' ? target.strategy.id : undefined;
+  const { strategies, onlyPaused } = strategiesAfter(environment, replacedId, strategy);
+  const pending = outcome === 'pendingApproval';
+  const notes: string[] = [];
+
+  if (enabled && !environment.enabled && strategies.length === 0) {
+    notes.push(
+      pending
+        ? `"${env}" has no strategies, so once this is applied Unleash gives it the project's default strategy.`
+        : `"${env}" had no strategies, so Unleash gave it the project's default strategy. get_flag_state shows it.`,
+    );
+  }
+  if (enabled && !environment.enabled && onlyPaused) {
+    notes.push(
+      pending
+        ? `Every strategy in "${env}" is disabled, so once this is applied Unleash turns them all back on.`
+        : `Every strategy in "${env}" was disabled, so Unleash turned them all back on.`,
+    );
+  }
+  if (strategy?.disabled && entry.strategyDisabled === undefined) {
+    notes.push('This strategy is disabled, so it has no effect. Pass enabled: true to turn it on.');
+  }
+  const others = (environment.strategies ?? []).filter(
+    (candidate) => candidate.id !== replacedId && !candidate.disabled,
+  ).length;
+  if (strategy && others > 0) {
+    notes.push(
+      `"${env}" has ${others} other active strateg${others === 1 ? 'y' : 'ies'}; a user who matches any strategy gets the flag.`,
+    );
+  }
+  if (!enabled && entry.enabled === undefined) {
+    notes.push(`The flag is off in "${env}". Pass enabled: true to turn it on.`);
+  }
+  return notes;
+}
+
+/** The same changes as applyDirectly, put into the caller's change request for the environment. */
 async function applyThroughApproval(
   context: ServerContext,
   projectId: string,
   featureName: string,
   plan: EnvironmentPlan,
+  waiting: Waiting,
   segments: SegmentSummary[],
-): Promise<AppliedEnvironment> {
+): Promise<EnvironmentResult> {
   const { entry, environment, target } = plan;
+  const env = environment.name;
   const enabled = entry.enabled ?? environment.enabled;
   const replacedId = target.kind === 'replace' ? target.strategy.id : undefined;
   const changes: ChangeRequestChange[] = [];
+  let edit: { changeId: number; change: ChangeRequestChange } | undefined;
   if (!enabled && environment.enabled) {
     changes.push({ action: 'updateEnabled', payload: { enabled: false } });
   }
   let requested: FlexibleRolloutStrategy | undefined;
-  if (target.kind === 'add') {
+  if (target.kind !== 'keep') {
     requested = buildStrategy({ ...plan, target }, featureName);
-    changes.push({ action: 'addStrategy', payload: { name: 'flexibleRollout', ...requested } });
-  } else if (target.kind === 'replace') {
-    requested = buildStrategy({ ...plan, target }, featureName);
-    changes.push({
-      action: 'updateStrategy',
-      payload: { id: target.strategy.id, name: 'flexibleRollout', ...requested },
-    });
+    const payload = { name: 'flexibleRollout' as const, ...requested };
+    if (target.kind === 'add') {
+      changes.push({ action: 'addStrategy', payload });
+    } else if (isWaitingStrategy(target.strategy)) {
+      edit = {
+        changeId: target.strategy.waitingChangeId,
+        change: { action: 'addStrategy', payload },
+      };
+    } else {
+      changes.push({ action: 'updateStrategy', payload: { id: target.strategy.id, ...payload } });
+    }
   }
   if (enabled && !environment.enabled) {
-    const strategies = [
-      ...(environment.strategies ?? []).filter((strategy) => strategy.id !== replacedId),
-      ...(requested ? [requested] : []),
-    ];
     // Like applyDirectly: turn paused strategies back on, or Unleash adds the default strategy.
-    const onlyPaused = strategies.length > 0 && strategies.every((strategy) => strategy.disabled);
+    const { onlyPaused } = strategiesAfter(environment, replacedId, requested);
     changes.push({
       action: 'updateEnabled',
       payload: { enabled: true, shouldActivateDisabledStrategies: onlyPaused },
     });
   }
 
-  if (changes.length === 0) return applyDirectly(context, projectId, featureName, plan, segments);
+  if (changes.length === 0 && !edit) {
+    const notes = rolloutNotes(plan, undefined, 'saved');
+    const enabledWaiting = waiting.changes.some(({ action }) => action === 'updateEnabled');
+    if (waiting.changeRequest && entry.enabled !== undefined && enabledWaiting) {
+      const changeRequest = changeRequestLink(context, projectId, waiting.changeRequest);
+      return {
+        outcome: 'pendingApproval',
+        environment: env,
+        requested: { enabled },
+        changeRequest,
+        notes: [
+          `Change request ${changeRequest.id} already turns it ${enabled ? 'on' : 'off'}, so nothing was added (${changeRequest.url}).`,
+          ...notes,
+        ],
+      };
+    }
+    return {
+      outcome: 'saved',
+      environment: env,
+      strategy: 'unchanged',
+      enabled,
+      ...(notes.length > 0 && { notes }),
+    };
+  }
 
-  const pending = await requestChange(context, projectId, environment.name, featureName, changes);
-  if (requested?.disabled && entry.strategyDisabled === undefined) {
-    pending.notes.push(
-      'This strategy is disabled, so it has no effect. Pass enabled: true to turn it on.',
-    );
-  }
-  const others = (environment.strategies ?? []).filter(
-    (strategy) => strategy.id !== replacedId && !strategy.disabled,
-  ).length;
-  if (requested && others > 0) {
-    pending.notes.push(
-      `"${environment.name}" has ${others} other active strateg${others === 1 ? 'y' : 'ies'}; a user who matches any strategy gets the flag.`,
-    );
-  }
-  if (!enabled && entry.enabled === undefined) {
-    pending.notes.push(
-      `The flag is off in "${environment.name}". Pass enabled: true to turn it on.`,
-    );
-  }
-
+  const pending = await requestChange(context, projectId, env, featureName, waiting, changes, edit);
   return {
     outcome: 'pendingApproval',
-    environment: environment.name,
-    enabled: environment.enabled,
+    environment: env,
     requested: {
       enabled,
-      ...(replacedId && { strategyId: replacedId }),
+      ...(target.kind === 'replace' &&
+        !isWaitingStrategy(target.strategy) && { strategyId: target.strategy.id }),
       ...(requested && summarize(requested, segments)),
     },
-    ...pending,
+    changeRequest: pending.changeRequest,
+    notes: [...pending.notes, ...rolloutNotes(plan, requested, 'pendingApproval')],
   };
 }
 
@@ -763,7 +845,7 @@ async function applyDirectly(
   featureName: string,
   plan: EnvironmentPlan,
   segments: SegmentSummary[],
-): Promise<AppliedEnvironment> {
+): Promise<EnvironmentResult> {
   const { entry, environment, target } = plan;
   const env = environment.name;
   const enabled = entry.enabled ?? environment.enabled;
@@ -791,42 +873,16 @@ async function applyDirectly(
     );
   }
 
-  const notes: string[] = [];
-  const strategies = [
-    ...(environment.strategies ?? []).filter((strategy) => strategy.id !== saved?.id),
-    ...(saved ? [saved] : []),
-  ];
-  const onlyPaused = strategies.length > 0 && strategies.every((strategy) => strategy.disabled);
   // Turn on after saving, or Unleash adds the project's default strategy next to the new one.
   if (enabled && !environment.enabled) {
+    const replacedId = target.kind === 'replace' ? target.strategy.id : undefined;
+    const { onlyPaused } = strategiesAfter(environment, replacedId, saved);
     await context.unleashClient.toggleFeatureEnvironment(projectId, featureName, env, true, {
       activateDisabledStrategies: onlyPaused,
     });
-    if (strategies.length === 0) {
-      notes.push(
-        `"${env}" had no strategies, so Unleash gave it the project's default strategy. get_flag_state shows it.`,
-      );
-    }
-    if (onlyPaused) {
-      notes.push(`Every strategy in "${env}" was disabled, so Unleash turned them all back on.`);
-    }
   }
 
-  if (saved?.disabled && entry.strategyDisabled === undefined) {
-    notes.push('This strategy is disabled, so it has no effect. Pass enabled: true to turn it on.');
-  }
-  const others = (environment.strategies ?? []).filter(
-    (strategy) => strategy.id !== saved?.id && !strategy.disabled,
-  ).length;
-  if (saved && others > 0) {
-    notes.push(
-      `"${env}" has ${others} other active strateg${others === 1 ? 'y' : 'ies'}; a user who matches any strategy gets the flag.`,
-    );
-  }
-  if (!enabled && entry.enabled === undefined) {
-    notes.push(`The flag is off in "${env}". Pass enabled: true to turn it on.`);
-  }
-
+  const notes = rolloutNotes(plan, saved, 'saved');
   return {
     outcome: 'saved',
     environment: env,
@@ -864,8 +920,25 @@ async function loadLookups(
   entries: EnvironmentRollout[],
 ): Promise<Lookups> {
   const baseUrl = context.config.unleash.baseUrl;
-  const feature = await fetchFeature(context, projectId, featureName);
-  if (context.config.server.dryRun) return dryRunLookups(feature, entries, projectId, baseUrl);
+  const [live, approval] = await Promise.all([
+    fetchFeature(context, projectId, featureName),
+    approvalEnvironments(context, projectId),
+  ]);
+  if (context.config.server.dryRun) return dryRunLookups(live, entries, projectId, baseUrl);
+
+  // Plan against what the environment will be once the caller's waiting changes are applied,
+  // because Unleash replaces a waiting change of the same kind instead of adding another.
+  const open = approval.length > 0 ? await context.unleashClient.openChangeRequests(projectId) : [];
+  const waiting = new Map(
+    approval.map((environment) => [environment, findWaiting(open, environment, featureName)]),
+  );
+  const feature = {
+    ...live,
+    environments: live.environments?.map((environment) => {
+      const changes = waiting.get(environment.name)?.changes;
+      return changes ? withWaitingChanges(environment, changes) : environment;
+    }),
+  };
 
   const needsSegments =
     entries.some((entry) => entry.segments?.length) ||
@@ -877,7 +950,7 @@ async function loadLookups(
     needsSegments ? context.unleashClient.listSegments() : [],
     needsContextFields ? context.unleashClient.getContextFields(projectId) : [],
   ]);
-  return { projectId, baseUrl, feature, segments, contextFields };
+  return { projectId, baseUrl, feature, segments, contextFields, waiting };
 }
 
 /** Dry run calls no API, so every name in the request counts as found. */
@@ -907,6 +980,7 @@ function dryRunLookups(
     },
     segments: [...segments].map((name, index) => ({ id: index + 1, name, project: null })),
     contextFields: [...contextNames].map((name) => ({ name, legalValues: [] })),
+    waiting: new Map(),
   };
 }
 
@@ -984,16 +1058,27 @@ export async function setFlagRollout(
       `${mode}Saving the rollout for "${input.featureName}"...`,
     );
 
-    const approval = await context.unleashClient.environmentsNeedingApproval(projectId);
-    const applied: AppliedEnvironment[] = [];
+    const applied: EnvironmentResult[] = [];
     for (const [index, environmentPlan] of checked.plans.entries()) {
-      const apply =
-        takesOnlyApproved(approval, environmentPlan.environment.name) !== undefined
-          ? applyThroughApproval
-          : applyDirectly;
+      const waiting = lookups.waiting.get(environmentPlan.environment.name);
       try {
         applied.push(
-          await apply(context, projectId, input.featureName, environmentPlan, lookups.segments),
+          await (waiting
+            ? applyThroughApproval(
+                context,
+                projectId,
+                input.featureName,
+                environmentPlan,
+                waiting,
+                lookups.segments,
+              )
+            : applyDirectly(
+                context,
+                projectId,
+                input.featureName,
+                environmentPlan,
+                lookups.segments,
+              )),
         );
       } catch (error) {
         const failed = environmentPlan.environment.name;
@@ -1055,7 +1140,7 @@ export const setFlagRolloutTool = {
     'Set who gets a feature flag in one or more environments: a rollout percentage, optionally narrowed to segments and to constraints on context fields, and whether the environment is on. ' +
     'Pass segment and context field names as the user said them; do not look them up first. Nothing is changed until every name checks out. When a name does not match, the user is asked to pick, or the error lists the valid options. ' +
     'An environment without strategies gets a new flexibleRollout strategy when the entry sets any strategy field; turning it on with only enabled gives it the project default strategy. With one, that strategy is updated and fields you leave out keep their value; with several, pass strategyId. ' +
-    'In an environment that only takes approved changes, the changes go into a change request instead and that environment gets outcome "pendingApproval" with a link to the change request; nothing changes there until it is approved and applied. Each environment is decided on its own, so one call can save one and request another.',
+    'In an environment where your changes need approval, the changes go into a change request instead and that environment gets outcome "pendingApproval" with a link to the change request; nothing changes there until it is approved and applied. A later call builds on the changes you already have waiting there. Each environment is decided on its own, so one call can save one and request another.',
   inputSchema: setFlagRolloutSchema,
   implementation: setFlagRollout,
 };

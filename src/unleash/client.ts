@@ -142,9 +142,38 @@ export interface ChangeRequestRef {
   state: 'Draft' | 'In review' | 'Approved' | 'Applied' | 'Scheduled' | 'Rejected' | 'Cancelled';
 }
 
+/** A change already in a change request, of a kind the write tools make. */
+export type WaitingChange = { id: number } & (
+  | { action: 'updateEnabled'; payload: { enabled: boolean } }
+  | { action: 'addStrategy'; payload: Omit<FeatureStrategy, 'id'> }
+  | { action: 'updateStrategy'; payload: FeatureStrategy }
+  | { action: 'deleteStrategy'; payload: { id: string } }
+  | { action: 'archiveFeature' }
+);
+
+const WAITING_ACTIONS: string[] = [
+  'updateEnabled',
+  'addStrategy',
+  'updateStrategy',
+  'deleteStrategy',
+  'archiveFeature',
+];
+
+const isWaitingChange = (change: { action: string }): change is WaitingChange =>
+  WAITING_ACTIONS.includes(change.action);
+
 export interface OpenChangeRequest extends ChangeRequestRef {
   environment: string;
-  changeCount: number;
+  /** otherChanges counts the flag's changes of kinds the write tools never make, such as variants. */
+  features: Array<{ name: string; changes: WaitingChange[]; otherChanges: number }>;
+  segments: unknown[];
+}
+
+/** A permission as Unleash checks it: root ones have no project, environment ones name both. */
+export interface UserPermission {
+  permission: string;
+  project?: string;
+  environment?: string;
 }
 
 export interface FeatureStrategy {
@@ -969,11 +998,11 @@ export class UnleashClient {
   }
 
   /**
-   * The project's environments where a change only applies through an approved change request.
+   * The project's environments where change requests are on.
    * Without change requests the endpoint is missing (404), and a token that can't read it (403)
    * gets Unleash's own refusal from the write, so both count as none.
    */
-  async environmentsNeedingApproval(
+  async changeRequestEnvironments(
     projectId: string,
   ): Promise<Array<{ environment: string; type: string }>> {
     if (this.dryRun) return [];
@@ -994,16 +1023,28 @@ export class UnleashClient {
     }
   }
 
-  /** The caller's change requests in the project that are still open, with how many changes each holds. */
+  /** The caller's own permissions. */
+  async getOwnPermissions(): Promise<UserPermission[]> {
+    if (this.dryRun) return [];
+    const { permissions = [] } = await this.requestJson<{ permissions?: UserPermission[] }>(
+      '/api/admin/user',
+      { method: 'GET' },
+      { errorMessage: 'Failed to read your permissions' },
+    );
+    return permissions;
+  }
+
+  /** The caller's change requests in the project that are still open, with the changes in them. */
   async openChangeRequests(projectId: string): Promise<OpenChangeRequest[]> {
+    if (this.dryRun) return [];
     const requests = await this.requestJson<
-      Array<{
-        id: number;
-        environment: string;
-        state: ChangeRequestRef['state'];
-        features: Array<{ changes: unknown[] }>;
-        segments?: unknown[];
-      }>
+      Array<
+        ChangeRequestRef & {
+          environment: string;
+          features: Array<{ name: string; changes: Array<{ action: string }> }>;
+          segments?: unknown[];
+        }
+      >
     >(
       `/api/admin/projects/${encodeURIComponent(projectId)}/change-requests/pending`,
       { method: 'GET' },
@@ -1013,8 +1054,11 @@ export class UnleashClient {
       id,
       environment,
       state,
-      changeCount:
-        features.reduce((count, feature) => count + feature.changes.length, 0) + segments.length,
+      features: features.map(({ name, changes }) => {
+        const known = changes.filter(isWaitingChange);
+        return { name, changes: known, otherChanges: changes.length - known.length };
+      }),
+      segments,
     }));
   }
 
@@ -1028,6 +1072,7 @@ export class UnleashClient {
     featureName: string,
     changes: ChangeRequestChange[],
   ): Promise<ChangeRequestRef> {
+    if (this.dryRun) return { id: 0, state: 'Draft' };
     return this.requestJson<ChangeRequestRef>(
       `/api/admin/projects/${encodeURIComponent(projectId)}/environments/${encodeURIComponent(environment)}/change-requests`,
       {
@@ -1040,8 +1085,25 @@ export class UnleashClient {
     );
   }
 
+  /** Replaces one change in a change request. Unleash gives the new change a new ID. */
+  async editChange(
+    projectId: string,
+    changeRequestId: number,
+    changeId: number,
+    featureName: string,
+    change: ChangeRequestChange,
+  ): Promise<ChangeRequestRef> {
+    if (this.dryRun) return { id: changeRequestId, state: 'Draft' };
+    return this.requestJson<ChangeRequestRef>(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/change-requests/${changeRequestId}/changes/${changeId}`,
+      { method: 'PUT', body: JSON.stringify({ feature: featureName, ...change }) },
+      { errorMessage: `Failed to change ${featureName} in change request ${changeRequestId}` },
+    );
+  }
+
   /** Sends a draft change request to its reviewers. */
   async submitChangeRequest(projectId: string, changeRequestId: number): Promise<void> {
+    if (this.dryRun) return;
     await this.request(
       `/api/admin/projects/${encodeURIComponent(projectId)}/change-requests/${changeRequestId}/state`,
       { method: 'PUT', body: JSON.stringify({ state: 'In review' }) },
