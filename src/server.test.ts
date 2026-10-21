@@ -6,17 +6,17 @@ import { createServer } from './server.ts';
 import type { UnleashClient } from './unleash/client.ts';
 import { createRecordedClient, createStubbedClient } from './unleash/testClient.ts';
 
-const { unleash, close } = createRecordedClient(new URL('./server.snapshot.json', import.meta.url).pathname);
+const { unleash, admin, close } = createRecordedClient(new URL('./server.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server';
 // Not `mcp-flag`: test files run in parallel while recording, and release.test.ts deletes that one.
 const flag = 'mcp-server-flag';
 
 // Archiving and then deleting from the archive removes the flag for good, so the release creates it.
 const deleteFlag = async (): Promise<void> => {
-  await unleash.DELETE('/api/admin/projects/{projectId}/features/{featureName}', {
+  await admin.DELETE('/api/admin/projects/{projectId}/features/{featureName}', {
     params: { path: { projectId: project, featureName: flag } },
   });
-  await unleash.DELETE('/api/admin/archive/{featureName}', { params: { path: { featureName: flag } } });
+  await admin.DELETE('/api/admin/archive/{featureName}', { params: { path: { featureName: flag } } });
 };
 
 before(deleteFlag);
@@ -55,6 +55,7 @@ test('release tool reports the targets', async () => {
 test('release tool reports a failure as text', async () => {
   const { unleash: stubbed, stub } = createStubbedClient();
   const message = 'You need the "SKIP_CHANGE_REQUEST" permission.';
+  stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(200, { versionInfo: { current: { enterprise: '' } } });
   stub.intercept({ path: `/api/admin/projects/${project}/features/${flag}`, method: 'GET' }).reply(403, { name: 'PermissionError', message, details: [{ message }] });
   const client = await connectClient(stubbed);
 

@@ -4,30 +4,37 @@ import { createStubbedClient, createRecordedClient } from '../unleash/testClient
 import { unleashError } from '../unleash/testError.ts';
 import { createRelease } from './release.ts';
 
-const { unleash, close } = createRecordedClient(new URL('./release.snapshot.json', import.meta.url).pathname);
+const { unleash, admin, close } = createRecordedClient(new URL('./release.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server';
 const flag = 'mcp-flag';
 
 // Archiving and then deleting from the archive removes the flag for good, so the first release creates it.
 const deleteFlag = async (): Promise<void> => {
-  await unleash.DELETE('/api/admin/projects/{projectId}/features/{featureName}', {
+  await admin.DELETE('/api/admin/projects/{projectId}/features/{featureName}', {
     params: { path: { projectId: project, featureName: flag } },
   });
-  await unleash.DELETE('/api/admin/archive/{featureName}', { params: { path: { featureName: flag } } });
+  await admin.DELETE('/api/admin/archive/{featureName}', { params: { path: { featureName: flag } } });
 };
 
 const segment = 'mcp-beta';
 let segmentId: number | undefined;
+let changeRequestId: number | undefined;
 
 before(async () => {
   await deleteFlag();
-  const created = await unleash.POST('/api/admin/segments', { body: { name: segment, constraints: [] } });
+  const created = await admin.POST('/api/admin/segments', { body: { name: segment, constraints: [] } });
   segmentId = created.data?.id;
 });
-// The flag goes first: Unleash may refuse to delete a segment that is in use.
+// The change request goes first, and the flag before the segment:
+// Unleash may refuse to delete a segment that is in use.
 after(async () => {
+  // A submitted change request can't be deleted, only cancelled, and only by its author. The OpenAPI spec omits the body.
+  if (changeRequestId) await unleash.PUT('/api/admin/projects/{projectId}/change-requests/{id}/state', {
+    params: { path: { projectId: project, id: String(changeRequestId) } },
+    body: { state: 'Cancelled' } as never,
+  });
   await deleteFlag();
-  if (segmentId) await unleash.DELETE('/api/admin/segments/{id}', { params: { path: { id: segmentId } } });
+  if (segmentId) await admin.DELETE('/api/admin/segments/{id}', { params: { path: { id: segmentId } } });
   await close();
 });
 
@@ -83,12 +90,32 @@ test('removes the audiences a release leaves out', async () => {
   assert.deepEqual(output, { kind: 'released', flag: { status: 'existing', name: flag }, environment: 'development', targets: [{ name: 'Beta testers', rollout: 100 }] });
 });
 
+// `mcp-server` requires change requests in production.
+test('puts the release in a change request where the environment requires one', async () => {
+  const release = createRelease(unleash);
+
+  const output = await release({ project, flag, environment: 'production', targets: [{ name: 'Everyone', rollout: 50 }] });
+
+  assert.equal(output.kind, 'pending_change_request');
+  const { changeRequest, ...rest } = output;
+  changeRequestId = changeRequest.id;
+  assert.deepEqual(rest, { kind: 'pending_change_request', flag: { status: 'existing', name: flag }, environment: 'production', targets: [{ name: 'Everyone', rollout: 50 }] });
+  assert.equal(changeRequest.state, 'In review');
+});
+
+// Open source has no change requests, so the stubs in each test cover only the flag and its writes.
+const createStubbedOpenSource = () => {
+  const stubbed = createStubbedClient();
+  stubbed.stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(200, { versionInfo: { current: { enterprise: '' } } });
+  return stubbed;
+};
+
 
 const feature = `/api/admin/projects/${project}/features/${flag}`;
 const base = `${feature}/environments/development`;
 
 test('fails with the Unleash error when the rollout cannot be set', async () => {
-  const { unleash, stub } = createStubbedClient();
+  const { unleash, stub } = createStubbedOpenSource();
   const release = createRelease(unleash);
   stub.intercept({ path: feature, method: 'GET' }).reply(200, { name: flag });
   stub.intercept({ path: `${base}/strategies`, method: 'POST' }).reply(400, unleashError('BadDataError', 'You have not added the current environment to the project'));
@@ -104,7 +131,7 @@ test('fails with the Unleash error when the rollout cannot be set', async () => 
 });
 
 test('fails with the Unleash error when the environment cannot be enabled', async () => {
-  const { unleash, stub } = createStubbedClient();
+  const { unleash, stub } = createStubbedOpenSource();
   const release = createRelease(unleash);
   stub.intercept({ path: feature, method: 'GET' }).reply(200, { name: flag });
   stub.intercept({ path: `${base}/strategies`, method: 'POST' }).reply(200, {});
@@ -126,7 +153,7 @@ const development = (...strategyIds: string[]) => ({
 });
 
 test('fails with the Unleash error when an audience cannot be changed', async () => {
-  const { unleash, stub } = createStubbedClient();
+  const { unleash, stub } = createStubbedOpenSource();
   const release = createRelease(unleash);
   stub.intercept({ path: feature, method: 'GET' }).reply(200, development('s1'));
   stub.intercept({ path: `${base}/strategies/s1`, method: 'PUT' }).reply(403, unleashError('PermissionError', 'You need the UPDATE_FEATURE_STRATEGY permission'));
@@ -137,7 +164,7 @@ test('fails with the Unleash error when an audience cannot be changed', async ()
 });
 
 test('fails with the Unleash error when a left out audience cannot be removed', async () => {
-  const { unleash, stub } = createStubbedClient();
+  const { unleash, stub } = createStubbedOpenSource();
   const release = createRelease(unleash);
   stub.intercept({ path: feature, method: 'GET' }).reply(200, development('s1', 's2'));
   stub.intercept({ path: `${base}/strategies/s1`, method: 'PUT' }).reply(200, {});
@@ -150,7 +177,7 @@ test('fails with the Unleash error when a left out audience cannot be removed', 
 
 // The update only matches when it clears the segments, so leaving them out would fail the release.
 test('takes the segments away from an audience that no longer names them', async () => {
-  const { unleash, stub } = createStubbedClient();
+  const { unleash, stub } = createStubbedOpenSource();
   const release = createRelease(unleash);
   stub.intercept({ path: feature, method: 'GET' }).reply(200, development('s1'));
   const clearsSegments = (body: string): boolean => JSON.parse(body).segments?.length === 0;
@@ -163,7 +190,7 @@ test('takes the segments away from an audience that no longer names them', async
 
 // No stub for enabling: a request to turn the environment on would fail the release.
 test('leaves an enabled environment as it is', async () => {
-  const { unleash, stub } = createStubbedClient();
+  const { unleash, stub } = createStubbedOpenSource();
   const release = createRelease(unleash);
   stub.intercept({ path: feature, method: 'GET' }).reply(200, development('s1'));
   stub.intercept({ path: `${base}/strategies/s1`, method: 'PUT' }).reply(200, {});
@@ -174,7 +201,7 @@ test('leaves an enabled environment as it is', async () => {
 });
 
 test('fails on an error reply without a body', async () => {
-  const { unleash, stub } = createStubbedClient();
+  const { unleash, stub } = createStubbedOpenSource();
   const release = createRelease(unleash);
   stub.intercept({ path: feature, method: 'GET' }).reply(200, { name: flag });
   stub.intercept({ path: `${base}/strategies`, method: 'POST' }).reply(503, '', { headers: { 'content-length': '0' } });
@@ -182,4 +209,15 @@ test('fails on an error reply without a body', async () => {
   const output = await release({ project, flag, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
 
   assert.deepEqual(output, { kind: 'failed', status: 503, name: 'UnknownError', reasons: [] });
+});
+
+// No stubs for the flag: reading or creating it would fail the test.
+test('fails without touching the flag when the edition cannot be read', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const release = createRelease(unleash);
+  stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(401, unleashError('AuthenticationRequired', 'You must log in to use Unleash'));
+
+  const output = await release({ project, flag, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
+
+  assert.deepEqual(output, { kind: 'failed', status: 401, name: 'AuthenticationRequired', reasons: ['You must log in to use Unleash'] });
 });
