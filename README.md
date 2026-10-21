@@ -235,6 +235,8 @@ Set `UNLEASH_MCP_CLIENT_ATTRIBUTION=off` to disable enrichment and revert to `un
 
 This section describes each of the core tools in detail, including its purpose, parameters, and output.
 
+In an environment that only takes approved changes, `set_flag_rollout`, `toggle_flag_environment`, `remove_flag_strategy` and archiving with `update_flag_lifecycle` put the change into a [change request](https://docs.getunleash.io/concepts/change-requests) and send it for review. The result has `pendingApproval` with the change request's ID and link, and nothing changes until someone approves and applies it. Archiving goes to a production environment first, as in the Unleash UI.
+
 ### Create flag
 
 The `create_flag` tool creates a new feature flag in Unleash with comprehensive validation and progress tracking. 
@@ -619,6 +621,7 @@ Use it after `create_flag` to roll the flag out, and later to change who gets it
   - `segments` (optional): Segment names, as the user said them. Case, spaces and hyphens don't matter. `[]` removes all segments.
   - `constraints` (optional): Constraints, each with `contextName`, `operator` (any Unleash constraint operator), `values` or `value`, `inverted` and `caseInsensitive`. `[]` removes all constraints.
   - `strategyId` (optional): The strategy to change when the environment has more than one.
+  - `addStrategy` (optional): `true` adds a new `flexibleRollout` strategy next to the existing ones instead of changing one.
   - `stickiness` (optional): Stickiness field. A new strategy uses `"default"`.
   - `groupId` (optional): Group ID for stickiness bucketing. A new strategy uses the flag name.
   - `title` (optional): Descriptive title for the strategy.
@@ -669,13 +672,14 @@ If the request has problems, nothing is changed. The error code is `INVALID_ROLL
 | `INVALID_CONSTRAINT` | A constraint has no value, or Unleash rejects its value, such as text for `NUM_GT` or a value outside the field's legal values. |
 | `STRATEGY_NOT_CHOSEN` | The environment has several `flexibleRollout` strategies and no `strategyId`, or `strategyId` matches none of them. The options list them. |
 | `STRATEGY_NOT_FOUND` | `strategyId` matches no strategy, and the environment has no `flexibleRollout` strategy to pick from instead. |
+| `STRATEGY_CONFLICT` | The entry sets both `addStrategy` and `strategyId`. |
 | `STRATEGY_NOT_SUPPORTED` | The strategy to change is not a `flexibleRollout` strategy. |
 | `LAST_STRATEGY_PAUSED` | `strategyDisabled: true` would pause the only active strategy in an environment that stays on. Unleash turns an environment off when its last active strategy is paused, and turning it on again adds the project's default strategy. |
 
 Other errors:
 - `VALIDATION_ERROR` for a field the tool doesn't know, such as a misspelt one, so it is never ignored.
 - `HTTP_404` when the flag is not in the project. The hint points to `create_flag` and `search_flags`.
-- If saving fails partway through, the error keeps Unleash's code and adds `failedEnvironment`, `applied` (the environments that were saved) and `notChanged`.
+- If saving fails partway through, the error keeps Unleash's code and adds `failedEnvironment`, `applied` (the environments that were saved or sent for review) and `notChanged`.
 
 ### Get flag state
 
@@ -1302,6 +1306,9 @@ This server uses the Unleash Admin API. For complete API documentation, see:
 - `DELETE /api/admin/projects/{projectId}/features/{featureName}` - Archive flag
 - `POST /api/admin/archive/revive/{featureName}` - Revive archived flag
 - `POST /api/admin/projects/{projectId}/stale` - Mark flag as stale or not stale
+- `GET /api/admin/projects/{projectId}/change-requests/config` - Find the environments that need approval
+- `POST /api/admin/projects/{projectId}/environments/{environment}/change-requests` - Add changes to a change request
+- `PUT /api/admin/projects/{projectId}/change-requests/{id}/state` - Send a change request for review
 
 `send_feedback` does not call your Unleash instance. It posts to `POST {UNLEASH_FEEDBACK_URL}/feedback` on the Unleash-hosted feedback instance.
 

@@ -123,6 +123,25 @@ export interface FlexibleRolloutStrategy {
   variants?: StrategyVariant[];
 }
 
+/** One change in a change request: the same payloads the direct Admin API calls send. */
+export type ChangeRequestChange =
+  | { action: 'addStrategy'; payload: FlexibleRolloutStrategy & { name: 'flexibleRollout' } }
+  | {
+      action: 'updateStrategy';
+      payload: FlexibleRolloutStrategy & { id: string; name: 'flexibleRollout' };
+    }
+  | {
+      action: 'updateEnabled';
+      payload: { enabled: boolean; shouldActivateDisabledStrategies?: boolean };
+    }
+  | { action: 'deleteStrategy'; payload: { id: string } }
+  | { action: 'archiveFeature' };
+
+export interface ChangeRequestRef {
+  id: number;
+  state: 'Draft' | 'In review' | 'Approved' | 'Applied' | 'Scheduled' | 'Rejected' | 'Cancelled';
+}
+
 export interface FeatureStrategy {
   id: string;
   name: string;
@@ -944,6 +963,53 @@ export class UnleashClient {
     );
   }
 
+  /** The project's environments where a change only applies through an approved change request. */
+  async environmentsNeedingApproval(
+    projectId: string,
+  ): Promise<Array<{ environment: string; type: string }>> {
+    const config = await this.requestJson<
+      { environment: string; type: string; changeRequestEnabled: boolean }[]
+    >(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/change-requests/config`,
+      { method: 'GET' },
+      { errorMessage: `Failed to read the change request settings of project ${projectId}` },
+    );
+    return config
+      .filter((entry) => entry.changeRequestEnabled)
+      .map(({ environment, type }) => ({ environment, type }));
+  }
+
+  /**
+   * Adds the changes, all or none, to the caller's open change request for the environment.
+   * Unleash creates a draft when there is none, and keeps adding to that request until it's applied.
+   */
+  async addToChangeRequest(
+    projectId: string,
+    environment: string,
+    featureName: string,
+    changes: ChangeRequestChange[],
+  ): Promise<ChangeRequestRef> {
+    return this.requestJson<ChangeRequestRef>(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/environments/${encodeURIComponent(environment)}/change-requests`,
+      {
+        method: 'POST',
+        body: JSON.stringify(changes.map((change) => ({ feature: featureName, ...change }))),
+      },
+      {
+        errorMessage: `Failed to add a change for ${featureName} to a change request in ${environment}`,
+      },
+    );
+  }
+
+  /** Sends a draft change request to its reviewers. */
+  async submitChangeRequest(projectId: string, changeRequestId: number): Promise<void> {
+    await this.request(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/change-requests/${changeRequestId}/state`,
+      { method: 'PUT', body: JSON.stringify({ state: 'In review' }) },
+      { errorMessage: `Failed to send change request ${changeRequestId} for review` },
+    );
+  }
+
   /**
    * One entry per lifecycle stage the flag has entered, oldest first.
    */
@@ -1168,7 +1234,7 @@ export class UnleashClient {
    * Where the flag is now. Falls back to searching archived flags when the feature endpoint
    * returns 404, since that endpoint may not serve archived flags.
    */
-  private async getLifecycleSnapshot(
+  async getLifecycleSnapshot(
     projectId: string,
     featureName: string,
   ): Promise<FeatureLifecycleSnapshot> {

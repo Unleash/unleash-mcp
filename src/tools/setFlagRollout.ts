@@ -8,6 +8,7 @@ import {
   toolErrorPayload,
 } from '../context.js';
 import {
+  type ChangeRequestChange,
   CONSTRAINT_OPERATORS,
   type ConstraintOperator,
   type ContextField,
@@ -23,6 +24,12 @@ import {
 import { CustomError } from '../utils/errors.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
+import {
+  type PendingApproval,
+  refusedForApproval,
+  requestApproval,
+  waitingForApprovalNote,
+} from './changeRequests.js';
 
 const SEGMENTS_DOCS = 'https://docs.getunleash.io/concepts/segments';
 const CONSTRAINTS_DOCS = 'https://docs.getunleash.io/concepts/activation-strategies#constraints';
@@ -95,6 +102,12 @@ const environmentRolloutSchema = z.strictObject({
     .optional()
     .describe(
       'The strategy to change when the environment has more than one. get_flag_state lists strategy IDs.',
+    ),
+  addStrategy: z
+    .boolean()
+    .optional()
+    .describe(
+      'Add a new strategy next to the existing ones instead of changing one, for example to target customers while staff keep theirs. Leave out strategyId.',
     ),
   stickiness: z
     .string()
@@ -195,6 +208,8 @@ interface AppliedEnvironment {
   segments?: string[];
   constraints?: StrategyConstraint[];
   previous?: { rolloutPercentage: number; segments: string[]; constraints: StrategyConstraint[] };
+  requested?: { rolloutPercentage: number; segments: string[]; constraints: StrategyConstraint[] };
+  pendingApproval?: PendingApproval;
   notes?: string[];
 }
 
@@ -294,7 +309,7 @@ function pickStrategy(
         options: options.map(({ value, label }) => ({ strategyId: value, description: label })),
       },
       hintOnceDeclined:
-        'The user was shown these strategies and picked none. Ask them what they want to change; set_flag_rollout cannot add a second strategy yet.',
+        'The user was shown these strategies and picked none. Ask them what they want to change, or pass addStrategy: true to add a new strategy instead.',
       title: `Strategy to change in ${env}`,
       options,
       apply: (current, value) => ({ ...current, strategyId: value }),
@@ -302,6 +317,16 @@ function pickStrategy(
     return undefined;
   };
 
+  if (entry.addStrategy && entry.strategyId) {
+    findings.problems.push({
+      environment: env,
+      code: 'STRATEGY_CONFLICT',
+      message: 'Pass either addStrategy or strategyId, not both.',
+      hint: 'addStrategy adds a new strategy; strategyId changes an existing one.',
+    });
+    return undefined;
+  }
+  if (entry.addStrategy) return { kind: 'add' };
   if (entry.strategyId) {
     const strategy = strategies.find((candidate) => candidate.id === entry.strategyId);
     if (strategy?.name === 'flexibleRollout') return { kind: 'replace', strategy };
@@ -643,7 +668,10 @@ function buildStrategy(
   };
 }
 
-function summarize(strategy: FeatureStrategy, segments: SegmentSummary[]) {
+function summarize(
+  strategy: Pick<FeatureStrategy, 'parameters' | 'segments' | 'constraints'>,
+  segments: SegmentSummary[],
+) {
   return {
     rolloutPercentage: Number(strategy.parameters.rollout ?? 100),
     segments: (strategy.segments ?? []).map((id) => segmentName(id, segments)),
@@ -652,6 +680,78 @@ function summarize(strategy: FeatureStrategy, segments: SegmentSummary[]) {
 }
 
 async function apply(
+  context: ServerContext,
+  projectId: string,
+  featureName: string,
+  plan: EnvironmentPlan,
+  segments: SegmentSummary[],
+): Promise<AppliedEnvironment> {
+  try {
+    return await applyDirectly(context, projectId, featureName, plan, segments);
+  } catch (error) {
+    // Unleash refuses the first write, so nothing was saved before this.
+    if (!refusedForApproval(error)) throw error;
+    return applyThroughApproval(context, projectId, featureName, plan, segments);
+  }
+}
+
+/** The same changes as applyDirectly, sent as one change request for review. */
+async function applyThroughApproval(
+  context: ServerContext,
+  projectId: string,
+  featureName: string,
+  plan: EnvironmentPlan,
+  segments: SegmentSummary[],
+): Promise<AppliedEnvironment> {
+  const { entry, environment, target } = plan;
+  const enabled = entry.enabled ?? environment.enabled;
+  const changes: ChangeRequestChange[] = [];
+  if (!enabled && environment.enabled) {
+    changes.push({ action: 'updateEnabled', payload: { enabled: false } });
+  }
+  let requested: FlexibleRolloutStrategy | undefined;
+  if (target.kind === 'add') {
+    requested = buildStrategy({ ...plan, target }, featureName);
+    changes.push({ action: 'addStrategy', payload: { name: 'flexibleRollout', ...requested } });
+  } else if (target.kind === 'replace') {
+    requested = buildStrategy({ ...plan, target }, featureName);
+    changes.push({
+      action: 'updateStrategy',
+      payload: { id: target.strategy.id, name: 'flexibleRollout', ...requested },
+    });
+  }
+  if (enabled && !environment.enabled) {
+    const replacedId = target.kind === 'replace' ? target.strategy.id : undefined;
+    const strategies = [
+      ...(environment.strategies ?? []).filter((strategy) => strategy.id !== replacedId),
+      ...(requested ? [requested] : []),
+    ];
+    // Like applyDirectly: turn paused strategies back on, or Unleash adds the default strategy.
+    const onlyPaused = strategies.length > 0 && strategies.every((strategy) => strategy.disabled);
+    changes.push({
+      action: 'updateEnabled',
+      payload: { enabled: true, shouldActivateDisabledStrategies: onlyPaused },
+    });
+  }
+
+  const pendingApproval = await requestApproval(
+    context,
+    projectId,
+    environment.name,
+    featureName,
+    changes,
+  );
+  return {
+    environment: environment.name,
+    strategy: 'unchanged',
+    enabled: environment.enabled,
+    ...(requested && { requested: summarize(requested, segments) }),
+    pendingApproval,
+    notes: [waitingForApprovalNote(environment.name, pendingApproval)],
+  };
+}
+
+async function applyDirectly(
   context: ServerContext,
   projectId: string,
   featureName: string,
@@ -892,7 +992,7 @@ export async function setFlagRollout(
             failedEnvironment: failed,
             applied,
             notChanged: checked.plans.slice(index + 1).map((p) => p.environment.name),
-            hint: `The environments in applied were saved and those in notChanged were not changed. "${failed}" failed and may be partly changed, so check it with get_flag_state. Fix the error, then call set_flag_rollout again for the environments that were not saved.`,
+            hint: `The environments in applied were saved or, where they have pendingApproval, sent for review. Those in notChanged were not changed. "${failed}" failed and may be partly changed, so check it with get_flag_state. Fix the error, then call set_flag_rollout again for the environments that were not saved.`,
           }),
         };
       }
@@ -942,7 +1042,8 @@ export const setFlagRolloutTool = {
   description:
     'Set who gets a feature flag in one or more environments: a rollout percentage, optionally narrowed to segments and to constraints on context fields, and whether the environment is on. ' +
     'Pass segment and context field names as the user said them; do not look them up first. Nothing is changed until every name checks out. When a name does not match, the user is asked to pick, or the error lists the valid options. ' +
-    'An environment without strategies gets a new flexibleRollout strategy when the entry sets any strategy field; turning it on with only enabled gives it the project default strategy. With one, that strategy is updated and fields you leave out keep their value; with several, pass strategyId.',
+    'An environment without strategies gets a new flexibleRollout strategy when the entry sets any strategy field; turning it on with only enabled gives it the project default strategy. With one, that strategy is updated and fields you leave out keep their value; with several, pass strategyId. ' +
+    'In an environment that only takes approved changes, the changes go into a change request sent for review instead, and pendingApproval links to it. Nothing changes there until someone approves and applies it.',
   inputSchema: setFlagRolloutSchema,
   implementation: setFlagRollout,
 };

@@ -7,8 +7,10 @@ import {
   type ServerContext,
 } from '../context.js';
 import type { FeatureDetails } from '../unleash/client.js';
+import { CustomError } from '../utils/errors.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
+import { refusedForApproval, requestApproval, waitingForApprovalNote } from './changeRequests.js';
 
 const removeFlagStrategySchema = z.object({
   projectId: z
@@ -42,12 +44,44 @@ export async function removeFlagStrategy(
       `Removing strategy "${input.strategyId}" from "${input.featureName}" in "${input.environment}"...`,
     );
 
-    await context.unleashClient.deleteFeatureStrategy(
-      projectId,
-      input.featureName,
-      input.environment,
-      input.strategyId,
-    );
+    try {
+      await context.unleashClient.deleteFeatureStrategy(
+        projectId,
+        input.featureName,
+        input.environment,
+        input.strategyId,
+      );
+    } catch (error) {
+      if (!refusedForApproval(error)) throw error;
+      // Unleash refuses before it looks the strategy up, so a wrong ID would still go for review.
+      const { environments = [] } = await context.unleashClient.getFeature(
+        projectId,
+        input.featureName,
+      );
+      const strategies = environments.find((env) => env.name === input.environment)?.strategies;
+      if (!strategies?.some((strategy) => strategy.id === input.strategyId)) {
+        throw new CustomError(
+          'STRATEGY_NOT_FOUND',
+          `"${input.environment}" has no strategy with ID ${input.strategyId}.`,
+          'Call get_flag_state to find the strategy IDs.',
+        );
+      }
+      const pendingApproval = await requestApproval(
+        context,
+        projectId,
+        input.environment,
+        input.featureName,
+        [{ action: 'deleteStrategy', payload: { id: input.strategyId } }],
+      );
+      return jsonResult({
+        success: true,
+        projectId,
+        featureName: input.featureName,
+        environment: input.environment,
+        pendingApproval,
+        notes: [waitingForApprovalNote(input.environment, pendingApproval)],
+      });
+    }
 
     const feature: FeatureDetails = await context.unleashClient.getFeature(
       projectId,
@@ -106,7 +140,8 @@ export const removeFlagStrategyTool = {
   title: 'Remove flag strategy',
   annotations: { readOnlyHint: false, destructiveHint: true },
   description:
-    'Delete a strategy configuration from a feature flag environment. Use get_flag_state to discover strategy IDs before removal.',
+    'Delete a strategy configuration from a feature flag environment. Use get_flag_state to discover strategy IDs before removal. ' +
+    'In an environment that only takes approved changes, the removal goes into a change request sent for review instead, and pendingApproval links to it.',
   inputSchema: removeFlagStrategySchema,
   implementation: removeFlagStrategy,
 };

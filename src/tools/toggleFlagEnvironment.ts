@@ -8,6 +8,7 @@ import {
 } from '../context.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
+import { refusedForApproval, requestApproval, waitingForApprovalNote } from './changeRequests.js';
 
 const toggleFlagEnvironmentSchema = z.object({
   projectId: z
@@ -42,12 +43,39 @@ export async function toggleFlagEnvironment(
       `${action} "${input.featureName}" in "${input.environment}"...`,
     );
 
-    await context.unleashClient.toggleFeatureEnvironment(
-      projectId,
-      input.featureName,
-      input.environment,
-      input.enabled,
-    );
+    try {
+      await context.unleashClient.toggleFeatureEnvironment(
+        projectId,
+        input.featureName,
+        input.environment,
+        input.enabled,
+      );
+    } catch (error) {
+      if (!refusedForApproval(error)) throw error;
+      // Unleash also refuses a toggle to the state the environment already has.
+      const { environments = [] } = await context.unleashClient.getFeature(
+        projectId,
+        input.featureName,
+      );
+      const current = environments.find((env) => env.name === input.environment);
+      if (current?.enabled !== input.enabled) {
+        const pendingApproval = await requestApproval(
+          context,
+          projectId,
+          input.environment,
+          input.featureName,
+          [{ action: 'updateEnabled', payload: { enabled: input.enabled } }],
+        );
+        return jsonResult({
+          success: true,
+          projectId,
+          featureName: input.featureName,
+          environment: input.environment,
+          pendingApproval,
+          notes: [waitingForApprovalNote(input.environment, pendingApproval)],
+        });
+      }
+    }
 
     await context.notifyProgress(
       progressToken,
@@ -108,7 +136,8 @@ export const toggleFlagEnvironmentTool = {
   title: 'Toggle flag in environment',
   annotations: { readOnlyHint: false, destructiveHint: false },
   description:
-    'Enable or disable a feature flag in a specific environment using the Unleash Admin API. For gradual rollouts, configure a flexibleRollout strategy first via set_flag_rollout.',
+    'Enable or disable a feature flag in a specific environment using the Unleash Admin API. For gradual rollouts, configure a flexibleRollout strategy first via set_flag_rollout. ' +
+    'In an environment that only takes approved changes, the change goes into a change request sent for review instead, and pendingApproval links to it.',
   inputSchema: toggleFlagEnvironmentSchema,
   implementation: toggleFlagEnvironment,
 };
