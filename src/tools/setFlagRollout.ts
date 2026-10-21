@@ -693,6 +693,7 @@ async function applyThroughApproval(
 ): Promise<AppliedEnvironment> {
   const { entry, environment, target } = plan;
   const enabled = entry.enabled ?? environment.enabled;
+  const replacedId = target.kind === 'replace' ? target.strategy.id : undefined;
   const changes: ChangeRequestChange[] = [];
   if (!enabled && environment.enabled) {
     changes.push({ action: 'updateEnabled', payload: { enabled: false } });
@@ -709,7 +710,6 @@ async function applyThroughApproval(
     });
   }
   if (enabled && !environment.enabled) {
-    const replacedId = target.kind === 'replace' ? target.strategy.id : undefined;
     const strategies = [
       ...(environment.strategies ?? []).filter((strategy) => strategy.id !== replacedId),
       ...(requested ? [requested] : []),
@@ -724,16 +724,36 @@ async function applyThroughApproval(
 
   if (changes.length === 0) return applyDirectly(context, projectId, featureName, plan, segments);
 
+  const pending = await requestChange(context, projectId, environment.name, featureName, changes);
+  if (requested?.disabled && entry.strategyDisabled === undefined) {
+    pending.notes.push(
+      'This strategy is disabled, so it has no effect. Pass enabled: true to turn it on.',
+    );
+  }
+  const others = (environment.strategies ?? []).filter(
+    (strategy) => strategy.id !== replacedId && !strategy.disabled,
+  ).length;
+  if (requested && others > 0) {
+    pending.notes.push(
+      `"${environment.name}" has ${others} other active strateg${others === 1 ? 'y' : 'ies'}; a user who matches any strategy gets the flag.`,
+    );
+  }
+  if (!enabled && entry.enabled === undefined) {
+    pending.notes.push(
+      `The flag is off in "${environment.name}". Pass enabled: true to turn it on.`,
+    );
+  }
+
   return {
     outcome: 'pendingApproval',
     environment: environment.name,
     enabled: environment.enabled,
     requested: {
       enabled,
-      ...(target.kind === 'replace' && { strategyId: target.strategy.id }),
+      ...(replacedId && { strategyId: replacedId }),
       ...(requested && summarize(requested, segments)),
     },
-    ...(await requestChange(context, projectId, environment.name, featureName, changes)),
+    ...pending,
   };
 }
 
