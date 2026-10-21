@@ -3,6 +3,7 @@ import type { Constraint, ReleaseInput, Target } from './releaseInput.ts';
 import type { ReleaseResult } from './releaseOutput.ts';
 import { type Failed, toFailed } from './failed.ts';
 import { ensureFlag } from './flag.ts';
+import { createRouter } from './changeRequest.ts';
 
 const strategies = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies';
 const strategy = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies/{strategyId}';
@@ -10,24 +11,29 @@ const enable = '/api/admin/projects/{projectId}/features/{featureName}/environme
 
 type EnvironmentPath = { projectId: string; featureName: string; environment: string };
 
-export const createRelease =
-  (unleash: UnleashClient) =>
-    async (input: ReleaseInput): Promise<ReleaseResult> => {
-      const { project, environment } = input;
-      const flag = await ensureFlag(unleash, project, input);
-      if (flag.kind === 'failed') return flag;
+export const createRelease = (unleash: UnleashClient) => {
+  const routeOf = createRouter(unleash);
+  return async (input: ReleaseInput): Promise<ReleaseResult> => {
+    const { project, environment } = input;
+    // Checked before any write, so a failed check leaves Unleash untouched.
+    const route = await routeOf(project, environment);
+    if (route.kind === 'failed') return route;
 
-      const path = { projectId: project, featureName: input.flag, environment };
-      const applied = await applyPlan(unleash, path, planRelease(input.flag, input.targets, flag));
-      if (applied.kind === 'failed') return applied;
+    const flag = await ensureFlag(unleash, project, input);
+    if (flag.kind === 'failed') return flag;
 
-      return {
-        kind: 'released',
-        flag: { status: flag.kind, name: input.flag },
-        environment,
-        targets: input.targets.map((t) => ({ ...t, rollout: rolloutOf(t) })),
-      };
+    const path = { projectId: project, featureName: input.flag, environment };
+    const applied = await applyPlan(unleash, path, planRelease(input.flag, input.targets, flag));
+    if (applied.kind === 'failed') return applied;
+
+    return {
+      kind: 'released',
+      flag: { status: flag.kind, name: input.flag },
+      environment,
+      targets: input.targets.map((t) => ({ ...t, rollout: rolloutOf(t) })),
     };
+  };
+};
 
 type Strategy = ReturnType<typeof toStrategy>;
 
