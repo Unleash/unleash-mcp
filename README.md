@@ -235,7 +235,7 @@ Set `UNLEASH_MCP_CLIENT_ATTRIBUTION=off` to disable enrichment and revert to `un
 
 This section describes each of the core tools in detail, including its purpose, parameters, and output.
 
-In an environment that only takes approved changes, `set_flag_rollout`, `toggle_flag_environment`, `remove_flag_strategy` and archiving with `update_flag_lifecycle` put the change into a [change request](https://docs.getunleash.io/concepts/change-requests) and send it for review. The result has `pendingApproval` with the change request's ID and link, and nothing changes until someone approves and applies it. Archiving goes to a production environment first, as in the Unleash UI.
+Before writing, these tools read the project's change request settings. In an environment that only takes approved changes, `set_flag_rollout`, `toggle_flag_environment`, `remove_flag_strategy` and archiving with `update_flag_lifecycle` put the change into a [change request](https://docs.getunleash.io/concepts/change-requests) for every token, admins included. The result has `outcome: "pendingApproval"` with `requested` and the change request's `id`, `url` and `state`; elsewhere it is `outcome: "saved"`. A new change request is sent for review. If you already had one open for that environment, the change is added to it and it is left as it is when it held other changes. Archiving goes to a production environment first, as in the Unleash UI.
 
 ### Create flag
 

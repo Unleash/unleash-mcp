@@ -5,12 +5,7 @@ import type { FeatureLifecycleSnapshot, LifecycleTransitionResult } from '../unl
 import { CustomError } from '../utils/errors.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
-import {
-  archiveApprovalEnvironment,
-  refusedForApproval,
-  requestApproval,
-  waitingForApprovalNote,
-} from './changeRequests.js';
+import { type PendingApproval, requestChange } from './changeRequests.js';
 
 const ACTIONS = [
   'complete',
@@ -64,37 +59,40 @@ export async function updateFlagLifecycle(
       `Applying "${input.action}" to "${input.featureName}"...`,
     );
 
-    let result: LifecycleTransitionResult;
-    try {
-      result = await applyAction(context, projectId, input);
-    } catch (error) {
-      if (input.action !== 'archive' || !refusedForApproval(error)) throw error;
-      // Unleash also refuses archiving a flag that is already archived.
-      const current = await context.unleashClient.getLifecycleSnapshot(
-        projectId,
-        input.featureName,
-      );
-      if (current.presence !== 'archived') {
-        const environment = await archiveApprovalEnvironment(context, projectId);
-        if (!environment) throw error;
-        const pendingApproval = await requestApproval(
-          context,
+    let result: LifecycleTransitionResult | undefined;
+    if (input.action === 'archive') {
+      // Unleash refuses an archive while any environment needs approval, so the UI sends it
+      // through a production one first. This does the same.
+      const approval = await context.unleashClient.environmentsNeedingApproval(projectId);
+      const environment = (approval.find(({ type }) => type === 'production') ?? approval[0])
+        ?.environment;
+      if (environment) {
+        const current = await context.unleashClient.getLifecycleSnapshot(
           projectId,
-          environment,
           input.featureName,
-          [{ action: 'archiveFeature' }],
         );
-        return jsonResult({
-          success: true,
-          projectId,
-          featureName: input.featureName,
-          action: input.action,
-          pendingApproval,
-          notes: [waitingForApprovalNote(environment, pendingApproval)],
-        });
+        if (current.presence === 'archived') {
+          result = { changed: false, changes: [], before: current, after: current };
+        } else {
+          await ensureNoOrphanedChildren(context, projectId, input.featureName);
+          const pending: PendingApproval<{ action: 'archive' }> = {
+            outcome: 'pendingApproval',
+            requested: { action: 'archive' },
+            ...(await requestChange(context, projectId, environment, input.featureName, [
+              { action: 'archiveFeature' },
+            ])),
+          };
+          return jsonResult({
+            success: true,
+            projectId,
+            featureName: input.featureName,
+            action: input.action,
+            ...pending,
+          });
+        }
       }
-      result = { changed: false, changes: [], before: current, after: current };
     }
+    result ??= await applyAction(context, projectId, input);
 
     await context.notifyProgress(
       progressToken,
@@ -110,6 +108,7 @@ export async function updateFlagLifecycle(
     );
 
     return jsonResult({
+      outcome: 'saved',
       success: true,
       dryRun: context.config.server.dryRun,
       projectId,
@@ -301,7 +300,7 @@ export const updateFlagLifecycleTool = {
 Actions:
 - complete: mark the flag's job as done. Requires status "kept" (the feature stays) or "discarded" (the feature was removed).
 - uncomplete: undo complete.
-- archive: archive the flag; SDKs stop receiving it. Refused when other flags depend on it. In a project where an environment only takes approved changes, it goes into a change request sent for review instead, and pendingApproval links to it.
+- archive: archive the flag; SDKs stop receiving it. Refused when other flags depend on it. In a project where an environment only takes approved changes, it goes into a change request instead and the result has outcome "pendingApproval" with a link to the change request; the flag stays active until it is approved and applied.
 - revive: restore an archived flag.
 - mark_stale / unmark_stale: set or clear the stale marker, which is independent of the stage.
 

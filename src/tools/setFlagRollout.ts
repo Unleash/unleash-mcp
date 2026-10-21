@@ -24,12 +24,7 @@ import {
 import { CustomError } from '../utils/errors.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
-import {
-  type PendingApproval,
-  refusedForApproval,
-  requestApproval,
-  waitingForApprovalNote,
-} from './changeRequests.js';
+import { type PendingApproval, requestChange, takesOnlyApproved } from './changeRequests.js';
 
 const SEGMENTS_DOCS = 'https://docs.getunleash.io/concepts/segments';
 const CONSTRAINTS_DOCS = 'https://docs.getunleash.io/concepts/activation-strategies#constraints';
@@ -199,7 +194,10 @@ interface Lookups {
   contextFields: ContextField[];
 }
 
-interface AppliedEnvironment {
+type AppliedEnvironment = SavedEnvironment | PendingEnvironment;
+
+interface SavedEnvironment {
+  outcome: 'saved';
   environment: string;
   strategy: 'added' | 'updated' | 'unchanged';
   enabled: boolean;
@@ -208,10 +206,16 @@ interface AppliedEnvironment {
   segments?: string[];
   constraints?: StrategyConstraint[];
   previous?: { rolloutPercentage: number; segments: string[]; constraints: StrategyConstraint[] };
-  requested?: { rolloutPercentage: number; segments: string[]; constraints: StrategyConstraint[] };
-  pendingApproval?: PendingApproval;
   notes?: string[];
 }
+
+type PendingEnvironment = { environment: string; enabled: boolean } & PendingApproval<{
+  enabled: boolean;
+  strategyId?: string;
+  rolloutPercentage?: number;
+  segments?: string[];
+  constraints?: StrategyConstraint[];
+}>;
 
 const normalizeName = (name: string): string =>
   name
@@ -679,23 +683,7 @@ function summarize(
   };
 }
 
-async function apply(
-  context: ServerContext,
-  projectId: string,
-  featureName: string,
-  plan: EnvironmentPlan,
-  segments: SegmentSummary[],
-): Promise<AppliedEnvironment> {
-  try {
-    return await applyDirectly(context, projectId, featureName, plan, segments);
-  } catch (error) {
-    // Unleash refuses the first write, so nothing was saved before this.
-    if (!refusedForApproval(error)) throw error;
-    return applyThroughApproval(context, projectId, featureName, plan, segments);
-  }
-}
-
-/** The same changes as applyDirectly, sent as one change request for review. */
+/** The same changes as applyDirectly, sent as one change request. */
 async function applyThroughApproval(
   context: ServerContext,
   projectId: string,
@@ -734,20 +722,18 @@ async function applyThroughApproval(
     });
   }
 
-  const pendingApproval = await requestApproval(
-    context,
-    projectId,
-    environment.name,
-    featureName,
-    changes,
-  );
+  if (changes.length === 0) return applyDirectly(context, projectId, featureName, plan, segments);
+
   return {
+    outcome: 'pendingApproval',
     environment: environment.name,
-    strategy: 'unchanged',
     enabled: environment.enabled,
-    ...(requested && { requested: summarize(requested, segments) }),
-    pendingApproval,
-    notes: [waitingForApprovalNote(environment.name, pendingApproval)],
+    requested: {
+      enabled,
+      ...(target.kind === 'replace' && { strategyId: target.strategy.id }),
+      ...(requested && summarize(requested, segments)),
+    },
+    ...(await requestChange(context, projectId, environment.name, featureName, changes)),
   };
 }
 
@@ -822,6 +808,7 @@ async function applyDirectly(
   }
 
   return {
+    outcome: 'saved',
     environment: env,
     strategy: target.kind === 'add' ? 'added' : target.kind === 'replace' ? 'updated' : 'unchanged',
     enabled,
@@ -977,8 +964,13 @@ export async function setFlagRollout(
       `${mode}Saving the rollout for "${input.featureName}"...`,
     );
 
+    const approval = await context.unleashClient.environmentsNeedingApproval(projectId);
     const applied: AppliedEnvironment[] = [];
     for (const [index, environmentPlan] of checked.plans.entries()) {
+      const apply =
+        takesOnlyApproved(approval, environmentPlan.environment.name) !== undefined
+          ? applyThroughApproval
+          : applyDirectly;
       try {
         applied.push(
           await apply(context, projectId, input.featureName, environmentPlan, lookups.segments),
@@ -992,7 +984,7 @@ export async function setFlagRollout(
             failedEnvironment: failed,
             applied,
             notChanged: checked.plans.slice(index + 1).map((p) => p.environment.name),
-            hint: `The environments in applied were saved or, where they have pendingApproval, sent for review. Those in notChanged were not changed. "${failed}" failed and may be partly changed, so check it with get_flag_state. Fix the error, then call set_flag_rollout again for the environments that were not saved.`,
+            hint: `The environments in applied were saved or, where the outcome is pendingApproval, put into a change request. Those in notChanged were not changed. "${failed}" failed and may be partly changed, so check it with get_flag_state. Fix the error, then call set_flag_rollout again for the environments that were not saved.`,
           }),
         };
       }
@@ -1043,7 +1035,7 @@ export const setFlagRolloutTool = {
     'Set who gets a feature flag in one or more environments: a rollout percentage, optionally narrowed to segments and to constraints on context fields, and whether the environment is on. ' +
     'Pass segment and context field names as the user said them; do not look them up first. Nothing is changed until every name checks out. When a name does not match, the user is asked to pick, or the error lists the valid options. ' +
     'An environment without strategies gets a new flexibleRollout strategy when the entry sets any strategy field; turning it on with only enabled gives it the project default strategy. With one, that strategy is updated and fields you leave out keep their value; with several, pass strategyId. ' +
-    'In an environment that only takes approved changes, the changes go into a change request sent for review instead, and pendingApproval links to it. Nothing changes there until someone approves and applies it.',
+    'In an environment that only takes approved changes, the changes go into a change request instead and that environment gets outcome "pendingApproval" with a link to the change request; nothing changes there until it is approved and applied. Each environment is decided on its own, so one call can save one and request another.',
   inputSchema: setFlagRolloutSchema,
   implementation: setFlagRollout,
 };

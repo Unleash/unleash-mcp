@@ -8,7 +8,7 @@ import {
 } from '../context.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
-import { refusedForApproval, requestApproval, waitingForApprovalNote } from './changeRequests.js';
+import { type PendingApproval, requestChange, takesOnlyApproved } from './changeRequests.js';
 
 const toggleFlagEnvironmentSchema = z.object({
   projectId: z
@@ -43,38 +43,40 @@ export async function toggleFlagEnvironment(
       `${action} "${input.featureName}" in "${input.environment}"...`,
     );
 
-    try {
+    const approval = await context.unleashClient.environmentsNeedingApproval(projectId);
+    const approvalEnvironment = takesOnlyApproved(approval, input.environment);
+    if (approvalEnvironment) {
+      const { environments = [] } = await context.unleashClient.getFeature(
+        projectId,
+        input.featureName,
+      );
+      const current = environments.find(
+        (env) => env.name.toLowerCase() === input.environment.toLowerCase(),
+      );
+      if (current?.enabled !== input.enabled) {
+        const pending: PendingApproval<{ enabled: boolean }> = {
+          outcome: 'pendingApproval',
+          requested: { enabled: input.enabled },
+          ...(await requestChange(context, projectId, approvalEnvironment, input.featureName, [
+            { action: 'updateEnabled', payload: { enabled: input.enabled } },
+          ])),
+        };
+        return jsonResult({
+          success: true,
+          projectId,
+          featureName: input.featureName,
+          environment: input.environment,
+          enabled: current?.enabled ?? false,
+          ...pending,
+        });
+      }
+    } else {
       await context.unleashClient.toggleFeatureEnvironment(
         projectId,
         input.featureName,
         input.environment,
         input.enabled,
       );
-    } catch (error) {
-      if (!refusedForApproval(error)) throw error;
-      // Unleash also refuses a toggle to the state the environment already has.
-      const { environments = [] } = await context.unleashClient.getFeature(
-        projectId,
-        input.featureName,
-      );
-      const current = environments.find((env) => env.name === input.environment);
-      if (current?.enabled !== input.enabled) {
-        const pendingApproval = await requestApproval(
-          context,
-          projectId,
-          input.environment,
-          input.featureName,
-          [{ action: 'updateEnabled', payload: { enabled: input.enabled } }],
-        );
-        return jsonResult({
-          success: true,
-          projectId,
-          featureName: input.featureName,
-          environment: input.environment,
-          pendingApproval,
-          notes: [waitingForApprovalNote(input.environment, pendingApproval)],
-        });
-      }
     }
 
     await context.notifyProgress(
@@ -113,6 +115,7 @@ export async function toggleFlagEnvironment(
       }) ?? null;
 
     return jsonResult({
+      outcome: 'saved',
       success: true,
       dryRun: context.config.server.dryRun,
       projectId,
@@ -137,7 +140,7 @@ export const toggleFlagEnvironmentTool = {
   annotations: { readOnlyHint: false, destructiveHint: false },
   description:
     'Enable or disable a feature flag in a specific environment using the Unleash Admin API. For gradual rollouts, configure a flexibleRollout strategy first via set_flag_rollout. ' +
-    'In an environment that only takes approved changes, the change goes into a change request sent for review instead, and pendingApproval links to it.',
+    'In an environment that only takes approved changes, the change goes into a change request instead and the result has outcome "pendingApproval" with a link to the change request; nothing changes until it is approved and applied.',
   inputSchema: toggleFlagEnvironmentSchema,
   implementation: toggleFlagEnvironment,
 };

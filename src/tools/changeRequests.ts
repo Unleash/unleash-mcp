@@ -1,62 +1,69 @@
 import type { ServerContext } from '../context.js';
-import type { ChangeRequestChange } from '../unleash/client.js';
-import { CustomError } from '../utils/errors.js';
+import type { ChangeRequestChange, ChangeRequestRef } from '../unleash/client.js';
 
-const SKIP_CHANGE_REQUEST = 'SKIP_CHANGE_REQUEST';
-
-export interface PendingApproval {
-  changeRequestId: number;
+export interface ChangeRequestLink {
+  id: number;
   url: string;
+  state: ChangeRequestRef['state'];
 }
+
+/** The reply for a change that went into a change request instead of being saved. */
+export interface PendingApproval<Requested> {
+  outcome: 'pendingApproval';
+  requested: Requested;
+  changeRequest: ChangeRequestLink;
+  notes: string[];
+}
+
+/** The environment's name as Unleash spells it, when it only takes approved changes. */
+export const takesOnlyApproved = (
+  environments: Array<{ environment: string }>,
+  name: string,
+): string | undefined =>
+  environments.find(({ environment }) => environment.toLowerCase() === name.toLowerCase())
+    ?.environment;
 
 /**
- * True when Unleash refused a write because the environment only takes approved changes. A token
- * missing some other permission gets a 403 too, but that one names the permission it lacks.
+ * Adds the changes to the caller's open change request for the environment and sends it for review,
+ * unless it already held other changes. Those stay in it, and the caller submits it when it's ready.
  */
-export function refusedForApproval(error: unknown): boolean {
-  return (
-    error instanceof CustomError &&
-    error.code === 'HTTP_403' &&
-    error.message.includes(SKIP_CHANGE_REQUEST)
-  );
-}
-
-/**
- * Unleash refuses an archive when any environment in the project only takes approved changes.
- * The Unleash UI then sends the archive to a production environment first, so this does the same.
- */
-export async function archiveApprovalEnvironment(
-  context: ServerContext,
-  projectId: string,
-): Promise<string | undefined> {
-  const environments = await context.unleashClient.environmentsNeedingApproval(projectId);
-  return (environments.find(({ type }) => type === 'production') ?? environments[0])?.environment;
-}
-
-export async function requestApproval(
+export async function requestChange(
   context: ServerContext,
   projectId: string,
   environment: string,
   featureName: string,
   changes: ChangeRequestChange[],
-): Promise<PendingApproval> {
-  const changeRequest = await context.unleashClient.addToChangeRequest(
+): Promise<{ changeRequest: ChangeRequestLink; notes: string[] }> {
+  const { unleashClient } = context;
+  const existing = (await unleashClient.openChangeRequests(projectId)).find(
+    (open) => open.environment === environment,
+  );
+  const added = await unleashClient.addToChangeRequest(
     projectId,
     environment,
     featureName,
     changes,
   );
-  // Unleash adds to the caller's open request, which may already be in review.
-  if (changeRequest.state === 'Draft') {
-    await context.unleashClient.submitChangeRequest(projectId, changeRequest.id);
-  }
-  return {
-    changeRequestId: changeRequest.id,
-    // The configured base URL ends in a slash when Unleash runs at the root.
-    url: `${context.config.unleash.baseUrl.replace(/\/$/, '')}/projects/${encodeURIComponent(projectId)}/change-requests/${changeRequest.id}`,
-  };
-}
+  const url = `${context.config.unleash.baseUrl.replace(/\/$/, '')}/projects/${encodeURIComponent(projectId)}/change-requests/${added.id}`;
 
-export function waitingForApprovalNote(environment: string, pending: PendingApproval): string {
-  return `"${environment}" only takes approved changes, so nothing changed yet: change request ${pending.changeRequestId} is waiting for review at ${pending.url}.`;
+  if (existing && existing.changeCount > 0) {
+    const tail =
+      existing.state === 'Draft'
+        ? `It is not submitted: submit it in Unleash when it's ready (${url}).`
+        : `It was ${existing.state === 'Approved' ? 'approved' : 'in review'}, so adding to it reset its approvals and it needs review again (${url}).`;
+    return {
+      changeRequest: { id: added.id, url, state: added.state },
+      notes: [
+        `Added to your open change request ${added.id}, which also holds other changes. ${tail}`,
+      ],
+    };
+  }
+
+  await unleashClient.submitChangeRequest(projectId, added.id);
+  return {
+    changeRequest: { id: added.id, url, state: 'In review' },
+    notes: [
+      `"${environment}" only takes approved changes, so nothing changed yet: change request ${added.id} is waiting for review at ${url}.`,
+    ],
+  };
 }

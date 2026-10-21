@@ -142,6 +142,11 @@ export interface ChangeRequestRef {
   state: 'Draft' | 'In review' | 'Approved' | 'Applied' | 'Scheduled' | 'Rejected' | 'Cancelled';
 }
 
+export interface OpenChangeRequest extends ChangeRequestRef {
+  environment: string;
+  changeCount: number;
+}
+
 export interface FeatureStrategy {
   id: string;
   name: string;
@@ -963,25 +968,59 @@ export class UnleashClient {
     );
   }
 
-  /** The project's environments where a change only applies through an approved change request. */
+  /**
+   * The project's environments where a change only applies through an approved change request.
+   * Without change requests the endpoint is missing (404), and a token that can't read it (403)
+   * gets Unleash's own refusal from the write, so both count as none.
+   */
   async environmentsNeedingApproval(
     projectId: string,
   ): Promise<Array<{ environment: string; type: string }>> {
-    const config = await this.requestJson<
-      { environment: string; type: string; changeRequestEnabled: boolean }[]
+    if (this.dryRun) return [];
+    try {
+      const config = await this.requestJson<
+        { environment: string; type: string; changeRequestEnabled: boolean }[]
+      >(
+        `/api/admin/projects/${encodeURIComponent(projectId)}/change-requests/config`,
+        { method: 'GET' },
+        { errorMessage: `Failed to read the change request settings of project ${projectId}` },
+      );
+      return config
+        .filter((entry) => entry.changeRequestEnabled)
+        .map(({ environment, type }) => ({ environment, type }));
+    } catch (error) {
+      if (error instanceof CustomError && ['HTTP_403', 'HTTP_404'].includes(error.code)) return [];
+      throw error;
+    }
+  }
+
+  /** The caller's change requests in the project that are still open, with how many changes each holds. */
+  async openChangeRequests(projectId: string): Promise<OpenChangeRequest[]> {
+    const requests = await this.requestJson<
+      Array<{
+        id: number;
+        environment: string;
+        state: ChangeRequestRef['state'];
+        features: Array<{ changes: unknown[] }>;
+        segments?: unknown[];
+      }>
     >(
-      `/api/admin/projects/${encodeURIComponent(projectId)}/change-requests/config`,
+      `/api/admin/projects/${encodeURIComponent(projectId)}/change-requests/pending`,
       { method: 'GET' },
-      { errorMessage: `Failed to read the change request settings of project ${projectId}` },
+      { errorMessage: `Failed to read the open change requests of project ${projectId}` },
     );
-    return config
-      .filter((entry) => entry.changeRequestEnabled)
-      .map(({ environment, type }) => ({ environment, type }));
+    return requests.map(({ id, environment, state, features, segments = [] }) => ({
+      id,
+      environment,
+      state,
+      changeCount:
+        features.reduce((count, feature) => count + feature.changes.length, 0) + segments.length,
+    }));
   }
 
   /**
    * Adds the changes, all or none, to the caller's open change request for the environment.
-   * Unleash creates a draft when there is none, and keeps adding to that request until it's applied.
+   * Unleash creates a draft when there is none, and adding to one in review or approved sends it back for review.
    */
   async addToChangeRequest(
     projectId: string,
