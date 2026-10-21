@@ -77,3 +77,9 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 ## 2026-10-20 — Core views
 
 - Always prefer Unleash's `view=core` query param where an endpoint offers it. Core views skip derived fields (counts, members, health) that MCP tools never consume, so they are cheaper for Unleash and smaller to read.
+
+## 2026-10-21 — Release tool takes complete input
+
+- The release tool is a command, not a query. Eliciting missing input (`choose`/`confirm`) polluted it with query responsibilities and made it super complex, and won't work long term. It now assumes all the input information is there: whatever the release needs (project, environment, segment ids) is required. Figuring out those inputs is the agent's job before it calls release.
+- Supersedes, in the 2026-10-20 Release tool entry: the `createFlag` confirmation round-trip (a missing flag is always created), problems returned with `choose`/`confirm`, and the optional environment checked against the project's enabled environments (no check; Unleash's error comes back as `failed`).
+- Segments are given by id. Supersedes "ids stay hidden from the agent" (Tool structure) for segments.
