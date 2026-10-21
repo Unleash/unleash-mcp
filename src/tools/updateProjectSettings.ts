@@ -53,7 +53,9 @@ const updateProjectSettingsSchema = z
       .string()
       .min(1)
       .optional()
-      .describe('Context field that keeps a user in the same bucket, such as "sessionId"'),
+      .describe(
+        'Context field that keeps a user in the same bucket, such as "sessionId". Needs Unleash Enterprise.',
+      ),
     addEnvironments: z
       .array(z.string().min(1))
       .optional()
@@ -299,7 +301,16 @@ export async function updateProjectSettings(
       }
     }
 
+    await context.notifyProgress(
+      progressToken,
+      90,
+      100,
+      `Reading back settings for "${projectId}"...`,
+    );
+
     const after = await context.unleashClient.getProjectSettings(projectId);
+    await context.notifyProgress(progressToken, 100, 100, `Updated settings for "${projectId}"`);
+
     const baseUrl = context.config.unleash.baseUrl;
     return jsonResult({
       success: true,

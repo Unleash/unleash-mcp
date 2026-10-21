@@ -35,6 +35,7 @@ The MCP server exposes the following tools:
 - `toggle_flag_environment`: Enables or disables a feature flag in an environment.
 - `remove_flag_strategy`: Deletes a feature flag's strategy from an environment.
 - `update_flag_lifecycle`: Completes, uncompletes, archives, or revives a feature flag, or marks it as stale.
+- `update_project_settings`: Sets a project's default stickiness (Enterprise only) and the default strategy new flags start with in each environment, and adds existing environments to the project.
 - `cleanup_flag`: Generates instructions for safely removing flagged code paths.
 - `send_feedback`: Reports a failed tool call, an unsupported request, or an unexpected result to Unleash so the MCP can be improved. Requires the user's consent. Not listed when consent is denied up front through `UNLEASH_MCP_SEND_FEEDBACK=false` or the `feedbackConsent` server option.
 
@@ -1072,6 +1073,46 @@ The new checkout flow is fully rolled out. Mark "new-checkout-flow" as completed
 
 Returns a JSON object with `changed`, the flag's lifecycle state `before` and `after` the call, a one-line `summary`, and `help` with the next tool calls. When the flag reaches `completed` or `archived`, `help` suggests calling `cleanup_flag`, with `preservePath` set from the completion status (`kept` keeps the enabled path, `discarded` keeps the disabled path). When the flag was already in the requested state, `changed` is `false` and nothing is modified.
 
+### Update project settings
+
+The `update_project_settings` tool changes how flags in a project are set up: the default strategy new flags start with in each environment, the default stickiness, and which environments the project has.
+
+#### When to use
+
+Use this tool when the user wants to change a project's defaults. It does not touch existing flags. Environments can be added, never removed.
+
+#### Parameters
+
+- `projectId` (optional): Project ID. Falls back to `UNLEASH_DEFAULT_PROJECT`.
+- `defaultStickiness` (optional): Context field that keeps a user in the same bucket, such as `sessionId`. Needs Unleash Enterprise; open source Unleash has no endpoint for it.
+- `addEnvironments` (optional): Names of existing environments to make available in the project.
+- `defaultStrategies` (optional): Per environment, `rolloutPercentage`, `segments` (by name), `constraints` and `stickiness`. Fields left out keep their current value, and `[]` clears `segments` or `constraints`.
+
+At least one of the three settings is required. Nothing is changed until every name checks out. Environments are added first. There is no rollback: if a step fails, the error lists what was applied.
+
+#### Usage example
+
+**Agent prompt**
+
+```
+New flags in production of ecommerce should start at 10% for the beta-users segment.
+```
+
+**Tool payload**
+
+```json
+{
+  "projectId": "ecommerce",
+  "defaultStrategies": [
+    { "environment": "production", "rolloutPercentage": 10, "segments": ["beta-users"] }
+  ]
+}
+```
+
+**Tool output**
+
+Returns a JSON object with `applied`, the project's `defaultStickiness`, and each environment's `defaultStrategy` (with the `previous` one for those that changed).
+
 ### Cleanup flag
 
 The `cleanup_flag` tool generates step-by-step instructions for safely removing feature flag code from the codebase while preserving the desired code path.
@@ -1265,6 +1306,7 @@ src/
 │   ├── toggleFlagEnvironment.ts # toggle_flag_environment tool
 │   ├── removeFlagStrategy.ts    # remove_flag_strategy tool
 │   ├── updateFlagLifecycle.ts   # update_flag_lifecycle tool
+│   ├── updateProjectSettings.ts # update_project_settings tool
 │   └── sendFeedback.ts          # send_feedback tool
 ├── resources/
 │   └── unleashResources.ts      # MCP resource handlers (projects, flags)
@@ -1361,6 +1403,11 @@ This server uses the Unleash Admin API. For complete API documentation, see:
 - `POST /api/admin/context` - Create global context field
 - `GET /api/admin/projects/{projectId}/context` - List a project's context fields
 - `POST /api/admin/projects/{projectId}/context` - Create project context field
+- `GET /api/admin/projects/{projectId}/overview` - Get project settings and default strategies
+- `PUT /api/admin/projects/{projectId}` - Set project default stickiness (Enterprise only)
+- `GET /api/admin/environments` - List environments
+- `POST /api/admin/projects/{projectId}/environments` - Add environment to project
+- `POST /api/admin/projects/{projectId}/environments/{environment}/default-strategy` - Set environment default strategy
 - `GET /api/admin/search/features` - Search feature flags
 - `GET /api/admin/search/events` - Fetch a feature flag's change events
 - `POST /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies` - Add rollout strategy

@@ -657,37 +657,61 @@ export class UnleashClient {
 
   async getProjectSettings(projectId: string): Promise<ProjectSettings> {
     if (this.dryRun) {
-      return { name: projectId, mode: 'open', defaultStickiness: 'default', environments: [] };
+      return {
+        name: projectId,
+        mode: 'open',
+        defaultStickiness: 'default',
+        environments: ['development', 'production'].map((environment) => ({ environment })),
+      };
     }
 
-    return this.requestJson<ProjectSettings>(
-      `/api/admin/projects/${encodeURIComponent(projectId)}/overview`,
-      { method: 'GET' },
-      {
-        errorMessage: `Failed to fetch project ${projectId}`,
-        networkErrorMessage: `Failed to connect to Unleash API while fetching project ${projectId}`,
-      },
-    );
+    try {
+      return await this.requestJson<ProjectSettings>(
+        `/api/admin/projects/${encodeURIComponent(projectId)}/overview`,
+        { method: 'GET' },
+        {
+          errorMessage: `Failed to fetch project ${projectId}`,
+          networkErrorMessage: `Failed to connect to Unleash API while fetching project ${projectId}`,
+        },
+      );
+    } catch (error) {
+      if (error instanceof CustomError && error.code === 'HTTP_404') {
+        throw new CustomError(
+          error.code,
+          `Project "${projectId}" not found.`,
+          'Call list_projects to see which projects exist, and ask the user which one they mean.',
+        );
+      }
+      throw error;
+    }
   }
 
-  /** The update replaces name and description, so they are sent back as they are. mode is never sent. */
+  /** The endpoint ignores fields we leave out. name is only sent because its schema requires it. */
   async setProjectDefaultStickiness(projectId: string, defaultStickiness: string): Promise<void> {
     if (this.dryRun) {
       return;
     }
 
-    const { name, description } = await this.getProjectSettings(projectId);
-    await this.request(
-      `/api/admin/projects/${encodeURIComponent(projectId)}`,
-      {
-        method: 'PUT',
-        body: JSON.stringify({ name, defaultStickiness, ...(description && { description }) }),
-      },
-      {
-        errorMessage: `Failed to set the default stickiness of project ${projectId}`,
-        networkErrorMessage: `Failed to connect to Unleash API while updating project ${projectId}`,
-      },
-    );
+    const { name } = await this.getProjectSettings(projectId);
+    try {
+      await this.request(
+        `/api/admin/projects/${encodeURIComponent(projectId)}`,
+        { method: 'PUT', body: JSON.stringify({ name, defaultStickiness }) },
+        {
+          errorMessage: `Failed to set the default stickiness of project ${projectId}`,
+          networkErrorMessage: `Failed to connect to Unleash API while updating project ${projectId}`,
+        },
+      );
+    } catch (error) {
+      // The project was just fetched, so a 404 here means this Unleash has no such endpoint (open source).
+      if (error instanceof CustomError && error.code === 'HTTP_404') {
+        throw new CustomError(
+          error.code,
+          'Setting the default stickiness of a project needs Unleash Enterprise. This Unleash does not support it.',
+        );
+      }
+      throw error;
+    }
   }
 
   async listEnvironmentNames(): Promise<string[]> {
