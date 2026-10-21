@@ -25,6 +25,7 @@ export const target = z.object({
   name: z.string().describe('What the audience is, e.g. Beta testers. Shown in the Unleash UI'),
   rollout: z.number().int().min(0).max(100).optional().describe('Percentage of the audience that gets the feature, default 100'),
   constraints: z.array(constraint).optional().describe('All must match for a user to be in the audience'),
+  segments: z.array(z.string()).optional().describe('Names of audiences already defined in Unleash.'),
   value: value.optional().describe('Value the audience gets'),
 });
 

@@ -4,6 +4,7 @@ import { failed, type Failed } from './failed.ts';
 import { projectChoice, type ProjectChoice } from './project.ts';
 import { environmentChoice, type EnvironmentChoice } from './environment.ts';
 import { createFlagConfirmation, type CreateFlagConfirmation } from './flag.ts';
+import { segmentChoice, type SegmentChoice } from './segment.ts';
 
 const flag = z.discriminatedUnion('status', [
   z.object({ status: z.literal('new'), name: z.string() }),
@@ -18,11 +19,11 @@ const released = z.object({
 });
 
 // Every choice is `kind: 'choose'`, which zod only accepts once per union, so the choices are told apart by `input`.
-const choice = z.discriminatedUnion('input', [projectChoice, environmentChoice]);
+const choice = z.discriminatedUnion('input', [projectChoice, environmentChoice, segmentChoice]);
 const result = z.discriminatedUnion('kind', [released, createFlagConfirmation, choice, failed]);
 
 // MCP requires an object output schema, so the union sits under `result`.
 export const releaseOutput = { result };
 
 export type Released = z.infer<typeof released>;
-export type ReleaseResult = Released | CreateFlagConfirmation | ProjectChoice | EnvironmentChoice | Failed;
+export type ReleaseResult = Released | CreateFlagConfirmation | ProjectChoice | EnvironmentChoice | SegmentChoice | Failed;
