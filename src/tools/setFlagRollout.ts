@@ -29,7 +29,7 @@ const CONSTRAINTS_DOCS = 'https://docs.getunleash.io/concepts/activation-strateg
 const CONTEXT_DOCS = 'https://docs.getunleash.io/concepts/unleash-context';
 const NONE_OF_THESE = '__none__';
 
-const constraintSchema = z.strictObject({
+export const constraintSchema = z.strictObject({
   contextName: z
     .string()
     .min(1)
@@ -194,7 +194,13 @@ interface AppliedEnvironment {
   rolloutPercentage?: number;
   segments?: string[];
   constraints?: StrategyConstraint[];
-  previous?: { rolloutPercentage: number; segments: string[]; constraints: StrategyConstraint[] };
+  variants?: StrategyVariant[];
+  previous?: {
+    rolloutPercentage: number;
+    segments: string[];
+    constraints: StrategyConstraint[];
+    variants: StrategyVariant[];
+  };
   notes?: string[];
 }
 
@@ -225,10 +231,19 @@ const STRATEGY_FIELDS = [
 const changesStrategy = (entry: EnvironmentRollout): boolean =>
   STRATEGY_FIELDS.some((field) => entry[field] !== undefined);
 
+const fixedWeightTotal = (variants: z.infer<typeof variantSchema>[]): number | undefined =>
+  variants.every((variant) => variant.weightType === 'fix')
+    ? variants.reduce((total, variant) => total + variant.weight, 0)
+    : undefined;
+
+// Unleash needs one variable variant. When all are fixed and add up to 1000, the first one is sent as variable and keeps its weight.
 const toVariants = (variants: z.infer<typeof variantSchema>[]): StrategyVariant[] =>
-  variants.map((variant) => ({
+  variants.map((variant, index) => ({
     ...variant,
-    weightType: variant.weightType ?? 'variable',
+    weightType:
+      index === 0 && fixedWeightTotal(variants) === 1000
+        ? 'variable'
+        : (variant.weightType ?? 'variable'),
     stickiness: variant.stickiness ?? 'default',
   }));
 
@@ -366,7 +381,7 @@ function resolveSegments(
         environment,
         code: 'SEGMENT_NOT_FOUND',
         message: `Project "${projectId}" has no segments it can use, so "${name}" cannot be targeted.`,
-        hint: `Ask the user who should get the flag and target them with constraints instead, or create the segment in Unleash (${baseUrl}/segments/create). See ${SEGMENTS_DOCS}.`,
+        hint: `Ask the user who should get the flag and target them with constraints instead, or whether to create the segment with create_targeting or in Unleash (${baseUrl}/segments/create). See ${SEGMENTS_DOCS}.`,
       });
       continue;
     }
@@ -410,7 +425,7 @@ function resolveSegments(
   return ids.length === entry.segments.length ? [...new Set(ids)] : undefined;
 }
 
-function shapeConstraint(
+export function shapeConstraint(
   input: ConstraintInput,
   environment: string,
 ): { constraint: StrategyConstraint } | { problem: Problem } {
@@ -459,7 +474,7 @@ async function checkConstraint(
         message: `"${input.contextName}" is not a context field in project "${lookups.projectId}".`,
         hint: differentCase
           ? `Context field names are case-sensitive; did you mean "${differentCase.name}"?`
-          : `Use one of the listed fields, or ask the user to create "${input.contextName}" in Unleash (${lookups.baseUrl}/context/create). A constraint on it only matches when the app also sends "${input.contextName}" in its Unleash context. See ${CONTEXT_DOCS}.`,
+          : `Use one of the listed fields, or ask the user whether to create "${input.contextName}" with create_targeting or in Unleash (${lookups.baseUrl}/context/create). A constraint on it only matches when the app also sends "${input.contextName}" in its Unleash context. See ${CONTEXT_DOCS}.`,
         options: lookups.contextFields.map(({ name }) => name),
       },
     };
@@ -570,6 +585,15 @@ async function plan(
         hint: `To turn the flag off in "${environment.name}", pass enabled: false. To keep it on, leave strategyDisabled out.`,
       });
     }
+    const total = entry.variants?.length ? fixedWeightTotal(entry.variants) : undefined;
+    if (total !== undefined && total !== 1000) {
+      findings.problems.push({
+        environment: environment.name,
+        code: 'INVALID_VARIANTS',
+        message: `Fixed variant weights must add up to 1000 (100%) when no variant is variable; these add up to ${total}.`,
+        hint: 'Change the weights to add up to 1000, or leave weightType out on one variant so it takes the rest.',
+      });
+    }
     const segmentIds = resolveSegments(entryIndex, entry, environment.name, lookups, findings);
     const constraints = await checkConstraints(context, entry, environment.name, lookups, findings);
     if (target && findings.problems.length + findings.choosables.length === found) {
@@ -648,6 +672,15 @@ function summarize(strategy: FeatureStrategy, segments: SegmentSummary[]) {
     rolloutPercentage: Number(strategy.parameters.rollout ?? 100),
     segments: (strategy.segments ?? []).map((id) => segmentName(id, segments)),
     constraints: strategy.constraints ?? [],
+    variants: (strategy.variants ?? []).map(
+      ({ name, weight, weightType, payload, stickiness }) => ({
+        name,
+        weight,
+        weightType,
+        stickiness,
+        ...(payload && { payload }),
+      }),
+    ),
   };
 }
 
@@ -706,6 +739,11 @@ async function apply(
     }
   }
 
+  if (entry.variants && fixedWeightTotal(entry.variants) === 1000) {
+    notes.push(
+      `Unleash needs one variable variant, so "${entry.variants[0].name}" was saved as variable. It keeps its weight of ${entry.variants[0].weight}.`,
+    );
+  }
   if (saved?.disabled && entry.strategyDisabled === undefined) {
     notes.push('This strategy is disabled, so it has no effect. Pass enabled: true to turn it on.');
   }

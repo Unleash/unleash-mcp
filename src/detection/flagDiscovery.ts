@@ -38,12 +38,9 @@ export interface DiscoveryInput {
 /**
  * Build instructions for leveraging Unleash inventory tools.
  *
- * Instructs the agent to call the dedicated `list_projects` / `list_flags` MCP tools
- * rather than `resources/read` on the equivalent URIs. Most MCP clients (e.g. Kiro
- * autopilot) only surface tools to the agent — resources are user-attached via UI
- * pickers — so tool-based instructions work everywhere. The underlying
- * `unleash://projects` and `unleash://projects/{id}/feature-flags` resources still
- * exist for clients that do expose resources; the new tools wrap the same handlers.
+ * Instructs the agent to call the `search_flags` MCP tool rather than `resources/read`.
+ * Most MCP clients (e.g. Kiro autopilot) only surface tools to the agent, so
+ * tool-based instructions work everywhere.
  */
 export function buildUnleashInventoryInstructions(
   description: string,
@@ -55,49 +52,31 @@ export function buildUnleashInventoryInstructions(
   const sharedSteps = `
 **Step 3**: Evaluate matches.
 - Consider semantic similarity between your change description and each flag's name/description.
-- Prefer non-archived flags. Note if a flag is archived and adjust scoring accordingly.
-- Record promising matches with the project ID and the flag URL so they can be reviewed quickly.
+- Prefer flags that are not stale. Note if a flag is stale and adjust scoring accordingly.
+- Record promising matches with the project ID and flag name so they can be reviewed quickly.
 
 **Step 4**: Score and report.
 - Assign an \`unleash-inventory\` score (0.0 - 1.0) based on how well the existing flag aligns with the proposed change.
-- Provide reasoning that references project and flag metadata (name, description, type, URL).
+- Provide reasoning that references project and flag metadata (name, description, type).
 
 ${baseNote}`.trim();
 
-  if (defaultProject) {
-    return `
-## Unleash Inventory Analysis
-
-Use the dedicated MCP tools to discover existing flags already defined in Unleash so you can reuse them instead of creating duplicates.
-
-**Step 1**: Focus on the configured default project **${defaultProject}**.
-- Optionally call the \`list_projects\` tool (with limit=200, order=desc) to confirm its metadata (filter to the entry whose 'id' matches "${defaultProject}").
-- Do not evaluate other projects unless the default project clearly does not align with the change. If uncertain, ask the user for guidance before proceeding.
-
-**Step 2**: Inspect feature flags for the default project.
-- Call the \`list_flags\` tool with projectId="${defaultProject}", limit=200, order=asc.
-- Review the returned flag names, descriptions, types, archived status and URLs.
-- Pay close attention to flags whose descriptions, rollout intent, or ownership align with "${description}".
-
-${sharedSteps}
-`.trim();
-  }
+  const projectStep = defaultProject
+    ? `- Prefer flags in the configured default project **${defaultProject}**, but a clearly better match in another project is fine.`
+    : '- If matches sit in several projects, shortlist up to 3 and justify your selection. If you cannot tell which project fits, ask the user.';
 
   return `
 ## Unleash Inventory Analysis
 
 Use the dedicated MCP tools to discover existing flags already defined in Unleash so you can reuse them instead of creating duplicates.
 
-**Step 1**: List available projects.
-- Call the \`list_projects\` tool (with limit=200, order=desc) to retrieve project metadata (names, descriptions, URLs).
-- Identify the project whose name or description best aligns with the feature description for "${description}".
-- If multiple projects seem relevant, shortlist up to 3 and justify your selection.
-- If you cannot determine a suitable project, explicitly ask the user which project to target before proceeding.
+**Step 1**: Pick a few short search words.
+- Choose two to four short words or phrases from "${description}" that a flag name or description would likely contain, such as "dark mode" or "checkout".
 
-**Step 2**: Inspect feature flags for each shortlisted project.
-- For each candidate project, call the \`list_flags\` tool with projectId="<projectId>", limit=200, order=asc.
-- Review the returned flag names, descriptions, types, archived status and URLs.
-- Pay close attention to flags whose descriptions, rollout intent, or ownership align with "${description}".
+**Step 2**: Search Unleash.
+- Call the \`search_flags\` tool once per word or phrase. It searches active flags in all projects by part of a name or description.
+- Review the returned flag names, projects, descriptions, types and stale status.
+${projectStep}
 
 ${sharedSteps}
 `.trim();
