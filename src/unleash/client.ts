@@ -177,6 +177,14 @@ export interface UserPermission {
   environment?: string;
 }
 
+export interface ProjectSettings {
+  name: string;
+  description?: string | null;
+  mode: string;
+  defaultStickiness: string;
+  environments: Array<{ environment: string; defaultStrategy?: Omit<FeatureStrategy, 'id'> }>;
+}
+
 export interface FeatureStrategy {
   id: string;
   name: string;
@@ -643,6 +651,92 @@ export class UnleashClient {
       {
         errorMessage: `Invalid constraint on ${constraint.contextName}`,
         networkErrorMessage: 'Failed to connect to Unleash API while validating a constraint',
+      },
+    );
+  }
+
+  async getProjectSettings(projectId: string): Promise<ProjectSettings> {
+    if (this.dryRun) {
+      return { name: projectId, mode: 'open', defaultStickiness: 'default', environments: [] };
+    }
+
+    return this.requestJson<ProjectSettings>(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/overview`,
+      { method: 'GET' },
+      {
+        errorMessage: `Failed to fetch project ${projectId}`,
+        networkErrorMessage: `Failed to connect to Unleash API while fetching project ${projectId}`,
+      },
+    );
+  }
+
+  /** The update replaces name and description, so they are sent back as they are. mode is never sent. */
+  async setProjectDefaultStickiness(projectId: string, defaultStickiness: string): Promise<void> {
+    if (this.dryRun) {
+      return;
+    }
+
+    const { name, description } = await this.getProjectSettings(projectId);
+    await this.request(
+      `/api/admin/projects/${encodeURIComponent(projectId)}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ name, defaultStickiness, ...(description && { description }) }),
+      },
+      {
+        errorMessage: `Failed to set the default stickiness of project ${projectId}`,
+        networkErrorMessage: `Failed to connect to Unleash API while updating project ${projectId}`,
+      },
+    );
+  }
+
+  async listEnvironmentNames(): Promise<string[]> {
+    if (this.dryRun) {
+      return ['development', 'production'];
+    }
+
+    const { environments } = await this.requestJson<{ environments: Array<{ name: string }> }>(
+      '/api/admin/environments',
+      { method: 'GET' },
+      {
+        errorMessage: 'Failed to list environments',
+        networkErrorMessage: 'Failed to connect to Unleash API while listing environments',
+      },
+    );
+    return environments.map(({ name }) => name);
+  }
+
+  async addEnvironmentToProject(projectId: string, environment: string): Promise<void> {
+    if (this.dryRun) {
+      return;
+    }
+
+    await this.request(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/environments`,
+      { method: 'POST', body: JSON.stringify({ environment }) },
+      {
+        errorMessage: `Failed to add environment ${environment} to project ${projectId}`,
+        networkErrorMessage: `Failed to connect to Unleash API while adding environment ${environment}`,
+      },
+    );
+  }
+
+  /** What new flags in this environment get, and what turning the flag on with no strategy adds. */
+  async setProjectDefaultStrategy(
+    projectId: string,
+    environment: string,
+    strategy: FlexibleRolloutStrategy,
+  ): Promise<void> {
+    if (this.dryRun) {
+      return;
+    }
+
+    await this.request(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/environments/${encodeURIComponent(environment)}/default-strategy`,
+      { method: 'POST', body: JSON.stringify({ name: 'flexibleRollout', ...strategy }) },
+      {
+        errorMessage: `Failed to set the default strategy of ${environment} in project ${projectId}`,
+        networkErrorMessage: `Failed to connect to Unleash API while setting the default strategy of ${environment}`,
       },
     );
   }

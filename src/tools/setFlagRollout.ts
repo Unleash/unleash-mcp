@@ -216,7 +216,7 @@ type PendingEnvironment = { environment: string } & PendingApproval<{
   constraints?: StrategyConstraint[];
 }>;
 
-const normalizeName = (name: string): string =>
+export const normalizeName = (name: string): string =>
   name
     .trim()
     .toLowerCase()
