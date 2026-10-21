@@ -18,11 +18,8 @@ export const createRelease =
       if (flag.kind === 'failed') return flag;
 
       const path = { projectId: project, featureName: input.flag, environment };
-      const replaced = await replaceTargets(unleash, path, input.targets, flag.strategyIds);
-      if (replaced.kind === 'failed') return replaced;
-
-      const enabled = await enableEnvironment(unleash, path, flag.enabled);
-      if (enabled.kind === 'failed') return enabled;
+      const applied = await applyPlan(unleash, path, planRelease(input.flag, input.targets, flag));
+      if (applied.kind === 'failed') return applied;
 
       return {
         kind: 'released',
@@ -32,34 +29,42 @@ export const createRelease =
       };
     };
 
-// Existing strategies are reused by position so their history survives. Surplus ones go last,
-// so the environment never has zero strategies, which would make Unleash disable it.
-const replaceTargets = async (
-  unleash: UnleashClient,
-  path: EnvironmentPath,
-  targets: Target[],
-  strategyIds: string[],
-): Promise<{ kind: 'replaced' } | Failed> => {
+type Strategy = ReturnType<typeof toStrategy>;
+
+type Plan = { updates: { id: string; strategy: Strategy }[]; adds: Strategy[]; deletes: string[]; enable: boolean };
+
+// Existing strategies are reused by position so their history survives.
+const planRelease = (flag: string, targets: Target[], current: { enabled: boolean; strategyIds: string[] }): Plan => {
+  const plan: Plan = { updates: [], adds: [], deletes: current.strategyIds.slice(targets.length), enable: !current.enabled };
   for (const [i, target] of targets.entries()) {
-    const id = strategyIds[i];
-    const body = toStrategy(path.featureName, target);
-    const written = id
-      ? await unleash.PUT(strategy, { params: { path: { ...path, strategyId: id } }, body })
-      : await unleash.POST(strategies, { params: { path }, body });
-    if (!written.response.ok) return toFailed(written);
+    const id = current.strategyIds[i];
+    const strategy = toStrategy(flag, target);
+    if (id) plan.updates.push({ id, strategy });
+    else plan.adds.push(strategy);
   }
-  for (const id of strategyIds.slice(targets.length)) {
+  return plan;
+};
+
+// Surplus strategies go last, so the environment never has zero strategies, which would make Unleash disable it.
+// Enabling goes after them, once the environment has its audiences.
+const applyPlan = async (unleash: UnleashClient, path: EnvironmentPath, plan: Plan): Promise<{ kind: 'applied' } | Failed> => {
+  for (const { id, strategy: body } of plan.updates) {
+    const updated = await unleash.PUT(strategy, { params: { path: { ...path, strategyId: id } }, body });
+    if (!updated.response.ok) return toFailed(updated);
+  }
+  for (const body of plan.adds) {
+    const added = await unleash.POST(strategies, { params: { path }, body });
+    if (!added.response.ok) return toFailed(added);
+  }
+  for (const id of plan.deletes) {
     const deleted = await unleash.DELETE(strategy, { params: { path: { ...path, strategyId: id } } });
     if (!deleted.response.ok) return toFailed(deleted);
   }
-  return { kind: 'replaced' };
-};
-
-const enableEnvironment = async (unleash: UnleashClient, path: EnvironmentPath, enabled: boolean): Promise<{ kind: 'enabled' } | Failed> => {
-  if (enabled) return { kind: 'enabled' };
-  const done = await unleash.POST(enable, { params: { path } });
-  if (!done.response.ok) return toFailed(done);
-  return { kind: 'enabled' };
+  if (plan.enable) {
+    const enabled = await unleash.POST(enable, { params: { path } });
+    if (!enabled.response.ok) return toFailed(enabled);
+  }
+  return { kind: 'applied' };
 };
 
 const rolloutOf = (target: Target): number => target.rollout ?? 100;
