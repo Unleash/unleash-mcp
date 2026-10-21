@@ -23,7 +23,7 @@ test('fails with the Unleash error when the flag cannot be created', async () =>
   stub.intercept({ path: feature, method: 'GET' }).reply(404, unleashError('NotFoundError', `Could not find feature flag ${flag}`));
   stub.intercept({ path: features, method: 'POST' }).reply(403, unleashError('PermissionError', 'You need the CREATE_FEATURE permission'));
 
-  const output = await ensureFlag(unleash, project, { flag, environment: 'development', createFlag: true });
+  const output = await ensureFlag(unleash, project, { flag, environment: 'development' });
 
   assert.deepEqual(output, { kind: 'failed', status: 403, name: 'PermissionError', reasons: ['You need the CREATE_FEATURE permission'] });
 });

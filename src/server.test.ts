@@ -41,7 +41,7 @@ test('release tool reports the targets', async () => {
 
   const result = await client.callTool({
     name: 'release',
-    arguments: { project, flag, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }], createFlag: true },
+    arguments: { project, flag, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] },
   });
 
   assert.deepEqual(result.structuredContent, {

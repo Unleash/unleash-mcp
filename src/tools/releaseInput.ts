@@ -25,16 +25,15 @@ export const target = z.object({
   name: z.string().describe('What the audience is, e.g. Beta testers. Shown in the Unleash UI'),
   rollout: z.number().int().min(0).max(100).optional().describe('Percentage of the audience that gets the feature, default 100'),
   constraints: z.array(constraint).optional().describe('All must match for a user to be in the audience'),
-  segments: z.array(z.string()).optional().describe('Names of audiences already defined in Unleash.'),
+  segments: z.array(z.number().int()).optional().describe('Ids of audiences already defined in Unleash'),
   value: value.optional().describe('Value the audience gets'),
 });
 
 export const releaseInput = {
-  project: z.string().optional().describe('Project id. Leave out to choose from a list'),
-  flag: z.string().describe('Feature flag name'),
-  environment: z.string().optional().describe('Environment name. Leave out to choose from a list'),
+  project: z.string().describe('Project id'),
+  flag: z.string().describe('Feature flag name. Created when missing'),
+  environment: z.string().describe('Environment name, enabled in the project'),
   targets: z.array(target).min(1).describe('The audiences that get the feature, ORed. Replaces what the environment had'),
-  createFlag: z.boolean().optional().describe('Set to true once the user has confirmed creating the missing flag'),
 };
 
 export type ReleaseInput = z.infer<z.ZodObject<typeof releaseInput>>;
