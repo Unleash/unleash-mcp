@@ -17,14 +17,21 @@ const deleteFlag = async (): Promise<void> => {
 
 const segment = 'mcp-beta';
 let segmentId: number | undefined;
+let changeRequestId: number | undefined;
 
 before(async () => {
   await deleteFlag();
   const created = await admin.POST('/api/admin/segments', { body: { name: segment, constraints: [] } });
   segmentId = created.data?.id;
 });
-// The flag goes first: Unleash may refuse to delete a segment that is in use.
+// The change request goes first, and the flag before the segment:
+// Unleash may refuse to delete a segment that is in use.
 after(async () => {
+  // A submitted change request can't be deleted, only cancelled, and only by its author. The OpenAPI spec omits the body.
+  if (changeRequestId) await unleash.PUT('/api/admin/projects/{projectId}/change-requests/{id}/state', {
+    params: { path: { projectId: project, id: String(changeRequestId) } },
+    body: { state: 'Cancelled' } as never,
+  });
   await deleteFlag();
   if (segmentId) await admin.DELETE('/api/admin/segments/{id}', { params: { path: { id: segmentId } } });
   await close();
@@ -80,6 +87,19 @@ test('removes the audiences a release leaves out', async () => {
   const output = await release({ project, flag, environment: 'development', targets: [{ name: 'Beta testers' }] });
 
   assert.deepEqual(output, { kind: 'released', flag: { status: 'existing', name: flag }, environment: 'development', targets: [{ name: 'Beta testers', rollout: 100 }] });
+});
+
+// `mcp-server` requires change requests in production.
+test('puts the release in a change request where the environment requires one', async () => {
+  const release = createRelease(unleash);
+
+  const output = await release({ project, flag, environment: 'production', targets: [{ name: 'Everyone', rollout: 50 }] });
+
+  assert.equal(output.kind, 'pending_change_request');
+  const { changeRequest, ...rest } = output;
+  changeRequestId = changeRequest.id;
+  assert.deepEqual(rest, { kind: 'pending_change_request', flag: { status: 'existing', name: flag }, environment: 'production', targets: [{ name: 'Everyone', rollout: 50 }] });
+  assert.equal(changeRequest.state, 'In review');
 });
 
 // Open source has no change requests, so the stubs in each test cover only the flag and its writes.
