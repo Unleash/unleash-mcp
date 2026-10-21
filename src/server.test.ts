@@ -3,7 +3,8 @@ import { after, before, test } from 'node:test';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { createServer } from './server.ts';
-import { createRecordedClient } from './unleash/testClient.ts';
+import type { UnleashClient } from './unleash/client.ts';
+import { createRecordedClient, createStubbedClient } from './unleash/testClient.ts';
 
 const { unleash, close } = createRecordedClient(new URL('./server.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server';
@@ -21,9 +22,9 @@ const deleteFlag = async (): Promise<void> => {
 before(deleteFlag);
 after(close);
 
-const connectClient = async (): Promise<Client> => {
+const connectClient = async (server: UnleashClient = unleash): Promise<Client> => {
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
-  await createServer(unleash).connect(serverTransport);
+  await createServer(server).connect(serverTransport);
   const client = new Client({ name: 'test-client', version: '0.0.0' });
   await client.connect(clientTransport);
   return client;
@@ -47,5 +48,22 @@ test('release tool reports the targets', async () => {
   assert.deepEqual(result.structuredContent, {
     result: { kind: 'released', flag: { status: 'new', name: flag }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] },
   });
+  assert.deepEqual(result.content, []);
+  await client.close();
+});
+
+test('release tool reports a failure as text', async () => {
+  const { unleash: stubbed, stub } = createStubbedClient();
+  const message = 'You need the "SKIP_CHANGE_REQUEST" permission.';
+  stub.intercept({ path: `/api/admin/projects/${project}/features/${flag}`, method: 'GET' }).reply(403, { name: 'PermissionError', message, details: [{ message }] });
+  const client = await connectClient(stubbed);
+
+  const result = await client.callTool({
+    name: 'release',
+    arguments: { project, flag, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] },
+  });
+
+  const failed = { result: { kind: 'failed', status: 403, name: 'PermissionError', reasons: [message] } };
+  assert.deepEqual(result, { isError: true, content: [{ type: 'text', text: JSON.stringify(failed) }] });
   await client.close();
 });

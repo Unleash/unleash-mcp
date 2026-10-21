@@ -8,6 +8,13 @@ import { searchOutput } from './tools/searchOutput.ts';
 import { createSearch } from './tools/search.ts';
 import type { UnleashClient } from './unleash/client.ts';
 
+// At the time of this writing, 
+// Claude Code shows the model only the text blocks of an error result, so failures are text.
+const toToolResult = <T extends { kind: string }>(result: T) =>
+  result.kind === 'failed'
+    ? { isError: true, content: [{ type: 'text' as const, text: JSON.stringify({ result }) }] }
+    : { structuredContent: { result }, content: [] };
+
 export const createServer = (unleash: UnleashClient): McpServer => {
   const server = new McpServer({ name: 'unleash-mcp', version: pkg.version });
   const release = createRelease(unleash);
@@ -21,8 +28,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
       outputSchema: releaseOutput,
     },
     async (input) => {
-      const result = await release(input);
-      return { structuredContent: { result }, isError: result.kind === 'failed', content: [] };
+      return toToolResult(await release(input));
     },
   );
 
@@ -35,8 +41,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
       annotations: { readOnlyHint: true },
     },
     async (input) => {
-      const result = await search(input);
-      return { structuredContent: { result }, isError: result.kind === 'failed', content: [] };
+      return toToolResult(await search(input));
     },
   );
 
