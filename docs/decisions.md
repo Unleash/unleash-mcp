@@ -88,3 +88,16 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 
 - A failed tool result is returned as a text block only; successes stay `structuredContent` only. Claude Code doesn't show the model `structuredContent` on an error result, only "Unknown error", so Unleash's reasons never reached the agent. Rejected: a text block on every result, and failures carrying both.
 - Supersedes "only `structuredContent` is returned, no text block" (Tool structure) for failures.
+
+## 2026-10-21 — Release in environments with change requests
+
+- The release tool must work in environments with change requests enabled. There, the whole release goes into one change request and the tool returns `pending_change_request` with the change request's id and state. The flag is still created directly, as in Unleash's own import. Supersedes "change requests" in the 2026-10-20 out-of-scope list.
+- Change request ids are shown to the agent, the same exception as segment ids. Rejected: an outcome-only result without the id.
+- Tell Enterprise apart the way the UI does (`useUiConfig`): `ui-config`'s `versionInfo.current.enterprise` set and `environment` not Pro. Only Enterprise reads the change request config. Rejected: treating a 404 on the change request config as no change requests.
+- The edition is remembered in the `createRelease(unleash)` closure after the first read, to keep requests to Unleash down. Rejected: reading `ui-config` on every release.
+- Submitting the change request for review is the last step of a release. Unleash adds the release to the user's open draft, if any, and the whole draft is submitted, other changes included. Rejected: leaving a draft with other changes unsubmitted.
+
+## 2026-10-21 — Admin client for test setup and teardown
+
+- Setup and teardown would be done by an admin in the real world, so tests use a second Unleash client with its own PAT (`UNLEASH_ADMIN_PAT`) for them, instead of giving the user under test more permissions.
+- Exception: a submitted change request can't be deleted, only cancelled, and only by its author, so the user under test cancels the ones its releases create. Cancelled change requests stay in the sandbox.
