@@ -48,7 +48,7 @@ const variantPayloadSchema = z.strictObject({
   value: z.string().min(1).describe('Serialized payload value'),
 }) satisfies z.ZodType<StrategyVariantPayload>;
 
-const variantSchema = z.strictObject({
+export const variantSchema = z.strictObject({
   name: z.string().min(1).describe('Variant name (unique within this feature)'),
   weight: z.number().int().min(0).max(1000).describe('Variant weight (0-1000)'),
   weightType: z.enum(['variable', 'fix']).optional().describe('Variant weight type'),
@@ -246,7 +246,7 @@ const fixedWeightTotal = (variants: z.infer<typeof variantSchema>[]): number | u
     : undefined;
 
 // Unleash needs one variable variant.
-const toVariants = (variants: z.infer<typeof variantSchema>[]): StrategyVariant[] =>
+export const toVariants = (variants: z.infer<typeof variantSchema>[]): StrategyVariant[] =>
   variants.map((variant, index) => ({
     ...variant,
     weightType:

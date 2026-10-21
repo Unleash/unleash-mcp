@@ -662,25 +662,14 @@ export class UnleashClient {
       };
     }
 
-    try {
-      return await this.requestJson<ProjectSettings>(
-        `/api/admin/projects/${encodeURIComponent(projectId)}/overview`,
-        { method: 'GET' },
-        {
-          errorMessage: `Failed to fetch project ${projectId}`,
-          networkErrorMessage: `Failed to connect to Unleash API while fetching project ${projectId}`,
-        },
-      );
-    } catch (error) {
-      if (error instanceof CustomError && error.code === 'HTTP_404') {
-        throw new CustomError(
-          error.code,
-          `Project "${projectId}" not found.`,
-          'Call list_projects to see which projects exist, and ask the user which one they mean.',
-        );
-      }
-      throw error;
-    }
+    return this.requestJson<ProjectSettings>(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/overview`,
+      { method: 'GET' },
+      {
+        errorMessage: `Failed to fetch project ${projectId}`,
+        networkErrorMessage: `Failed to connect to Unleash API while fetching project ${projectId}`,
+      },
+    );
   }
 
   /** The endpoint ignores fields we leave out. name is only sent because its schema requires it. */
@@ -693,25 +682,14 @@ export class UnleashClient {
       return;
     }
 
-    try {
-      await this.request(
-        `/api/admin/projects/${encodeURIComponent(projectId)}`,
-        { method: 'PUT', body: JSON.stringify({ name, defaultStickiness }) },
-        {
-          errorMessage: `Failed to set the default stickiness of project ${projectId}`,
-          networkErrorMessage: `Failed to connect to Unleash API while updating project ${projectId}`,
-        },
-      );
-    } catch (error) {
-      // Callers fetch the project first, so a 404 here means this Unleash has no such endpoint (open source).
-      if (error instanceof CustomError && error.code === 'HTTP_404') {
-        throw new CustomError(
-          error.code,
-          'Setting the default stickiness of a project needs Unleash Enterprise. This Unleash does not support it.',
-        );
-      }
-      throw error;
-    }
+    await this.request(
+      `/api/admin/projects/${encodeURIComponent(projectId)}`,
+      { method: 'PUT', body: JSON.stringify({ name, defaultStickiness }) },
+      {
+        errorMessage: `Failed to set the default stickiness of project ${projectId}`,
+        networkErrorMessage: `Failed to connect to Unleash API while updating project ${projectId}`,
+      },
+    );
   }
 
   async listEnvironmentNames(): Promise<string[]> {
@@ -745,7 +723,7 @@ export class UnleashClient {
     );
   }
 
-  /** What new flags in this environment get, and what turning the flag on with no strategy adds. */
+  /** The strategy Unleash adds when a flag with no enabled strategies in this environment is turned on. */
   async setProjectDefaultStrategy(
     projectId: string,
     environment: string,

@@ -35,7 +35,7 @@ The MCP server exposes the following tools:
 - `toggle_flag_environment`: Enables or disables a feature flag in an environment.
 - `remove_flag_strategy`: Deletes a feature flag's strategy from an environment.
 - `update_flag_lifecycle`: Completes, uncompletes, archives, or revives a feature flag, or marks it as stale.
-- `update_project_settings`: Sets a project's default stickiness (Enterprise only) and the default strategy new flags start with in each environment, and adds existing environments to the project.
+- `update_project_settings`: Sets a project's default stickiness (Enterprise only) and the default strategy of each environment, and adds existing environments to the project.
 - `cleanup_flag`: Generates instructions for safely removing flagged code paths.
 - `send_feedback`: Reports a failed tool call, an unsupported request, or an unexpected result to Unleash so the MCP can be improved. Requires the user's consent. Not listed when consent is denied up front through `UNLEASH_MCP_SEND_FEEDBACK=false` or the `feedbackConsent` server option.
 
@@ -1075,27 +1075,27 @@ Returns a JSON object with `changed`, the flag's lifecycle state `before` and `a
 
 ### Update project settings
 
-The `update_project_settings` tool changes how flags in a project are set up: the default strategy new flags start with in each environment, the default stickiness, and which environments the project has.
+The `update_project_settings` tool changes how flags in a project are set up: the default strategy of each environment, the default stickiness, and which environments the project has. An environment's default strategy is what Unleash adds when a flag with no enabled strategies there is turned on, existing flags included.
 
 #### When to use
 
-Use this tool when the user wants to change a project's defaults. It does not touch existing flags. Environments can be added, never removed.
+Use this tool when the user wants to change a project's defaults. Environments can be added, never removed.
 
 #### Parameters
 
 - `projectId` (optional): Project ID. Falls back to `UNLEASH_DEFAULT_PROJECT`.
 - `defaultStickiness` (optional): Context field that keeps a user in the same bucket, such as `sessionId`. Needs Unleash Enterprise; open source Unleash has no endpoint for it.
 - `addEnvironments` (optional): Names of existing environments to make available in the project.
-- `defaultStrategies` (optional): Per environment, `rolloutPercentage`, `segments` (by name), `constraints` and `stickiness`. Fields left out keep their current value, and `[]` clears `segments` or `constraints`.
+- `defaultStrategies` (optional): Per environment, `rolloutPercentage`, `segments` (by name), `constraints`, `stickiness`, `groupId`, `title` and `variants`. Fields left out keep their current value, and `[]` clears `segments`, `constraints` or `variants`. A new default gives each flag its own `groupId`.
 
-At least one of the three settings is required. Nothing is changed until every name checks out. Environments are added first. There is no rollback: if a step fails, the error lists what was applied.
+At least one of the three settings is required. Nothing is changed until every name checks out. Default stickiness is set first, so on open source Unleash the call fails before anything changes; then environments are added, then default strategies. There is no rollback: if a step fails, the error returns `applied`, `failed` and `notApplied` in the input's own shape.
 
 #### Usage example
 
 **Agent prompt**
 
 ```
-New flags in production of ecommerce should start at 10% for the beta-users segment.
+Flags turned on in production of ecommerce should start at 10% for the beta-users segment.
 ```
 
 **Tool payload**
