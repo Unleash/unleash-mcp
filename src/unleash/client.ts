@@ -749,7 +749,11 @@ export class UnleashClient {
   /** Creates a segment in `project`, or a global one when `project` is left out. */
   async createSegment(segment: NewSegment): Promise<Segment> {
     if (this.dryRun) {
-      return { id: 0, ...segment, constraints: [] };
+      return {
+        id: 0,
+        ...segment,
+        constraints: segment.constraints.map((constraint) => ({ ...constraint })),
+      };
     }
 
     const { id, name, description, project, constraints } = await this.requestJson<Segment>(

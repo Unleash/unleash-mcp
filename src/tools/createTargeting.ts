@@ -10,7 +10,7 @@ import {
 import type { StrategyConstraint } from '../unleash/client.js';
 import { CustomError } from '../utils/errors.js';
 import { jsonResult } from '../utils/toolResult.js';
-import { constraintSchema, shapeConstraint } from './setFlagRollout.js';
+import { constraintSchema, shapeConstraint, unknownContextField } from './constraints.js';
 
 const contextFieldInputSchema = z.strictObject({
   name: z.string().min(1).describe('Context field name, such as "devMode"'),
@@ -61,33 +61,40 @@ const createTargetingSchema = z
   });
 
 type Item = { kind: 'contextField' | 'segment'; name: string };
-type Created = Item & { project: string | null };
+type Owner = { scope: 'project' | 'global'; project?: string };
 
-/**
- * Unleash accepts a constraint on any name, so a misspelt field name would give a segment that
- * never matches.
- */
-async function checkContextNames(
+const projectContextUnsupported = (projectId: string) =>
+  new CustomError(
+    'HTTP_404',
+    `Unleash has no project context endpoint for "${projectId}": Unleash is older than 7.4.0, which added project context fields.`,
+    'Ask the user whether they want a global field instead (scope: "global").',
+  );
+
+/** Unleash returns 500 with a raw SQL error when a create names a project that does not exist. */
+async function checkProjectExists(context: ServerContext, projectId: string): Promise<void> {
+  if (context.config.server.dryRun) return;
+
+  const projects = await context.unleashClient.listProjects();
+  if (projects.some(({ id }) => id === projectId)) return;
+  throw new CustomError(
+    'PROJECT_NOT_FOUND',
+    `Nothing was created: there is no project "${projectId}".`,
+    'Call list_projects to see the project IDs, or ask the user which project they mean.',
+  );
+}
+
+/** Unleash accepts a constraint on any name, so a misspelt field name would give a segment that never matches. */
+async function usableFieldNames(
   context: ServerContext,
-  segments: Array<{ constraints: Array<{ contextName: string }> }>,
   newFields: string[],
   projectId: string | undefined,
-): Promise<void> {
-  if (segments.length === 0 || context.config.server.dryRun) return;
-
-  const existing = await context.unleashClient.getContextFields(projectId);
-  const usable = [...existing.map(({ name }) => name), ...newFields];
-  for (const { contextName } of segments.flatMap(({ constraints }) => constraints)) {
-    if (usable.includes(contextName)) continue;
-    const differentCase = usable.find((name) => name.toLowerCase() === contextName.toLowerCase());
-    throw new CustomError(
-      'CONTEXT_FIELD_NOT_FOUND',
-      `Nothing was created: "${contextName}" is not a context field ${projectId ? `that project "${projectId}" can use` : 'that every project can use'}.`,
-      differentCase
-        ? `Context field names are case-sensitive; did you mean "${differentCase}"?`
-        : `Use one of these fields: ${usable.join(', ')}. If none fits, ask the user whether to create "${contextName}" too. A constraint on it only matches when the app sends "${contextName}" in its Unleash context.`,
-    );
-  }
+): Promise<string[]> {
+  const existing = await context.unleashClient.getContextFields(projectId).catch((error) => {
+    throw projectId && error instanceof CustomError && error.code === 'HTTP_404'
+      ? projectContextUnsupported(projectId)
+      : error;
+  });
+  return [...existing.map(({ name }) => name), ...newFields];
 }
 
 async function explainContextFieldError(
@@ -110,13 +117,7 @@ async function explainContextFieldError(
       'Use the existing field, or pick another name.',
     );
   }
-  if (error.code === 'HTTP_404' && projectId) {
-    return new CustomError(
-      error.code,
-      `Unleash has no project context endpoint for "${projectId}": either the project does not exist, or Unleash is older than 7.4.0, which added project context fields.`,
-      'Check the project ID, or ask the user whether they want a global field instead (scope: "global").',
-    );
-  }
+  if (error.code === 'HTTP_404' && projectId) return projectContextUnsupported(projectId);
   return error;
 }
 
@@ -131,19 +132,47 @@ export async function createTargeting(
     const fields = input.contextFields ?? [];
     const segments = input.segments ?? [];
 
+    if (scope === 'global' && input.projectId) {
+      throw new CustomError(
+        'INVALID_SCOPE',
+        `scope "global" cannot be combined with projectId "${input.projectId}": a global field or segment belongs to no project.`,
+        `Drop projectId to create it for every project, or drop scope to create it in project "${input.projectId}".`,
+      );
+    }
+
     const projectId =
       scope === 'project' ? await resolveProjectId(input.projectId, context) : undefined;
     if (scope === 'project' && !projectId) return askForProjectId(context);
+    if (projectId) await checkProjectExists(context, projectId);
+
+    const usable =
+      segments.length > 0 && !context.config.server.dryRun
+        ? await usableFieldNames(
+            context,
+            fields.map(({ name }) => name),
+            projectId,
+          )
+        : undefined;
+    const where = projectId ? `in project "${projectId}"` : 'that every project can use';
+    const baseUrl = context.config.unleash.baseUrl;
 
     const shaped: Array<{ name: string; constraints: StrategyConstraint[] }> = [];
     for (const segment of segments) {
       const constraints: StrategyConstraint[] = [];
       for (const constraint of segment.constraints) {
-        const result = shapeConstraint(constraint, segment.name);
-        if ('problem' in result) {
+        const unknown = usable
+          ? unknownContextField(constraint.contextName, usable, where, baseUrl)
+          : undefined;
+        const result = unknown ?? shapeConstraint(constraint);
+        if ('message' in result) {
+          const listed = result.options ? ` Fields: ${result.options.join(', ')}.` : '';
           return handleToolError(
             context,
-            new CustomError('INVALID_CONSTRAINT', result.problem.message, result.problem.hint),
+            new CustomError(
+              result.code,
+              result.message,
+              `Nothing was created. ${result.hint}${listed}`,
+            ),
             'create_targeting',
           );
         }
@@ -151,16 +180,10 @@ export async function createTargeting(
       }
       shaped.push({ name: segment.name, constraints });
     }
-    await checkContextNames(
-      context,
-      segments,
-      fields.map(({ name }) => name),
-      projectId,
-    );
 
     const total = fields.length + segments.length;
-    const created: Created[] = [];
-    const owner = projectId ?? null;
+    const created: Item[] = [];
+    const owner: Owner = projectId ? { scope, project: projectId } : { scope };
     await context.notifyProgress(
       progressToken,
       0,
@@ -181,11 +204,12 @@ export async function createTargeting(
           context,
           await explainContextFieldError(context, error, field.name, projectId),
           { kind: 'contextField', name: field.name },
+          owner,
           created,
           notAttempted,
         );
       }
-      created.push({ kind: 'contextField', name: field.name, project: owner });
+      created.push({ kind: 'contextField', name: field.name });
       await context.notifyProgress(progressToken, created.length, total, `Created ${field.name}`);
     }
 
@@ -205,15 +229,16 @@ export async function createTargeting(
           context,
           error,
           { kind: 'segment', name: segment.name },
+          owner,
           created,
           notAttempted,
         );
       }
-      created.push({ kind: 'segment', name: segment.name, project: owner });
+      created.push({ kind: 'segment', name: segment.name });
       await context.notifyProgress(progressToken, created.length, total, `Created ${segment.name}`);
     }
 
-    return jsonResult({ success: true, dryRun: context.config.server.dryRun, created });
+    return jsonResult({ success: true, dryRun: context.config.server.dryRun, ...owner, created });
   } catch (error) {
     return handleToolError(context, error, 'create_targeting');
   }
@@ -223,17 +248,22 @@ function failure(
   context: ServerContext,
   error: unknown,
   failed: Item,
-  created: Created[],
+  owner: Owner,
+  created: Item[],
   notAttempted: Item[],
 ): CallToolResult {
+  const { success, error: normalized } = toolErrorPayload(context, error, 'create_targeting');
+  const nothingRolledBack =
+    'Nothing was rolled back: everything in created exists in Unleash, and nothing in notAttempted was sent. Fix the error, then call create_targeting again with only the failed and notAttempted items.';
   return {
     isError: true,
     ...jsonResult({
-      ...toolErrorPayload(context, error, 'create_targeting'),
+      success,
+      error: { ...normalized, hint: `${normalized.hint} ${nothingRolledBack}`.trim() },
+      ...owner,
       failed,
       created,
       notAttempted,
-      hint: 'Nothing was rolled back: everything in created exists in Unleash, and nothing in notAttempted was sent. Fix the error, then call create_targeting again with only the failed and notAttempted items.',
     }),
   };
 }

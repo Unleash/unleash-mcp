@@ -7,47 +7,30 @@ import {
   type ServerContext,
   toolErrorPayload,
 } from '../context.js';
-import {
-  CONSTRAINT_OPERATORS,
-  type ConstraintOperator,
-  type ContextField,
-  type FeatureDetails,
-  type FeatureEnvironment,
-  type FeatureStrategy,
-  type FlexibleRolloutStrategy,
-  type SegmentSummary,
-  type StrategyConstraint,
-  type StrategyVariant,
-  type StrategyVariantPayload,
+import type {
+  ContextField,
+  FeatureDetails,
+  FeatureEnvironment,
+  FeatureStrategy,
+  FlexibleRolloutStrategy,
+  SegmentSummary,
+  StrategyConstraint,
+  StrategyVariant,
+  StrategyVariantPayload,
 } from '../unleash/client.js';
 import { CustomError } from '../utils/errors.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
+import {
+  type ConstraintInput,
+  constraintSchema,
+  shapeConstraint,
+  unknownContextField,
+} from './constraints.js';
 
 const SEGMENTS_DOCS = 'https://docs.getunleash.io/concepts/segments';
 const CONSTRAINTS_DOCS = 'https://docs.getunleash.io/concepts/activation-strategies#constraints';
-const CONTEXT_DOCS = 'https://docs.getunleash.io/concepts/unleash-context';
 const NONE_OF_THESE = '__none__';
-
-export const constraintSchema = z.strictObject({
-  contextName: z
-    .string()
-    .min(1)
-    .describe('Context field to match, such as "userId" or "email", as the user said it'),
-  operator: z
-    .enum(CONSTRAINT_OPERATORS)
-    .describe(
-      'IN and NOT_IN match exact values, STR_* match text, and NUM_*, DATE_*, SEMVER_* and REGEX compare against one value',
-    ),
-  values: z.array(z.string().min(1)).optional().describe('Values for IN, NOT_IN and STR_*'),
-  value: z
-    .string()
-    .min(1)
-    .optional()
-    .describe('The single value for NUM_*, DATE_*, SEMVER_* and REGEX'),
-  inverted: z.boolean().optional().describe('Match everyone the constraint would not match'),
-  caseInsensitive: z.boolean().optional().describe('Ignore case when matching text'),
-});
 
 const variantPayloadSchema = z.strictObject({
   type: z.enum(['json', 'csv', 'string', 'number']).describe('Payload type'),
@@ -139,7 +122,6 @@ const setFlagRolloutSchema = z.strictObject({
     .describe('Who gets the flag in each environment, one entry per environment'),
 });
 
-type ConstraintInput = z.infer<typeof constraintSchema>;
 type EnvironmentRollout = z.infer<typeof environmentRolloutSchema>;
 
 interface Problem {
@@ -209,9 +191,6 @@ const normalizeName = (name: string): string =>
     .trim()
     .toLowerCase()
     .replace(/[\s_-]+/g, ' ');
-
-const takesSingleValue = (operator: ConstraintOperator): boolean =>
-  operator === 'REGEX' || /^(NUM|DATE|SEMVER)_/.test(operator);
 
 const segmentName = (id: number, segments: SegmentSummary[]): string =>
   segments.find((segment) => segment.id === id)?.name ?? `#${id}`;
@@ -425,69 +404,30 @@ function resolveSegments(
   return ids.length === entry.segments.length ? [...new Set(ids)] : undefined;
 }
 
-export function shapeConstraint(
-  input: ConstraintInput,
-  environment: string,
-): { constraint: StrategyConstraint } | { problem: Problem } {
-  const { contextName, operator, inverted, caseInsensitive } = input;
-  const invalid = (message: string) => ({
-    problem: {
-      environment,
-      code: 'INVALID_CONSTRAINT',
-      message,
-      hint: `See ${CONSTRAINTS_DOCS}.`,
-    },
-  });
-
-  if (takesSingleValue(operator)) {
-    const value = input.value ?? (input.values?.length === 1 ? input.values[0] : undefined);
-    if (value === undefined) {
-      return invalid(
-        `${operator} on "${contextName}" compares against one value; pass it as value.`,
-      );
-    }
-    return { constraint: { contextName, operator, value, inverted, caseInsensitive } };
-  }
-
-  const values = input.values ?? (input.value !== undefined ? [input.value] : []);
-  if (values.length === 0) {
-    return invalid(`${operator} on "${contextName}" needs at least one entry in values.`);
-  }
-  return { constraint: { contextName, operator, values, inverted, caseInsensitive } };
-}
-
 async function checkConstraint(
   context: ServerContext,
   input: ConstraintInput,
   environment: string,
   lookups: Lookups,
 ): Promise<{ constraint: StrategyConstraint } | { problem: Problem }> {
-  const field = lookups.contextFields.find((candidate) => candidate.name === input.contextName);
-  if (!field) {
-    const differentCase = lookups.contextFields.find(
-      (candidate) => candidate.name.toLowerCase() === input.contextName.toLowerCase(),
-    );
-    return {
-      problem: {
-        environment,
-        code: 'CONTEXT_FIELD_NOT_FOUND',
-        message: `"${input.contextName}" is not a context field in project "${lookups.projectId}".`,
-        hint: differentCase
-          ? `Context field names are case-sensitive; did you mean "${differentCase.name}"?`
-          : `Use one of the listed fields, or ask the user whether to create "${input.contextName}" with create_targeting or in Unleash (${lookups.baseUrl}/context/create). A constraint on it only matches when the app also sends "${input.contextName}" in its Unleash context. See ${CONTEXT_DOCS}.`,
-        options: lookups.contextFields.map(({ name }) => name),
-      },
-    };
-  }
+  const fieldNames = lookups.contextFields.map(({ name }) => name);
+  const unknown = unknownContextField(
+    input.contextName,
+    fieldNames,
+    `in project "${lookups.projectId}"`,
+    lookups.baseUrl,
+  );
+  if (unknown) return { problem: { environment, ...unknown } };
 
-  const shaped = shapeConstraint(input, environment);
-  if ('problem' in shaped) return shaped;
+  const shaped = shapeConstraint(input);
+  if ('message' in shaped) return { problem: { environment, ...shaped } };
 
   try {
     await context.unleashClient.validateConstraint(shaped.constraint);
   } catch (error) {
     if (!(error instanceof CustomError && error.code === 'HTTP_400')) throw error;
-    const legalValues = field.legalValues?.map(({ value }) => value) ?? [];
+    const field = lookups.contextFields.find((candidate) => candidate.name === input.contextName);
+    const legalValues = field?.legalValues?.map(({ value }) => value) ?? [];
     return {
       problem: {
         environment,
@@ -495,7 +435,7 @@ async function checkConstraint(
         message: error.message,
         hint:
           legalValues.length > 0
-            ? `"${field.name}" only accepts the listed values.`
+            ? `"${input.contextName}" only accepts the listed values.`
             : `See ${CONSTRAINTS_DOCS}.`,
         ...(legalValues.length > 0 && { options: legalValues }),
       },
