@@ -2,14 +2,14 @@ import { z } from 'zod';
 import {
   CONSTRAINT_OPERATORS,
   type ConstraintOperator,
+  type ContextField,
   type StrategyConstraint,
   type UnleashClient,
 } from '../unleash/client.js';
 import { CustomError } from '../utils/errors.js';
 
-export const CONSTRAINTS_DOCS =
-  'https://docs.getunleash.io/concepts/activation-strategies#constraints';
-const CONTEXT_DOCS = 'https://docs.getunleash.io/concepts/unleash-context';
+const CONSTRAINTS_DOCS = 'https://docs.getunleash.io/concepts/activation-strategies#constraints';
+export const CONTEXT_DOCS = 'https://docs.getunleash.io/concepts/unleash-context';
 
 export const constraintSchema = z.strictObject({
   contextName: z
@@ -76,44 +76,22 @@ export function shapeConstraint(
 export async function invalidConstraint(
   unleashClient: UnleashClient,
   constraint: StrategyConstraint,
-  legalValues: string[],
+  field: ContextField,
 ): Promise<ConstraintProblem | undefined> {
   try {
     await unleashClient.validateConstraint(constraint);
   } catch (error) {
     if (!(error instanceof CustomError && error.code === 'HTTP_400')) throw error;
+    const legalValues = field.legalValues?.map(({ value }) => value) ?? [];
     return {
       code: 'INVALID_CONSTRAINT',
       message: error.message,
       hint:
         legalValues.length > 0
-          ? `"${constraint.contextName}" only accepts the listed values.`
+          ? `"${field.name}" only accepts the listed values.`
           : `See ${CONSTRAINTS_DOCS}.`,
       ...(legalValues.length > 0 && { options: legalValues }),
     };
   }
   return undefined;
-}
-
-/**
- * `where` completes "is not a context field ...", such as `in project "shop"`.
- * `createHint` says how to get the missing field, since it depends on the calling tool.
- */
-export function unknownContextField(
-  contextName: string,
-  available: string[],
-  where: string,
-  createHint: string,
-): ConstraintProblem | undefined {
-  if (available.includes(contextName)) return undefined;
-
-  const differentCase = available.find((name) => name.toLowerCase() === contextName.toLowerCase());
-  return {
-    code: 'CONTEXT_FIELD_NOT_FOUND',
-    message: `"${contextName}" is not a context field ${where}.`,
-    hint: differentCase
-      ? `Context field names are case-sensitive; did you mean "${differentCase}"?`
-      : `Use one of the listed fields, or ${createHint}. A constraint on it only matches when the app also sends "${contextName}" in its Unleash context. See ${CONTEXT_DOCS}.`,
-    options: available,
-  };
 }

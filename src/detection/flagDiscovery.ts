@@ -46,21 +46,6 @@ export function buildUnleashInventoryInstructions(
   description: string,
   defaultProject?: string,
 ): string {
-  const baseNote =
-    '> You cannot open the Unleash UI yourself. Ask the user to review the relevant project/flag in the Unleash console if human confirmation is required.';
-
-  const sharedSteps = `
-**Step 3**: Evaluate matches.
-- Consider semantic similarity between your change description and each flag's name/description.
-- Prefer flags that are not stale. Note if a flag is stale and adjust scoring accordingly.
-- Record promising matches with the project ID and flag name so they can be reviewed quickly.
-
-**Step 4**: Score and report.
-- Assign an \`unleash-inventory\` score (0.0 - 1.0) based on how well the existing flag aligns with the proposed change.
-- Provide reasoning that references project and flag metadata (name, description, type).
-
-${baseNote}`.trim();
-
   const projectStep = defaultProject
     ? `- Prefer flags in the configured default project **${defaultProject}**, but a clearly better match in another project is fine.`
     : '- If matches sit in several projects, shortlist up to 3 and justify your selection. If you cannot tell which project fits, ask the user.';
@@ -78,7 +63,16 @@ Use the dedicated MCP tools to discover existing flags already defined in Unleas
 - Review the returned flag names, projects, descriptions, types and stale status.
 ${projectStep}
 
-${sharedSteps}
+**Step 3**: Evaluate matches.
+- Consider semantic similarity between your change description and each flag's name/description.
+- Prefer flags that are not stale. Note if a flag is stale and adjust scoring accordingly.
+- Record promising matches with the project ID and flag name so they can be reviewed quickly.
+
+**Step 4**: Score and report.
+- Assign an \`unleash-inventory\` score (0.0 - 1.0) based on how well the existing flag aligns with the proposed change.
+- Provide reasoning that references project and flag metadata (name, description, type).
+
+> You cannot open the Unleash UI yourself. Ask the user to review the relevant project/flag in the Unleash console if human confirmation is required.
 `.trim();
 }
 

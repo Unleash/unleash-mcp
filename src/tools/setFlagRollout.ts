@@ -22,11 +22,11 @@ import { CustomError } from '../utils/errors.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
 import {
+  CONTEXT_DOCS,
   type ConstraintInput,
   constraintSchema,
   invalidConstraint,
   shapeConstraint,
-  unknownContextField,
 } from './constraints.js';
 
 const SEGMENTS_DOCS = 'https://docs.getunleash.io/concepts/segments';
@@ -215,7 +215,7 @@ const fixedWeightTotal = (variants: z.infer<typeof variantSchema>[]): number | u
     ? variants.reduce((total, variant) => total + variant.weight, 0)
     : undefined;
 
-// Unleash needs one variable variant. When all are fixed and add up to 1000, the first one is sent as variable and keeps its weight.
+// Unleash needs one variable variant.
 const toVariants = (variants: z.infer<typeof variantSchema>[]): StrategyVariant[] =>
   variants.map((variant, index) => ({
     ...variant,
@@ -410,21 +410,28 @@ async function checkConstraint(
   environment: string,
   lookups: Lookups,
 ): Promise<{ constraint: StrategyConstraint } | { problem: Problem }> {
-  const fieldNames = lookups.contextFields.map(({ name }) => name);
-  const unknown = unknownContextField(
-    input.contextName,
-    fieldNames,
-    `in project "${lookups.projectId}"`,
-    `ask the user whether to create "${input.contextName}" with create_targeting or in Unleash (${lookups.baseUrl}/context/create)`,
-  );
-  if (unknown) return { problem: { environment, ...unknown } };
+  const field = lookups.contextFields.find((candidate) => candidate.name === input.contextName);
+  if (!field) {
+    const differentCase = lookups.contextFields.find(
+      (candidate) => candidate.name.toLowerCase() === input.contextName.toLowerCase(),
+    );
+    return {
+      problem: {
+        environment,
+        code: 'CONTEXT_FIELD_NOT_FOUND',
+        message: `"${input.contextName}" is not a context field in project "${lookups.projectId}".`,
+        hint: differentCase
+          ? `Context field names are case-sensitive; did you mean "${differentCase.name}"?`
+          : `Use one of the listed fields, or ask the user whether to create "${input.contextName}" with create_targeting or in Unleash (${lookups.baseUrl}/context/create). A constraint on it only matches when the app also sends "${input.contextName}" in its Unleash context. See ${CONTEXT_DOCS}.`,
+        options: lookups.contextFields.map(({ name }) => name),
+      },
+    };
+  }
 
   const shaped = shapeConstraint(input);
   if ('problem' in shaped) return { problem: { environment, ...shaped.problem } };
 
-  const field = lookups.contextFields.find((candidate) => candidate.name === input.contextName);
-  const legalValues = field?.legalValues?.map(({ value }) => value) ?? [];
-  const invalid = await invalidConstraint(context.unleashClient, shaped.constraint, legalValues);
+  const invalid = await invalidConstraint(context.unleashClient, shaped.constraint, field);
   if (invalid) return { problem: { environment, ...invalid } };
 
   return shaped;

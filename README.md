@@ -682,15 +682,15 @@ Other errors:
 
 The `create_targeting` tool creates [context fields](https://docs.getunleash.io/concepts/unleash-context) and [segments](https://docs.getunleash.io/concepts/segments) for `set_flag_rollout` to target. Context fields are created before segments, so one call can create a field and a segment that constrains on it.
 
-Everything belongs to the project by default. `scope: "global"` makes it usable in every project, and cannot be combined with `projectId`. Project context fields need Unleash 7.4.0 or later. Context field names are unique across the whole instance.
+Everything belongs to the project by default. `scope: "global"` makes it usable in every project, and cannot be combined with `projectId`. Project context fields need Unleash 7.4.1 or later. Context field and segment names are unique across the whole instance.
 
-Each item is its own API call and nothing is rolled back. The first failure stops the call, and the error lists what was `created`, the `failed` item and what was `notAttempted`.
+Nothing is created until every name and constraint checks out. Each item is then its own API call and nothing is rolled back. A failure partway through stops the call, and the error lists what was `created`, the `failed` item and what was `notAttempted`.
 
 #### Parameters
 
 - `projectId` (optional): Project that owns what is created (defaults to `UNLEASH_DEFAULT_PROJECT`).
 - `scope` (optional): `"project"` (default) or `"global"`.
-- `contextFields` (optional): Fields, each with `name`, `description`, `legalValues` and `stickiness`.
+- `contextFields` (optional): Fields, each with `name`, `description`, `legalValues`, `stickiness` and `sortOrder`. A name is URL-friendly and at most 100 characters.
 - `segments` (optional): Segments, each with `name`, `description` and `constraints` (same shape as in `set_flag_rollout`).
 
 #### Usage example
@@ -716,14 +716,23 @@ Each item is its own API call and nothing is rolled back. The first failure stop
 
 #### Errors
 
-Nothing is created when:
+If the request has problems, nothing is created. The error code is `INVALID_TARGETING`, and `problems` lists every problem at once, each with the `kind` and `name` of its item, code, message, hint and, where there are any, the valid `options`:
+
+| Code | When |
+|---|---|
+| `DUPLICATE_NAME` | The same context field or segment name appears more than once. |
+| `CONTEXT_FIELD_EXISTS` | A context field with that name exists, in any project. The message says which project owns it. |
+| `SEGMENT_EXISTS` | A segment with that name exists, in any project. |
+| `CONTEXT_FIELD_NOT_FOUND` | A segment constraint names a field that neither exists nor is created in the same call. The hint says when another project owns the name. The options list the fields the segment can use. |
+| `INVALID_CONSTRAINT` | A constraint has no value, or Unleash rejects its value, such as text for `NUM_GT` or a value outside the field's legal values. |
+
+Other errors, also before anything is created:
 - `INVALID_SCOPE`: `scope: "global"` comes with a `projectId`.
 - `PROJECT_NOT_FOUND`: the project does not exist. The hint points to `list_projects`.
-- `CONTEXT_FIELD_NOT_FOUND`: a segment constraint names a field that neither exists nor is created in the same call.
-- `INVALID_CONSTRAINT`: a constraint has no value.
-- `HTTP_404`: Unleash is older than 7.4.0, so it has no project context fields. The hint suggests `scope: "global"`.
+- `VALIDATION_ERROR`: a context field breaks Unleash's limits: a name that is not URL-friendly or is over 100 characters, a description over 250, or a legal value over 100 or repeated.
+- `HTTP_404`: Unleash is older than 7.4.1, so it has no project context fields. The hint suggests `scope: "global"`. Project segments still work on older versions.
 
-`HTTP_409` on a context field means the name is taken, and says which project owns it.
+If creating fails partway through, the error keeps Unleash's code and adds `failed`, `created` and `notAttempted`.
 
 ### Get flag state
 
