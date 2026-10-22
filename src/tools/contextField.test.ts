@@ -17,8 +17,15 @@ after(async () => {
   await close();
 });
 
-test('creates a context field', async () => {
-  const output = await createContextField(unleash, { kind: 'context_field', action: 'create', name, description: 'Created by the MCP server tests' });
+test('creates a context field with its legal values', async () => {
+  const output = await createContextField(unleash, {
+    kind: 'context_field',
+    action: 'create',
+    name,
+    description: 'Created by the MCP server tests',
+    stickiness: true,
+    legalValues: [{ value: 'gold', description: 'Paying customers' }, { value: 'free' }],
+  });
 
   assert.deepEqual(output, { kind: 'created', resource: 'context_field', name });
 });

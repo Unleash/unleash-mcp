@@ -21,7 +21,7 @@
             "content-length": "172",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 07:59:33 GMT",
+            "date": "Thu, 22 Oct 2026 09:02:03 GMT",
             "etag": "W/\"ac-XgWi21Bz7mzaPgdzkqLZLMV7dDw\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
@@ -42,7 +42,7 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 07:59:34 GMT",
+            "date": "Thu, 22 Oct 2026 09:02:04 GMT",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
             "ratelimit-remaining": "19997",
@@ -60,11 +60,11 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T07:59:34.085Z"
+      "timestamp": "2026-10-22T09:02:04.141Z"
     }
   },
   {
-    "hash": "y4Jp8xcb4i8RZP-6xHyZ0wg9QqFhZAvbYyKrBWvISZY",
+    "hash": "VF_gcuFRubZuO0kta-dAgNKXFB7DrcWZTMVzizwm-Gk",
     "snapshot": {
       "request": {
         "method": "POST",
@@ -73,22 +73,22 @@
           "content-type": "application/json",
           "accept": "*/*",
           "accept-language": "*",
-          "content-length": "74",
+          "content-length": "175",
           "sec-fetch-mode": "cors",
           "user-agent": "node",
           "accept-encoding": "br, gzip, deflate, zstd"
         },
-        "body": "{\"name\":\"mcpContextField\",\"description\":\"Created by the MCP server tests\"}"
+        "body": "{\"name\":\"mcpContextField\",\"description\":\"Created by the MCP server tests\",\"stickiness\":true,\"legalValues\":[{\"value\":\"gold\",\"description\":\"Paying customers\"},{\"value\":\"free\"}]}"
       },
       "responses": [
         {
           "statusCode": 201,
           "headers": {
-            "content-length": "163",
+            "content-length": "228",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 07:59:34 GMT",
-            "etag": "W/\"a3-hDwgs2v0yy6Q+E3+QCBAa1WyQ1M\"",
+            "date": "Thu, 22 Oct 2026 09:02:04 GMT",
+            "etag": "W/\"e4-HAHWTKgmDHkS1MrRn/zgG4NKito\"",
             "location": "context/mcpContextField",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
@@ -102,12 +102,12 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwQ29udGV4dEZpZWxkIiwiZGVzY3JpcHRpb24iOiJDcmVhdGVkIGJ5IHRoZSBNQ1Agc2VydmVyIHRlc3RzIiwic3RpY2tpbmVzcyI6ZmFsc2UsInNvcnRPcmRlciI6MCwibGVnYWxWYWx1ZXMiOltdLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTIyVDA3OjU5OjMzLjk4M1oifQ==",
+          "body": "eyJuYW1lIjoibWNwQ29udGV4dEZpZWxkIiwiZGVzY3JpcHRpb24iOiJDcmVhdGVkIGJ5IHRoZSBNQ1Agc2VydmVyIHRlc3RzIiwic3RpY2tpbmVzcyI6dHJ1ZSwic29ydE9yZGVyIjowLCJsZWdhbFZhbHVlcyI6W3sidmFsdWUiOiJnb2xkIiwiZGVzY3JpcHRpb24iOiJQYXlpbmcgY3VzdG9tZXJzIn0seyJ2YWx1ZSI6ImZyZWUifV0sImNyZWF0ZWRBdCI6IjIwMjYtMTAtMjJUMDk6MDI6MDMuOTc4WiJ9",
           "trailers": {}
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T07:59:33.990Z"
+      "timestamp": "2026-10-22T09:02:04.041Z"
     }
   }
 ]
