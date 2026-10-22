@@ -12,7 +12,15 @@ const contextField = z.object({
   include: z.array(contextFieldInclude).optional().describe('Parts that cost Unleash an extra request, left out unless named'),
 }).describe('A context field: what it holds, the values it allows, whether it can drive stickiness, and on request which flags use it');
 
-const query = z.discriminatedUnion('kind', [project, flag, contextField]);
+const segmentInclude = z.enum(['usage']).describe('usage: the flags whose targets use the segment. Ask before changing or deleting the segment');
+
+const segment = z.object({
+  kind: z.literal('segment'),
+  id: z.number().int().describe('Segment id, as targets refer to it'),
+  include: z.array(segmentInclude).optional().describe('Parts that cost an extra request, left out unless named'),
+}).describe('A segment: the constraints it stands for, its project, who made it, and on request which flags use it');
+
+const query = z.discriminatedUnion('kind', [project, flag, contextField, segment]);
 
 export const inspectInput = {
   queries: z.array(query).min(1).describe('Run together; one result per query, in the order asked'),
@@ -23,3 +31,4 @@ export type Query = z.infer<typeof query>;
 export type ProjectQuery = z.infer<typeof project>;
 export type FlagQuery = z.infer<typeof flag>;
 export type ContextFieldQuery = z.infer<typeof contextField>;
+export type SegmentQuery = z.infer<typeof segment>;

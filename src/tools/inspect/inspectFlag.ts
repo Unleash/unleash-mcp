@@ -2,7 +2,8 @@ import type { components } from '../../unleash/api.d.ts';
 import type { UnleashClient } from '../../unleash/client.ts';
 import type { FlagQuery } from './inspectInput.ts';
 import type { Environment, FlagType, InspectResult, Lifecycle, LifecycleStage, Link, Milestone, Parent, ReleasePlan, Tag, Transition } from './inspectOutput.ts';
-import type { Constraint, Target, Value } from '../shared/target.ts';
+import type { Target, Value } from '../shared/target.ts';
+import { toConstraint, type UnleashConstraint } from './constraint.ts';
 import { toFailed } from '../shared/failed.ts';
 
 export const inspectFlag = async (unleash: UnleashClient, { project, flag }: FlagQuery): Promise<InspectResult> => {
@@ -36,7 +37,6 @@ export const inspectFlag = async (unleash: UnleashClient, { project, flag }: Fla
 
 type UnleashEnvironment = components['schemas']['featureEnvironmentSchema'];
 type UnleashReleasePlan = components['schemas']['releasePlanSchema'];
-type UnleashConstraint = components['schemas']['constraintSchema'];
 type UnleashVariant = components['schemas']['strategyVariantSchema'];
 // What a feature strategy and a release plan milestone strategy have in common.
 type UnleashStrategy = {
@@ -67,7 +67,6 @@ const toReleasePlan = ({ name, milestones, activeMilestoneId }: UnleashReleasePl
   })),
 });
 
-
 // TODO: take `transitionConditionSchema` directly once the spec uses it on a plan milestone instead of an empty object.
 const toTransition = (condition: object): Transition => {
   const c = condition as components['schemas']['transitionConditionSchema'];
@@ -81,15 +80,6 @@ const toTarget = (s: UnleashStrategy): Target & { rollout: number } => ({
   ...(s.constraints?.length ? { constraints: s.constraints.map(toConstraint) } : {}),
   ...(s.segments?.length ? { segments: s.segments } : {}),
   ...(s.variants?.length ? { values: s.variants.map(toValue) } : {}),
-});
-
-const toConstraint = (c: UnleashConstraint): Constraint => ({
-  field: c.contextName,
-  operator: c.operator,
-  // Single-value operators (numbers, dates, semver) keep their value in `value`.
-  values: c.values?.length ? c.values : c.value ? [c.value] : [],
-  ...(c.inverted ? { inverted: true } : {}),
-  ...(c.caseInsensitive ? { caseInsensitive: true } : {}),
 });
 
 // A variable weight is what Unleash resolved, not what was asked for, so only a fixed one comes back as a share.

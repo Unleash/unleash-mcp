@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createStubbedClient, createRecordedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { deleteFlag } from '../../unleash/testSetup.ts';
+import { deleteFlag, deleteSegmentNamed } from '../../unleash/testSetup.ts';
 import { createRelease } from './release.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./release.snapshot.json', import.meta.url).pathname);
@@ -13,21 +13,10 @@ const segment = 'mcp-beta';
 let segmentId: number | undefined;
 let changeRequestId: number | undefined;
 
-const deleteSegment = async (id: number): Promise<void> => {
-  await admin.DELETE('/api/admin/segments/{id}', { params: { path: { id } } });
-};
-
-// A failed recording can leave the segment behind, and Unleash refuses a second one with the same name.
-const deleteLeftoverSegment = async (): Promise<void> => {
-  const listed = await admin.GET('/api/admin/segments');
-  const leftover = listed.data?.segments?.find((s) => s.name === segment);
-  if (leftover) await deleteSegment(leftover.id);
-};
-
 // The flag is gone before the tests, so the first release creates it.
 before(async () => {
   await deleteFlag(admin, project, flag);
-  await deleteLeftoverSegment();
+  await deleteSegmentNamed(admin, segment);
   const created = await admin.POST('/api/admin/segments', { body: { name: segment, constraints: [] } });
   segmentId = created.data?.id;
 });
@@ -40,7 +29,7 @@ after(async () => {
     body: { state: 'Cancelled' } as never,
   });
   await deleteFlag(admin, project, flag);
-  if (segmentId) await deleteSegment(segmentId);
+  await deleteSegmentNamed(admin, segment);
   await close();
 });
 

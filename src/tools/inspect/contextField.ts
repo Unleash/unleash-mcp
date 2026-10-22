@@ -1,7 +1,7 @@
 import type { UnleashClient } from '../../unleash/client.ts';
-import type { components } from '../../unleash/api.d.ts';
 import type { ContextFieldQuery } from './inspectInput.ts';
-import type { InspectResult, Usage } from './inspectOutput.ts';
+import type { InspectResult } from './inspectOutput.ts';
+import { toUsedBy } from './usage.ts';
 import { toFailed } from '../shared/failed.ts';
 
 export const inspectContextField = async (unleash: UnleashClient, { project, name, include = [] }: ContextFieldQuery): Promise<InspectResult> => {
@@ -25,14 +25,3 @@ export const inspectContextField = async (unleash: UnleashClient, { project, nam
     ...(used?.data ? { usedBy: toUsedBy(used.data.strategies) } : {}),
   };
 };
-
-// Unleash answers with one entry per strategy; a flag with several strategies on the field in one
-// environment is still one use, so entries are deduplicated by project, flag and environment.
-const toUsedBy = (strategies: UnleashUsage[]): Usage[] => {
-  const uses = strategies.map(({ projectId, featureName, environment }): Usage => ({ project: projectId, flag: featureName, environment }));
-  return uses.filter((use, index) => uses.findIndex((other) => isSameUse(use, other)) === index);
-};
-
-type UnleashUsage = components['schemas']['contextFieldStrategiesSchema']['strategies'][number];
-
-const isSameUse = (a: Usage, b: Usage): boolean => a.project === b.project && a.flag === b.flag && a.environment === b.environment;
