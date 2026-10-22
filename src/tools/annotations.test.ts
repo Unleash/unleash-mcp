@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { cleanupFlagTool } from './cleanupFlag.js';
 import { createFlagTool } from './createFlag.js';
+import { createTargetingTool } from './createTargeting.js';
 import { detectFlagTool } from './detectFlag.js';
 import { evaluateChangeTool } from './evaluateChange.js';
 import { evaluateFlagTool } from './evaluateFlag.js';
@@ -24,6 +25,7 @@ const tools = [
   wrapChangeTool,
   cleanupFlagTool,
   setFlagRolloutTool,
+  createTargetingTool,
   getFlagStateTool,
   evaluateFlagTool,
   getFlagHistoryTool,

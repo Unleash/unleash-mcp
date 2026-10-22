@@ -88,6 +88,7 @@ describe('remote MCP handler (e2e)', () => {
     expect(toolNames).toEqual([
       'cleanup_flag',
       'create_flag',
+      'create_targeting',
       'detect_flag',
       'evaluate_change',
       'evaluate_flag',
