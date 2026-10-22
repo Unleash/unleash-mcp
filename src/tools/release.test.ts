@@ -58,13 +58,27 @@ test('releases to several audiences', async () => {
   const beta = { field: 'userId', operator: 'IN' as const, values: ['1', '2'] };
   const blue = { name: 'blue', payload: { type: 'string' as const, value: 'blue' } };
 
-  const output = await release({ project, flag, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }, { name: 'Beta testers', constraints: [beta], value: blue }] });
+  const output = await release({ project, flag, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }, { name: 'Beta testers', constraints: [beta], values: [blue] }] });
 
   assert.deepEqual(output, {
     kind: 'released',
     flag: { status: 'existing', name: flag },
     environment: 'development',
-    targets: [{ name: 'Everyone', rollout: 50 }, { name: 'Beta testers', rollout: 100, constraints: [beta], value: blue }],
+    targets: [{ name: 'Everyone', rollout: 50 }, { name: 'Beta testers', rollout: 100, constraints: [beta], values: [blue] }],
+  });
+});
+
+test('splits an audience across values', async () => {
+  const release = createRelease(unleash);
+  const values = [{ name: 'control', share: 50 }, { name: 'new' }];
+
+  const output = await release({ project, flag, environment: 'development', targets: [{ name: 'Checkout test', values }] });
+
+  assert.deepEqual(output, {
+    kind: 'released',
+    flag: { status: 'existing', name: flag },
+    environment: 'development',
+    targets: [{ name: 'Checkout test', rollout: 100, values }],
   });
 });
 
