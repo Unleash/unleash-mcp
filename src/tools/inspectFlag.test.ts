@@ -31,13 +31,18 @@ after(async () => {
   await close();
 });
 
-// The flag is created anew on every recording, so the timestamp is pinned to its shape, not its value.
-test('describes a flag with who worked on it, its parents, tags and links', async () => {
+const timestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+
+// The flag is created anew on every recording, so the timestamps are pinned to their shape, not their value.
+// A kill switch has no expected lifetime.
+test('describes a flag with its lifecycle, who worked on it, its parent, tags and links', async () => {
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
 
-  const { createdAt, ...rest } = output as Extract<typeof output, { kind: 'flag' }>;
-  assert.match(createdAt ?? '', /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
-  assert.deepEqual(rest, {
+  const { createdAt, lifecycle, ...rest } = output as Extract<typeof output, { kind: 'flag' }>;
+  assert.match(createdAt ?? '', timestamp);
+  assert.match(lifecycle?.enteredAt ?? '', timestamp);
+  assert.deepEqual({ stage: lifecycle?.stage, ...rest }, {
+    stage: 'define',
     kind: 'flag',
     name: flag,
     type: 'kill-switch',
@@ -47,6 +52,59 @@ test('describes a flag with who worked on it, its parents, tags and links', asyn
     tags: [{ type: 'simple', value: 'mcp-inspect' }],
     links: [{ url: 'https://example.com/mcp-inspect', title: 'Spec' }],
   });
+});
+
+// The parent is created without a type, so Unleash gives it the default `release` with its lifetime.
+test('names the flags that depend on a flag', async () => {
+  const output = await inspectFlag(unleash, { kind: 'flag', project, flag: parent });
+
+  const { createdAt, lifecycle, expectedLifetimeEndsAt, ...rest } = output as Extract<typeof output, { kind: 'flag' }>;
+  assert.match(createdAt ?? '', timestamp);
+  assert.match(lifecycle?.enteredAt ?? '', timestamp);
+  assert.match(expectedLifetimeEndsAt ?? '', timestamp);
+  assert.deepEqual({ stage: lifecycle?.stage, ...rest }, {
+    stage: 'define',
+    kind: 'flag',
+    name: parent,
+    type: 'release',
+    createdBy: 'Mateusz K',
+    collaborators: ['Mateusz K'],
+    children: [flag],
+  });
+});
+
+test('names the lifecycle stage as the Unleash UI does, with its status', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release', lifecycle: { stage: 'completed', status: 'kept', enteredStageAt: '2026-10-21T09:00:00.000Z' } });
+  stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
+
+  const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
+
+  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', lifecycle: { stage: 'cleanup', status: 'kept', enteredAt: '2026-10-21T09:00:00.000Z' } });
+});
+
+test('tells when an SDK last saw the flag in each environment', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: flagPath, method: 'GET' }).reply(200, {
+    name: flag,
+    type: 'release',
+    environments: [{ name: 'development', lastSeenAt: '2026-10-21T09:00:00.000Z' }, { name: 'production', lastSeenAt: null }],
+  });
+  stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
+
+  const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
+
+  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', lastSeen: { development: '2026-10-21T09:00:00.000Z' } });
+});
+
+test('tells when the flag is expected to be gone', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release', expectedLifetimeEndsAt: '2026-12-01T07:39:52.026Z' });
+  stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
+
+  const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
+
+  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', expectedLifetimeEndsAt: '2026-12-01T07:39:52.026Z' });
 });
 
 test('tells which variants the parent must resolve to', async () => {
