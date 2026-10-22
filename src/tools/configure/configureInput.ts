@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { target } from '../shared/target.ts';
 
 const legalValue = z.object({
   value: z.string().describe('e.g. gold'),
@@ -26,7 +27,7 @@ const deleteContextField = z.object({
   kind: z.literal('context_field'),
   action: z.literal('delete'),
   project,
-  name: z.string(),
+  name: z.string().describe('Name of the context field to delete'),
 }).describe('Delete a context field. Unleash refuses while a flag has a constraint on it');
 
 const createLegalValue = z.object({
@@ -42,10 +43,30 @@ const deleteLegalValue = z.object({
   action: z.literal('delete'),
   project,
   field: z.string().describe('Name of the context field the value belongs to'),
-  value: z.string(),
+  value: z.string().describe('The value to remove, e.g. gold'),
 }).describe('Remove a legal value from a context field. Succeeds when the value is not there. Constraints that use it keep it');
 
-const change = z.union([createContextField, updateContextField, deleteContextField, createLegalValue, deleteLegalValue]);
+const advance = z.union([
+  z.object({ afterMinutes: z.number().int().min(1).describe('Minutes since the milestone started') }),
+  z.object({ afterExposures: z.number().int().min(1).describe('Times the flag was evaluated as enabled') }),
+]).describe('Moves the flag to the next milestone on its own once met');
+
+const milestone = z.object({
+  name: z.string().describe('e.g. Internal, 50%, Everyone'),
+  targets: z.array(target).min(1).describe('The audiences that get the feature while the milestone is active, OR-ed'),
+  advance: advance.optional(),
+}).describe('One step of the rollout');
+
+const createReleaseTemplate = z.object({
+  kind: z.literal('release_template'),
+  action: z.literal('create'),
+  project: z.string().optional().describe('Project id of a project template; leave out for a template every project can use'),
+  name: z.string().describe('Unique, e.g. Gradual rollout'),
+  description: z.string().optional().describe('What the template is for, shown when picking one for a flag'),
+  milestones: z.array(milestone).min(1).describe('In release order. Starting a milestone replaces the audiences of the one before'),
+}).describe('Create a release template: a reusable rollout plan for flags, made of milestones');
+
+const change = z.union([createContextField, updateContextField, deleteContextField, createLegalValue, deleteLegalValue, createReleaseTemplate]);
 
 export const configureInput = {
   changes: z.array(change).min(1).describe('Applied in the order given; one result per change'),
@@ -65,3 +86,5 @@ export type DeleteContextField = z.infer<typeof deleteContextField>;
 export type CreateLegalValue = z.infer<typeof createLegalValue>;
 /** The change that removes a legal value from a context field. */
 export type DeleteLegalValue = z.infer<typeof deleteLegalValue>;
+/** The change that creates a release template, global or in a project. */
+export type CreateReleaseTemplate = z.infer<typeof createReleaseTemplate>;
