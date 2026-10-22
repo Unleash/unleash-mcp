@@ -139,3 +139,11 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Snapshots leave out response headers that change on every recording (`date`, `etag`, `ratelimit-*`), so a re-recording diffs less noise.
 - Response bodies are kept verbatim even though they carry ids and timestamps: they are the truth about the API, and ids echo into later request URLs, so normalising them would break replay.
 - undici's per-entry recording timestamp stays: stripping it needs code that rewrites the snapshot file, and one line per exchange is easy to skim past.
+
+## 2026-10-22 — Release templates in configure
+
+- `configure` creates release templates, global or in a project (the project endpoint is beta). Only create for now.
+- A milestone takes `targets`, the audience shape `release` takes. Rejected: Unleash strategies as they are.
+- A milestone can advance on its own (`advance`: after minutes or after exposures).
+- A created template answers with its `id` next to its `name`. Release template ids are shown to the agent, the same exception as segment and change request ids. Rejected: the name only.
+- The project template test is stubbed, not recorded: the sandbox's limit of 10 release templates leaves room for only one of ours. Rejected: freeing slots in the sandbox, and creating one template at a time.
