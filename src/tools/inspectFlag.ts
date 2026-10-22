@@ -1,6 +1,6 @@
 import type { UnleashClient } from '../unleash/client.ts';
 import type { FlagQuery } from './inspectInput.ts';
-import type { FlagType, InspectResult, Link, Parent, Tag } from './inspectOutput.ts';
+import type { FlagType, InspectResult, Lifecycle, LifecycleStage, Link, Parent, Tag } from './inspectOutput.ts';
 import { toFailed } from './failed.ts';
 
 export const inspectFlag = async (unleash: UnleashClient, { project, flag }: FlagQuery): Promise<InspectResult> => {
@@ -11,21 +11,35 @@ export const inspectFlag = async (unleash: UnleashClient, { project, flag }: Fla
   ]);
   if (!found.response.ok || !found.data) return toFailed(found);
   if (!tagged.response.ok || !tagged.data) return toFailed(tagged);
-  const { name, type, createdAt, createdBy, collaborators, dependencies, links } = found.data;
+  const { name, type, createdAt, createdBy, lifecycle, expectedLifetimeEndsAt, environments, collaborators, dependencies, children, links } = found.data;
   const tags = tagged.data.tags;
   const collaboratorNames = collaborators?.users.map((user) => user.name) ?? [];
+  const lastSeen = Object.fromEntries((environments ?? []).flatMap((e) => (e.lastSeenAt ? [[e.name, e.lastSeenAt]] : [])));
   return {
     kind: 'flag',
     name,
     type: type as FlagType,
+    ...(lifecycle ? { lifecycle: toLifecycle(lifecycle) } : {}),
+    // Unleash returns `expectedLifetimeEndsAt` but leaves it out of its OpenAPI spec, hence the type check.
+    ...(typeof expectedLifetimeEndsAt === 'string' ? { expectedLifetimeEndsAt } : {}),
+    ...(Object.keys(lastSeen).length ? { lastSeen } : {}),
     ...(createdAt ? { createdAt } : {}),
     ...(createdBy ? { createdBy: createdBy.name } : {}),
     ...(collaboratorNames.length ? { collaborators: collaboratorNames } : {}),
     ...(dependencies?.[0] ? { parent: toParent(dependencies[0]) } : {}),
+    ...(children?.length ? { children } : {}),
     ...(tags?.length ? { tags: tags.map(toTag) } : {}),
     ...(links?.length ? { links: links.map(toLink) } : {}),
   };
 };
+
+const stages: Record<string, LifecycleStage> = { initial: 'define', 'pre-live': 'develop', live: 'production', completed: 'cleanup', archived: 'archived' };
+
+const toLifecycle = ({ stage, status, enteredStageAt }: { stage: keyof typeof stages; status?: string | null; enteredStageAt: string }): Lifecycle => ({
+  stage: stages[stage],
+  ...(status ? { status } : {}),
+  enteredAt: enteredStageAt,
+});
 
 // Unleash allows one parent per flag; its schema is an array anyway.
 const toParent = ({ feature, enabled, variants }: { feature: string; enabled?: boolean; variants?: string[] }): Parent => ({
