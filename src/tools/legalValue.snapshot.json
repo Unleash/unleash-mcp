@@ -21,12 +21,6 @@
             "content-length": "178",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:13:52 GMT",
-            "etag": "W/\"b2-Md5GiSZM1YehsDZrTx4ZCOIUKA4\"",
-            "ratelimit-limit": "20000",
-            "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19998",
-            "ratelimit-reset": "60",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "vary": "Accept-Encoding",
@@ -42,11 +36,6 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:13:53 GMT",
-            "ratelimit-limit": "20000",
-            "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19978",
-            "ratelimit-reset": "59",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "x-content-type-options": "nosniff",
@@ -60,7 +49,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:13:53.636Z"
+      "timestamp": "2026-10-22T12:52:54.426Z"
     }
   },
   {
@@ -85,12 +74,6 @@
             "content-length": "192",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:13:52 GMT",
-            "etag": "W/\"c0-UmyCtWZkyatH9AdnOkb/8RYMs/c\"",
-            "ratelimit-limit": "20000",
-            "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19997",
-            "ratelimit-reset": "60",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "vary": "Accept-Encoding",
@@ -106,11 +89,6 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:13:53 GMT",
-            "ratelimit-limit": "20000",
-            "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19976",
-            "ratelimit-reset": "59",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "x-content-type-options": "nosniff",
@@ -124,7 +102,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:13:53.712Z"
+      "timestamp": "2026-10-22T12:52:54.596Z"
     }
   },
   {
@@ -151,13 +129,7 @@
             "content-length": "137",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:13:52 GMT",
-            "etag": "W/\"89-ZwruKU99XCchGxo94bPG70X1LNg\"",
             "location": "context/mcpLegalValueField",
-            "ratelimit-limit": "20000",
-            "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19994",
-            "ratelimit-reset": "60",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "vary": "Accept-Encoding",
@@ -166,12 +138,12 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwTGVnYWxWYWx1ZUZpZWxkIiwiZGVzY3JpcHRpb24iOm51bGwsInN0aWNraW5lc3MiOmZhbHNlLCJzb3J0T3JkZXIiOjAsImxlZ2FsVmFsdWVzIjpbXSwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yMlQxMDoxMzo1Mi41OTRaIn0=",
+          "body": "eyJuYW1lIjoibWNwTGVnYWxWYWx1ZUZpZWxkIiwiZGVzY3JpcHRpb24iOm51bGwsInN0aWNraW5lc3MiOmZhbHNlLCJzb3J0T3JkZXIiOjAsImxlZ2FsVmFsdWVzIjpbXSwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yMlQxMjo1Mjo1My4xNDNaIn0=",
           "trailers": {}
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:13:52.587Z"
+      "timestamp": "2026-10-22T12:52:53.214Z"
     }
   },
   {
@@ -198,13 +170,7 @@
             "content-length": "167",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:13:52 GMT",
-            "etag": "W/\"a7-R7EF7NFuiXnyX5EV780fu593aHU\"",
             "location": "context/mcpProjectLegalValueField",
-            "ratelimit-limit": "20000",
-            "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19992",
-            "ratelimit-reset": "60",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "vary": "Accept-Encoding",
@@ -213,12 +179,12 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwUHJvamVjdExlZ2FsVmFsdWVGaWVsZCIsImRlc2NyaXB0aW9uIjpudWxsLCJzdGlja2luZXNzIjpmYWxzZSwic29ydE9yZGVyIjowLCJsZWdhbFZhbHVlcyI6W10sImNyZWF0ZWRBdCI6IjIwMjYtMTAtMjJUMTA6MTM6NTIuNjg5WiIsInByb2plY3QiOiJtY3Atc2VydmVyIn0=",
+          "body": "eyJuYW1lIjoibWNwUHJvamVjdExlZ2FsVmFsdWVGaWVsZCIsImRlc2NyaXB0aW9uIjpudWxsLCJzdGlja2luZXNzIjpmYWxzZSwic29ydE9yZGVyIjowLCJsZWdhbFZhbHVlcyI6W10sImNyZWF0ZWRBdCI6IjIwMjYtMTAtMjJUMTI6NTI6NTMuMzI5WiIsInByb2plY3QiOiJtY3Atc2VydmVyIn0=",
           "trailers": {}
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:13:52.672Z"
+      "timestamp": "2026-10-22T12:52:53.355Z"
     }
   },
   {
@@ -243,11 +209,6 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:13:52 GMT",
-            "ratelimit-limit": "20000",
-            "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19990",
-            "ratelimit-reset": "60",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "x-content-type-options": "nosniff",
@@ -261,7 +222,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:13:52.831Z"
+      "timestamp": "2026-10-22T12:52:53.549Z"
     }
   },
   {
@@ -286,11 +247,6 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:13:52 GMT",
-            "ratelimit-limit": "20000",
-            "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19988",
-            "ratelimit-reset": "60",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "x-content-type-options": "nosniff",
@@ -304,7 +260,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:13:52.984Z"
+      "timestamp": "2026-10-22T12:52:53.739Z"
     }
   },
   {
@@ -327,11 +283,6 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:13:53 GMT",
-            "ratelimit-limit": "20000",
-            "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19986",
-            "ratelimit-reset": "60",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "x-content-type-options": "nosniff",
@@ -345,7 +296,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:13:53.079Z"
+      "timestamp": "2026-10-22T12:52:53.853Z"
     }
   },
   {
@@ -370,11 +321,6 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:13:53 GMT",
-            "ratelimit-limit": "20000",
-            "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19984",
-            "ratelimit-reset": "59",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "x-content-type-options": "nosniff",
@@ -388,7 +334,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:13:53.227Z"
+      "timestamp": "2026-10-22T12:52:54.073Z"
     }
   },
   {
@@ -413,11 +359,6 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:13:53 GMT",
-            "ratelimit-limit": "20000",
-            "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19981",
-            "ratelimit-reset": "59",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "x-content-type-options": "nosniff",
@@ -431,7 +372,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:13:53.398Z"
+      "timestamp": "2026-10-22T12:52:54.173Z"
     }
   },
   {
@@ -454,11 +395,6 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:13:53 GMT",
-            "ratelimit-limit": "20000",
-            "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19979",
-            "ratelimit-reset": "59",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "x-content-type-options": "nosniff",
@@ -472,7 +408,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:13:53.541Z"
+      "timestamp": "2026-10-22T12:52:54.263Z"
     }
   }
 ]
