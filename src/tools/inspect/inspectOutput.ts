@@ -80,6 +80,8 @@ const flag = z.object({
   links: z.array(link).optional().describe('Related URLs, such as the pull request or the ticket'),
 });
 
+const usage = z.object({ project: z.string(), flag: z.string(), environment: z.string() });
+
 const contextField = z.object({
   kind: z.literal('context_field'),
   name: z.string(),
@@ -87,6 +89,7 @@ const contextField = z.object({
   description: z.string().optional(),
   stickiness: z.boolean().describe('Whether flags can use the field for custom stickiness'),
   legalValues: z.array(legalValue).optional().describe('Set when constraints on the field may only use these values'),
+  usedBy: z.array(usage).optional().describe('Set when usage is included; every flag environment with a constraint on the field'),
 });
 
 const result = z.discriminatedUnion('kind', [project, flag, contextField, failed]);
@@ -100,6 +103,7 @@ export type InspectResult = z.infer<typeof result>;
 export type Project = z.infer<typeof project>;
 export type Flag = z.infer<typeof flag>;
 export type ContextField = z.infer<typeof contextField>;
+export type Usage = z.infer<typeof usage>;
 export type FlagType = z.infer<typeof flagType>;
 export type Parent = z.infer<typeof parent>;
 export type Lifecycle = z.infer<typeof lifecycle>;
