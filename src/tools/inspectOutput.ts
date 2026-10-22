@@ -13,7 +13,18 @@ const project = z.object({
   flagNaming: flagNaming.optional().describe('Set when the project enforces a naming pattern on new flags'),
 });
 
-const result = z.discriminatedUnion('kind', [project, failed]);
+// The types Unleash accepts on create; its read schema loosens them to a string.
+const flagType = z.enum(['release', 'experiment', 'operational', 'kill-switch', 'permission', 'sunset']);
+
+const flag = z.object({
+  kind: z.literal('flag'),
+  name: z.string(),
+  type: flagType,
+  createdAt: z.string().optional().describe('ISO timestamp'),
+  createdBy: z.string().optional().describe('Name of the user who created the flag'),
+});
+
+const result = z.discriminatedUnion('kind', [project, flag, failed]);
 
 export const inspectOutput = {
   results: z.array(result).describe('One per query, in the order asked'),
@@ -22,3 +33,5 @@ export const inspectOutput = {
 export type InspectOutput = z.infer<z.ZodObject<typeof inspectOutput>>;
 export type InspectResult = z.infer<typeof result>;
 export type Project = z.infer<typeof project>;
+export type Flag = z.infer<typeof flag>;
+export type FlagType = z.infer<typeof flagType>;
