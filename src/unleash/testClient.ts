@@ -12,7 +12,7 @@ export const createRecordedClient = (snapshotPath: string): { unleash: UnleashCl
   const agent = new SnapshotAgent({
     mode: config.UNLEASH_SNAPSHOT_MODE,
     snapshotPath,
-    excludeHeaders: ['authorization'],
+    excludeHeaders: ['authorization', ...churningHeaders],
     ignoreHeaders: ['authorization'],
   });
   const unleash = createUnleashClient({
@@ -25,12 +25,13 @@ export const createRecordedClient = (snapshotPath: string): { unleash: UnleashCl
     headers: adminHeaders(record),
     fetch: createFetch(agent),
   });
-  const close = async (): Promise<void> => {
-    if (record) await agent.saveSnapshots();
-    await agent.close();
-  };
+  // Closing the agent writes the snapshots when recording.
+  const close = (): Promise<void> => agent.close();
   return { unleash, admin, close };
 };
+
+// Response headers that change on every recording and that nothing reads: left out so re-recording only diffs what matters.
+const churningHeaders = ['date', 'etag', 'ratelimit-limit', 'ratelimit-policy', 'ratelimit-remaining', 'ratelimit-reset'];
 
 // Replays ignore the authorization header, so only recording needs the admin token.
 const adminHeaders = (record: boolean): Record<string, string> =>

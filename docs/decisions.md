@@ -133,3 +133,9 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Tests recreate everything they need in setup and remove it in teardown; the sandbox holds only the project `mcp-server`. Rejected: depending on predefined flags and settings in the sandbox, which drift and break recordings.
 - Setup copes with what a failed recording leaves behind (a flag with children, a segment with the same name), so a recording never needs a manual sandbox cleanup.
 - Over time, setup should go through the server's own tools instead of the admin API.
+
+## 2026-10-22 — Snapshots hold only what matters
+
+- Snapshots leave out response headers that change on every recording (`date`, `etag`, `ratelimit-*`), so a re-recording diffs less noise.
+- Response bodies are kept verbatim even though they carry ids and timestamps: they are the truth about the API, and ids echo into later request URLs, so normalising them would break replay.
+- undici's per-entry recording timestamp stays: stripping it needs code that rewrites the snapshot file, and one line per exchange is easy to skim past.
