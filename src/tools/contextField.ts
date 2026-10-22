@@ -1,5 +1,5 @@
 import type { UnleashClient } from '../unleash/client.ts';
-import type { CreateContextField, DeleteContextField } from './configureInput.ts';
+import type { CreateContextField, DeleteContextField, UpdateContextField } from './configureInput.ts';
 import type { ConfigureResult } from './configureOutput.ts';
 import { toFailed } from './failed.ts';
 
@@ -8,6 +8,16 @@ export const createContextField = async (unleash: UnleashClient, { name, descrip
   const created = await unleash.POST('/api/admin/context', { body: { name, description, stickiness, legalValues } });
   if (!created.response.ok) return toFailed(created);
   return { kind: 'created', resource: 'context_field', name };
+};
+
+/** Replaces a global context field with the given properties, as Unleash's update does: whatever is left out is reset. */
+export const updateContextField = async (unleash: UnleashClient, { name, description, stickiness, legalValues }: UpdateContextField): Promise<ConfigureResult> => {
+  const updated = await unleash.PUT('/api/admin/context/{contextField}', {
+    params: { path: { contextField: name } },
+    body: { description, stickiness, legalValues },
+  });
+  if (!updated.response.ok) return toFailed(updated);
+  return { kind: 'updated', resource: 'context_field', name };
 };
 
 /** Deletes a global context field, answering Unleash's refusal (e.g. a flag still uses it) as `failed`. */
