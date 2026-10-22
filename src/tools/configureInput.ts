@@ -14,7 +14,13 @@ const createContextField = z.object({
   legalValues: z.array(legalValue).optional().describe('When set, constraints on the field may only use these values'),
 }).describe('Create a global context field');
 
-const change = z.discriminatedUnion('kind', [createContextField]);
+const deleteContextField = z.object({
+  kind: z.literal('context_field'),
+  action: z.literal('delete'),
+  name: z.string(),
+}).describe('Delete a global context field. Unleash refuses while a flag has a constraint on it');
+
+const change = z.union([createContextField, deleteContextField]);
 
 export const configureInput = {
   changes: z.array(change).min(1).describe('Applied in the order given; one result per change'),
@@ -26,3 +32,5 @@ export type ConfigureInput = z.infer<z.ZodObject<typeof configureInput>>;
 export type Change = z.infer<typeof change>;
 /** The change that creates a global context field. */
 export type CreateContextField = z.infer<typeof createContextField>;
+/** The change that deletes a global context field. */
+export type DeleteContextField = z.infer<typeof deleteContextField>;

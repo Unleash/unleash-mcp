@@ -1,7 +1,7 @@
 import type { UnleashClient } from '../unleash/client.ts';
 import type { Change, ConfigureInput } from './configureInput.ts';
 import type { ConfigureOutput, ConfigureResult } from './configureOutput.ts';
-import { createContextField } from './contextField.ts';
+import { createContextField, deleteContextField } from './contextField.ts';
 
 /** Builds the configure tool: applies changes to Unleash resources one after another, one result per change. */
 export const createConfigure =
@@ -14,6 +14,10 @@ export const createConfigure =
 
 const configure = (unleash: UnleashClient, change: Change): Promise<ConfigureResult> => {
   switch (change.kind) {
-    case 'context_field': return createContextField(unleash, change);
+    case 'context_field':
+      switch (change.action) {
+        case 'create': return createContextField(unleash, change);
+        case 'delete': return deleteContextField(unleash, change);
+      }
   }
 };
