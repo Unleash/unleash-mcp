@@ -6,8 +6,18 @@ import {
   resolveProjectId,
   type ServerContext,
 } from '../context.js';
+import type { FeatureDetails, FeatureEnvironment } from '../unleash/client.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
+import {
+  alreadyWaiting,
+  approvalEnvironments,
+  findApprovalEnvironment,
+  findWaiting,
+  type PendingApproval,
+  requestChange,
+  withWaitingChanges,
+} from './changeRequests.js';
 
 const toggleFlagEnvironmentSchema = z.object({
   projectId: z
@@ -42,33 +52,82 @@ export async function toggleFlagEnvironment(
       `${action} "${input.featureName}" in "${input.environment}"...`,
     );
 
-    await context.unleashClient.toggleFeatureEnvironment(
+    const { url, resourceUri } = createFlagLinks(
+      context.config.unleash.baseUrl,
       projectId,
       input.featureName,
+    );
+
+    const approvalEnvironment = findApprovalEnvironment(
+      await approvalEnvironments(context, projectId),
       input.environment,
-      input.enabled,
     );
+    let feature: FeatureDetails;
+    if (approvalEnvironment) {
+      const [current, open] = await Promise.all([
+        context.unleashClient.getFeature(projectId, input.featureName),
+        context.unleashClient.openChangeRequests(projectId),
+      ]);
+      feature = current;
+      const live = findEnvironmentState(feature, input.environment);
+      const waiting = findWaiting(open, approvalEnvironment, input.featureName);
+      const enabledOnceApplied = live && withWaitingChanges(live, waiting.changes).enabled;
+      const reply = {
+        success: true,
+        projectId,
+        featureName: input.featureName,
+        environment: input.environment,
+        enabled: live?.enabled ?? false,
+        links: { ui: url, resourceUri },
+      };
+      if (enabledOnceApplied !== input.enabled) {
+        const pending: PendingApproval<{ enabled: boolean }> = {
+          outcome: 'pendingApproval',
+          requested: { enabled: input.enabled },
+          ...(await requestChange(
+            context,
+            projectId,
+            approvalEnvironment,
+            input.featureName,
+            waiting,
+            [{ action: 'updateEnabled', payload: { enabled: input.enabled } }],
+          )),
+        };
+        return jsonResult({ ...reply, ...pending });
+      }
+      if (waiting.changeRequest && live?.enabled !== input.enabled) {
+        const pending = alreadyWaiting(
+          context,
+          projectId,
+          waiting.changeRequest,
+          { enabled: input.enabled },
+          `turns it ${input.enabled ? 'on' : 'off'}`,
+        );
+        return jsonResult({ ...reply, ...pending });
+      }
+    } else {
+      await context.unleashClient.toggleFeatureEnvironment(
+        projectId,
+        input.featureName,
+        input.environment,
+        input.enabled,
+      );
 
-    await context.notifyProgress(
-      progressToken,
-      75,
-      100,
-      `Feature ${input.enabled ? 'Enabled' : 'Disabled'} "${input.featureName}" in "${input.environment}", validating state...`,
-    );
+      await context.notifyProgress(
+        progressToken,
+        75,
+        100,
+        `Feature ${input.enabled ? 'Enabled' : 'Disabled'} "${input.featureName}" in "${input.environment}", validating state...`,
+      );
 
-    const feature = await context.unleashClient.getFeature(projectId, input.featureName);
+      feature = await context.unleashClient.getFeature(projectId, input.featureName);
+    }
 
     await context.notifyProgress(
       progressToken,
       100,
       100,
       `${input.enabled ? 'Enabled' : 'Disabled'} "${input.featureName}" in "${input.environment}"`,
-    );
-
-    const { url, resourceUri } = createFlagLinks(
-      context.config.unleash.baseUrl,
-      projectId,
-      input.featureName,
     );
 
     const apiBase = `${context.config.unleash.baseUrl}/api/admin/projects/${encodeURIComponent(
@@ -78,13 +137,10 @@ export async function toggleFlagEnvironment(
     )}`;
     const apiUrl = `${apiBase}/${input.enabled ? 'on' : 'off'}`;
 
-    const environmentState =
-      feature.environments?.find((env) => {
-        const target = input.environment.toLowerCase();
-        return env.environment?.toLowerCase() === target || env.name.toLowerCase() === target;
-      }) ?? null;
+    const environmentState = findEnvironmentState(feature, input.environment) ?? null;
 
     return jsonResult({
+      outcome: 'saved',
       success: true,
       dryRun: context.config.server.dryRun,
       projectId,
@@ -103,12 +159,23 @@ export async function toggleFlagEnvironment(
   }
 }
 
+function findEnvironmentState(
+  feature: FeatureDetails,
+  environment: string,
+): FeatureEnvironment | undefined {
+  const target = environment.toLowerCase();
+  return feature.environments?.find(
+    (env) => env.environment?.toLowerCase() === target || env.name.toLowerCase() === target,
+  );
+}
+
 export const toggleFlagEnvironmentTool = {
   name: 'toggle_flag_environment',
   title: 'Toggle flag in environment',
   annotations: { readOnlyHint: false, destructiveHint: false },
   description:
-    'Enable or disable a feature flag in a specific environment using the Unleash Admin API. For gradual rollouts, configure a flexibleRollout strategy first via set_flag_rollout.',
+    'Enable or disable a feature flag in a specific environment using the Unleash Admin API. For gradual rollouts, configure a flexibleRollout strategy first via set_flag_rollout. ' +
+    'In an environment where your changes need approval, the change goes into a change request instead and the result has outcome "pendingApproval" with a link to the change request; nothing changes until it is approved and applied.',
   inputSchema: toggleFlagEnvironmentSchema,
   implementation: toggleFlagEnvironment,
 };
