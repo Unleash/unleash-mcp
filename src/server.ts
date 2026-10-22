@@ -3,6 +3,9 @@ import pkg from '../package.json' with { type: 'json' };
 import { releaseInput } from './tools/releaseInput.ts';
 import { releaseOutput } from './tools/releaseOutput.ts';
 import { createRelease } from './tools/release.ts';
+import { configureInput } from './tools/configureInput.ts';
+import { configureOutput } from './tools/configureOutput.ts';
+import { createConfigure } from './tools/configure.ts';
 import { searchSpikeInput } from './tools/searchSpikeInput.ts';
 import { searchSpikeOutput } from './tools/searchSpikeOutput.ts';
 import { createSearchSpike } from './tools/searchSpike.ts';
@@ -19,6 +22,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   const server = new McpServer({ name: 'unleash-mcp', version: pkg.version });
   const release = createRelease(unleash);
   const searchSpike = createSearchSpike(unleash);
+  const configure = createConfigure(unleash);
 
   server.registerTool(
     'release',
@@ -42,6 +46,18 @@ export const createServer = (unleash: UnleashClient): McpServer => {
     },
     async (input) => {
       return toToolResult(await searchSpike(input));
+    },
+  );
+
+  server.registerTool(
+    'configure',
+    {
+      description: 'Change Unleash configuration: create global context fields. Applies the changes in order and reports each one.',
+      inputSchema: configureInput,
+      outputSchema: configureOutput,
+    },
+    async (input) => {
+      return { structuredContent: await configure(input), content: [] };
     },
   );
 
