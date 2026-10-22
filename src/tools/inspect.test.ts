@@ -21,7 +21,7 @@ test('answers each query in the order asked, failures included', async () => {
     results: [
       { kind: 'failed', status: 404, name: 'NotFoundError', reasons: ['No project found'] },
       { kind: 'project', environments: ['development'] },
-      { kind: 'flag', name: 'mcp-flag', type: 'release' },
+      { kind: 'flag', name: 'mcp-flag', type: 'release', environments: [] },
     ],
   });
 });

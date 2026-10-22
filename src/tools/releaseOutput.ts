@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { target } from './releaseInput.ts';
+import { target } from './target.ts';
 import { failed, type Failed } from './failed.ts';
 
 const flag = z.discriminatedUnion('status', [

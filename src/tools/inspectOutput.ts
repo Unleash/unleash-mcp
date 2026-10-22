@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { target } from './target.ts';
 import { failed } from './failed.ts';
 
 const flagNaming = z.object({
@@ -35,13 +36,20 @@ const lifecycle = z.object({
   enteredAt: z.string().describe('ISO timestamp'),
 });
 
+const environment = z.object({
+  name: z.string(),
+  enabled: z.boolean(),
+  lastSeenAt: z.string().optional().describe('ISO timestamp an SDK last evaluated the flag here'),
+  targets: z.array(target.required({ rollout: true })).optional().describe('The audiences that get the feature, in the shape release takes'),
+});
+
 const flag = z.object({
   kind: z.literal('flag'),
   name: z.string(),
   type: flagType,
   lifecycle: lifecycle.optional().describe('Where the flag is in its life'),
   expectedLifetimeEndsAt: z.string().optional().describe('ISO timestamp; after it the flag counts as stale'),
-  lastSeen: z.record(z.string(), z.string()).optional().describe('ISO timestamp an SDK last evaluated the flag, by environment; only environments with one'),
+  environments: z.array(environment),
   createdAt: z.string().optional().describe('ISO timestamp'),
   createdBy: z.string().optional().describe('Name of the user who created the flag'),
   collaborators: z.array(z.string()).optional().describe('Names of the users who changed the flag, most recent first'),
@@ -64,6 +72,7 @@ export type Flag = z.infer<typeof flag>;
 export type FlagType = z.infer<typeof flagType>;
 export type Parent = z.infer<typeof parent>;
 export type Lifecycle = z.infer<typeof lifecycle>;
+export type Environment = z.infer<typeof environment>;
 export type LifecycleStage = z.infer<typeof lifecycleStage>;
 export type Tag = z.infer<typeof tag>;
 export type Link = z.infer<typeof link>;

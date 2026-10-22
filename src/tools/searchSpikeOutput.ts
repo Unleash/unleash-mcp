@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { target } from './releaseInput.ts';
+import { target } from './target.ts';
 import { failed } from './failed.ts';
 
 const projects = z.object({ kind: z.literal('projects'), projects: z.array(z.object({ id: z.string(), name: z.string() })) });

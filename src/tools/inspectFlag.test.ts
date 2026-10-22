@@ -4,11 +4,14 @@ import { createRecordedClient, createStubbedClient } from '../unleash/testClient
 import { unleashError } from '../unleash/testError.ts';
 import { deleteFlag } from '../unleash/testSetup.ts';
 import { inspectFlag } from './inspectFlag.ts';
+import { createRelease } from './release.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./inspectFlag.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server';
 const flag = 'mcp-inspected-flag';
 const parent = 'mcp-inspected-parent';
+const beta = { field: 'userId', operator: 'IN' as const, values: ['1', '2'] };
+const values = [{ name: 'blue', payload: { type: 'string' as const, value: '#00f' }, share: 30 }, { name: 'green' }];
 const features = '/api/admin/projects/{projectId}/features';
 const flagPath = `/api/admin/projects/${project}/features/${flag}`;
 const tagsPath = `/api/admin/features/${flag}/tags`;
@@ -25,6 +28,7 @@ before(async () => {
   await admin.POST('/api/admin/projects/{projectId}/features/{child}/dependencies', { params: { path: { projectId: project, child: flag } }, body: { feature: parent } });
   await admin.POST('/api/admin/features/{featureName}/tags', { params: { path: { featureName: flag } }, body: { type: 'simple', value: 'mcp-inspect' } });
   await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/link', { params: { path: { projectId: project, featureName: flag } }, body: { url: 'https://example.com/mcp-inspect', title: 'Spec' } });
+  await createRelease(admin)({ project, flag, environment: 'development', targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values }] });
 });
 after(async () => {
   await deleteFlags();
@@ -35,7 +39,7 @@ const timestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 // The flag is created anew on every recording, so the timestamps are pinned to their shape, not their value.
 // A kill switch has no expected lifetime.
-test('describes a flag with its lifecycle, who worked on it, its parent, tags and links', async () => {
+test('describes a flag with its lifecycle, environments, who worked on it, its parent, tags and links', async () => {
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
 
   const { createdAt, lifecycle, ...rest } = output as Extract<typeof output, { kind: 'flag' }>;
@@ -47,6 +51,10 @@ test('describes a flag with its lifecycle, who worked on it, its parent, tags an
     name: flag,
     type: 'kill-switch',
     lifecycle: { stage: 'define' },
+    environments: [
+      { name: 'development', enabled: true, targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values }] },
+      { name: 'production', enabled: false },
+    ],
     createdBy: 'Mateusz K',
     collaborators: ['Mateusz K'],
     parent: { flag: parent },
@@ -69,6 +77,7 @@ test('names the flags that depend on a flag', async () => {
     name: parent,
     type: 'release',
     lifecycle: { stage: 'define' },
+    environments: [{ name: 'development', enabled: false }, { name: 'production', enabled: false }],
     createdBy: 'Mateusz K',
     collaborators: ['Mateusz K'],
     children: [flag],
@@ -82,7 +91,7 @@ test('names the lifecycle stage as the Unleash UI does, with its status', async 
 
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
 
-  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', lifecycle: { stage: 'cleanup', status: 'kept', enteredAt: '2026-10-21T09:00:00.000Z' } });
+  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', lifecycle: { stage: 'cleanup', status: 'kept', enteredAt: '2026-10-21T09:00:00.000Z' }, environments: [] });
 });
 
 test('tells when an SDK last saw the flag in each environment', async () => {
@@ -90,13 +99,18 @@ test('tells when an SDK last saw the flag in each environment', async () => {
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, {
     name: flag,
     type: 'release',
-    environments: [{ name: 'development', lastSeenAt: '2026-10-21T09:00:00.000Z' }, { name: 'production', lastSeenAt: null }],
+    environments: [{ name: 'development', enabled: true, lastSeenAt: '2026-10-21T09:00:00.000Z' }, { name: 'production', enabled: false, lastSeenAt: null }],
   });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
 
-  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', lastSeen: { development: '2026-10-21T09:00:00.000Z' } });
+  assert.deepEqual(output, {
+    kind: 'flag',
+    name: flag,
+    type: 'release',
+    environments: [{ name: 'development', enabled: true, lastSeenAt: '2026-10-21T09:00:00.000Z' }, { name: 'production', enabled: false }],
+  });
 });
 
 test('tells which variants the parent must resolve to', async () => {
@@ -106,7 +120,7 @@ test('tells which variants the parent must resolve to', async () => {
 
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
 
-  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', parent: { flag: parent, variants: ['blue'] } });
+  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', environments: [], parent: { flag: parent, variants: ['blue'] } });
 });
 
 test('tells when the parent must be disabled', async () => {
@@ -116,7 +130,7 @@ test('tells when the parent must be disabled', async () => {
 
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
 
-  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', parent: { flag: parent, enabled: false } });
+  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', environments: [], parent: { flag: parent, enabled: false } });
 });
 
 test('fails with the Unleash error when the flag does not exist', async () => {

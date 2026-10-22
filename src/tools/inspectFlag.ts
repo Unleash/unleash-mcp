@@ -1,6 +1,8 @@
+import type { components } from '../unleash/api.d.ts';
 import type { UnleashClient } from '../unleash/client.ts';
 import type { FlagQuery } from './inspectInput.ts';
-import type { FlagType, InspectResult, Lifecycle, LifecycleStage, Link, Parent, Tag } from './inspectOutput.ts';
+import type { Environment, FlagType, InspectResult, Lifecycle, LifecycleStage, Link, Parent, Tag } from './inspectOutput.ts';
+import type { Constraint, Target, Value } from './target.ts';
 import { toFailed } from './failed.ts';
 
 export const inspectFlag = async (unleash: UnleashClient, { project, flag }: FlagQuery): Promise<InspectResult> => {
@@ -14,7 +16,6 @@ export const inspectFlag = async (unleash: UnleashClient, { project, flag }: Fla
   const { name, type, createdAt, createdBy, lifecycle, expectedLifetimeEndsAt, environments, collaborators, dependencies, children, links } = found.data;
   const tags = tagged.data.tags;
   const collaboratorNames = collaborators?.users.map((user) => user.name) ?? [];
-  const lastSeen = Object.fromEntries((environments ?? []).flatMap((e) => (e.lastSeenAt ? [[e.name, e.lastSeenAt]] : [])));
   return {
     kind: 'flag',
     name,
@@ -22,7 +23,7 @@ export const inspectFlag = async (unleash: UnleashClient, { project, flag }: Fla
     ...(lifecycle ? { lifecycle: toLifecycle(lifecycle) } : {}),
     // Unleash returns `expectedLifetimeEndsAt` but leaves it out of its OpenAPI spec, hence the type check.
     ...(typeof expectedLifetimeEndsAt === 'string' ? { expectedLifetimeEndsAt } : {}),
-    ...(Object.keys(lastSeen).length ? { lastSeen } : {}),
+    environments: (environments ?? []).map(toEnvironment),
     ...(createdAt ? { createdAt } : {}),
     ...(createdBy ? { createdBy: createdBy.name } : {}),
     ...(collaboratorNames.length ? { collaborators: collaboratorNames } : {}),
@@ -32,6 +33,43 @@ export const inspectFlag = async (unleash: UnleashClient, { project, flag }: Fla
     ...(links?.length ? { links: links.map(toLink) } : {}),
   };
 };
+
+type UnleashEnvironment = components['schemas']['featureEnvironmentSchema'];
+type UnleashStrategy = components['schemas']['featureStrategySchema'];
+type UnleashConstraint = components['schemas']['constraintSchema'];
+type UnleashVariant = components['schemas']['strategyVariantSchema'];
+
+const toEnvironment = ({ name, enabled, lastSeenAt, strategies }: UnleashEnvironment): Environment => ({
+  name,
+  enabled,
+  ...(lastSeenAt ? { lastSeenAt } : {}),
+  ...(strategies?.length ? { targets: strategies.map(toTarget) } : {}),
+});
+
+// The reverse of the release plan's toStrategy, so a target can be edited and released again.
+const toTarget = (s: UnleashStrategy): Target & { rollout: number } => ({
+  name: s.title || s.name,
+  rollout: Number(s.parameters?.rollout ?? 100),
+  ...(s.constraints?.length ? { constraints: s.constraints.map(toConstraint) } : {}),
+  ...(s.segments?.length ? { segments: s.segments } : {}),
+  ...(s.variants?.length ? { values: s.variants.map(toValue) } : {}),
+});
+
+const toConstraint = (c: UnleashConstraint): Constraint => ({
+  field: c.contextName,
+  operator: c.operator,
+  // Single-value operators (numbers, dates, semver) keep their value in `value`.
+  values: c.values?.length ? c.values : c.value ? [c.value] : [],
+  ...(c.inverted ? { inverted: true } : {}),
+  ...(c.caseInsensitive ? { caseInsensitive: true } : {}),
+});
+
+// A variable weight is what Unleash resolved, not what was asked for, so only a fixed one comes back as a share.
+const toValue = ({ name, payload, weight, weightType }: UnleashVariant): Value => ({
+  name,
+  ...(payload ? { payload } : {}),
+  ...(weightType === 'fix' ? { share: weight / 10 } : {}),
+});
 
 type UnleashStage = 'initial' | 'pre-live' | 'live' | 'completed' | 'archived';
 
