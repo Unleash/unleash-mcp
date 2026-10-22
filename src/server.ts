@@ -6,6 +6,9 @@ import { createRelease } from './tools/release.ts';
 import { inspectInput } from './tools/inspectInput.ts';
 import { inspectOutput } from './tools/inspectOutput.ts';
 import { createInspect } from './tools/inspect.ts';
+import { configureInput } from './tools/configureInput.ts';
+import { configureOutput } from './tools/configureOutput.ts';
+import { createConfigure } from './tools/configure.ts';
 import type { UnleashClient } from './unleash/client.ts';
 
 // At the time of this writing, 
@@ -19,6 +22,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   const server = new McpServer({ name: 'unleash-mcp', version: pkg.version });
   const release = createRelease(unleash);
   const inspect = createInspect(unleash);
+  const configure = createConfigure(unleash);
 
   server.registerTool(
     'release',
@@ -42,6 +46,18 @@ export const createServer = (unleash: UnleashClient): McpServer => {
       annotations: { readOnlyHint: true },
     },
     async (input) => ({ structuredContent: await inspect(input), content: [] }),
+  );
+
+  server.registerTool(
+    'configure',
+    {
+      description: 'Change Unleash configuration: create, replace and delete context fields, global or in a project, and add or remove their legal values. Applies the changes in order and reports each one.',
+      inputSchema: configureInput,
+      outputSchema: configureOutput,
+    },
+    async (input) => {
+      return { structuredContent: await configure(input), content: [] };
+    },
   );
 
   return server;

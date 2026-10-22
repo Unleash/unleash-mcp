@@ -63,6 +63,20 @@ test('release tool reports a failure as text', async () => {
   await client.close();
 });
 
+test('configure tool reports each change', async () => {
+  const { unleash: stubbed, stub } = createStubbedClient();
+  const message = 'A context field with that name already exist';
+  stub.intercept({ path: '/api/admin/context', method: 'POST' }).reply(409, { name: 'NameExistsError', message, details: [{ message }] });
+  const client = await connectClient(stubbed);
+
+  const result = await client.callTool({ name: 'configure', arguments: { changes: [{ kind: 'context_field', action: 'create', name: 'tier' }] } });
+
+  assert.deepEqual(result.structuredContent, {
+    results: [{ kind: 'failed', resource: 'context_field', action: 'create', name: 'tier', error: { status: 409, name: 'NameExistsError', reasons: [message] } }],
+  });
+  await client.close();
+});
+
 test('inspect tool returns its results as structured content', async () => {
   const { unleash: stubbed, stub } = createStubbedClient();
   stub.intercept({ path: `/api/admin/projects/${project}/overview`, method: 'GET' }).reply(200, { environments: [{ environment: 'development' }] });
