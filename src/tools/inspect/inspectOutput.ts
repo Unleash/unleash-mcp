@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { target } from '../shared/target.ts';
+import { constraint, target } from '../shared/target.ts';
 import { failed } from '../shared/failed.ts';
 import { legalValue } from '../shared/legalValue.ts';
 
@@ -92,7 +92,19 @@ const contextField = z.object({
   usedBy: z.array(usage).optional().describe('Set when usage is included; every flag environment with a constraint on the field'),
 });
 
-const result = z.discriminatedUnion('kind', [project, flag, contextField, failed]);
+const segment = z.object({
+  kind: z.literal('segment'),
+  id: z.number().int(),
+  name: z.string(),
+  project: z.string().optional().describe('Set on a project segment; absent on a global one'),
+  description: z.string().optional(),
+  constraints: z.array(constraint).describe('All must match for a user to be in the segment'),
+  createdAt: z.string().optional().describe('ISO timestamp'),
+  createdBy: z.string().optional().describe('Email of the user who created the segment'),
+  usedBy: z.array(usage).optional().describe('Set when usage is included; every flag environment with a target on the segment'),
+});
+
+const result = z.discriminatedUnion('kind', [project, flag, contextField, segment, failed]);
 
 export const inspectOutput = {
   results: z.array(result).describe('One per query, in the order asked'),
@@ -104,6 +116,7 @@ export type Project = z.infer<typeof project>;
 export type Flag = z.infer<typeof flag>;
 export type ContextField = z.infer<typeof contextField>;
 export type Usage = z.infer<typeof usage>;
+export type Segment = z.infer<typeof segment>;
 export type FlagType = z.infer<typeof flagType>;
 export type Parent = z.infer<typeof parent>;
 export type Lifecycle = z.infer<typeof lifecycle>;

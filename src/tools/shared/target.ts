@@ -8,7 +8,7 @@ const operators = [
   'REGEX', 'IN_CIDR',
 ] as const;
 
-const constraint = z.object({
+export const constraint = z.object({
   field: z.string().describe('Context field name, e.g. userId, email, appName'),
   operator: z.enum(operators),
   values: z.array(z.string()).min(1),
