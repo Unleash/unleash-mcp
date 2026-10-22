@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createStubbedClient, createRecordedClient } from '../unleash/testClient.ts';
+import { unleashError } from '../unleash/testError.ts';
 import { createRelease } from './release.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./release.snapshot.json', import.meta.url).pathname);
@@ -123,7 +124,6 @@ const createStubbedOpenSource = () => {
   return stubbed;
 };
 
-const unleashError = (name: string, message: string) => ({ id: '0b84c7fd-5278-4087-832d-0b502c7929b3', name, message, details: [{ message }] });
 
 const feature = `/api/admin/projects/${project}/features/${flag}`;
 const base = `${feature}/environments/development`;
