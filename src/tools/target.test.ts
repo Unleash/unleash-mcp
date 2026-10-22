@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { target } from './releaseInput.ts';
+import { target } from './target.ts';
 
 test('refuses shares that do not add up to 100 when every value has one', () => {
   const parsed = target.safeParse({ name: 'Checkout test', values: [{ name: 'control', share: 30 }, { name: 'new', share: 30 }] });

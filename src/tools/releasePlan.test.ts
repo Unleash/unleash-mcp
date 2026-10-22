@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import type { Target } from './releaseInput.ts';
+import type { Target } from './target.ts';
 import { planRelease } from './releasePlan.ts';
 
 const variantsOf = (target: Target) => planRelease('mcp-flag', [target], { enabled: true, strategyIds: [] }).adds[0]?.variants;
