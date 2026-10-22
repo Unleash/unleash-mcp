@@ -109,6 +109,25 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - The result echoes the values as sent, not the shares Unleash resolves. Rejected: echoing the resolved shares, which means copying Unleash's weight logic or extra reads.
 - Left out for now: value stickiness (stays `default`) and Unleash's deprecated per-environment values.
 
+## 2026-10-22 — Configure tool
+
+- `configure` handles simple CRUD resources: create, update, delete a segment, context field, legal value, tag type; more added as needed.
+- Shaped like `search`: a list of changes, one result per change.
+- A change names its resource in `kind` and its operation in `action`. Rejected: one kind per operation (`create_tag_type`) and an end state the tool upserts.
+- Updating a context field replaces it, like Unleash's PUT: properties left out are reset. Rejected: a partial update that reads the field and merges (2 requests).
+- Project context fields are supported, after the global ones.
+- Left out of `configure`: reading context fields, their usage (both belong in `search`), validating a name (create already answers it) and `sortOrder` (Unleash's PUT resets it to 0).
+- Adding a legal value is `action: 'create'`, although Unleash overwrites the description of a value that exists. Rejected: `update`, and both mapping to the same call.
+- A legal value result names its `field` and `value`, mirroring the input. Rejected: `name` for the value.
+- Every result names the change it answers, failures included: `resource`, `action` and its target (`name`, or `field` and `value`). Matching by position alone is error prone in a batch. `kind` is `applied` or `failed`, with Unleash's answer under `error`. Supersedes the `created`/`updated`/`deleted` kinds. Rejected: a caller-chosen id per change, and echoing the target without `action`. Only `configure` changes; `release` and `search` keep the shared `failed`.
+
+## 2026-10-22 — End state or operations
+
+- `release` and `configure` keep different shapes because the problems differ. Rejected: one shape for every tool.
+- A tool takes a list of operations when the agent can name each part it changes and each change is one Unleash call with no rules across parts (`configure`). An end state would cost reads to tell create from update and still needs operations to delete.
+- A tool takes an end state and computes the diff when the parts have no identity the agent can name, or rules span them (`release`: hidden strategy ids, order, never zero strategies, one change request).
+- Target names are not identity: they are not unique, and order and the change request still need the whole set. So `release` keeps replacing all targets.
+
 ## 2026-10-22 — Tests set up their own data
 
 - Tests recreate everything they need in setup and remove it in teardown; the sandbox holds only the project `mcp-server`. Rejected: depending on predefined flags and settings in the sandbox, which drift and break recordings.
