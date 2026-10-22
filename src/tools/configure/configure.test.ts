@@ -24,3 +24,17 @@ test('applies the changes after a failed one, naming the change each result answ
     ],
   });
 });
+
+test('answers a created release template with its id', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const id = '01JB9GGTGQYEQ9D40R17T3YVW2';
+  stub.intercept({ path: '/api/admin/release-plan-templates', method: 'POST' })
+    .reply(200, { id, discriminator: 'template', name: 'Gradual rollout', milestones: [] }, { headers: { 'content-type': 'application/json' } });
+  const configure = createConfigure(unleash);
+
+  const output = await configure({ changes: [
+    { kind: 'release_template', action: 'create', name: 'Gradual rollout', milestones: [{ name: 'Everyone', targets: [{ name: 'Everyone' }] }] },
+  ] });
+
+  assert.deepEqual(output, { results: [{ kind: 'applied', resource: 'release_template', action: 'create', name: 'Gradual rollout', id }] });
+});
