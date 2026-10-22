@@ -147,3 +147,4 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 ## 2026-10-22 — Search tool
 
 - Search fetches all segments for now and returns every match, without a limit or a total: most people don't have that many segments, and letting the agent do the filtering and mapping is fine for now. The rows carry scope, author, creation date and usage counts, and the tool tells the agent to search all and filter itself. Rejected for now: a default limit with a total, and typed filters applied on our side, since Unleash's segments list offers none.
+- Context field search lets Unleash scope the list, as its UI does: a project's fields with the global ones included, or the global ones with every project's included. The name match stays on our side. Rows carry the usage counts the list gives for free; legal values stay on `inspect`.

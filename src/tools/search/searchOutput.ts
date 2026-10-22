@@ -16,7 +16,22 @@ const segments = z.object({
   segments: z.array(segment).describe('Sorted by name'),
 });
 
-const result = z.discriminatedUnion('kind', [segments, failed]);
+const contextField = z.object({
+  name: z.string(),
+  project: z.string().optional().describe('Set on a project field; absent on a global one'),
+  description: z.string().optional(),
+  stickiness: z.literal(true).optional().describe('Set when flags can use the field for custom stickiness'),
+  createdAt: z.string().optional().describe('ISO timestamp'),
+  usedInProjects: z.number().int(),
+  usedInFlags: z.number().int(),
+});
+
+const contextFields = z.object({
+  kind: z.literal('context_fields'),
+  fields: z.array(contextField).describe('Sorted by name'),
+});
+
+const result = z.discriminatedUnion('kind', [segments, contextFields, failed]);
 
 export const searchOutput = {
   results: z.array(result).describe('One per query, in the order asked'),
@@ -25,3 +40,4 @@ export const searchOutput = {
 export type SearchOutput = z.infer<z.ZodObject<typeof searchOutput>>;
 export type SearchResult = z.infer<typeof result>;
 export type Segments = z.infer<typeof segments>;
+export type ContextFields = z.infer<typeof contextFields>;
