@@ -1,0 +1,116 @@
+[
+  {
+    "hash": "CeLI5ICLGoP29QHX8wO9yqndvdavjqK6hcWBtAvitE4",
+    "snapshot": {
+      "request": {
+        "method": "PUT",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/settings",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "109",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"featureNaming\":{\"pattern\":\"^mcp-[a-z-]+$\",\"example\":\"mcp-flag\",\"description\":\"mcp, dash, lowercase words\"}}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-22T14:01:22.223Z"
+    }
+  },
+  {
+    "hash": "YlRiiUslISDkzfwVWa61d-WbqL7fdvxAM6ItEOW-4x0",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/overview",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "826",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJzdGF0cyI6eyJhdmdUaW1lVG9Qcm9kQ3VycmVudFdpbmRvdyI6MCwiY3JlYXRlZEN1cnJlbnRXaW5kb3ciOjIsImNyZWF0ZWRQYXN0V2luZG93IjowLCJhcmNoaXZlZEN1cnJlbnRXaW5kb3ciOjAsImFyY2hpdmVkUGFzdFdpbmRvdyI6MCwicHJvamVjdEFjdGl2aXR5Q3VycmVudFdpbmRvdyI6NDAyLCJwcm9qZWN0QWN0aXZpdHlQYXN0V2luZG93IjowLCJwcm9qZWN0TWVtYmVyc0FkZGVkQ3VycmVudFdpbmRvdyI6M30sIm5hbWUiOiJtY3Atc2VydmVyIiwiZGVzY3JpcHRpb24iOiIiLCJtb2RlIjoib3BlbiIsImZlYXR1cmVMaW1pdCI6bnVsbCwiZmVhdHVyZU5hbWluZyI6eyJwYXR0ZXJuIjoiXm1jcC1bYS16LV0rJCIsImV4YW1wbGUiOiJtY3AtZmxhZyIsImRlc2NyaXB0aW9uIjoibWNwLCBkYXNoLCBsb3dlcmNhc2Ugd29yZHMifSwibGlua1RlbXBsYXRlcyI6W10sImRlZmF1bHRTdGlja2luZXNzIjoiZGVmYXVsdCIsImhlYWx0aCI6MTAwLCJ0ZWNobmljYWxEZWJ0IjowLCJmYXZvcml0ZSI6ZmFsc2UsInVwZGF0ZWRBdCI6IjIwMjYtMTAtMjJUMTM6MzE6MTguNjc2WiIsImNyZWF0ZWRBdCI6IjIwMjYtMTAtMjBUMDg6MTE6NTEuMzEzWiIsIm9uYm9hcmRpbmdTdGF0dXMiOnsic3RhdHVzIjoiZmlyc3QtZmxhZy1jcmVhdGVkIiwiZmVhdHVyZSI6Im1jcC1kZXRhaWxlZC1mbGFnIn0sImVudmlyb25tZW50cyI6W3siZW52aXJvbm1lbnQiOiJkZXZlbG9wbWVudCJ9LHsiZW52aXJvbm1lbnQiOiJwcm9kdWN0aW9uIn1dLCJmZWF0dXJlVHlwZUNvdW50cyI6W3sidHlwZSI6InJlbGVhc2UiLCJjb3VudCI6M31dLCJtZW1iZXJzIjozLCJ2ZXJzaW9uIjoxfQ==",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-22T14:01:22.715Z"
+    }
+  },
+  {
+    "hash": "S7Q55G1h_sK48H-cYscHuMRdRRVZ2ZNLb9kTvmz3rvQ",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/unknown/overview",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "96",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBwcm9qZWN0IGZvdW5kIiwiZGV0YWlscyI6W3sibWVzc2FnZSI6Ik5vIHByb2plY3QgZm91bmQifV19",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-22T14:01:22.820Z"
+    }
+  }
+]
