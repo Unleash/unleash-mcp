@@ -38,9 +38,15 @@ const lifecycle = z.object({
 
 const targets = z.array(target.required({ rollout: true }));
 
+const transition = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('time'), intervalMinutes: z.number() }),
+  z.object({ type: z.literal('exposure'), minimumExposures: z.number().describe('Evaluations of the flag') }),
+]);
+
 const milestone = z.object({
   name: z.string(),
   active: z.literal(true).optional().describe('Set on the milestone the plan is at'),
+  transition: transition.optional().describe('Set when the plan moves on from this milestone by itself, once the condition is met'),
   targets: targets.optional().describe('The audiences this milestone gives the feature to'),
 });
 
@@ -89,6 +95,7 @@ export type Lifecycle = z.infer<typeof lifecycle>;
 export type Environment = z.infer<typeof environment>;
 export type ReleasePlan = z.infer<typeof releasePlan>;
 export type Milestone = z.infer<typeof milestone>;
+export type Transition = z.infer<typeof transition>;
 export type LifecycleStage = z.infer<typeof lifecycleStage>;
 export type Tag = z.infer<typeof tag>;
 export type Link = z.infer<typeof link>;
