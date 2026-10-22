@@ -27,7 +27,7 @@ after(async () => {
 test('adds a legal value to a context field', async () => {
   const output = await createLegalValue(unleash, { kind: 'legal_value', action: 'create', field, value: 'gold', description: 'Paying customers' });
 
-  assert.deepEqual(output, { kind: 'created', resource: 'legal_value', field, value: 'gold' });
+  assert.deepEqual(output, { kind: 'applied' });
 });
 
 test('fails with the Unleash error when the context field does not exist', async () => {
@@ -45,7 +45,7 @@ test('removes a legal value from a context field', async () => {
 
   const output = await deleteLegalValue(unleash, { kind: 'legal_value', action: 'delete', field, value: 'silver' });
 
-  assert.deepEqual(output, { kind: 'deleted', resource: 'legal_value', field, value: 'silver' });
+  assert.deepEqual(output, { kind: 'applied' });
 });
 
 test('fails with the Unleash error when the context field to remove a value from does not exist', async () => {
@@ -61,7 +61,7 @@ test('fails with the Unleash error when the context field to remove a value from
 test('adds a legal value to a context field in a project', async () => {
   const output = await createLegalValue(unleash, { kind: 'legal_value', action: 'create', project, field: projectField, value: 'gold' });
 
-  assert.deepEqual(output, { kind: 'created', resource: 'legal_value', field: projectField, value: 'gold' });
+  assert.deepEqual(output, { kind: 'applied' });
 });
 
 test('removes a legal value from a context field in a project', async () => {
@@ -69,5 +69,5 @@ test('removes a legal value from a context field in a project', async () => {
 
   const output = await deleteLegalValue(unleash, { kind: 'legal_value', action: 'delete', project, field: projectField, value: 'silver' });
 
-  assert.deepEqual(output, { kind: 'deleted', resource: 'legal_value', field: projectField, value: 'silver' });
+  assert.deepEqual(output, { kind: 'applied' });
 });

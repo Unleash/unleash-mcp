@@ -34,7 +34,7 @@ test('creates a context field with its legal values', async () => {
     legalValues: [{ value: 'gold', description: 'Paying customers' }, { value: 'free' }],
   });
 
-  assert.deepEqual(output, { kind: 'created', resource: 'context_field', name });
+  assert.deepEqual(output, { kind: 'applied' });
 });
 
 test('fails with the Unleash error when the context field exists', async () => {
@@ -58,7 +58,7 @@ test('replaces a context field', async () => {
     legalValues: [{ value: 'silver' }],
   });
 
-  assert.deepEqual(output, { kind: 'updated', resource: 'context_field', name: updatable });
+  assert.deepEqual(output, { kind: 'applied' });
 });
 
 test('fails with the Unleash error when the context field to update does not exist', async () => {
@@ -76,7 +76,7 @@ test('deletes a context field', async () => {
 
   const output = await deleteContextField(unleash, { kind: 'context_field', action: 'delete', name: deletable });
 
-  assert.deepEqual(output, { kind: 'deleted', resource: 'context_field', name: deletable });
+  assert.deepEqual(output, { kind: 'applied' });
 });
 
 test('fails with the Unleash error when a flag still uses the context field', async () => {
@@ -92,7 +92,7 @@ test('fails with the Unleash error when a flag still uses the context field', as
 test('creates a context field in a project', async () => {
   const output = await createContextField(unleash, { kind: 'context_field', action: 'create', project, name: projectField });
 
-  assert.deepEqual(output, { kind: 'created', resource: 'context_field', name: projectField });
+  assert.deepEqual(output, { kind: 'applied' });
 });
 
 test('replaces a context field in a project', async () => {
@@ -100,7 +100,7 @@ test('replaces a context field in a project', async () => {
 
   const output = await updateContextField(unleash, { kind: 'context_field', action: 'update', project, name: updatableProjectField, stickiness: true });
 
-  assert.deepEqual(output, { kind: 'updated', resource: 'context_field', name: updatableProjectField });
+  assert.deepEqual(output, { kind: 'applied' });
 });
 
 test('deletes a context field in a project', async () => {
@@ -108,5 +108,5 @@ test('deletes a context field in a project', async () => {
 
   const output = await deleteContextField(unleash, { kind: 'context_field', action: 'delete', project, name: deletableProjectField });
 
-  assert.deepEqual(output, { kind: 'deleted', resource: 'context_field', name: deletableProjectField });
+  assert.deepEqual(output, { kind: 'applied' });
 });

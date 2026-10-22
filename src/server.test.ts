@@ -77,6 +77,8 @@ test('configure tool reports each change', async () => {
 
   const result = await client.callTool({ name: 'configure', arguments: { changes: [{ kind: 'context_field', action: 'create', name: 'tier' }] } });
 
-  assert.deepEqual(result.structuredContent, { results: [{ kind: 'failed', status: 409, name: 'NameExistsError', reasons: [message] }] });
+  assert.deepEqual(result.structuredContent, {
+    results: [{ kind: 'failed', resource: 'context_field', action: 'create', name: 'tier', error: { status: 409, name: 'NameExistsError', reasons: [message] } }],
+  });
   await client.close();
 });
