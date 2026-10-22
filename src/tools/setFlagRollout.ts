@@ -7,47 +7,30 @@ import {
   type ServerContext,
   toolErrorPayload,
 } from '../context.js';
-import {
-  CONSTRAINT_OPERATORS,
-  type ConstraintOperator,
-  type ContextField,
-  type FeatureDetails,
-  type FeatureEnvironment,
-  type FeatureStrategy,
-  type FlexibleRolloutStrategy,
-  type SegmentSummary,
-  type StrategyConstraint,
-  type StrategyVariant,
-  type StrategyVariantPayload,
+import type {
+  ContextField,
+  FeatureDetails,
+  FeatureEnvironment,
+  FeatureStrategy,
+  FlexibleRolloutStrategy,
+  SegmentSummary,
+  StrategyConstraint,
+  StrategyVariant,
+  StrategyVariantPayload,
 } from '../unleash/client.js';
 import { CustomError } from '../utils/errors.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
+import {
+  CONTEXT_DOCS,
+  type ConstraintInput,
+  constraintSchema,
+  invalidConstraint,
+  shapeConstraint,
+} from './constraints.js';
 
 const SEGMENTS_DOCS = 'https://docs.getunleash.io/concepts/segments';
-const CONSTRAINTS_DOCS = 'https://docs.getunleash.io/concepts/activation-strategies#constraints';
-const CONTEXT_DOCS = 'https://docs.getunleash.io/concepts/unleash-context';
 const NONE_OF_THESE = '__none__';
-
-const constraintSchema = z.strictObject({
-  contextName: z
-    .string()
-    .min(1)
-    .describe('Context field to match, such as "userId" or "email", as the user said it'),
-  operator: z
-    .enum(CONSTRAINT_OPERATORS)
-    .describe(
-      'IN and NOT_IN match exact values, STR_* match text, and NUM_*, DATE_*, SEMVER_* and REGEX compare against one value',
-    ),
-  values: z.array(z.string().min(1)).optional().describe('Values for IN, NOT_IN and STR_*'),
-  value: z
-    .string()
-    .min(1)
-    .optional()
-    .describe('The single value for NUM_*, DATE_*, SEMVER_* and REGEX'),
-  inverted: z.boolean().optional().describe('Match everyone the constraint would not match'),
-  caseInsensitive: z.boolean().optional().describe('Ignore case when matching text'),
-});
 
 const variantPayloadSchema = z.strictObject({
   type: z.enum(['json', 'csv', 'string', 'number']).describe('Payload type'),
@@ -139,7 +122,6 @@ const setFlagRolloutSchema = z.strictObject({
     .describe('Who gets the flag in each environment, one entry per environment'),
 });
 
-type ConstraintInput = z.infer<typeof constraintSchema>;
 type EnvironmentRollout = z.infer<typeof environmentRolloutSchema>;
 
 interface Problem {
@@ -194,7 +176,13 @@ interface AppliedEnvironment {
   rolloutPercentage?: number;
   segments?: string[];
   constraints?: StrategyConstraint[];
-  previous?: { rolloutPercentage: number; segments: string[]; constraints: StrategyConstraint[] };
+  variants?: StrategyVariant[];
+  previous?: {
+    rolloutPercentage: number;
+    segments: string[];
+    constraints: StrategyConstraint[];
+    variants: StrategyVariant[];
+  };
   notes?: string[];
 }
 
@@ -203,9 +191,6 @@ const normalizeName = (name: string): string =>
     .trim()
     .toLowerCase()
     .replace(/[\s_-]+/g, ' ');
-
-const takesSingleValue = (operator: ConstraintOperator): boolean =>
-  operator === 'REGEX' || /^(NUM|DATE|SEMVER)_/.test(operator);
 
 const segmentName = (id: number, segments: SegmentSummary[]): string =>
   segments.find((segment) => segment.id === id)?.name ?? `#${id}`;
@@ -225,10 +210,19 @@ const STRATEGY_FIELDS = [
 const changesStrategy = (entry: EnvironmentRollout): boolean =>
   STRATEGY_FIELDS.some((field) => entry[field] !== undefined);
 
+const fixedWeightTotal = (variants: z.infer<typeof variantSchema>[]): number | undefined =>
+  variants.every((variant) => variant.weightType === 'fix')
+    ? variants.reduce((total, variant) => total + variant.weight, 0)
+    : undefined;
+
+// Unleash needs one variable variant.
 const toVariants = (variants: z.infer<typeof variantSchema>[]): StrategyVariant[] =>
-  variants.map((variant) => ({
+  variants.map((variant, index) => ({
     ...variant,
-    weightType: variant.weightType ?? 'variable',
+    weightType:
+      index === 0 && fixedWeightTotal(variants) === 1000
+        ? 'variable'
+        : (variant.weightType ?? 'variable'),
     stickiness: variant.stickiness ?? 'default',
   }));
 
@@ -366,7 +360,7 @@ function resolveSegments(
         environment,
         code: 'SEGMENT_NOT_FOUND',
         message: `Project "${projectId}" has no segments it can use, so "${name}" cannot be targeted.`,
-        hint: `Ask the user who should get the flag and target them with constraints instead, or create the segment in Unleash (${baseUrl}/segments/create). See ${SEGMENTS_DOCS}.`,
+        hint: `Ask the user who should get the flag and target them with constraints instead, or whether to create the segment with create_targeting or in Unleash (${baseUrl}/segments/create). See ${SEGMENTS_DOCS}.`,
       });
       continue;
     }
@@ -410,37 +404,6 @@ function resolveSegments(
   return ids.length === entry.segments.length ? [...new Set(ids)] : undefined;
 }
 
-function shapeConstraint(
-  input: ConstraintInput,
-  environment: string,
-): { constraint: StrategyConstraint } | { problem: Problem } {
-  const { contextName, operator, inverted, caseInsensitive } = input;
-  const invalid = (message: string) => ({
-    problem: {
-      environment,
-      code: 'INVALID_CONSTRAINT',
-      message,
-      hint: `See ${CONSTRAINTS_DOCS}.`,
-    },
-  });
-
-  if (takesSingleValue(operator)) {
-    const value = input.value ?? (input.values?.length === 1 ? input.values[0] : undefined);
-    if (value === undefined) {
-      return invalid(
-        `${operator} on "${contextName}" compares against one value; pass it as value.`,
-      );
-    }
-    return { constraint: { contextName, operator, value, inverted, caseInsensitive } };
-  }
-
-  const values = input.values ?? (input.value !== undefined ? [input.value] : []);
-  if (values.length === 0) {
-    return invalid(`${operator} on "${contextName}" needs at least one entry in values.`);
-  }
-  return { constraint: { contextName, operator, values, inverted, caseInsensitive } };
-}
-
 async function checkConstraint(
   context: ServerContext,
   input: ConstraintInput,
@@ -459,33 +422,18 @@ async function checkConstraint(
         message: `"${input.contextName}" is not a context field in project "${lookups.projectId}".`,
         hint: differentCase
           ? `Context field names are case-sensitive; did you mean "${differentCase.name}"?`
-          : `Use one of the listed fields, or ask the user to create "${input.contextName}" in Unleash (${lookups.baseUrl}/context/create). A constraint on it only matches when the app also sends "${input.contextName}" in its Unleash context. See ${CONTEXT_DOCS}.`,
+          : `Use one of the listed fields, or ask the user whether to create "${input.contextName}" with create_targeting or in Unleash (${lookups.baseUrl}/context/create). A constraint on it only matches when the app also sends "${input.contextName}" in its Unleash context. See ${CONTEXT_DOCS}.`,
         options: lookups.contextFields.map(({ name }) => name),
       },
     };
   }
 
-  const shaped = shapeConstraint(input, environment);
-  if ('problem' in shaped) return shaped;
+  const shaped = shapeConstraint(input);
+  if ('problem' in shaped) return { problem: { environment, ...shaped.problem } };
 
-  try {
-    await context.unleashClient.validateConstraint(shaped.constraint);
-  } catch (error) {
-    if (!(error instanceof CustomError && error.code === 'HTTP_400')) throw error;
-    const legalValues = field.legalValues?.map(({ value }) => value) ?? [];
-    return {
-      problem: {
-        environment,
-        code: 'INVALID_CONSTRAINT',
-        message: error.message,
-        hint:
-          legalValues.length > 0
-            ? `"${field.name}" only accepts the listed values.`
-            : `See ${CONSTRAINTS_DOCS}.`,
-        ...(legalValues.length > 0 && { options: legalValues }),
-      },
-    };
-  }
+  const invalid = await invalidConstraint(context.unleashClient, shaped.constraint, field);
+  if (invalid) return { problem: { environment, ...invalid } };
+
   return shaped;
 }
 
@@ -570,6 +518,15 @@ async function plan(
         hint: `To turn the flag off in "${environment.name}", pass enabled: false. To keep it on, leave strategyDisabled out.`,
       });
     }
+    const total = entry.variants?.length ? fixedWeightTotal(entry.variants) : undefined;
+    if (total !== undefined && total !== 1000) {
+      findings.problems.push({
+        environment: environment.name,
+        code: 'INVALID_VARIANTS',
+        message: `Fixed variant weights must add up to 1000 (100%) when no variant is variable; these add up to ${total}.`,
+        hint: 'Change the weights to add up to 1000, or leave weightType out on one variant so it takes the rest.',
+      });
+    }
     const segmentIds = resolveSegments(entryIndex, entry, environment.name, lookups, findings);
     const constraints = await checkConstraints(context, entry, environment.name, lookups, findings);
     if (target && findings.problems.length + findings.choosables.length === found) {
@@ -648,6 +605,15 @@ function summarize(strategy: FeatureStrategy, segments: SegmentSummary[]) {
     rolloutPercentage: Number(strategy.parameters.rollout ?? 100),
     segments: (strategy.segments ?? []).map((id) => segmentName(id, segments)),
     constraints: strategy.constraints ?? [],
+    variants: (strategy.variants ?? []).map(
+      ({ name, weight, weightType, payload, stickiness }) => ({
+        name,
+        weight,
+        weightType,
+        stickiness,
+        ...(payload && { payload }),
+      }),
+    ),
   };
 }
 
@@ -706,6 +672,11 @@ async function apply(
     }
   }
 
+  if (entry.variants && fixedWeightTotal(entry.variants) === 1000) {
+    notes.push(
+      `Unleash needs one variable variant, so "${entry.variants[0].name}" was saved as variable. It keeps its weight of ${entry.variants[0].weight}.`,
+    );
+  }
   if (saved?.disabled && entry.strategyDisabled === undefined) {
     notes.push('This strategy is disabled, so it has no effect. Pass enabled: true to turn it on.');
   }
