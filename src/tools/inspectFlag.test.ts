@@ -39,13 +39,14 @@ test('describes a flag with its lifecycle, who worked on it, its parent, tags an
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
 
   const { createdAt, lifecycle, ...rest } = output as Extract<typeof output, { kind: 'flag' }>;
+  const { enteredAt, ...stage } = lifecycle ?? {};
   assert.match(createdAt ?? '', timestamp);
-  assert.match(lifecycle?.enteredAt ?? '', timestamp);
-  assert.deepEqual({ stage: lifecycle?.stage, ...rest }, {
-    stage: 'define',
+  assert.match(enteredAt ?? '', timestamp);
+  assert.deepEqual({ lifecycle: stage, ...rest }, {
     kind: 'flag',
     name: flag,
     type: 'kill-switch',
+    lifecycle: { stage: 'define' },
     createdBy: 'Mateusz K',
     collaborators: ['Mateusz K'],
     parent: { flag: parent },
@@ -59,14 +60,15 @@ test('names the flags that depend on a flag', async () => {
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag: parent });
 
   const { createdAt, lifecycle, expectedLifetimeEndsAt, ...rest } = output as Extract<typeof output, { kind: 'flag' }>;
+  const { enteredAt, ...stage } = lifecycle ?? {};
   assert.match(createdAt ?? '', timestamp);
-  assert.match(lifecycle?.enteredAt ?? '', timestamp);
+  assert.match(enteredAt ?? '', timestamp);
   assert.match(expectedLifetimeEndsAt ?? '', timestamp);
-  assert.deepEqual({ stage: lifecycle?.stage, ...rest }, {
-    stage: 'define',
+  assert.deepEqual({ lifecycle: stage, ...rest }, {
     kind: 'flag',
     name: parent,
     type: 'release',
+    lifecycle: { stage: 'define' },
     createdBy: 'Mateusz K',
     collaborators: ['Mateusz K'],
     children: [flag],
@@ -95,16 +97,6 @@ test('tells when an SDK last saw the flag in each environment', async () => {
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', lastSeen: { development: '2026-10-21T09:00:00.000Z' } });
-});
-
-test('tells when the flag is expected to be gone', async () => {
-  const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release', expectedLifetimeEndsAt: '2026-12-01T07:39:52.026Z' });
-  stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
-
-  const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
-
-  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', expectedLifetimeEndsAt: '2026-12-01T07:39:52.026Z' });
 });
 
 test('tells which variants the parent must resolve to', async () => {

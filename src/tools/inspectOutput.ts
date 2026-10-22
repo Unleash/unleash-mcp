@@ -39,7 +39,7 @@ const flag = z.object({
   kind: z.literal('flag'),
   name: z.string(),
   type: flagType,
-  lifecycle: lifecycle.optional(),
+  lifecycle: lifecycle.optional().describe('Where the flag is in its life'),
   expectedLifetimeEndsAt: z.string().optional().describe('ISO timestamp; after it the flag counts as stale'),
   lastSeen: z.record(z.string(), z.string()).optional().describe('ISO timestamp an SDK last evaluated the flag, by environment; only environments with one'),
   createdAt: z.string().optional().describe('ISO timestamp'),
