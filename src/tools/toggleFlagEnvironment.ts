@@ -16,6 +16,7 @@ import {
   findWaiting,
   type PendingApproval,
   requestChange,
+  withdraw,
   withWaitingChanges,
 } from './changeRequests.js';
 
@@ -80,6 +81,22 @@ export async function toggleFlagEnvironment(
         enabled: live?.enabled ?? false,
         links: { ui: url, resourceUri },
       };
+      const waitingToggle = waiting.changes.find(
+        (change) => change.action === 'updateEnabled' && change.payload.enabled !== input.enabled,
+      );
+      if (waiting.changeRequest && waitingToggle && live?.enabled === input.enabled) {
+        const withdrawn = await withdraw(context, projectId, waiting.changeRequest, [
+          waitingToggle.id,
+        ]);
+        return jsonResult({
+          ...reply,
+          outcome: 'saved',
+          changeRequest: withdrawn.changeRequest,
+          notes: [
+            `It is already ${input.enabled ? 'on' : 'off'}, so the waiting change to turn it ${input.enabled ? 'off' : 'on'} was taken back. ${withdrawn.note}`,
+          ],
+        });
+      }
       if (enabledOnceApplied !== input.enabled) {
         const pending: PendingApproval<{ enabled: boolean }> = {
           outcome: 'pendingApproval',
@@ -175,7 +192,7 @@ export const toggleFlagEnvironmentTool = {
   annotations: { readOnlyHint: false, destructiveHint: false },
   description:
     'Enable or disable a feature flag in a specific environment using the Unleash Admin API. For gradual rollouts, configure a flexibleRollout strategy first via set_flag_rollout. ' +
-    'In an environment where your changes need approval, the change goes into a change request instead and the result has outcome "pendingApproval" with a link to the change request; nothing changes until it is approved and applied.',
+    'In an environment where your changes need approval, the change goes into a change request instead and the result has outcome "pendingApproval" with a link to the change request; nothing changes until it is approved and applied. Asking for what is live now takes back your waiting change instead, with outcome "saved".',
   inputSchema: toggleFlagEnvironmentSchema,
   implementation: toggleFlagEnvironment,
 };

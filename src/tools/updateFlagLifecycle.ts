@@ -67,7 +67,7 @@ export async function updateFlagLifecycle(
     if (input.action === 'archive') {
       // Like the Unleash UI: while any environment has change requests on, archiving goes through
       // one, in a production environment first, even for admins.
-      const configured = await context.unleashClient.changeRequestEnvironments(projectId);
+      const configured = (await context.unleashClient.changeRequestEnvironments(projectId)) ?? [];
       const environment = (configured.find(({ type }) => type === 'production') ?? configured[0])
         ?.environment;
       if (environment) return await archiveThroughApproval(context, projectId, input, environment);

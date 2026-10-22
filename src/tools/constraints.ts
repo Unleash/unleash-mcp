@@ -95,3 +95,33 @@ export async function invalidConstraint(
   }
   return undefined;
 }
+
+export async function checkStrategyConstraint(
+  unleashClient: UnleashClient,
+  input: ConstraintInput,
+  lookups: { projectId: string; baseUrl: string; contextFields: ContextField[] },
+): Promise<{ constraint: StrategyConstraint } | { problem: ConstraintProblem }> {
+  const { projectId, baseUrl, contextFields } = lookups;
+  const field = contextFields.find((candidate) => candidate.name === input.contextName);
+  if (!field) {
+    const differentCase = contextFields.find(
+      (candidate) => candidate.name.toLowerCase() === input.contextName.toLowerCase(),
+    );
+    return {
+      problem: {
+        code: 'CONTEXT_FIELD_NOT_FOUND',
+        message: `"${input.contextName}" is not a context field in project "${projectId}".`,
+        hint: differentCase
+          ? `Context field names are case-sensitive; did you mean "${differentCase.name}"?`
+          : `Use one of the listed fields, or ask the user whether to create "${input.contextName}" with create_targeting or in Unleash (${baseUrl}/context/create). A constraint on it only matches when the app also sends "${input.contextName}" in its Unleash context. See ${CONTEXT_DOCS}.`,
+        options: contextFields.map(({ name }) => name),
+      },
+    };
+  }
+
+  const shaped = shapeConstraint(input);
+  if ('problem' in shaped) return shaped;
+
+  const invalid = await invalidConstraint(unleashClient, shaped.constraint, field);
+  return invalid ? { problem: invalid } : shaped;
+}
