@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../unleash/testClient.ts';
 import { unleashError } from '../unleash/testError.ts';
-import { deleteFlag } from '../unleash/testSetup.ts';
+import { deleteFlag, deleteReleaseTemplate } from '../unleash/testSetup.ts';
 import { inspectFlag } from './inspectFlag.ts';
 import { createRelease } from './release.ts';
 
@@ -12,13 +12,30 @@ const flag = 'mcp-inspected-flag';
 const parent = 'mcp-inspected-parent';
 const beta = { field: 'userId', operator: 'IN' as const, values: ['1', '2'] };
 const values = [{ name: 'blue', payload: { type: 'string' as const, value: '#00f' }, share: 30 }, { name: 'green' }];
+const template = 'mcp-inspect-plan';
+const gradual = (rollout: string) => ({ sortOrder: 0, strategyName: 'flexibleRollout', title: 'Everyone', parameters: { rollout, stickiness: 'default', groupId: parent } });
 const features = '/api/admin/projects/{projectId}/features';
 const flagPath = `/api/admin/projects/${project}/features/${flag}`;
 const tagsPath = `/api/admin/features/${flag}/tags`;
 
+// The flags go before the template: a plan made from it keeps the template in use.
 const deleteFlags = async (): Promise<void> => {
   await deleteFlag(admin, project, flag);
   await deleteFlag(admin, project, parent);
+  await deleteReleaseTemplate(admin, template);
+};
+
+// Rolls the parent out in development through a release plan, stopped at its first milestone.
+const addReleasePlan = async (): Promise<void> => {
+  // The OpenAPI spec omits the body (it is `createReleasePlanTemplateSchema`).
+  const created = await admin.POST('/api/admin/release-plan-templates', {
+    body: { name: template, milestones: [{ name: 'Canary', sortOrder: 0, strategies: [gradual('10')] }, { name: 'Everyone', sortOrder: 1, strategies: [gradual('100')] }] } as never,
+  });
+  const path = { project, featureName: parent, environment: 'development' };
+  const plan = await admin.POST('/api/admin/projects/{project}/features/{featureName}/environments/{environment}/release-plans', { params: { path }, body: { templateId: created.data!.id } });
+  await admin.POST('/api/admin/projects/{project}/features/{featureName}/environments/{environment}/release-plans/{planId}/milestones/{milestoneId}/start', {
+    params: { path: { ...path, planId: plan.data!.id, milestoneId: plan.data!.milestones[0]!.id } },
+  });
 };
 
 before(async () => {
@@ -29,6 +46,7 @@ before(async () => {
   await admin.POST('/api/admin/features/{featureName}/tags', { params: { path: { featureName: flag } }, body: { type: 'simple', value: 'mcp-inspect' } });
   await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/link', { params: { path: { projectId: project, featureName: flag } }, body: { url: 'https://example.com/mcp-inspect', title: 'Spec' } });
   await createRelease(admin)({ project, flag, environment: 'development', targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values }] });
+  await addReleasePlan();
 });
 after(async () => {
   await deleteFlags();
@@ -64,7 +82,7 @@ test('describes a flag with its lifecycle, environments, who worked on it, its p
 });
 
 // The parent is created without a type, so Unleash gives it the default `release` with its lifetime.
-test('names the flags that depend on a flag', async () => {
+test('names the flags that depend on a flag and the release plan rolling it out', async () => {
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag: parent });
 
   const { createdAt, lifecycle, expectedLifetimeEndsAt, ...rest } = output as Extract<typeof output, { kind: 'flag' }>;
@@ -77,7 +95,20 @@ test('names the flags that depend on a flag', async () => {
     name: parent,
     type: 'release',
     lifecycle: { stage: 'define' },
-    environments: [{ name: 'development', enabled: false }, { name: 'production', enabled: false }],
+    environments: [
+      {
+        name: 'development',
+        enabled: false,
+        releasePlan: {
+          name: template,
+          milestones: [
+            { name: 'Canary', active: true, targets: [{ name: 'Everyone', rollout: 10 }] },
+            { name: 'Everyone', targets: [{ name: 'Everyone', rollout: 100 }] },
+          ],
+        },
+      },
+      { name: 'production', enabled: false },
+    ],
     createdBy: 'Mateusz K',
     collaborators: ['Mateusz K'],
     children: [flag],

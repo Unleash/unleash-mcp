@@ -21,7 +21,7 @@
             "content-length": "212",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:49 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:00 GMT",
             "etag": "W/\"d4-p04LH2FkzSTveBQZwmE88bPnuBw\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
@@ -44,11 +44,11 @@
             "content-encoding": "br",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:51 GMT",
-            "etag": "W/\"4b8-U5L40mzbvnSReOU22fAKWncIe5I\"",
+            "date": "Thu, 22 Oct 2026 12:03:02 GMT",
+            "etag": "W/\"4b8-7r/8buvomtzTWXDpY9rsIXxC+xs\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19986",
+            "ratelimit-remaining": "19985",
             "ratelimit-reset": "59",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -59,7 +59,7 @@
             "x-permitted-cross-domain-policies": "none",
             "transfer-encoding": "chunked"
           },
-          "body": "G7cEAMSvpfqna+b9csIFqfNLrxtYK0xQGVi7Z+CcYlOcShVF+sCqdDRP0YH1I/V0oIMkvoF+0qubIvhs70RC2sYzFZY+YuW4BPPriIF6hkHb8s/reRAoBEryiXl4IDDDOgSFZgYrOZgVhcQKe04wS4VhfDJkPyHtL41R3kXHESZTSBJJuPOcYH79UYgcmBK/DzSsuhOtuFtTdLvEK0UQ9TNU5cdhxoGiL9gN8Edt19tp5oc0sRV2s1WgDgqZxzIWqZL+mIQSybqrCqiJFxIP6gZB0I9LHDccoZCEAiTaKn5ndg8EBtkyq2Z6Ocuyz3pp8tqUy3mTNz+xtfHhHuYI72B0zf1b3pDwOh3OXkHB99TxlxhgcCEyJbNYdJE2JBT/lAD8ebALblye1c6uCt00Fdvzoqra2lkqc5e3mignKormvM6oyql1rsmbzNk8s1ZXpbb30p0iu+nuRJY43ox3OlwpyL5AUy59CLO09WIvoGD+iSiO412Sj3rtVyy+5yeDSxrA/Eq01ZdwhOUlESXSJooax1RjkLhmhcb/8KGA6oueGlgRrwl+xXZvA8MckYQ6hsHNBRDelQhHdp+EOq7KiJ5nTfETVwrBD5c8f9E7GCz1m/L5q+XLRhcPHuU/nury85Pvn3/ouobCeqBuL2hGI7s9KIiXwDD4NLGFSgCkTyjC1Bh8aXUJ5oh14kjsvwhF+XN1BQ==",
+          "body": "G7cEAMSvpfqna+b9csIqqNjml143sFaYoDKwds/ENcVe8VWqKNIfrEqf3lP0z8tyoaMBDSRxDbSRTt0UwWd7JxLSNp6psPQRK8clmF9HDNQzDNqWf17Pg0AhUJJPzMMDgRnWISg0M1jJwawoJFbYc4IpFIbxyZD9hLS/NEZ5Fx1HGK2QJJJw5znB/PqjEDkwJX4faFh1J1pxt6bodolXiiDqZ6jKj8OMA0VfsBfAH7Vdb6eZH9LEVtjNVoE6KGQey1ikSvpjEkok664qoCZeSDyoGwRBPy5x3HCEQhIKkGir+J3ZPRAY6EK3s7KYaf251KaoTKGzopj/xNbeh3uYI7yDKefcv+UNCa/T4ewVFHxPHX+JAQYXIlMyed5F2pBQ/FMC8OfB5rxwlZ47u6rLxaJle1637XLuLDWVq5YlUUVU14vzuaa2oqVzi2qhna20tWXblPZeulPrm+5OZInjzXinw5WC7As0cOlDmKWtF3sBBfNPRHEc75J81Gu/YvE9Pxlc0gDmV6KtvoQjLC+JKJE2UdQ4phqDxDUrNP6HDwVUX/TUwIp4TfArtnsbGOaIJNQxDG4ugPCuTDiy+yTUcVUay7r9iSuF4IdLnr/oHQyK8k3z/MO352/rz8X3Dx8/Lt+0P/Sj5tWzJRTWA3V7QTMa2e1BQbwEhsGniS1UAiB9QhGmxuBLq0swR6wTR2L/RSjKn6sr",
           "trailers": {}
         },
         {
@@ -68,35 +68,11 @@
             "content-encoding": "br",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:51 GMT",
-            "etag": "W/\"6cc-APycunQl8Pu4/VyiuhyYOhlFb38\"",
+            "date": "Thu, 22 Oct 2026 12:03:03 GMT",
+            "etag": "W/\"6cc-+J1ki4VIFS8435pkbv6y/ixcozw\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19983",
-            "ratelimit-reset": "59",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "G8sGAMRPc/mna/U+nLxtYNEFxtl4klp1QPaknOnvp+98gPJqXRzRP9b0fTfPBBpF8W7nw4HkeQDNeDpLlhh9GOPLaQrQwo+7Te4PjtwWoO9/UFHJ0Fi2/PtKrgQKjoKcM1erAl21ziksZnCMgRbfssIXB+hIoaqfNeSrAfp0qL0ce8MeOlEI4km4sGwaK+COs9q5uhUoXPSgjqyP5ERczw3Q94ihkOBRwVbv7IUNdE4usMKa5+G1h8buEY5b+FOO7GxrA/tdA4WMAu9WvCMIa/eosPI7torcGzZ1LUPhghU3Q6dRpNDQl6vJQP+EnRbE26qA8vU4aPyJohydQhCbvdmKQ8iwL6fWCaTkAiAmt5/olNXGwjNXD96oYCwQwoKpY3SPCpK1Qf/gVGNP2TXQKLOmZ6vQcCZsermjAgo+951oDCI4HtUpBC5UU/lI7mUiBWugEcWHg539aG9vvLe+tb22t319c3S+lgyvJ1AQK46hscZCM8LBP52CcKlcLPPsmAKfOKrspVDORUveHKMmDM+41GHrSrOA57xedCBqaNXGmi3YPf6jYs82rkbiFaVybRsk9JXMbF8hbt4oHjwhhNBDAvt39oRxyEHi7QPOZrMq0EiiZNiLo16SXMSRTkd6EM2O0/Edfupa+4L+oU8fj3z/lUMSbsP3zD4UbEkFX3oHjVeRJui5ucLTOwn5f88AfrzaOR6bNBmZLO/H4/GQs2l/OJyMTEaD1KSTmCgl6vfH01FCw5QmxozTcWKyNMmyeDiIs+Ww2E/+m0XP4uv/frFApyBfBG14s871woeV7BUKA2GUwtfwp5xvOrA5iy15szJBA2SGTZY1HTwGxUyRpSHfspi6HLUtAH5xJ4X8v8fZnLOvzDH0D4JQwdDYzQLgvYiwZ3MuVDArK+LZZNy/Q6fgbPXWGOnl9OFx3F9dT2+34sHF5s3FbTwaQaG94QlAcKdGRi27iZ03nEElAHQCECGndrOKoHeo29BE/tG9UEyPXQc=",
-          "trailers": {}
-        },
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-encoding": "br",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:52 GMT",
-            "etag": "W/\"6cc-APycunQl8Pu4/VyiuhyYOhlFb38\"",
-            "ratelimit-limit": "20000",
-            "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19977",
+            "ratelimit-remaining": "19979",
             "ratelimit-reset": "58",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -107,12 +83,36 @@
             "x-permitted-cross-domain-policies": "none",
             "transfer-encoding": "chunked"
           },
-          "body": "G8sGAMRPc/mna/U+nLxtYNEFxtl4klp1QPaknOnvp+98gPJqXRzRP9b0fTfPBBpF8W7nw4HkeQDNeDpLlhh9GOPLaQrQwo+7Te4PjtwWoO9/UFHJ0Fi2/PtKrgQKjoKcM1erAl21ziksZnCMgRbfssIXB+hIoaqfNeSrAfp0qL0ce8MeOlEI4km4sGwaK+COs9q5uhUoXPSgjqyP5ERczw3Q94ihkOBRwVbv7IUNdE4usMKa5+G1h8buEY5b+FOO7GxrA/tdA4WMAu9WvCMIa/eosPI7torcGzZ1LUPhghU3Q6dRpNDQl6vJQP+EnRbE26qA8vU4aPyJohydQhCbvdmKQ8iwL6fWCaTkAiAmt5/olNXGwjNXD96oYCwQwoKpY3SPCpK1Qf/gVGNP2TXQKLOmZ6vQcCZsermjAgo+951oDCI4HtUpBC5UU/lI7mUiBWugEcWHg539aG9vvLe+tb22t319c3S+lgyvJ1AQK46hscZCM8LBP52CcKlcLPPsmAKfOKrspVDORUveHKMmDM+41GHrSrOA57xedCBqaNXGmi3YPf6jYs82rkbiFaVybRsk9JXMbF8hbt4oHjwhhNBDAvt39oRxyEHi7QPOZrMq0EiiZNiLo16SXMSRTkd6EM2O0/Edfupa+4L+oU8fj3z/lUMSbsP3zD4UbEkFX3oHjVeRJui5ucLTOwn5f88AfrzaOR6bNBmZLO/H4/GQs2l/OJyMTEaD1KSTmCgl6vfH01FCw5QmxozTcWKyNMmyeDiIs+Ww2E/+m0XP4uv/frFApyBfBG14s871woeV7BUKA2GUwtfwp5xvOrA5iy15szJBA2SGTZY1HTwGxUyRpSHfspi6HLUtAH5xJ4X8v8fZnLOvzDH0D4JQwdDYzQLgvYiwZ3MuVDArK+LZZNy/Q6fgbPXWGOnl9OFx3F9dT2+34sHF5s3FbTwaQaG94QlAcKdGRi27iZ03nEElAHQCECGndrOKoHeo29BE/tG9UEyPXQc=",
+          "body": "G8sGAMQvm6+nq+elnPRjAb/KpdaUNVqIxqKMtLgztrbOOiGWM9yyiL+h6Tujq64zomfGOpFQdF1ComV0liwx+jDGl9MUoIUfd5v8Txy5LcI8fKKmimGwbPn3VVwLFDxFuWCu1wSm7rxXWMzgGAsjoWOFd44wWqFunnXkvQX6dGyCnATLASZViBJIuHRsGivgjvPG+6YTKFz0oIGcj+REXM+NMA9IoJDit4KrXzgIW5iCfGSFNc+jmwCDvWMcr/CbHNvZ1kUOexYKOUXeq3lHEPb+t8LK79gqcm/Uk+8YChesuBkm01qhpXffkIX5DDsrSnB1CeXrcTD4pnWBXiGKy59dzTFmOFBQ5wVSdgmQULg39MpqcxmY64dgUjQWCGHJk2f0vxUk64D5xKnGnrJnYVDl7cDVseVc2A4KTyUUQu67MRhpOB7XK0QuVVP9m9zLaAVnYaCTo9Hu2c3u/dru9vF0azTZ2ThYXz/d0adQECeeYbDOQnPC0T+DgnCpXKwL7Jkin3qq7WVQwWVHwR6jJgzPuDTgmlqzgGdOLzoQNbRaU80W7Z7wt2LPNq5G4hWlch2bJPSVwm5fIW3fKB48IYTQIyKHFw6E8chD4u0Dzma7JjBIdToeJHqQppdJanRmdPpL68k9fupZf4f5pM+YTHz/lSMS7uLH3AEUXEUlXwUPg/8ibTTz82WgFxIK/54B/Hi18zy1WTqxeTFMptMx50/D8Xg2sTmNMpvNEqKMaDicPk1SGmc0s3aaTVObZ2meJ+NRkq/EpWH60y4FltD8DEslegV5J2jDs/N+EF+d5P+hMBBGKXwdv8n5pkNXsLiKt2obNUBm2BR508FjUMwU2VoKLYupy1HbAuAXd1LI/3u8Kzh/zz3DfCIKlQyD3SwA3osJB7YXQiWzsjIZju/RK3hXPzdGejl9+Hh4qW/Pzs9nR+O7dGN0sDODQnfDE4DgTo2MWnZTu2g5h0oA6AQgQl7jZxVB79B2sYn8owehWH73PQ==",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Thu, 22 Oct 2026 12:03:03 GMT",
+            "etag": "W/\"6cc-+J1ki4VIFS8435pkbv6y/ixcozw\"",
+            "ratelimit-limit": "20000",
+            "ratelimit-policy": "20000;w=60",
+            "ratelimit-remaining": "19973",
+            "ratelimit-reset": "58",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G8sGAMQvm6+nq+elnPRjAb/KpdaUNVqIxqKMtLgztrbOOiGWM9yyiL+h6Tujq64zomfGOpFQdF1ComV0liwx+jDGl9MUoIUfd5v8Txy5LcI8fKKmimGwbPn3VVwLFDxFuWCu1wSm7rxXWMzgGAsjoWOFd44wWqFunnXkvQX6dGyCnATLASZViBJIuHRsGivgjvPG+6YTKFz0oIGcj+REXM+NMA9IoJDit4KrXzgIW5iCfGSFNc+jmwCDvWMcr/CbHNvZ1kUOexYKOUXeq3lHEPb+t8LK79gqcm/Uk+8YChesuBkm01qhpXffkIX5DDsrSnB1CeXrcTD4pnWBXiGKy59dzTFmOFBQ5wVSdgmQULg39MpqcxmY64dgUjQWCGHJk2f0vxUk64D5xKnGnrJnYVDl7cDVseVc2A4KTyUUQu67MRhpOB7XK0QuVVP9m9zLaAVnYaCTo9Hu2c3u/dru9vF0azTZ2ThYXz/d0adQECeeYbDOQnPC0T+DgnCpXKwL7Jkin3qq7WVQwWVHwR6jJgzPuDTgmlqzgGdOLzoQNbRaU80W7Z7wt2LPNq5G4hWlch2bJPSVwm5fIW3fKB48IYTQIyKHFw6E8chD4u0Dzma7JjBIdToeJHqQppdJanRmdPpL68k9fupZf4f5pM+YTHz/lSMS7uLH3AEUXEUlXwUPg/8ibTTz82WgFxIK/54B/Hi18zy1WTqxeTFMptMx50/D8Xg2sTmNMpvNEqKMaDicPk1SGmc0s3aaTVObZ2meJ+NRkq/EpWH60y4FltD8DEslegV5J2jDs/N+EF+d5P+hMBBGKXwdv8n5pkNXsLiKt2obNUBm2BR508FjUMwU2VoKLYupy1HbAuAXd1LI/3u8Kzh/zz3DfCIKlQyD3SwA3osJB7YXQiWzsjIZju/RK3hXPzdGejl9+Hh4qW/Pzs9nR+O7dGN0sDODQnfDE4DgTo2MWnZTu2g5h0oA6AQgQl7jZxVB79B2sYn8owehWH73PQ==",
           "trailers": {}
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:52.061Z"
+      "timestamp": "2026-10-22T12:03:03.816Z"
     }
   },
   {
@@ -137,7 +137,7 @@
             "content-length": "106",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:50 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:01 GMT",
             "etag": "W/\"6a-DCE85g69Wd+SkTNWCnhx227clns\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
@@ -158,10 +158,10 @@
           "statusCode": 202,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:37:52 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:03 GMT",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19976",
+            "ratelimit-remaining": "19972",
             "ratelimit-reset": "58",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -176,7 +176,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:52.208Z"
+      "timestamp": "2026-10-22T12:03:03.937Z"
     }
   },
   {
@@ -199,7 +199,7 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:37:50 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:01 GMT",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
             "ratelimit-remaining": "19997",
@@ -219,10 +219,10 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:37:52 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:04 GMT",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19975",
+            "ratelimit-remaining": "19971",
             "ratelimit-reset": "58",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -237,7 +237,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:52.297Z"
+      "timestamp": "2026-10-22T12:03:04.042Z"
     }
   },
   {
@@ -262,7 +262,7 @@
             "content-length": "216",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:50 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:01 GMT",
             "etag": "W/\"d8-RXFF7VtX62FBHVBaLTACIPhBvXE\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
@@ -285,35 +285,11 @@
             "content-encoding": "br",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:51 GMT",
-            "etag": "W/\"428-KcUJt29rxxCwNKnDYasF5GYitFk\"",
+            "date": "Thu, 22 Oct 2026 12:03:03 GMT",
+            "etag": "W/\"9b2-yQFS/q2JiVoUm5U8bwh4NPnMfUA\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19980",
-            "ratelimit-reset": "59",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "GycEAMTKXPn6XvUleckk064C/GKek8aOKzKUNAs0dVMsxQQiHmtoAm2wtC0ScNs6jwIK5IGjMOJ0m09PvYmYzjqnUPEECViE+XHCRCPDoGz580aeBAqeonxgnh4LzLTxXqGYwSEH05GPrHDgCJMrTPOskcNi6bo4B3kTHAcYrRAlkHA/cIT58UshsGeK/NbTJA1H6rjfUHBaxkU5iPMZ+hrmaeQNZRfcK+iX2h/tkgxTXNgKu2ShACKOPYFZJk/BMxKCknfNCpjFMywinA+C2QeLHLYcoBCFvEm8WPxpdo8FBjrXTVLkidYfi9yUranztM31d6hOPjnAnDA4mKL1/iuvSHgTj1cvoDCM1POn4GHwT2SJJsv6QFsSCn8lgG5vm/HKlbp1tquK1aphe1M1zbp1lurSleuCqCSqqtVNq6kpae3cqlxpZ0ttbdHUhX0Y71f6jrsfWMJ8J9zvcVGQQ4ow3H0oUH8y903lPcTAL4eOZRj5+eRi9Mg6yQuCwyTYO4c/hSqYH5l7p/PU45eCHzq2B+sZ5oQo1DMMWhSUodBBeTh2H4R6Bn90VdXfcVHww/T/8MLseWDRCHPCJnJ4gP+TFvvX5QI=",
-          "trailers": {}
-        },
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-encoding": "br",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:52 GMT",
-            "etag": "W/\"414-mf2qp8M2HypkEyA9RA7FaUVik34\"",
-            "ratelimit-limit": "20000",
-            "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19974",
+            "ratelimit-remaining": "19976",
             "ratelimit-reset": "58",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -324,12 +300,36 @@
             "x-permitted-cross-domain-policies": "none",
             "transfer-encoding": "chunked"
           },
-          "body": "GxMEAMTKXPb6pjq5e8kk4+qAX8wTadbn4pJmgaZuiqWYQMRjDU2gDZa2RQJuW+dRQIE8YBdQxOk2n556EzGddU6h4gkSsADz84SJRoZB2fL3jTwJFAYK8pF5eiIw02YYFIoZHHIwaxoCKxw4wKQK0zxr5LBYui7MXt56xx5GKwTxJNx2HGB+/lbwPDAFfjfQJA0HWnO7Ie+0jItyEOcz9NXN08gbyi64G+i32h/tEnVTWNgKu2ghDyKOPYFZJk/BcxKCknfNCpjFMywinA+C2QcL7LfsoRCEBpN4sfjT7J4IDHSqqyhLI60/ZanJa1OmcZ3qH1CdfHqAOaFzMFnt/Vdek/AmHK9eQqEbqeXPfoDBf5ElmCRpPW1JyP+VALq9bcKNy3Xt7LrImqZie1tU1ap2lsrc5auMKCcqiua21lTltHKuyRvtbK6tzaoys4/Cg0LfdQ88i5/v+gctLgpySBGGuw8F6k/mvqm8hxj4Vbdm6UZ+MbkQPbKO0ozgMAn2zuFPAU3zM0O3ZnuwA8OcEIRahkE7gjIUuiUPx+6jUMtAjzZF+QMXhaGb+oMK88D5igaYEzaB/WP7nxTYvy8X",
+          "body": "G7EJAORaqr2+N3vlhROh4sJVl9LSN2KtY4KRBnC65/+Y+din9IsW0ba2LOoA22zPp417s3GDVNw10B3ZveEt1jnp1zqeqkv8AJ/dHIjrDzB4JBDQbfn3O5LxwECj80siU/cgzElrBp0ZTCRBHFA7YvBGDkTAwOT3Mv6tyGl+Lrd+aiVZECED5y16yhQ5ENe3DCxpQkczjaY2C1MSBAR8nPTm20Fn0B53eu1Za1erT8rxYlsHBlK51KqjMuhzCwIKjQYYGD2PaVFSxhWU+lIoXY4FYCy8yg0wuDlE/Ek6O5KlAi0OvDHlHz+4n/YBJBtva0e2L0HwSsCvr3sQEAZhucSDUhiueCiCSATRBa/FV8AAU6+eaaw0OZ8b6kP9hYtuFOx6k11yFQ1Xc57sAFGdrOhYaPQJZ6yu+KLd6e7DXXs7HLdagyUwcHig7IRWYpt+LDPgK2DJCKkdNNGgfSMmJcgWLbyYQRUqN4MFwGSQpZoKPDk/XwbxW81P3C6TVVyP4u5+tYy79cUVwBUiHv1AcJNXXhMIaD+TfcsNgYy1kc0i1zo/MTGsWUZvk0he6sEA4gOmdQtIFAxr0WxijQAeFOGg0idlyDlG63bAk/ZwZrDuRy4qMZXfMhiYgPhggSfyKHeUyXSK27N0FbTosI0FqslNX8JSnhnqb9vNAr5ZLSZBb94YB51Jhzu8Eegt6LGcPxCx/wYnvM5dXN4mu2EcjtuVbbCYLHcBax/r+PgpHJ7MGXCRHy0iODNTgVuW1Uvl5uSbkfeDumqA6jFuNVYwGMdWkNTLy2IaWuixuoHMBW6Zh2TaxpF9Jiu6CaizDEH7t+EX1aRyZTm4IFScgFd07U8Zo6eTe/8yBAbqiBmtrQYB/70vnLi8zCw+o0e71Rqgc2svqSqjsCLTQ8yr1TKlj3G5XKvIFJNIRjWOGCHGcfWxEmI5wpqU1agayjQK05SXE57+db/j8If8bcnb/If9ncGZgX8jEVIhcmDQCNOLplx6RfHOI3Ugr47UNtLZvdZhKeDQk9akjJSw+E1JKRDX2nK6g8YMbhlodaD0LdUE4gOcx4xAgDLjoDbRJ+LJklx6zMjs9gkveJxcwZmBVuap8IRct8gF8so5OfX9H12TRXx7PgM=",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Thu, 22 Oct 2026 12:03:04 GMT",
+            "etag": "W/\"99e-zMraSj1HtqVWt9JDUzOYrRZEMfY\"",
+            "ratelimit-limit": "20000",
+            "ratelimit-policy": "20000;w=60",
+            "ratelimit-remaining": "19970",
+            "ratelimit-reset": "57",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G50JAORaqr2+N3vlhaNSzVX3mlI3Yu1jgpEGcLrn/5j52Kf0ixbRtrYs6gDbbM+nzbNxg1ReAt2R3RveYZ7t4F+g4xQmfoDNdhb49QdoPBBwaLb8+x1IO2Cg0LoVkW444PqoFIPGDCYSwHeoLDF4IwvcZ6DLexn3VsU0O1saNzOCDPCQgXUGHe0lWeDXtwwMKUJLc4U6N3OTAjj4wSTpL86H3WFn0u135u2LemOaxsvzBjAQ0hZGHqRGVxrgUCnUwIrR81BUNaltRYWrudJFXwDGyslSFwZXh4g/DWdHolahgYE3pPzDB7fTPoBE821jyQwE8CBz+PUNBxxCP0xrgV8Lw3UQcj/ifnQW1OMrYICFk880kYqsKzUNSv2Fy17kX/SnF8lVNFovguQCANXJmg6VQhdwynwdLDvd3mV40TkfTdrt4QoYWNzR/ohGQJt+SDPgK2DKCKgdtFCjeUMmxc8WTXkxgSpkqTsLgMEgSTVVeLR2vgTiN5ufeL5K1nEjinuX61XcayyvoFwhwtFPCa5y0ikCDp1nMm+lpiJjaWSzLJUqj0QMc5bR29STl3gwAP+AYd0CFAVDWjQTWMMh8JNwkMWT1GQtoXXb4VE5ODGY9yMXJZvKbxl0TEBsMMMTfpRb2vN0itsTdxW0abfGAtWUesBhKU8M9NddzP1gu15O/f6iOfG70y51eAPQm9FjA/pAyP4blPCcF3F6nlyM4nDSyc795XS1Bcx9rKXjl3B4MWdARX6kiODEVAWuWVYvWeqTb0TeD+ryANlj3EqsYCCOtSDJl5fGNLTRYXYDqQtcMw/xtI0l80yGdRNQRRmC9G8TnOVJdqU5uMBFnCDIZO1PmaCjo33/MgIG8oB72hgFHP47V1nueXuDz+jQrFoDNG6sR7mIwkwUuzjI85SKxzhN65koMIlEVA8QI8Q4zh+zENMI60LkUR6KIgqLIkiToPhrf8fhD/HbkDPlD/N7DycG7g1FSITIgUElTC+ccukVxFuP5Y6cPFBHC6v3Woc1Pyg9qU3KKBCL35RAm8mU3FHxVigC/gHW4Z6Ag+DioFLHR+LIkFg53JOK7ROeBXFyBScGSuqnhBJKVfsW8CbnaEX1f3SNAvHt6QQ=",
           "trailers": {}
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:52.380Z"
+      "timestamp": "2026-10-22T12:03:04.127Z"
     }
   },
   {
@@ -354,7 +354,7 @@
             "content-length": "106",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:50 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:01 GMT",
             "etag": "W/\"6a-DCE85g69Wd+SkTNWCnhx227clns\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
@@ -375,11 +375,11 @@
           "statusCode": 202,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:37:52 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:04 GMT",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19973",
-            "ratelimit-reset": "58",
+            "ratelimit-remaining": "19969",
+            "ratelimit-reset": "57",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "x-content-type-options": "nosniff",
@@ -393,7 +393,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:52.499Z"
+      "timestamp": "2026-10-22T12:03:04.245Z"
     }
   },
   {
@@ -416,7 +416,7 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:37:50 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:01 GMT",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
             "ratelimit-remaining": "19994",
@@ -436,11 +436,11 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:37:52 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:04 GMT",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19972",
-            "ratelimit-reset": "58",
+            "ratelimit-remaining": "19968",
+            "ratelimit-reset": "57",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "x-content-type-options": "nosniff",
@@ -454,7 +454,76 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:52.586Z"
+      "timestamp": "2026-10-22T12:03:04.341Z"
+    }
+  },
+  {
+    "hash": "z29wBmPZX6fxsctolY6SgnczBWCvowGSX7E_XDkrors",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Thu, 22 Oct 2026 12:03:01 GMT",
+            "etag": "W/\"69d-4D2M6iHyyAabIE38x47qS224uIk\"",
+            "ratelimit-limit": "20000",
+            "ratelimit-policy": "20000;w=60",
+            "ratelimit-remaining": "19993",
+            "ratelimit-reset": "60",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G5wGAOScWlXtiA/JawHOdJviJV8K/HrOh4RhBVinvde31Rflz/+5fG4zHqb92Z4nyMZVtDfbXQNGPi+MtMPDA85aEJyIHp7aWQ2Gzf+dqshG1Abv/xDVEEEoW82G1WrNRry+4ZOLaTarb4ZZersgETGyQyLIqbNwjhqlRxKR08nXgc0wEEE45emA8QErasZFQkWSx1mZ3ZGINIfvr3oIyhoiyM66TmpwVmvbB3i1Dg7OQqgETyKy+2FpIkyvdUQa5fdOdcrIYB0RZJ+DyosrR8dLj27ZEJGwv9GYIppN6ZivymKcXFxcTy7y8XVZlWM7qrn04f8/AwF9qFCFhKeCpXFecAedhvEqqrPR7mp6nuR0xXb0enRWZCzj1bXRl+voGcxBKrIBTQa8qBkTvBJZFdOUWeQXQZpGukZ9IBxt7yCg7L55SAxRJPdvEGw3g5RpwfYBDL7DvavUKhzhXYU3cEgAMD5CvsCDjRRIG5QdbQ8PH+BF/eLhCD44GbBV6COwDnhP+5FkDAr4TwoeA/QHp8q1bH1Kj+o7ym4ptWpNhyZAcpbgPVIVPEiHcOVVtolhjLSA+nBVGiz4XoWAqF9loPPvI8imUab1C/UisgPu1avaQ6c0+mAN+himcv/WCEBLQZNhJY0gdzhTUFLrYwQ+OJSdVkaZtksikqrz/H2M8ZTBGK1R3Y7m/HpYD9mUTqv0tjg7y6fj4doIOJiH1W+VDzivaSWSStAkzopyFYQZ43XKdb69muSr8m5yV5zyu/O7+vzm/IpL8CJboDHKtJ6M6oODlgbIkngcowOa1IyKLBMpjXNKSZVq9EGZdjZYLY1Hl3rpoACPQ3lQHiQ4lFofQVvT/ucFiXGV0MYANA14aw06LRH1lXK/nOZbiGFjHXagDr7voLHaOvAqgOwwRLC3xuM+YOgdyEYdlN8r0wJqFWIINaxIo1oNd9PhdV5e3ZTV/DabVulwfE0ry9EdYeYIuvlr5QPKBzyrWSZoIXgSV7TABlOkfx8B",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Thu, 22 Oct 2026 12:03:04 GMT",
+            "etag": "W/\"754-p+w/PEjMcCWbkw5y+feUVpQQ1Ac\"",
+            "ratelimit-limit": "20000",
+            "ratelimit-policy": "20000;w=60",
+            "ratelimit-remaining": "19967",
+            "ratelimit-reset": "57",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G1MHAOR3afmn6xMpzbYAd24zPTO73dsKsV+8SBgswFpNolxP/3D8839NP7czPky7rUEKZMdVtDeLBIx8Xhhpw+GAs34QTESH0zr9DoZNeydeZCN0gw9/ieqIIJTt1rN6t2dz3tzy5eUqXze3szy725KIGDkgEeTMWbhAjdIjicju5OvAbhaIIJzyLGY8ZmXDuEipSIskr/J7EpFu8/1Vx6CsIYKcWDdIDc5qbacAv62D0VlIVdyTiKx+WJoIM2kdkU751qlBGRmsI4Ksc1CguHJ+uPLofnZEpOxf1CdA6xVd8F1VLtLLy5vlZbG4qepqEUe1kT78/5+BgD4UoqbCM8GypCi5jaBJvAZ1Pj+5Xl2kBd2xE3ozPy9zlvP6JsJX++zpjAEWeUzTmJcNY4LXIq8TmrEAfhmk6aTr1B+Eg50cBJTDFw8XQ0yQ7RsE28wgZXqwUwCD73TvKrUKB3hX4Q0cEwToH2df4MJKD1gblB3sBD8+wI3+xcMRfHAyYK/QR2Ad6J76Ja8YHtA/MXgMMI2gyrXs/ZUelWeU3VJq1ZsBTYDLWQrvmargQTqEI69GugQWTEtRf6CKgwU/qZAQ5V8Z6PzrALLrlOlx0SiAjdiq36qFQWn0wRr0Caxk+1YpgJeC6oaVYQS7w5mCklofIvDBoRy0Msr0TXKZVOznn8SETxmM0QLqbr7hN7NmxlZ0VWd35fl5sVrM9sHRwTitfqsi5ryhtUhrQdMkL6tZkM4YL1Pui+PrZbGr7pf35Rm/v7hvLm4vrrWEfSRbNEaZ3otRfTBqaYBMiccxGtO0YVTkuchoUlBJqtSgD8r0oxHR0nh2KacOTXAYyoPyIMGh1PoA2pr+OzdYjCuMNgag6cBba9B5iSiPlPvlNF9CAkfW4QBq9NMAndXWgVcB5IAhgtYaj23AMDmQnRqVb5XpAbUKCaSaVGagdrOT1eymqK5vq3pzl6/qbLa4oXXkGA4wcpzc/LWKmPKY5w3LBS0FT5OaltxQgwZ+nG/Pb3ZVwy5W680dv13d7I+Xy91l3L0dY2X8iG2IRy0NEUmki5jRmPOGcUFTQdOEFmkwYO1Ltv/fEw==",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-22T12:03:04.401Z"
     }
   },
   {
@@ -481,11 +550,11 @@
             "content-length": "183",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:50 GMT",
-            "etag": "W/\"b7-y3L9uXS5Tt+dR8kQii7rGGvzWE8\"",
+            "date": "Thu, 22 Oct 2026 12:03:01 GMT",
+            "etag": "W/\"b7-AOuVriGITO8a8Uv+c1DXyK5GcfU\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19993",
+            "ratelimit-remaining": "19992",
             "ratelimit-reset": "60",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -495,12 +564,12 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLWluc3BlY3RlZC1wYXJlbnQiLCJkZXNjcmlwdGlvbiI6bnVsbCwidHlwZSI6InJlbGVhc2UiLCJwcm9qZWN0IjoibWNwLXNlcnZlciIsInN0YWxlIjpmYWxzZSwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yMlQxMDozNzo1MC43MDJaIiwiaW1wcmVzc2lvbkRhdGEiOmZhbHNlLCJhcmNoaXZlZCI6ZmFsc2V9",
+          "body": "eyJuYW1lIjoibWNwLWluc3BlY3RlZC1wYXJlbnQiLCJkZXNjcmlwdGlvbiI6bnVsbCwidHlwZSI6InJlbGVhc2UiLCJwcm9qZWN0IjoibWNwLXNlcnZlciIsInN0YWxlIjpmYWxzZSwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yMlQxMjowMzowMS44NTdaIiwiaW1wcmVzc2lvbkRhdGEiOmZhbHNlLCJhcmNoaXZlZCI6ZmFsc2V9",
           "trailers": {}
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:50.766Z"
+      "timestamp": "2026-10-22T12:03:01.946Z"
     }
   },
   {
@@ -527,11 +596,11 @@
             "content-length": "185",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:50 GMT",
-            "etag": "W/\"b9-mHWUr49f9BPdj98ruHmG3SWeyW0\"",
+            "date": "Thu, 22 Oct 2026 12:03:02 GMT",
+            "etag": "W/\"b9-wmQtweeDVuNjAEllG2XQfVWIUG4\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19992",
+            "ratelimit-remaining": "19991",
             "ratelimit-reset": "60",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -541,12 +610,12 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLWluc3BlY3RlZC1mbGFnIiwiZGVzY3JpcHRpb24iOm51bGwsInR5cGUiOiJraWxsLXN3aXRjaCIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTIyVDEwOjM3OjUwLjgzOFoiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
+          "body": "eyJuYW1lIjoibWNwLWluc3BlY3RlZC1mbGFnIiwiZGVzY3JpcHRpb24iOm51bGwsInR5cGUiOiJraWxsLXN3aXRjaCIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTIyVDEyOjAzOjAyLjAwN1oiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
           "trailers": {}
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:50.870Z"
+      "timestamp": "2026-10-22T12:03:02.039Z"
     }
   },
   {
@@ -571,11 +640,11 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:37:50 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:02 GMT",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19991",
-            "ratelimit-reset": "60",
+            "ratelimit-remaining": "19990",
+            "ratelimit-reset": "59",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "x-content-type-options": "nosniff",
@@ -589,7 +658,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:50.991Z"
+      "timestamp": "2026-10-22T12:03:02.209Z"
     }
   },
   {
@@ -616,12 +685,12 @@
             "content-length": "39",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:51 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:02 GMT",
             "etag": "W/\"27-mrPVnlxLtHuQ7ykKF0KrqLu4Ww4\"",
             "location": "mcp-inspected-flag/tags",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19990",
+            "ratelimit-remaining": "19989",
             "ratelimit-reset": "59",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -636,7 +705,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:51.159Z"
+      "timestamp": "2026-10-22T12:03:02.357Z"
     }
   },
   {
@@ -661,10 +730,10 @@
           "statusCode": 204,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:37:51 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:02 GMT",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19989",
+            "ratelimit-remaining": "19988",
             "ratelimit-reset": "59",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -678,7 +747,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:51.258Z"
+      "timestamp": "2026-10-22T12:03:02.469Z"
     }
   },
   {
@@ -703,11 +772,11 @@
             "content-encoding": "br",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:51 GMT",
-            "etag": "W/\"14ca-nDQBQRlTq35naybVV3YGBUqIYgE\"",
+            "date": "Thu, 22 Oct 2026 12:03:02 GMT",
+            "etag": "W/\"14ca-RbUhhzoMube3p93HmYNE6hqDNqM\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19988",
+            "ratelimit-remaining": "19987",
             "ratelimit-reset": "59",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -718,12 +787,12 @@
             "x-permitted-cross-domain-policies": "none",
             "transfer-encoding": "chunked"
           },
-          "body": "G8kUAGQrm/+drikd/5iwZfVpeATeIyuF4S+73C1sFe2Wp6VmmVSO1loIgVYIfXdm3jD1vUHM233DRBJeKcEkPcSEjaHhHq0DVDjAHyZp+An/0wWUsKkD1+4TK0EB+4CNQvkJH6unOZSWMhWwWMxuPTeLBM/d9yybVwso9xiUCph/3Gz4/rqYVT/+mb9+7J5yU62O6/J0ZeUdWWnHEYNepamOu+aErK/sKCoROUxJlSVuuSPJpmnYXZffcke/sLWzvn/Hjl44hOrE5trcag93eBNfO17S4+BvGCMlKD8hYkdQQtc6AltOvhheqqIm/6RVXjxc/qsAtcTOKtdShz9jYI/GEqtEZXnVmXOkupUDRW2EHzepcOSruENfRnnqhLdnSKwFk+fY7JlD1FZyuuiLbis9u67D65d/JXTGR3qiTigW2nMwSqt4ZfnPmAemaG9kqSLoJTZJvRL+oWkXA6FWewCRr9Ed1qLGsRGHJ1F06dLbokMOBJ5EZ6Poye8UGzI0Qs/o8LwhzcH0WcqXDXq8BEEP5SfYpScoYXtfg6CALbt9NShhejcajUYj+BpQWRH7dhFLmb4KkGwejXzlDyo2WEi2cLi5dB1FY/i/iNMqWWmdpGMlWUmao2tJHuSY2GDXezR6w/OGjqwscVU1ZNPs28Tq2u4ixig5OvKqWALVgqHvaslnYpFVK6dVIgqdbckUfAV6up8xZKrwPB3GS2UJjRomXWPDUQlQCITWP4MadJefMTFyg7JAAijZ0Oxj5aV2UXFPqxg4UmWXQFVy7cDLVhXcSKCZKjfYB60cyYnqVuSwNnbYqzSNVCrF9/DZGR/ZLhvqJUkoMlBMFq9dxNsKqSdPYXKguDj3nC7vYrxnp8PUEFtqK6edUnqiIzuaS44m5gv/hCnOajnSQx1P5LuQp2A46zlrOoeupSWuJVaUGM0u1vXFHPl/mSp/2CZ0B7U+zEnU3PXGEt/EU+fRkiVRPzOdBhOk0rxKZVGm8D5w09qG3MomXpWHPiaR2egNToqZXFMuk0Sj6Lu41zkF+LBXLXFs0rdmfTkc0vAYpMe1rxWjr+V83ZBl7Eu4ZhnuabsPiMOyHRerRA2d94p0M+RoHz0lNAGe2Sh1R0rfjbKRujTDfQbsy7CslIxO+C9sLdIHzHpWiWLtUHgOxiOVOG8x2ZhMH6TZiDuQteFFC2hzrb3YvMVU9F/64xVrtCx539GSrBnf5bSKRsYTy8mBm2nlD8uAR0mShwumBNHMbTaxMMlZKpOEDdjikrpPeBKnv7BvyNIO746UvmUO/o0MPRpWrBzNCMagyQrjMHs2TyjNTinNGqCStF64pdC/UcwbOhtnwx8MY4f2AS9Nkhz9mtIyoAqOqmFrc934DoaNMxr1M+NO3ytwgaeuMWH3cuwXnqXF0pPJ+sp7Mu66A5RG+jeE0OsoxybQGhvC/qTLUlLXyegMJL2Jz6FnmZS388TaB7xUOR3pUjpjleuObWOviAOlbwDArBdHDNnsDKncRAzjML1Jh0Z+5kD6YgcOoXIt+RzIz1uMDW1oqR0wvtAouuDyF7YJ93t2T2g4F5WNOEuEHUaW3C8gLBY2UxabYinpXeLCSyALsA12q14MM9e+ObhES6HPW5IyRKOnCXu3Pjiqct+L9jtRJOG/8I1j0kFfuf2VGNz1y4DNWplA5cMqxx2OT/U9Se6/Z0zOUFoKqMYuVIisLtFxuneiQKi0pa4PaKSzYdSMIMbUum+o5PNgLenzeXsiPEgZCZA+SMPx+FVUfVHKdRJ1YvTm+qUs8okJP0SNfGbFIIV51NY99/p5ogiXUOzCSjVTemPt0FzriYAsONYLaUU0UIKDIcb92VCABmkwQgkGJ/PV4GoWwtUqVp56Ff15QiF16JJvVkDgeFAo//j0GDC+d0AqV2EnEUoIXCdMl39qkYNCAW2ivRmckZbDoRenRm81L06hAGMLdK2V0pUn0OCr+B7iO9uPXNN0d//AVzHkZJpy7DagLV7D3CakuF8lOTm6cuLpSuIVBfevvwT4V+cS99zkRH7bJslNu4jHESl5Jloz/ceghIfryfUICqAOOdg8MP8ddyl0VQncA0V5KoINPWDW9ysPJYwPsXXcTodBNU5gVdOtJRmG7H/m8XYyvr8bQwE1Ku0Sr9FaKIFMRszWUjQ/1LL1cMytyAZCAc5K4KznRd6LKJR/wE/wV+uLrOJeoPyEK58YpvwEUe0ThaLsqFOO/zO5n4xvr2t3c7O/mbrpGL4K0FiuCjvHwosNYH0tA/YjD0c1jI566oEeRxOa0N3DAOuxH9zQ9Hbw6Pxo8PB4dzd+8PXdaOrhy2n/WkfWUtbZejU7IgesjY8WpvJACfscAsRBQqbCX7njkM5PqTGeEOKEjUejEcALK2epMkQqlLc2JnAR/Wp78v9pEbigiszQNByPPuN1TWkdtjBFzMtovFpNQG6cJmQlCAeuKdEXLBGs0xyQEpOFQzkdGRbpQzItVNIgszqPlEmhvB0VsZb4n3SjArBnRvygnFTjpJ0TNB2NTIxlOenkdjvKxyK67J+0idB/xIDF4r8rfEWxT0TVkyQ/y+ahlmSaBz0HRT1KoZ6JMUcZuhvpoYAOz9UclIMGak7jWambvBD1s8BHWkWjdMRQkZPoFcoRJECgPBjKT9gOCNH3DT/h4JUIcdbeu/UB4rWzdCWzCOnwpBtq8CmQ8mDVwC4HY4Ct4jSSLCnIL8OKwxfMiRmXIY2y/v+/KLYuMhTQorbkFzkfnx78dHLv3f5m/PBwR66+ubt7vPcOb6d++jhGnCLe3DzU9xO8m+Kj9w/Th4l304lz47vbsYOYJM3KQzm+nzpzlzRpwIVG",
+          "body": "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",
           "trailers": {}
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:51.316Z"
+      "timestamp": "2026-10-22T12:03:02.530Z"
     }
   },
   {
@@ -748,11 +817,11 @@
             "content-length": "205",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:51 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:02 GMT",
             "etag": "W/\"cd-w0FpbBEWKsI5UN3qk5/4JXjF9z4\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19987",
+            "ratelimit-remaining": "19986",
             "ratelimit-reset": "59",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -767,7 +836,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:51.371Z"
+      "timestamp": "2026-10-22T12:03:02.583Z"
     }
   },
   {
@@ -794,11 +863,11 @@
             "content-length": "533",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:51 GMT",
-            "etag": "W/\"215-X0dqqIlxySdf/+Jvv436mwN7XDI\"",
+            "date": "Thu, 22 Oct 2026 12:03:02 GMT",
+            "etag": "W/\"215-hMbFPyGit7lpWl3N2XBpDbQk+Js\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19985",
+            "ratelimit-remaining": "19984",
             "ratelimit-reset": "59",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -808,12 +877,12 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJpZCI6IjAxTTVISzBKSjhKQ0ZHQkpHV1hOU0IyNlc5IiwibmFtZSI6ImZsZXhpYmxlUm9sbG91dCIsImNvbnN0cmFpbnRzIjpbeyJ2YWx1ZXMiOlsiMSIsIjIiXSwiaW52ZXJ0ZWQiOmZhbHNlLCJvcGVyYXRvciI6IklOIiwiY29udGV4dE5hbWUiOiJ1c2VySWQiLCJjYXNlSW5zZW5zaXRpdmUiOmZhbHNlfV0sInBhcmFtZXRlcnMiOnsiZ3JvdXBJZCI6Im1jcC1pbnNwZWN0ZWQtZmxhZyIsInJvbGxvdXQiOiI1MCIsInN0aWNraW5lc3MiOiJkZWZhdWx0In0sInZhcmlhbnRzIjpbeyJuYW1lIjoiYmx1ZSIsIndlaWdodCI6MzAwLCJwYXlsb2FkIjp7InR5cGUiOiJzdHJpbmciLCJ2YWx1ZSI6IiMwMGYifSwic3RpY2tpbmVzcyI6ImRlZmF1bHQiLCJ3ZWlnaHRUeXBlIjoiZml4In0seyJuYW1lIjoiZ3JlZW4iLCJ3ZWlnaHQiOjcwMCwic3RpY2tpbmVzcyI6ImRlZmF1bHQiLCJ3ZWlnaHRUeXBlIjoidmFyaWFibGUifV0sInNlZ21lbnRzIjpbXSwidGl0bGUiOiJCZXRhIHRlc3RlcnMiLCJkaXNhYmxlZCI6ZmFsc2UsInNvcnRPcmRlciI6MH0=",
+          "body": "eyJpZCI6IjAxTTVIUVdIWkFIRk44RTU3R0NLQkJQRzBQIiwibmFtZSI6ImZsZXhpYmxlUm9sbG91dCIsImNvbnN0cmFpbnRzIjpbeyJ2YWx1ZXMiOlsiMSIsIjIiXSwiaW52ZXJ0ZWQiOmZhbHNlLCJvcGVyYXRvciI6IklOIiwiY29udGV4dE5hbWUiOiJ1c2VySWQiLCJjYXNlSW5zZW5zaXRpdmUiOmZhbHNlfV0sInBhcmFtZXRlcnMiOnsiZ3JvdXBJZCI6Im1jcC1pbnNwZWN0ZWQtZmxhZyIsInJvbGxvdXQiOiI1MCIsInN0aWNraW5lc3MiOiJkZWZhdWx0In0sInZhcmlhbnRzIjpbeyJuYW1lIjoiYmx1ZSIsIndlaWdodCI6MzAwLCJwYXlsb2FkIjp7InR5cGUiOiJzdHJpbmciLCJ2YWx1ZSI6IiMwMGYifSwic3RpY2tpbmVzcyI6ImRlZmF1bHQiLCJ3ZWlnaHRUeXBlIjoiZml4In0seyJuYW1lIjoiZ3JlZW4iLCJ3ZWlnaHQiOjcwMCwic3RpY2tpbmVzcyI6ImRlZmF1bHQiLCJ3ZWlnaHRUeXBlIjoidmFyaWFibGUifV0sInNlZ21lbnRzIjpbXSwidGl0bGUiOiJCZXRhIHRlc3RlcnMiLCJkaXNhYmxlZCI6ZmFsc2UsInNvcnRPcmRlciI6MH0=",
           "trailers": {}
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:51.588Z"
+      "timestamp": "2026-10-22T12:03:02.792Z"
     }
   },
   {
@@ -837,10 +906,10 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 10:37:51 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:02 GMT",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19984",
+            "ratelimit-remaining": "19983",
             "ratelimit-reset": "59",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -855,7 +924,146 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:51.704Z"
+      "timestamp": "2026-10-22T12:03:02.993Z"
+    }
+  },
+  {
+    "hash": "k2UV0gzuh128N_zWXx-p0SSI3z2fWXOvIAyX60Q5n6o",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "447",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"name\":\"mcp-inspect-plan\",\"milestones\":[{\"name\":\"Canary\",\"sortOrder\":0,\"strategies\":[{\"sortOrder\":0,\"strategyName\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"10\",\"stickiness\":\"default\",\"groupId\":\"mcp-inspected-parent\"}}]},{\"name\":\"Everyone\",\"sortOrder\":1,\"strategies\":[{\"sortOrder\":0,\"strategyName\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"mcp-inspected-parent\"}}]}]}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Thu, 22 Oct 2026 12:03:03 GMT",
+            "etag": "W/\"454-uWRLkKpIaXEtTZuOAwiczKzyT+Y\"",
+            "ratelimit-limit": "20000",
+            "ratelimit-policy": "20000;w=60",
+            "ratelimit-remaining": "19982",
+            "ratelimit-reset": "58",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G1MEAMR/1dm0v9k5xUnRWwHBan4rF5wYDuj/biIeCEzfz48PfHEWaJ7nXxMLAy8ak6NIz7JtkgYN20Od36jkyL9QCQRCPsi3J6tuac6njWZrE60bq96gXu/OwKDliyDwumSB0i6jiw+yp9RgqFA+BCUVD4EojAoBD4MomvNIhLEI47ewEG/BkBTghzOvUg2h359PhhwHNnoT5S5WvZSWPrUQyGYI3nlj9XvhyHYSCF5keKknOZ9qchA7ORavenySn5Vb7V4lX1+v6/SNmtTSfoPBpdaPbEIWImSw9CTpaPyUuk7XHvQbpbqTKKez81Z6uikkD66X3VJUmfQ23cq6VOazCaBX64BOgFzklX8SBBofZL9TTVKxiGmbps9n+u6R1foeHgpc2EP8wu45AR7eAKnLQ2lyDgJRZhk+KIuRh64wjZIgk5a0xz9Db4qQVNo7iN2BoXg+X0GObi9iLjonxFU+Hf0f/pkll22a21qrUtvkx4NKt9JsDSnURKiqH3JbHnNb4etVdbCqL+vzcrye1igLuzwudorDPw==",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-22T12:03:03.119Z"
+    }
+  },
+  {
+    "hash": "J0ac9yTpJmFwbGyeZ7XUyQ2R76I2B3Hb_dH0VuzE4wo",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-parent/environments/development/release-plans",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "43",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"templateId\":\"01M5HQWJ8T1REFGY2XEWKMDDJS\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Thu, 22 Oct 2026 12:03:03 GMT",
+            "etag": "W/\"4e8-m7uD2Mnpez/wZpvshhe/qO3UqoM\"",
+            "ratelimit-limit": "20000",
+            "ratelimit-policy": "20000;w=60",
+            "ratelimit-remaining": "19981",
+            "ratelimit-reset": "58",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G+cEAMR/p+a0vxnHvtLYrtSC7H8RCsYW/JQ2cTPEQGDSBp0Ca4DNAZR2eYAhRGMDFlEXPcOrnhxOH5Z13foK//4XOoFEVJhWBsv9qDfqTnuD7qJzaDRn1fJq34RAon3sdKqt4sxBIjfKQsCqlCCRxnmgrc8p5iA3ykIgIR87nbPOLKR9N0bgSYrfHc1USpBI4zzQ1ucUMyVBrhxZhgDZD+0ym5JlSCT0QSbLU7IMgdiRYkpa31tPbphAFmoC8cbtmwyJYlSsBoUoKBY3haKMSjIqvRQa5RMEVMz6g6bakOfM0jDqh1j1S9FhMDtUTqXxZlmoHCDgyJDytDDKbijNjWLDnvVNYdXt9Y/FQ3c/nnY6ozUEUh+VHvLMraknmMRr28oq9w0Bnzmeu4QcZIQj0KHnv/jTZXaYsNaenWJ61XPafl3ZlJulcv+4WZf7zdUJuk1qDECOYs2GINH9IPedWYoKUXHdKjMme2dkjr5nhzSyEiB/8RxaEJOVasGcMSNRiFyIdPymLXlfO01P9W4Y/wL/ZexS2rKHPF8FLvRHVwBPrykhshkS8qmMp//rv1DIuMMiKuw2q1k0WLamUW/Wi1vLhJaqHyzkcp2HcnVfOYzLxWm3to9Ws3Uzhf1B/a2Dvv4D",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-22T12:03:03.331Z"
+    }
+  },
+  {
+    "hash": "1veARaGN20TRIwkASpCBORxIGPJmQw2Sb2guIP79nDo",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-parent/environments/development/release-plans/01M5HQWJFJEMFHEPDX9AN64RWA/milestones/01M5HQWJFRG30XHNX5Z3KTQ15X/start",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "0",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 415,
+          "headers": {
+            "content-length": "515",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Thu, 22 Oct 2026 12:03:03 GMT",
+            "etag": "W/\"203-oo5M5gHaHp0hKXTf93r/MwYKps8\"",
+            "ratelimit-limit": "20000",
+            "ratelimit-policy": "20000;w=60",
+            "ratelimit-remaining": "19980",
+            "ratelimit-reset": "58",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJpZCI6ImE2ZTcwNGMxLTA1NzgtNGMwZi04OTI1LWY5NzI5NmRmNTY2ZiIsIm5hbWUiOiJDb250ZW50VHlwZUVycm9yIiwibWVzc2FnZSI6IldlIGRvIG5vdCBhY2NlcHQgdGhlIGNvbnRlbnQtdHlwZSB5b3UgcHJvdmlkZWQgKHlvdSBkaWRuJ3QgcHJvdmlkZSBvbmUpLiBUcnkgdXNpbmcgb25lIG9mIHRoZSBjb250ZW50LXR5cGVzIHdlIGRvIGFjY2VwdCBpbnN0ZWFkIChhcHBsaWNhdGlvbi9qc29uKSBhbmQgbWFrZSBzdXJlIHRoZSBib2R5IGlzIGluIHRoZSBjb3JyZXNwb25kaW5nIGZvcm1hdC4iLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiV2UgZG8gbm90IGFjY2VwdCB0aGUgY29udGVudC10eXBlIHlvdSBwcm92aWRlZCAoeW91IGRpZG4ndCBwcm92aWRlIG9uZSkuIFRyeSB1c2luZyBvbmUgb2YgdGhlIGNvbnRlbnQtdHlwZXMgd2UgZG8gYWNjZXB0IGluc3RlYWQgKGFwcGxpY2F0aW9uL2pzb24pIGFuZCBtYWtlIHN1cmUgdGhlIGJvZHkgaXMgaW4gdGhlIGNvcnJlc3BvbmRpbmcgZm9ybWF0LiJ9XX0=",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-22T12:03:03.412Z"
     }
   },
   {
@@ -880,12 +1088,12 @@
             "content-length": "80",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:51 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:03 GMT",
             "etag": "W/\"50-RMQibLPExmW5DQ4exWbWp0cwqmg\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19982",
-            "ratelimit-reset": "59",
+            "ratelimit-remaining": "19978",
+            "ratelimit-reset": "58",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "vary": "Accept-Encoding",
@@ -899,7 +1107,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:51.852Z"
+      "timestamp": "2026-10-22T12:03:03.624Z"
     }
   },
   {
@@ -924,12 +1132,12 @@
             "content-length": "23",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:51 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:03 GMT",
             "etag": "W/\"17-d2Zj8CY0g+DPFdfMmqrMI4iJOug\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19981",
-            "ratelimit-reset": "59",
+            "ratelimit-remaining": "19977",
+            "ratelimit-reset": "58",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "vary": "Accept-Encoding",
@@ -943,7 +1151,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:51.910Z"
+      "timestamp": "2026-10-22T12:03:03.682Z"
     }
   },
   {
@@ -968,11 +1176,11 @@
             "content-length": "152",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:51 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:03 GMT",
             "etag": "W/\"98-YCnmBJKolAikkWCOTsfTzxYhRhk\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19979",
+            "ratelimit-remaining": "19975",
             "ratelimit-reset": "58",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -987,7 +1195,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:51.985Z"
+      "timestamp": "2026-10-22T12:03:03.749Z"
     }
   },
   {
@@ -1012,11 +1220,11 @@
             "content-length": "198",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 10:37:51 GMT",
+            "date": "Thu, 22 Oct 2026 12:03:03 GMT",
             "etag": "W/\"c6-Neu6VEXpuR+DmCIKvuLYwcycrdc\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19978",
+            "ratelimit-remaining": "19974",
             "ratelimit-reset": "58",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
@@ -1031,7 +1239,48 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T10:37:51.987Z"
+      "timestamp": "2026-10-22T12:03:03.751Z"
+    }
+  },
+  {
+    "hash": "4fa9i-x-3UvJQv-CXomQPcnjnZIOeVVS6XbnIAcWD6I",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M5HQWJ8T1REFGY2XEWKMDDJS",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "date": "Thu, 22 Oct 2026 12:03:04 GMT",
+            "ratelimit-limit": "20000",
+            "ratelimit-policy": "20000;w=60",
+            "ratelimit-remaining": "19966",
+            "ratelimit-reset": "57",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-22T12:03:04.565Z"
     }
   }
 ]

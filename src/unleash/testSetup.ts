@@ -13,3 +13,11 @@ export const deleteFlag = async (admin: UnleashClient, projectId: string, featur
   await admin.DELETE('/api/admin/projects/{projectId}/features/{featureName}', { params: { path: { projectId, featureName } } });
   await admin.DELETE('/api/admin/archive/{featureName}', { params: { path: { featureName } } });
 };
+
+// A failed recording can leave the template behind, and Unleash refuses a second one with the same name.
+export const deleteReleaseTemplate = async (admin: UnleashClient, name: string): Promise<void> => {
+  const listed = await admin.GET('/api/admin/release-plan-templates');
+  for (const template of (listed.data ?? []).filter((t) => t.name === name)) {
+    await admin.DELETE('/api/admin/release-plan-templates/{templateId}', { params: { path: { templateId: template.id } } });
+  }
+};

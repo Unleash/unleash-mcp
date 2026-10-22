@@ -1,7 +1,7 @@
 import type { components } from '../unleash/api.d.ts';
 import type { UnleashClient } from '../unleash/client.ts';
 import type { FlagQuery } from './inspectInput.ts';
-import type { Environment, FlagType, InspectResult, Lifecycle, LifecycleStage, Link, Parent, Tag } from './inspectOutput.ts';
+import type { Environment, FlagType, InspectResult, Lifecycle, LifecycleStage, Link, Milestone, Parent, ReleasePlan, Tag } from './inspectOutput.ts';
 import type { Constraint, Target, Value } from './target.ts';
 import { toFailed } from './failed.ts';
 
@@ -35,15 +35,35 @@ export const inspectFlag = async (unleash: UnleashClient, { project, flag }: Fla
 };
 
 type UnleashEnvironment = components['schemas']['featureEnvironmentSchema'];
-type UnleashStrategy = components['schemas']['featureStrategySchema'];
+type UnleashReleasePlan = components['schemas']['releasePlanSchema'];
 type UnleashConstraint = components['schemas']['constraintSchema'];
 type UnleashVariant = components['schemas']['strategyVariantSchema'];
+// What a feature strategy and a release plan milestone strategy have in common.
+type UnleashStrategy = {
+  name: string;
+  title?: string | null;
+  parameters?: Record<string, string>;
+  constraints?: UnleashConstraint[];
+  segments?: number[];
+  variants?: UnleashVariant[];
+};
 
-const toEnvironment = ({ name, enabled, lastSeenAt, strategies }: UnleashEnvironment): Environment => ({
+// Unleash allows one release plan per environment; its schema is an array anyway.
+const toEnvironment = ({ name, enabled, lastSeenAt, strategies, releasePlans }: UnleashEnvironment): Environment => ({
   name,
   enabled,
   ...(lastSeenAt ? { lastSeenAt } : {}),
   ...(strategies?.length ? { targets: strategies.map(toTarget) } : {}),
+  ...(releasePlans?.[0] ? { releasePlan: toReleasePlan(releasePlans[0]) } : {}),
+});
+
+const toReleasePlan = ({ name, milestones, activeMilestoneId }: UnleashReleasePlan): ReleasePlan => ({
+  name,
+  milestones: milestones.map(({ id, name, strategies }): Milestone => ({
+    name,
+    ...(id === activeMilestoneId ? { active: true } : {}),
+    ...(strategies?.length ? { targets: strategies.map(toTarget) } : {}),
+  })),
 });
 
 // The reverse of the release plan's toStrategy, so a target can be edited and released again.
