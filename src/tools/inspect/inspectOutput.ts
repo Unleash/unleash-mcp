@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { target } from '../shared/target.ts';
 import { failed } from '../shared/failed.ts';
+import { legalValue } from '../shared/legalValue.ts';
 
 const flagNaming = z.object({
   pattern: z.string().describe('JavaScript regular expression new flag names must match'),
@@ -79,7 +80,16 @@ const flag = z.object({
   links: z.array(link).optional().describe('Related URLs, such as the pull request or the ticket'),
 });
 
-const result = z.discriminatedUnion('kind', [project, flag, failed]);
+const contextField = z.object({
+  kind: z.literal('context_field'),
+  name: z.string(),
+  project: z.string().optional().describe('Set on a project field; absent on a global one'),
+  description: z.string().optional(),
+  stickiness: z.boolean().describe('Whether flags can use the field for custom stickiness'),
+  legalValues: z.array(legalValue).optional().describe('Set when constraints on the field may only use these values'),
+});
+
+const result = z.discriminatedUnion('kind', [project, flag, contextField, failed]);
 
 export const inspectOutput = {
   results: z.array(result).describe('One per query, in the order asked'),
@@ -89,6 +99,7 @@ export type InspectOutput = z.infer<z.ZodObject<typeof inspectOutput>>;
 export type InspectResult = z.infer<typeof result>;
 export type Project = z.infer<typeof project>;
 export type Flag = z.infer<typeof flag>;
+export type ContextField = z.infer<typeof contextField>;
 export type FlagType = z.infer<typeof flagType>;
 export type Parent = z.infer<typeof parent>;
 export type Lifecycle = z.infer<typeof lifecycle>;

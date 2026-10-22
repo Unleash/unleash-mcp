@@ -5,7 +5,7 @@ paths:
 
 # MCP tools
 
-- Each tool has its own directory (`src/tools/release/`), split into input schema, logic and output schema. Files and exports carry the tool name (`releaseInput.ts`, not `input.ts`). Shapes shared across tools (`failed.ts`, `target.ts`) sit in `src/tools/`.
+- Each tool has its own directory (`src/tools/release/`), split into input schema, logic and output schema. Files and exports carry the tool name (`releaseInput.ts`, not `input.ts`). Shapes shared across tools (`failed.ts`, `target.ts`, `legalValue.ts`) sit in `src/tools/shared/`.
 - A success returns `structuredContent` only; a failure returns a text block only.
 - Keep output token efficient by returning minimal fields, shaped by hand on top of the generated Unleash types.
 - Every union tags its success case with a `kind`; never a bare string next to result objects.

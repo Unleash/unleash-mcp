@@ -1,9 +1,5 @@
 import { z } from 'zod';
-
-const legalValue = z.object({
-  value: z.string().describe('e.g. gold'),
-  description: z.string().optional().describe('What the value means, shown next to it when picking values'),
-});
+import { legalValue } from '../shared/legalValue.ts';
 
 const project = z.string().optional().describe('Project id of a project field; leave out for a global field');
 
