@@ -33,9 +33,12 @@ export const inspectFlag = async (unleash: UnleashClient, { project, flag }: Fla
   };
 };
 
-const stages: Record<string, LifecycleStage> = { initial: 'define', 'pre-live': 'develop', live: 'production', completed: 'cleanup', archived: 'archived' };
+type UnleashStage = 'initial' | 'pre-live' | 'live' | 'completed' | 'archived';
 
-const toLifecycle = ({ stage, status, enteredStageAt }: { stage: keyof typeof stages; status?: string | null; enteredStageAt: string }): Lifecycle => ({
+// A stage Unleash adds fails to compile here until it has a UI name.
+const stages: Record<UnleashStage, LifecycleStage> = { initial: 'define', 'pre-live': 'develop', live: 'production', completed: 'cleanup', archived: 'archived' };
+
+const toLifecycle = ({ stage, status, enteredStageAt }: { stage: UnleashStage; status?: string | null; enteredStageAt: string }): Lifecycle => ({
   stage: stages[stage],
   ...(status ? { status } : {}),
   enteredAt: enteredStageAt,
