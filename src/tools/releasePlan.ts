@@ -1,4 +1,4 @@
-import type { Constraint, Target } from './releaseInput.ts';
+import type { Constraint, Target, Value } from './releaseInput.ts';
 
 export type EnvironmentPath = { projectId: string; featureName: string; environment: string };
 
@@ -26,9 +26,13 @@ const toStrategy = (flag: string, target: Target) => ({
   parameters: { rollout: String(rolloutOf(target)), stickiness: 'default', groupId: flag },
   constraints: (target.constraints ?? []).map(toConstraint),
   segments: target.segments ?? [],
-  // Unleash rejects a lone variant with a fixed weight, so it takes all of the variable weight.
-  variants: target.value ? [{ ...target.value, weight: 1000, weightType: 'variable' as const, stickiness: 'default' }] : [],
+  variants: (target.values ?? []).map(toVariant),
 });
+
+const toVariant = ({ share, ...value }: Value, i: number, all: Value[]) => {
+  const fixed = share !== undefined && (i < all.length - 1 || all.some((v) => v.share === undefined));
+  return { ...value, weight: (share ?? 0) * 10, weightType: fixed ? ('fix' as const) : ('variable' as const), stickiness: 'default' };
+};
 
 const toConstraint = (c: Constraint) => ({
   contextName: c.field,

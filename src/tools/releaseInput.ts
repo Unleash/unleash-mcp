@@ -19,14 +19,22 @@ const constraint = z.object({
 const value = z.object({
   name: z.string(),
   payload: z.object({ type: z.enum(['string', 'json', 'csv', 'number']), value: z.string() }).optional(),
+  share: z.number().int().min(0).max(100).optional().describe('Percentage of the audience that gets this value. Values without one split what is left evenly'),
 });
+
+// The plan turns the last of a fully shared list into the one taking what is left (see releasePlan.ts),
+// which only keeps its share when the shares add up to 100. Shares over 100 are left to Unleash to reject.
+const values = z.array(value).min(1).refine(
+  (vs) => vs.some((v) => v.share === undefined) || vs.reduce((sum, v) => sum + (v.share ?? 0), 0) === 100,
+  'When every value has a share, the shares must add up to 100',
+);
 
 export const target = z.object({
   name: z.string().describe('What the audience is, e.g. Beta testers. Shown in the Unleash UI'),
   rollout: z.number().int().min(0).max(100).optional().describe('Percentage of the audience that gets the feature, default 100'),
   constraints: z.array(constraint).optional().describe('All must match for a user to be in the audience'),
   segments: z.array(z.number().int()).optional().describe('Ids of audiences already defined in Unleash'),
-  value: value.optional().describe('Value the audience gets'),
+  values: values.optional().describe('Values the audience gets, split by share'),
 });
 
 export const releaseInput = {
@@ -39,3 +47,4 @@ export const releaseInput = {
 export type ReleaseInput = z.infer<z.ZodObject<typeof releaseInput>>;
 export type Target = z.infer<typeof target>;
 export type Constraint = z.infer<typeof constraint>;
+export type Value = z.infer<typeof value>;
