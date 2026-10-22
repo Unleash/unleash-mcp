@@ -1,22 +1,26 @@
 import assert from 'node:assert/strict';
-import { after, test } from 'node:test';
+import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../unleash/testClient.ts';
 import { unleashError } from '../unleash/testError.ts';
 import { inspectProject } from './project.ts';
 
-const { unleash, close } = createRecordedClient(new URL('./project.snapshot.json', import.meta.url).pathname);
+const { unleash, admin, close } = createRecordedClient(new URL('./project.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server';
+const flagNaming = { pattern: '^mcp-[a-z-]+$', example: 'mcp-flag', description: 'mcp, dash, lowercase words' };
 
+// Every flag the tests create has to match the pattern.
+before(async () => {
+  await admin.PUT('/api/admin/projects/{projectId}/settings', { params: { path: { projectId: project } }, body: { featureNaming: flagNaming } });
+});
 after(close);
 
-// The sandbox project enforces the flag naming pattern listed in the testing rule.
 test('lists the environments and the flag naming pattern of a project', async () => {
   const output = await inspectProject(unleash, { kind: 'project', project });
 
   assert.deepEqual(output, {
     kind: 'project',
     environments: ['development', 'production'],
-    flagNaming: { pattern: '^mcp-[a-z-]+$', example: 'mcp-flag', description: 'mcp, dash, lowercase words' },
+    flagNaming,
   });
 });
 

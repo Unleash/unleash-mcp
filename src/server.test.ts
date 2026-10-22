@@ -5,21 +5,15 @@ import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { createServer } from './server.ts';
 import type { UnleashClient } from './unleash/client.ts';
 import { createRecordedClient, createStubbedClient } from './unleash/testClient.ts';
+import { deleteFlag } from './unleash/testSetup.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./server.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server';
 // Not `mcp-flag`: test files run in parallel while recording, and release.test.ts deletes that one.
 const flag = 'mcp-server-flag';
 
-// Archiving and then deleting from the archive removes the flag for good, so the release creates it.
-const deleteFlag = async (): Promise<void> => {
-  await admin.DELETE('/api/admin/projects/{projectId}/features/{featureName}', {
-    params: { path: { projectId: project, featureName: flag } },
-  });
-  await admin.DELETE('/api/admin/archive/{featureName}', { params: { path: { featureName: flag } } });
-};
-
-before(deleteFlag);
+// The flag is gone before the test, so the release creates it.
+before(() => deleteFlag(admin, project, flag));
 after(close);
 
 const connectClient = async (server: UnleashClient = unleash): Promise<Client> => {

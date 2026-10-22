@@ -10,6 +10,7 @@ test('answers each query in the order asked, failures included', async () => {
   stub.intercept({ path: '/api/admin/projects/unknown/overview', method: 'GET' }).reply(404, unleashError('NotFoundError', 'No project found'));
   stub.intercept({ path: '/api/admin/projects/known/overview', method: 'GET' }).reply(200, { environments: [{ environment: 'development' }] });
   stub.intercept({ path: '/api/admin/projects/known/features/mcp-flag', method: 'GET' }).reply(200, { name: 'mcp-flag', type: 'release' });
+  stub.intercept({ path: '/api/admin/features/mcp-flag/tags', method: 'GET' }).reply(200, { version: 1, tags: [] });
   const inspect = createInspect(unleash);
 
   const output = await inspect({
