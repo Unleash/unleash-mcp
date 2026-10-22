@@ -16,6 +16,7 @@ import { setFlagRolloutTool } from './setFlagRollout.js';
 import { toggleFlagEnvironmentTool } from './toggleFlagEnvironment.js';
 import type { ToolDefinition } from './types.js';
 import { updateFlagLifecycleTool } from './updateFlagLifecycle.js';
+import { updateProjectSettingsTool } from './updateProjectSettings.js';
 import { wrapChangeTool } from './wrapChange.js';
 
 const tools = [
@@ -35,6 +36,7 @@ const tools = [
   toggleFlagEnvironmentTool,
   removeFlagStrategyTool,
   updateFlagLifecycleTool,
+  updateProjectSettingsTool,
   sendFeedbackTool,
 ] as ToolDefinition[];
 
@@ -81,6 +83,7 @@ describe('tool annotations', () => {
       'remove_flag_strategy',
       'set_flag_rollout',
       'update_flag_lifecycle',
+      'update_project_settings',
     ]);
   });
 });

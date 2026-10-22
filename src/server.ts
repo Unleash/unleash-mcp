@@ -40,6 +40,7 @@ import { setFlagRolloutTool } from './tools/setFlagRollout.js';
 import { toggleFlagEnvironmentTool } from './tools/toggleFlagEnvironment.js';
 import type { ToolDefinition } from './tools/types.js';
 import { updateFlagLifecycleTool } from './tools/updateFlagLifecycle.js';
+import { updateProjectSettingsTool } from './tools/updateProjectSettings.js';
 import { wrapChangeTool } from './tools/wrapChange.js';
 import type { ClientInfo } from './unleash/attribution.js';
 import { UnleashClient } from './unleash/client.js';
@@ -209,6 +210,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     toggleFlagEnvironmentTool,
     removeFlagStrategyTool,
     updateFlagLifecycleTool,
+    updateProjectSettingsTool,
     ...(feedbackToolEnabled ? [sendFeedbackTool] : []),
   ];
 
