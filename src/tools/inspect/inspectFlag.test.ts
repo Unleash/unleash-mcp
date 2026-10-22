@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
-import { createRecordedClient, createStubbedClient } from '../unleash/testClient.ts';
-import { unleashError } from '../unleash/testError.ts';
-import { deleteFlag, deleteReleaseTemplate } from '../unleash/testSetup.ts';
+import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
+import { unleashError } from '../../unleash/testError.ts';
+import { deleteFlag, deleteReleaseTemplate } from '../../unleash/testSetup.ts';
 import { inspectFlag } from './inspectFlag.ts';
-import { createRelease } from './release.ts';
+import { createRelease } from '../release/release.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./inspectFlag.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server';

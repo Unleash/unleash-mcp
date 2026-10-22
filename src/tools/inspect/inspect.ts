@@ -1,4 +1,4 @@
-import type { UnleashClient } from '../unleash/client.ts';
+import type { UnleashClient } from '../../unleash/client.ts';
 import type { Query, InspectInput } from './inspectInput.ts';
 import type { InspectOutput, InspectResult } from './inspectOutput.ts';
 import { inspectProject } from './project.ts';

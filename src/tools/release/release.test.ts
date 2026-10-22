@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
-import { createStubbedClient, createRecordedClient } from '../unleash/testClient.ts';
-import { unleashError } from '../unleash/testError.ts';
-import { deleteFlag } from '../unleash/testSetup.ts';
+import { createStubbedClient, createRecordedClient } from '../../unleash/testClient.ts';
+import { unleashError } from '../../unleash/testError.ts';
+import { deleteFlag } from '../../unleash/testSetup.ts';
 import { createRelease } from './release.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./release.snapshot.json', import.meta.url).pathname);

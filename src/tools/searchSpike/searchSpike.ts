@@ -1,9 +1,9 @@
-import type { components } from '../unleash/api.d.ts';
-import type { UnleashClient } from '../unleash/client.ts';
-import type { Constraint, Target } from './target.ts';
+import type { components } from '../../unleash/api.d.ts';
+import type { UnleashClient } from '../../unleash/client.ts';
+import type { Constraint, Target } from '../shared/target.ts';
 import type { Lookup } from './searchSpikeInput.ts';
 import type { SearchResult } from './searchSpikeOutput.ts';
-import { toFailed } from './failed.ts';
+import { toFailed } from '../shared/failed.ts';
 
 type Strategy = components['schemas']['featureStrategySchema'];
 type UnleashConstraint = components['schemas']['constraintSchema'];

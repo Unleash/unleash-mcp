@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { target } from './target.ts';
-import { failed } from './failed.ts';
+import { target } from '../shared/target.ts';
+import { failed } from '../shared/failed.ts';
 
 const projects = z.object({ kind: z.literal('projects'), projects: z.array(z.object({ id: z.string(), name: z.string() })) });
 const environments = z.object({ kind: z.literal('environments'), environments: z.array(z.string()).describe('Enabled environments only') });

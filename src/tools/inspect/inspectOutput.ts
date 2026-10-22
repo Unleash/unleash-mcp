@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { target } from './target.ts';
-import { failed } from './failed.ts';
+import { target } from '../shared/target.ts';
+import { failed } from '../shared/failed.ts';
 
 const flagNaming = z.object({
   pattern: z.string().describe('JavaScript regular expression new flag names must match'),

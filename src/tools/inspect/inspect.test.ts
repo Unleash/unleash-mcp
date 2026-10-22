@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createStubbedClient } from '../unleash/testClient.ts';
-import { unleashError } from '../unleash/testError.ts';
+import { createStubbedClient } from '../../unleash/testClient.ts';
+import { unleashError } from '../../unleash/testError.ts';
 import { createInspect } from './inspect.ts';
 
 // What each query returns is pinned by its own step's tests; here only the order and the inline failures matter.

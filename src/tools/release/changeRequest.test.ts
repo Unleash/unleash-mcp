@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { isDeepStrictEqual } from 'node:util';
 import type { Interceptable } from 'undici';
-import { createStubbedClient } from '../unleash/testClient.ts';
+import { createStubbedClient } from '../../unleash/testClient.ts';
 import { createRouter, requestChanges } from './changeRequest.ts';
 
 const project = 'mcp-server';

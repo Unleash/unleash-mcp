@@ -1,4 +1,4 @@
-import type { Constraint, Target, Value } from './target.ts';
+import type { Constraint, Target, Value } from '../shared/target.ts';
 
 export type EnvironmentPath = { projectId: string; featureName: string; environment: string };
 

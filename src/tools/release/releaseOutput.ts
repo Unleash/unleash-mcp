@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { target } from './target.ts';
-import { failed, type Failed } from './failed.ts';
+import { target } from '../shared/target.ts';
+import { failed, type Failed } from '../shared/failed.ts';
 
 const flag = z.discriminatedUnion('status', [
   z.object({ status: z.literal('new'), name: z.string() }),
