@@ -143,3 +143,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 ## 2026-10-22 — Opt-in parts of a read
 
 - A read returns everything it gets cheaply. Parts that cost Unleash real work, such as the usage of a context field (a scan of every strategy), are named in an `include` enum list on the query and left out unless named. Rejected: a boolean per part (doesn't scale), always fetching usage, and a GraphQL-style selection of the response shape (the output schema can't follow it, absence stops meaning anything, and the savings stop at request boundaries anyway).
+
+## 2026-10-22 — Search tool
+
+- Search fetches all segments for now and returns every match, without a limit or a total: most people don't have that many segments, and letting the agent do the filtering and mapping is fine for now. The rows carry scope, author, creation date and usage counts, and the tool tells the agent to search all and filter itself. Rejected for now: a default limit with a total, and typed filters applied on our side, since Unleash's segments list offers none.
