@@ -21,12 +21,12 @@
             "content-length": "178",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 09:19:27 GMT",
+            "date": "Thu, 22 Oct 2026 10:04:03 GMT",
             "etag": "W/\"b2-Md5GiSZM1YehsDZrTx4ZCOIUKA4\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19999",
-            "ratelimit-reset": "60",
+            "ratelimit-remaining": "19998",
+            "ratelimit-reset": "44",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "vary": "Accept-Encoding",
@@ -42,11 +42,11 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 09:19:27 GMT",
+            "date": "Thu, 22 Oct 2026 10:04:04 GMT",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19996",
-            "ratelimit-reset": "60",
+            "ratelimit-remaining": "19993",
+            "ratelimit-reset": "44",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "x-content-type-options": "nosniff",
@@ -60,7 +60,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T09:19:27.450Z"
+      "timestamp": "2026-10-22T10:04:04.454Z"
     }
   },
   {
@@ -87,13 +87,13 @@
             "content-length": "137",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Thu, 22 Oct 2026 09:19:27 GMT",
-            "etag": "W/\"89-dSz58Lt8AZrNjyCdk1giQqWCsYg\"",
+            "date": "Thu, 22 Oct 2026 10:04:04 GMT",
+            "etag": "W/\"89-hYXGA154UzLIOu5v3Y01Pz296AE\"",
             "location": "context/mcpLegalValueField",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19998",
-            "ratelimit-reset": "60",
+            "ratelimit-remaining": "19997",
+            "ratelimit-reset": "44",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "vary": "Accept-Encoding",
@@ -102,12 +102,12 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwTGVnYWxWYWx1ZUZpZWxkIiwiZGVzY3JpcHRpb24iOm51bGwsInN0aWNraW5lc3MiOmZhbHNlLCJzb3J0T3JkZXIiOjAsImxlZ2FsVmFsdWVzIjpbXSwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yMlQwOToxOToyNy4yNDVaIn0=",
+          "body": "eyJuYW1lIjoibWNwTGVnYWxWYWx1ZUZpZWxkIiwiZGVzY3JpcHRpb24iOm51bGwsInN0aWNraW5lc3MiOmZhbHNlLCJzb3J0T3JkZXIiOjAsImxlZ2FsVmFsdWVzIjpbXSwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yMlQxMDowNDowNC4xNTRaIn0=",
           "trailers": {}
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T09:19:27.244Z"
+      "timestamp": "2026-10-22T10:04:04.142Z"
     }
   },
   {
@@ -132,11 +132,11 @@
           "statusCode": 200,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
-            "date": "Thu, 22 Oct 2026 09:19:27 GMT",
+            "date": "Thu, 22 Oct 2026 10:04:04 GMT",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19997",
-            "ratelimit-reset": "60",
+            "ratelimit-remaining": "19996",
+            "ratelimit-reset": "44",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "x-content-type-options": "nosniff",
@@ -150,7 +150,91 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-22T09:19:27.352Z"
+      "timestamp": "2026-10-22T10:04:04.230Z"
+    }
+  },
+  {
+    "hash": "Zk18xcb9TKwfByi-OtDH9g1eeVCyYDpOHKsHdPh3nkg",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/context/mcpLegalValueField/legal-values",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "18",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"value\":\"silver\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "date": "Thu, 22 Oct 2026 10:04:04 GMT",
+            "ratelimit-limit": "20000",
+            "ratelimit-policy": "20000;w=60",
+            "ratelimit-remaining": "19995",
+            "ratelimit-reset": "44",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-22T10:04:04.306Z"
+    }
+  },
+  {
+    "hash": "w67NYuZPtBvsf029H-xN_7CJpIDWKoQBqylABHyO1zc",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/context/mcpLegalValueField/legal-values/silver",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "date": "Thu, 22 Oct 2026 10:04:04 GMT",
+            "ratelimit-limit": "20000",
+            "ratelimit-policy": "20000;w=60",
+            "ratelimit-remaining": "19994",
+            "ratelimit-reset": "44",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-22T10:04:04.376Z"
     }
   }
 ]
