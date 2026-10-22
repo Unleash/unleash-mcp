@@ -4,7 +4,7 @@ const segments = z.object({
   kind: z.literal('segments'),
   project: z.string().optional().describe('Project id; keeps the segments usable there, global or owned by it'),
   query: z.string().optional().describe('Case-insensitive text the name contains; leave out to list all'),
-}).describe('Segments by name, with the ids targets and inspect take');
+}).describe('Segments by name, with the ids targets and inspect take. To find segments by scope, author, creation date or how many projects and flags use them, search all and filter the rows yourself');
 
 const query = z.discriminatedUnion('kind', [segments]);
 
