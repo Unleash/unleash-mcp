@@ -1,5 +1,5 @@
 import type { UnleashClient } from '../unleash/client.ts';
-import type { CreateLegalValue } from './configureInput.ts';
+import type { CreateLegalValue, DeleteLegalValue } from './configureInput.ts';
 import type { ConfigureResult } from './configureOutput.ts';
 import { toFailed } from './failed.ts';
 
@@ -11,4 +11,13 @@ export const createLegalValue = async (unleash: UnleashClient, { field, value, d
   });
   if (!created.response.ok) return toFailed(created);
   return { kind: 'created', resource: 'legal_value', field, value };
+};
+
+/** Removes a legal value from a global context field. Unleash answers success for a value that is not there. */
+export const deleteLegalValue = async (unleash: UnleashClient, { field, value }: DeleteLegalValue): Promise<ConfigureResult> => {
+  const deleted = await unleash.DELETE('/api/admin/context/{contextField}/legal-values/{legalValue}', {
+    params: { path: { contextField: field, legalValue: value } },
+  });
+  if (!deleted.response.ok) return toFailed(deleted);
+  return { kind: 'deleted', resource: 'legal_value', field, value };
 };

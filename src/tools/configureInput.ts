@@ -31,7 +31,14 @@ const createLegalValue = z.object({
   ...legalValue.shape,
 }).describe('Add a legal value to a global context field. If the value exists, it gets the new description');
 
-const change = z.union([createContextField, updateContextField, deleteContextField, createLegalValue]);
+const deleteLegalValue = z.object({
+  kind: z.literal('legal_value'),
+  action: z.literal('delete'),
+  field: z.string().describe('Name of the context field the value belongs to'),
+  value: z.string(),
+}).describe('Remove a legal value from a global context field. Succeeds when the value is not there. Constraints that use it keep it');
+
+const change = z.union([createContextField, updateContextField, deleteContextField, createLegalValue, deleteLegalValue]);
 
 export const configureInput = {
   changes: z.array(change).min(1).describe('Applied in the order given; one result per change'),
@@ -49,3 +56,5 @@ export type UpdateContextField = z.infer<typeof updateContextField>;
 export type DeleteContextField = z.infer<typeof deleteContextField>;
 /** The change that adds a legal value to a global context field, or redescribes an existing one. */
 export type CreateLegalValue = z.infer<typeof createLegalValue>;
+/** The change that removes a legal value from a global context field. */
+export type DeleteLegalValue = z.infer<typeof deleteLegalValue>;
