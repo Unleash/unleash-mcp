@@ -11,10 +11,11 @@ test('answers each query in the order asked, failures included', async () => {
   stub.intercept({ path: '/api/admin/projects/known/overview', method: 'GET' }).reply(200, { environments: [{ environment: 'development' }] });
   stub.intercept({ path: '/api/admin/projects/known/features/mcp-flag', method: 'GET' }).reply(200, { name: 'mcp-flag', type: 'release' });
   stub.intercept({ path: '/api/admin/features/mcp-flag/tags', method: 'GET' }).reply(200, { version: 1, tags: [] });
+  stub.intercept({ path: '/api/admin/context/tier', method: 'GET' }).reply(200, { name: 'tier', stickiness: true });
   const inspect = createInspect(unleash);
 
   const output = await inspect({
-    queries: [{ kind: 'project', project: 'unknown' }, { kind: 'project', project: 'known' }, { kind: 'flag', project: 'known', flag: 'mcp-flag' }],
+    queries: [{ kind: 'project', project: 'unknown' }, { kind: 'project', project: 'known' }, { kind: 'flag', project: 'known', flag: 'mcp-flag' }, { kind: 'context_field', name: 'tier' }],
   });
 
   assert.deepEqual(output, {
@@ -22,6 +23,7 @@ test('answers each query in the order asked, failures included', async () => {
       { kind: 'failed', status: 404, name: 'NotFoundError', reasons: ['No project found'] },
       { kind: 'project', environments: ['development'] },
       { kind: 'flag', name: 'mcp-flag', type: 'release', environments: [] },
+      { kind: 'context_field', name: 'tier', stickiness: true },
     ],
   });
 });

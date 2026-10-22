@@ -3,6 +3,7 @@ import type { Query, InspectInput } from './inspectInput.ts';
 import type { InspectOutput, InspectResult } from './inspectOutput.ts';
 import { inspectProject } from './project.ts';
 import { inspectFlag } from './inspectFlag.ts';
+import { inspectContextField } from './contextField.ts';
 
 // Queries are independent, so they run together and each one answers its HTTP failures on its own.
 export const createInspect =
@@ -13,5 +14,6 @@ const inspect = (unleash: UnleashClient, query: Query): Promise<InspectResult> =
   switch (query.kind) {
     case 'project': return inspectProject(unleash, query);
     case 'flag': return inspectFlag(unleash, query);
+    case 'context_field': return inspectContextField(unleash, query);
   }
 };
