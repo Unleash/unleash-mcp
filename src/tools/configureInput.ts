@@ -5,14 +5,18 @@ const legalValue = z.object({
   description: z.string().optional().describe('What the value means, shown next to it when picking values'),
 });
 
-const createContextField = z.object({
+const contextField = {
   kind: z.literal('context_field'),
-  action: z.literal('create'),
   name: z.string().describe('Name constraints refer to, e.g. tier'),
   description: z.string().optional().describe('What the field holds, shown to people choosing it for a constraint'),
   stickiness: z.boolean().optional().describe('Lets flags use the field for custom stickiness'),
   legalValues: z.array(legalValue).optional().describe('When set, constraints on the field may only use these values'),
-}).describe('Create a global context field');
+};
+
+const createContextField = z.object({ ...contextField, action: z.literal('create') }).describe('Create a global context field');
+
+const updateContextField = z.object({ ...contextField, action: z.literal('update') })
+  .describe('Replace a global context field. Whatever is left out is reset: no description, no stickiness, no legal values');
 
 const deleteContextField = z.object({
   kind: z.literal('context_field'),
@@ -20,7 +24,7 @@ const deleteContextField = z.object({
   name: z.string(),
 }).describe('Delete a global context field. Unleash refuses while a flag has a constraint on it');
 
-const change = z.union([createContextField, deleteContextField]);
+const change = z.union([createContextField, updateContextField, deleteContextField]);
 
 export const configureInput = {
   changes: z.array(change).min(1).describe('Applied in the order given; one result per change'),
@@ -32,5 +36,7 @@ export type ConfigureInput = z.infer<z.ZodObject<typeof configureInput>>;
 export type Change = z.infer<typeof change>;
 /** The change that creates a global context field. */
 export type CreateContextField = z.infer<typeof createContextField>;
+/** The change that replaces a global context field. */
+export type UpdateContextField = z.infer<typeof updateContextField>;
 /** The change that deletes a global context field. */
 export type DeleteContextField = z.infer<typeof deleteContextField>;

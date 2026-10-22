@@ -2,15 +2,16 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../unleash/testClient.ts';
 import { unleashError } from '../unleash/testError.ts';
-import { createContextField, deleteContextField } from './contextField.ts';
+import { createContextField, deleteContextField, updateContextField } from './contextField.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./contextField.snapshot.json', import.meta.url).pathname);
 const name = 'mcpContextField';
-// Its own field, so the create test above does not depend on running first.
+// Each test that needs an existing field gets its own, so tests don't depend on running in order.
+const updatable = 'mcpUpdatableContextField';
 const deletable = 'mcpDeletableContextField';
 
 const deleteFields = async (): Promise<void> => {
-  for (const contextField of [name, deletable]) await admin.DELETE('/api/admin/context/{contextField}', { params: { path: { contextField } } });
+  for (const contextField of [name, updatable, deletable]) await admin.DELETE('/api/admin/context/{contextField}', { params: { path: { contextField } } });
 };
 
 before(deleteFields);
@@ -40,6 +41,30 @@ test('fails with the Unleash error when the context field exists', async () => {
   const output = await createContextField(unleash, { kind: 'context_field', action: 'create', name });
 
   assert.deepEqual(output, { kind: 'failed', status: 409, name: 'NameExistsError', reasons: [message] });
+});
+
+test('replaces a context field', async () => {
+  await admin.POST('/api/admin/context', { body: { name: updatable, stickiness: true, legalValues: [{ value: 'gold' }] } });
+
+  const output = await updateContextField(unleash, {
+    kind: 'context_field',
+    action: 'update',
+    name: updatable,
+    description: 'Updated by the MCP server tests',
+    legalValues: [{ value: 'silver' }],
+  });
+
+  assert.deepEqual(output, { kind: 'updated', resource: 'context_field', name: updatable });
+});
+
+test('fails with the Unleash error when the context field to update does not exist', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const message = `Could not find context field with name ${name}`;
+  stub.intercept({ path: `/api/admin/context/${name}`, method: 'PUT' }).reply(404, unleashError('NotFoundError', message));
+
+  const output = await updateContextField(unleash, { kind: 'context_field', action: 'update', name });
+
+  assert.deepEqual(output, { kind: 'failed', status: 404, name: 'NotFoundError', reasons: [message] });
 });
 
 test('deletes a context field', async () => {
