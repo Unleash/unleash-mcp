@@ -1,11 +1,10 @@
 import { z } from 'zod';
 import { failed } from './failed.ts';
 
-const created = z.object({
-  kind: z.literal('created'),
-  resource: z.literal('context_field'),
-  name: z.string(),
-});
+const created = z.discriminatedUnion('resource', [
+  z.object({ kind: z.literal('created'), resource: z.literal('context_field'), name: z.string() }),
+  z.object({ kind: z.literal('created'), resource: z.literal('legal_value'), field: z.string(), value: z.string() }),
+]);
 
 const updated = z.object({
   kind: z.literal('updated'),

@@ -24,7 +24,14 @@ const deleteContextField = z.object({
   name: z.string(),
 }).describe('Delete a global context field. Unleash refuses while a flag has a constraint on it');
 
-const change = z.union([createContextField, updateContextField, deleteContextField]);
+const createLegalValue = z.object({
+  kind: z.literal('legal_value'),
+  action: z.literal('create'),
+  field: z.string().describe('Name of the context field the value belongs to'),
+  ...legalValue.shape,
+}).describe('Add a legal value to a global context field. If the value exists, it gets the new description');
+
+const change = z.union([createContextField, updateContextField, deleteContextField, createLegalValue]);
 
 export const configureInput = {
   changes: z.array(change).min(1).describe('Applied in the order given; one result per change'),
@@ -40,3 +47,5 @@ export type CreateContextField = z.infer<typeof createContextField>;
 export type UpdateContextField = z.infer<typeof updateContextField>;
 /** The change that deletes a global context field. */
 export type DeleteContextField = z.infer<typeof deleteContextField>;
+/** The change that adds a legal value to a global context field, or redescribes an existing one. */
+export type CreateLegalValue = z.infer<typeof createLegalValue>;

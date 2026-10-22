@@ -52,7 +52,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   server.registerTool(
     'configure',
     {
-      description: 'Change Unleash configuration: create, replace and delete global context fields. Applies the changes in order and reports each one.',
+      description: 'Change Unleash configuration: create, replace and delete global context fields, and add legal values to them. Applies the changes in order and reports each one.',
       inputSchema: configureInput,
       outputSchema: configureOutput,
     },
