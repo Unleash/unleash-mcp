@@ -26,6 +26,7 @@ All six were called through an MCP client against the sandbox and returned the e
 
 ## Findings
 
+- **`environments` filters on the wrong field.** `enabled` is the instance-wide switch; `visible` says whether the environment is added to the project. The sandbox has 6 enabled environments but `mcp-server` only has 2.
 - **Flag search silently truncates.** Unleash returns 50 results by default and reports `total` (default project: 50 of 78; `query=a`: 50 of 64). The proposed output drops `total`, so the agent can't tell the list is cut off. This also affects the "what flags exist in project X" use case: `query` is required, so the agent can't list a project's flags at all.
 - **Unfiltered lists are big.** The sandbox has 351 projects, 102 segments (61 owned by a project) and 93 context fields. With `query` left out, a lookup returns every row; at sandbox scale that's thousands of tokens. Filtering happens in our code, so Unleash still sends the whole list.
 - **Some empty results look like successes.** `flags` with an unknown project returns 200 with no flags, and `audiences` with an unknown environment returns `enabled: false, targets: []`. To the agent, both look like "nothing there" rather than "wrong input".

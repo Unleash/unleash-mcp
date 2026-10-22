@@ -1,13 +1,13 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createStubbedClient } from '../unleash/testClient.ts';
+import { unleashError } from '../unleash/testError.ts';
 import { ensureFlag } from './flag.ts';
 
 const project = 'mcp-server';
 const flag = 'mcp-flag';
 const features = `/api/admin/projects/${project}/features`;
 const feature = `${features}/${flag}`;
-const unleashError = (name: string, message: string) => ({ id: '0b84c7fd-5278-4087-832d-0b502c7929b3', name, message, details: [{ message }] });
 
 test('fails with the Unleash error when the flag cannot be read', async () => {
   const { unleash, stub } = createStubbedClient();
