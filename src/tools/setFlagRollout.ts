@@ -25,8 +25,8 @@ import { CustomError } from '../utils/errors.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
 import {
+  alreadyWaiting,
   approvalEnvironments,
-  changeRequestLink,
   findWaiting,
   isWaitingStrategy,
   type PendingApproval,
@@ -803,17 +803,14 @@ async function applyThroughApproval(
     const notes = rolloutNotes(plan, undefined, 'saved');
     const enabledWaiting = waiting.changes.some(({ action }) => action === 'updateEnabled');
     if (waiting.changeRequest && entry.enabled !== undefined && enabledWaiting) {
-      const changeRequest = changeRequestLink(context, projectId, waiting.changeRequest);
-      return {
-        outcome: 'pendingApproval',
-        environment: env,
-        requested: { enabled },
-        changeRequest,
-        notes: [
-          `Change request ${changeRequest.id} already turns it ${enabled ? 'on' : 'off'}, so nothing was added (${changeRequest.url}).`,
-          ...notes,
-        ],
-      };
+      const pending = alreadyWaiting(
+        context,
+        projectId,
+        waiting.changeRequest,
+        { enabled },
+        `turns it ${enabled ? 'on' : 'off'}`,
+      );
+      return { ...pending, environment: env, notes: [...pending.notes, ...notes] };
     }
     return {
       outcome: 'saved',

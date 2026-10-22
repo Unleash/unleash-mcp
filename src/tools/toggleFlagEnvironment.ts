@@ -10,8 +10,8 @@ import type { FeatureDetails, FeatureEnvironment } from '../unleash/client.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
 import {
+  alreadyWaiting,
   approvalEnvironments,
-  changeRequestLink,
   findApprovalEnvironment,
   findWaiting,
   type PendingApproval,
@@ -96,15 +96,13 @@ export async function toggleFlagEnvironment(
         return jsonResult({ ...reply, ...pending });
       }
       if (waiting.changeRequest && live?.enabled !== input.enabled) {
-        const changeRequest = changeRequestLink(context, projectId, waiting.changeRequest);
-        const pending: PendingApproval<{ enabled: boolean }> = {
-          outcome: 'pendingApproval',
-          requested: { enabled: input.enabled },
-          changeRequest,
-          notes: [
-            `Change request ${changeRequest.id} already turns it ${input.enabled ? 'on' : 'off'}, so nothing was added (${changeRequest.url}).`,
-          ],
-        };
+        const pending = alreadyWaiting(
+          context,
+          projectId,
+          waiting.changeRequest,
+          { enabled: input.enabled },
+          `turns it ${input.enabled ? 'on' : 'off'}`,
+        );
         return jsonResult({ ...reply, ...pending });
       }
     } else {

@@ -144,7 +144,10 @@ export interface ChangeRequestRef {
 
 /** A change already in a change request, of a kind the write tools make. */
 export type WaitingChange = { id: number } & (
-  | { action: 'updateEnabled'; payload: { enabled: boolean } }
+  | {
+      action: 'updateEnabled';
+      payload: { enabled: boolean; shouldActivateDisabledStrategies?: boolean };
+    }
   | { action: 'addStrategy'; payload: Omit<FeatureStrategy, 'id'> }
   | { action: 'updateStrategy'; payload: FeatureStrategy }
   | { action: 'deleteStrategy'; payload: { id: string } }
@@ -164,9 +167,7 @@ const isWaitingChange = (change: { action: string }): change is WaitingChange =>
 
 export interface OpenChangeRequest extends ChangeRequestRef {
   environment: string;
-  /** otherChanges counts the flag's changes of kinds the write tools never make, such as variants. */
-  features: Array<{ name: string; changes: WaitingChange[]; otherChanges: number }>;
-  segments: unknown[];
+  features: Array<{ name: string; changes: WaitingChange[] }>;
 }
 
 /** A permission as Unleash checks it: root ones have no project, environment ones name both. */
@@ -1042,7 +1043,6 @@ export class UnleashClient {
         ChangeRequestRef & {
           environment: string;
           features: Array<{ name: string; changes: Array<{ action: string }> }>;
-          segments?: unknown[];
         }
       >
     >(
@@ -1050,15 +1050,14 @@ export class UnleashClient {
       { method: 'GET' },
       { errorMessage: `Failed to read the open change requests of project ${projectId}` },
     );
-    return requests.map(({ id, environment, state, features, segments = [] }) => ({
+    return requests.map(({ id, environment, state, features }) => ({
       id,
       environment,
       state,
-      features: features.map(({ name, changes }) => {
-        const known = changes.filter(isWaitingChange);
-        return { name, changes: known, otherChanges: changes.length - known.length };
-      }),
-      segments,
+      features: features.map(({ name, changes }) => ({
+        name,
+        changes: changes.filter(isWaitingChange),
+      })),
     }));
   }
 

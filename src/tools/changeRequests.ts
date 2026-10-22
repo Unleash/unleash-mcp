@@ -8,6 +8,7 @@ import type {
   UserPermission,
   WaitingChange,
 } from '../unleash/client.js';
+import { CustomError } from '../utils/errors.js';
 
 export interface ChangeRequestLink {
   id: number;
@@ -88,7 +89,12 @@ export function withWaitingChanges(
 ): FeatureEnvironment {
   let { enabled, strategies = [] } = environment;
   for (const change of changes) {
-    if (change.action === 'updateEnabled') enabled = change.payload.enabled;
+    if (change.action === 'updateEnabled') {
+      enabled = change.payload.enabled;
+      if (enabled && change.payload.shouldActivateDisabledStrategies) {
+        strategies = strategies.map((strategy) => ({ ...strategy, disabled: false }));
+      }
+    }
     if (change.action === 'addStrategy') {
       const waiting: WaitingStrategy = {
         ...change.payload,
@@ -122,10 +128,26 @@ export function changeRequestLink(
   };
 }
 
+/** The reply when the open change request already makes the requested change. */
+export function alreadyWaiting<Requested>(
+  context: ServerContext,
+  projectId: string,
+  changeRequest: ChangeRequestRef,
+  requested: Requested,
+  change: string,
+): PendingApproval<Requested> {
+  const link = changeRequestLink(context, projectId, changeRequest);
+  return {
+    outcome: 'pendingApproval',
+    requested,
+    changeRequest: link,
+    notes: [`Change request ${link.id} already ${change}, so nothing was added (${link.url}).`],
+  };
+}
+
 /**
  * Puts the changes into the caller's open change request for the environment, replacing the
- * waiting change in `edit`, and sends it for review unless it also holds changes these tools don't
- * make, such as to other flags or the flag's variants.
+ * waiting change in `edit`, and sends it for review only when this call created it.
  */
 export async function requestChange(
   context: ServerContext,
@@ -152,13 +174,20 @@ export async function requestChange(
     saved = await unleashClient.addToChangeRequest(projectId, environment, featureName, changes);
   }
   const link = changeRequestLink(context, projectId, saved);
-  const holdsOthers =
-    open !== undefined &&
-    (open.segments.length > 0 ||
-      open.features.some((feature) => feature.name !== featureName || feature.otherChanges > 0));
 
-  if (saved.state === 'Draft' && !holdsOthers) {
-    await unleashClient.submitChangeRequest(projectId, saved.id);
+  // A draft that was already open may hold the user's own unfinished changes.
+  if (saved.state === 'Draft' && !open) {
+    try {
+      await unleashClient.submitChangeRequest(projectId, saved.id);
+    } catch (error) {
+      if (!(error instanceof CustomError)) throw error;
+      const draft = `The change is in change request ${saved.id}, which is still a draft. Submit it in Unleash (${link.url}).`;
+      throw new CustomError(
+        error.code,
+        error.message,
+        error.hint ? `${error.hint} ${draft}` : draft,
+      );
+    }
     return {
       changeRequest: { ...link, state: 'In review' },
       notes: [
@@ -170,7 +199,7 @@ export async function requestChange(
     return {
       changeRequest: link,
       notes: [
-        `Added to your draft change request ${saved.id}, which also holds other changes. It is not submitted: submit it in Unleash when it's ready (${link.url}).`,
+        `Added to your draft change request ${saved.id}. It is not submitted: submit it in Unleash when it's ready (${link.url}).`,
       ],
     };
   }

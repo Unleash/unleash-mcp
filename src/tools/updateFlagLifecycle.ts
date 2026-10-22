@@ -5,7 +5,12 @@ import type { FeatureLifecycleSnapshot, LifecycleTransitionResult } from '../unl
 import { CustomError } from '../utils/errors.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
-import { findWaiting, type PendingApproval, requestChange } from './changeRequests.js';
+import {
+  alreadyWaiting,
+  findWaiting,
+  type PendingApproval,
+  requestChange,
+} from './changeRequests.js';
 
 const ACTIONS = [
   'complete',
@@ -135,33 +140,40 @@ async function archiveThroughApproval(
     });
   }
 
-  await ensureNoOrphanedChildren(context, projectId, featureName);
-  const open = await context.unleashClient.openChangeRequests(projectId);
-  const pending: PendingApproval<{ action: 'archive' }> = {
-    outcome: 'pendingApproval',
-    requested: { action: 'archive' },
-    ...(await requestChange(
-      context,
-      projectId,
-      environment,
-      featureName,
-      findWaiting(open, environment, featureName),
-      [{ action: 'archiveFeature' }],
-    )),
-  };
   const { url, resourceUri } = createFlagLinks(
     context.config.unleash.baseUrl,
     projectId,
     featureName,
   );
-  return jsonResult({
+  const reply = {
     success: true,
     projectId,
     featureName,
     action: input.action,
-    ...pending,
     links: { ui: url, resourceUri },
-  });
+  };
+  const open = await context.unleashClient.openChangeRequests(projectId);
+  const waiting = findWaiting(open, environment, featureName);
+  if (waiting.changeRequest && waiting.changes.some(({ action }) => action === 'archiveFeature')) {
+    const pending = alreadyWaiting(
+      context,
+      projectId,
+      waiting.changeRequest,
+      { action: 'archive' },
+      'archives it',
+    );
+    return jsonResult({ ...reply, ...pending });
+  }
+
+  await ensureNoOrphanedChildren(context, projectId, featureName);
+  const pending: PendingApproval<{ action: 'archive' }> = {
+    outcome: 'pendingApproval',
+    requested: { action: 'archive' },
+    ...(await requestChange(context, projectId, environment, featureName, waiting, [
+      { action: 'archiveFeature' },
+    ])),
+  };
+  return jsonResult({ ...reply, ...pending });
 }
 
 function ensureStatusWhenCompleting(input: UpdateFlagLifecycleInput): void {

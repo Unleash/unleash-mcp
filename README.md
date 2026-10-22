@@ -237,7 +237,7 @@ This section describes each of the core tools in detail, including its purpose, 
 
 Before writing, these tools read the project's change request settings and your permissions. As in the Unleash UI, where your changes need approval, `set_flag_rollout`, `toggle_flag_environment` and `remove_flag_strategy` put the change into a [change request](https://docs.getunleash.io/concepts/change-requests); with `ADMIN` or `SKIP_CHANGE_REQUEST` there they write directly. Archiving with `update_flag_lifecycle` goes into a change request for everyone while any environment has change requests on, in a production environment first. The result has `outcome: "pendingApproval"` with `requested` and the change request's `id`, `url` and `state`; elsewhere it is `outcome: "saved"`.
 
-The change goes into your open change request for that environment, or a new one, and builds on what you already have waiting there for the flag, so a follow-up changes the waiting change instead of adding a second one. A change request that holds only changes these tools make to this flag is sent for review. One that also holds other changes, such as to other flags or the flag's variants, is not submitted, and adding to one in review or approved resets its approvals.
+The change goes into your open change request for that environment, or a new one, and builds on what you already have waiting there for the flag, so a follow-up changes the waiting change instead of adding a second one. A new change request is sent for review. A draft you already had is not submitted, so you can submit it in Unleash when it's ready, and adding to one in review or approved resets its approvals. Archiving a flag whose archive is already waiting adds nothing.
 
 ### Create flag
 
