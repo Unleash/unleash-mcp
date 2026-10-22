@@ -36,11 +36,25 @@ const lifecycle = z.object({
   enteredAt: z.string().describe('ISO timestamp'),
 });
 
+const targets = z.array(target.required({ rollout: true }));
+
+const milestone = z.object({
+  name: z.string(),
+  active: z.literal(true).optional().describe('Set on the milestone the plan is at'),
+  targets: targets.optional().describe('The audiences this milestone gives the feature to'),
+});
+
+const releasePlan = z.object({
+  name: z.string(),
+  milestones: z.array(milestone).describe('In order; the plan moves from one to the next'),
+});
+
 const environment = z.object({
   name: z.string(),
   enabled: z.boolean(),
   lastSeenAt: z.string().optional().describe('ISO timestamp an SDK last evaluated the flag here'),
-  targets: z.array(target.required({ rollout: true })).optional().describe('The audiences that get the feature, in the shape release takes'),
+  targets: targets.optional().describe('The audiences that get the feature, in the shape release takes'),
+  releasePlan: releasePlan.optional().describe('Set when the environment is rolled out through a release plan'),
 });
 
 const flag = z.object({
@@ -73,6 +87,8 @@ export type FlagType = z.infer<typeof flagType>;
 export type Parent = z.infer<typeof parent>;
 export type Lifecycle = z.infer<typeof lifecycle>;
 export type Environment = z.infer<typeof environment>;
+export type ReleasePlan = z.infer<typeof releasePlan>;
+export type Milestone = z.infer<typeof milestone>;
 export type LifecycleStage = z.infer<typeof lifecycleStage>;
 export type Tag = z.infer<typeof tag>;
 export type Link = z.infer<typeof link>;
