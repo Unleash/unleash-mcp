@@ -108,3 +108,9 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - A value's `share` is an optional percentage (0–100), like `rollout`. Values without one split what is left evenly. Rejected: decimal percentages and Unleash's 0–1000 weights.
 - The result echoes the values as sent, not the shares Unleash resolves. Rejected: echoing the resolved shares, which means copying Unleash's weight logic or extra reads.
 - Left out for now: value stickiness (stays `default`) and Unleash's deprecated per-environment values.
+
+## 2026-10-22 — Tests set up their own data
+
+- Tests recreate everything they need in setup and remove it in teardown; the sandbox holds only the project `mcp-server`. Rejected: depending on predefined flags and settings in the sandbox, which drift and break recordings.
+- Setup copes with what a failed recording leaves behind (a flag with children, a segment with the same name), so a recording never needs a manual sandbox cleanup.
+- Over time, setup should go through the server's own tools instead of the admin API.
