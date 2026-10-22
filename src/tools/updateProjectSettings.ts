@@ -12,13 +12,20 @@ import type {
   FeatureStrategy,
   FlexibleRolloutStrategy,
   ProjectSettings,
+  ResourceLimits,
   SegmentSummary,
   StrategyConstraint,
 } from '../unleash/client.js';
 import { CustomError } from '../utils/errors.js';
 import { jsonResult } from '../utils/toolResult.js';
-import { constraintSchema, invalidConstraint, shapeConstraint } from './constraints.js';
-import { fixedWeightTotal, normalizeName, toVariants, variantSchema } from './setFlagRollout.js';
+import { checkStrategyConstraint, constraintSchema } from './constraints.js';
+import {
+  findSegment,
+  sameStrategy,
+  toVariants,
+  variantProblems,
+  variantSchema,
+} from './strategyInput.js';
 
 const defaultStrategySchema = z.strictObject({
   environment: z.string().min(1).describe('Environment name, such as "production"'),
@@ -73,9 +80,7 @@ const updateProjectSettingsSchema = z
     defaultStrategies: z
       .array(defaultStrategySchema)
       .optional()
-      .describe(
-        'Per environment, the strategy Unleash adds when a flag with no enabled strategies there is turned on',
-      ),
+      .describe('Default strategy per environment'),
   })
   .refine(
     (input) =>
@@ -84,7 +89,6 @@ const updateProjectSettingsSchema = z
   );
 
 type DefaultStrategyInput = z.infer<typeof defaultStrategySchema>;
-type VariantInput = z.infer<typeof variantSchema>;
 type DefaultStrategy = Omit<FeatureStrategy, 'id'>;
 
 /** The settings part of the input, so an agent can pass what was not applied straight back. */
@@ -107,6 +111,7 @@ interface Lookups {
   environmentNames: string[];
   segments: SegmentSummary[];
   contextFields: ContextField[];
+  limits: ResourceLimits;
 }
 
 const summarize = (strategy: DefaultStrategy | undefined, segments: SegmentSummary[]) =>
@@ -157,7 +162,7 @@ async function loadLookups(
 
   const { defaultStickiness, addEnvironments = [], defaultStrategies = [] } = change;
   const settings = await fetchSettings(context, projectId);
-  const [environmentNames, segments, contextFields] = await Promise.all([
+  const [environmentNames, segments, contextFields, limits] = await Promise.all([
     addEnvironments.length > 0 ? context.unleashClient.listEnvironmentNames() : [],
     defaultStrategies.some((entry) => entry.segments?.length) ||
     settings.environments.some(({ defaultStrategy }) => defaultStrategy?.segments?.length)
@@ -167,8 +172,11 @@ async function loadLookups(
     defaultStrategies.some((entry) => entry.constraints?.length || entry.stickiness)
       ? context.unleashClient.getContextFields(projectId)
       : [],
+    defaultStrategies.some((entry) => entry.constraints?.length || entry.segments?.length)
+      ? context.unleashClient.getResourceLimits()
+      : {},
   ]);
-  return { settings, environmentNames, segments, contextFields };
+  return { settings, environmentNames, segments, contextFields, limits };
 }
 
 /** Dry run calls no API, so every name in the request counts as found. */
@@ -196,6 +204,7 @@ function dryRunLookups(projectId: string, change: SettingsChange): Lookups {
     environmentNames: addEnvironments,
     segments: [...segments].map((name, index) => ({ id: index + 1, name, project: null })),
     contextFields: [...contextNames].map((name) => ({ name, stickiness: true, legalValues: [] })),
+    limits: {},
   };
 }
 
@@ -215,7 +224,7 @@ async function setDefaultStickiness(
     // The project was fetched first, so a 404 means this Unleash has no such endpoint (open source).
     if (error instanceof CustomError && error.code === 'HTTP_404') {
       throw new CustomError(
-        error.code,
+        'ENTERPRISE_ONLY',
         'Setting the default stickiness of a project needs Unleash Enterprise. This Unleash does not support it.',
         'Leave defaultStickiness out and call update_project_settings again for the rest.',
       );
@@ -223,74 +232,6 @@ async function setDefaultStickiness(
     throw error;
   }
 }
-
-// The default-strategy endpoint stores variants unchecked. Unleash checks them only when it copies the default into a flag.
-function variantProblems(environment: string, variants: VariantInput[]): Problem[] {
-  const invalid = (message: string, hint: string): Problem => ({
-    environment,
-    code: 'INVALID_VARIANTS',
-    message,
-    hint,
-  });
-  const problems: Problem[] = [];
-  const names = variants.map(({ name }) => name);
-  const repeated = [...new Set(names.filter((name, index) => names.indexOf(name) !== index))];
-  if (repeated.length > 0) {
-    problems.push(
-      invalid(
-        `Variant names must be unique, and ${repeated.map((name) => `"${name}"`).join(', ')} appear more than once.`,
-        'Give each variant its own name.',
-      ),
-    );
-  }
-  for (const { name, payload } of variants) {
-    if (encodeURIComponent(name) !== name || name === '.' || name === '..' || name.length > 100) {
-      problems.push(
-        invalid(
-          `Variant name "${name}" must be URL friendly and at most 100 characters.`,
-          'Use letters, digits, "-", "_", "." or "~", with no spaces.',
-        ),
-      );
-    }
-    if (payload?.type === 'json' && !isJsonObject(payload.value)) {
-      problems.push(
-        invalid(
-          `The payload of variant "${name}" must be a JSON object or array.`,
-          'Fix the JSON, or pick another payload type.',
-        ),
-      );
-    }
-  }
-  const allFixed = fixedWeightTotal(variants);
-  const fixed = variants
-    .filter(({ weightType }) => weightType === 'fix')
-    .reduce((total, { weight }) => total + weight, 0);
-  if (variants.length > 0 && allFixed !== undefined && allFixed !== 1000) {
-    problems.push(
-      invalid(
-        `Fixed variant weights must add up to 1000 (100%) when no variant is variable; these add up to ${allFixed}.`,
-        'Change the weights to add up to 1000, or leave weightType out on one variant so it takes the rest.',
-      ),
-    );
-  } else if (fixed > 1000) {
-    problems.push(
-      invalid(
-        `Fixed variant weights add up to ${fixed}, more than 1000 (100%).`,
-        'Lower the fixed weights so the variable variants can take the rest.',
-      ),
-    );
-  }
-  return problems;
-}
-
-const isJsonObject = (value: string): boolean => {
-  try {
-    const parsed = JSON.parse(value);
-    return typeof parsed === 'object' && parsed !== null;
-  } catch {
-    return false;
-  }
-};
 
 async function buildDefaultStrategy(
   context: ServerContext,
@@ -314,56 +255,79 @@ async function buildDefaultStrategy(
     };
   }
   const problems: Problem[] = [];
-  const { contextFields } = lookups;
-  const usable = lookups.segments.filter(
-    (segment) => !segment.project || segment.project === projectId,
-  );
   const segments: number[] = [];
   for (const name of entry.segments ?? []) {
-    const loose = usable.filter((segment) => normalizeName(segment.name) === normalizeName(name));
-    const match =
-      usable.find((segment) => segment.name === name) ??
-      (loose.length === 1 ? loose[0] : undefined);
-    if (match) segments.push(match.id);
+    const found = findSegment(name, lookups.segments, projectId);
+    if (found.status === 'found') segments.push(found.segment.id);
     else
       problems.push({
         environment,
         code: 'SEGMENT_NOT_FOUND',
-        message: `No single segment in project "${projectId}" matches "${name}".`,
-        hint: 'Ask the user which of these segments they mean, then pass its name.',
-        options: (loose.length > 1 ? loose : usable).map((segment) => segment.name),
+        message:
+          found.status === 'notFound'
+            ? found.message
+            : `Project "${projectId}" has no segments it can use, so "${name}" cannot be targeted.`,
+        hint:
+          found.status === 'notFound'
+            ? 'Ask the user which segment they mean, then pass its name.'
+            : `Ask the user who the default should target and use constraints instead, or whether to create the segment with create_targeting or in Unleash (${context.config.unleash.baseUrl}/segments/create).`,
+        ...(found.status === 'notFound' && {
+          options: found.candidates.map((segment) => segment.name),
+        }),
       });
   }
 
+  const results = await Promise.all(
+    (entry.constraints ?? []).map((input) =>
+      checkStrategyConstraint(context.unleashClient, input, {
+        projectId,
+        baseUrl: context.config.unleash.baseUrl,
+        contextFields: lookups.contextFields,
+      }),
+    ),
+  );
   const constraints: StrategyConstraint[] = [];
-  for (const input of entry.constraints ?? []) {
-    const field = contextFields.find(({ name }) => name === input.contextName);
-    if (!field) {
-      const differentCase = contextFields.find(
-        ({ name }) => name.toLowerCase() === input.contextName.toLowerCase(),
-      );
+  for (const result of results) {
+    if ('problem' in result) problems.push({ environment, ...result.problem });
+    else constraints.push(result.constraint);
+  }
+
+  // The default-strategy endpoint stores these unchecked, and Unleash checks them only when it copies the default into a flag.
+  for (const problem of variantProblems(entry.variants ?? [])) {
+    problems.push({ environment, ...problem });
+  }
+  const {
+    constraints: maxConstraints,
+    constraintValues: maxValues,
+    strategySegments: maxSegments,
+  } = lookups.limits;
+  const segmentCount = new Set(segments).size;
+  if (maxSegments !== undefined && segmentCount > maxSegments) {
+    problems.push({
+      environment,
+      code: 'SEGMENT_LIMIT',
+      message: `This Unleash allows at most ${maxSegments} segments on a strategy, and this one has ${segmentCount}.`,
+      hint: 'Use fewer segments.',
+    });
+  }
+  if (maxConstraints !== undefined && constraints.length > maxConstraints) {
+    problems.push({
+      environment,
+      code: 'CONSTRAINT_LIMIT',
+      message: `This Unleash allows at most ${maxConstraints} constraints on a strategy, and this one has ${constraints.length}.`,
+      hint: 'Use fewer constraints, or move some of them into a segment.',
+    });
+  }
+  for (const { contextName, values = [] } of constraints) {
+    if (maxValues !== undefined && values.length > maxValues) {
       problems.push({
         environment,
-        code: 'CONTEXT_FIELD_NOT_FOUND',
-        message: `"${input.contextName}" is not a context field in project "${projectId}".`,
-        hint: differentCase
-          ? `Context field names are case-sensitive; did you mean "${differentCase.name}"?`
-          : 'Ask the user which of these context fields they mean.',
-        options: contextFields.map(({ name }) => name),
+        code: 'CONSTRAINT_LIMIT',
+        message: `The constraint on "${contextName}" has ${values.length} values, more than the ${maxValues} this Unleash allows.`,
+        hint: 'Use fewer values, or split the users into a segment.',
       });
-      continue;
     }
-    const shaped = shapeConstraint(input);
-    if ('problem' in shaped) {
-      problems.push({ environment, ...shaped.problem });
-      continue;
-    }
-    const invalid = await invalidConstraint(context.unleashClient, shaped.constraint, field);
-    if (invalid) problems.push({ environment, ...invalid });
-    else constraints.push(shaped.constraint);
   }
-
-  problems.push(...variantProblems(environment, entry.variants ?? []));
 
   if (problems.length > 0) return { problems };
 
@@ -373,7 +337,6 @@ async function buildDefaultStrategy(
       disabled: current?.disabled,
       variants: entry.variants ? toVariants(entry.variants) : current?.variants,
       parameters: {
-        // Unleash gives each flag its own group only when groupId is "", not when it is missing.
         groupId: '',
         ...current?.parameters,
         rollout: String(entry.rolloutPercentage ?? current?.parameters?.rollout ?? 100),
@@ -476,8 +439,10 @@ export async function updateProjectSettings(
     }
 
     const projectStickiness = defaultStickiness ?? before.defaultStickiness ?? 'default';
+    const stickinessChanges = defaultStickiness && defaultStickiness !== before.defaultStickiness;
     const strategies: Array<{ entry: DefaultStrategyInput; strategy: FlexibleRolloutStrategy }> =
       [];
+    const unchanged: SettingsChange[] = [];
     for (const entry of defaultStrategies) {
       const current = currentDefault(entry.environment);
       const built = await buildDefaultStrategy(
@@ -489,8 +454,14 @@ export async function updateProjectSettings(
         projectStickiness,
       );
       if ('problems' in built) problems.push(...built.problems);
+      else if (current && sameStrategy(current, built.strategy))
+        unchanged.push({ defaultStrategies: [entry] });
       else strategies.push({ entry, strategy: built.strategy });
     }
+
+    if (defaultStickiness && !stickinessChanges) unchanged.push({ defaultStickiness });
+    const alreadyInProject = addEnvironments.filter((environment) => present.includes(environment));
+    if (alreadyInProject.length > 0) unchanged.push({ addEnvironments: alreadyInProject });
 
     if (problems.length > 0) {
       return {
@@ -516,7 +487,7 @@ export async function updateProjectSettings(
 
     // Stickiness goes first: on open source Unleash it fails, and then nothing has been changed.
     const steps: Array<{ change: SettingsChange; run: () => Promise<void> }> = [
-      ...(defaultStickiness
+      ...(defaultStickiness && stickinessChanges
         ? [
             {
               change: { defaultStickiness },
@@ -540,14 +511,20 @@ export async function updateProjectSettings(
       try {
         await step.run();
       } catch (error) {
+        const notSupported = error instanceof CustomError && error.code === 'ENTERPRISE_ONLY';
+        const notApplied = combine(steps.slice(index + 1).map(({ change }) => change));
         return {
           isError: true,
           ...jsonResult({
             ...toolErrorPayload(context, error, 'update_project_settings'),
             applied: combine(steps.slice(0, index).map(({ change }) => change)),
-            failed: step.change,
-            notApplied: combine(steps.slice(index + 1).map(({ change }) => change)),
-            hint: 'Settings in applied were saved and are not rolled back. Fix the error, then call update_project_settings again with failed and notApplied.',
+            ...(notSupported ? { notSupported: step.change } : { failed: step.change }),
+            notApplied,
+            hint: notSupported
+              ? Object.keys(notApplied).length > 0
+                ? 'Nothing in notApplied was changed. Call update_project_settings again with only notApplied.'
+                : 'Nothing was changed, and there is nothing else to apply.'
+              : 'Settings in applied were saved and are not rolled back. Fix the error, then call update_project_settings again with failed and notApplied.',
           }),
         };
       }
@@ -561,8 +538,18 @@ export async function updateProjectSettings(
     );
 
     const applied = combine(steps.map(({ change }) => change));
+    const added = applied.addEnvironments ?? [];
     let after: ProjectSettings;
+    let withoutApproval: string[] = [];
     try {
+      if (added.length > 0) {
+        const approval = await context.unleashClient.changeRequestEnvironments(projectId);
+        withoutApproval = approval
+          ? added.filter(
+              (environment) => !approval.some((entry) => entry.environment === environment),
+            )
+          : [];
+      }
       after = dryRun
         ? {
             name: before.name,
@@ -601,6 +588,7 @@ export async function updateProjectSettings(
       dryRun,
       projectId,
       applied,
+      ...(unchanged.length > 0 && { unchanged: combine(unchanged) }),
       defaultStickiness: after.defaultStickiness,
       defaultStrategies: after.environments.map(({ environment, defaultStrategy }) => ({
         environment,
@@ -609,6 +597,12 @@ export async function updateProjectSettings(
           previous: summarize(currentDefault(environment), segments),
         }),
       })),
+      ...(withoutApproval.length > 0 && {
+        notes: withoutApproval.map(
+          (environment) =>
+            `Change requests are off for "${environment}" in this project, so changes there take effect without approval. If they need approval, turn change requests on for it in the project settings in Unleash.`,
+        ),
+      }),
       links: {
         ui: `${baseUrl}/projects/${encodeURIComponent(projectId)}`,
         api: `${baseUrl}/api/admin/projects/${encodeURIComponent(projectId)}/overview`,
@@ -625,8 +619,8 @@ export const updateProjectSettingsTool = {
   annotations: { readOnlyHint: false, destructiveHint: true },
   description:
     'Change how flags in a project are set up. ' +
-    "An environment's default strategy is what Unleash adds when a flag with no enabled strategies there is turned on, by toggle_flag_environment or by set_flag_rollout with only enabled. Existing flags get it too, so confirm with the user before something like 100% for everyone in production. " +
-    'Fields you leave out keep their current value. Nothing is changed until every name checks out. Default stickiness is set first, then environments are added, then default strategies. There is no rollback: if a step fails, the error lists what was applied and what was not.',
+    "An environment's default strategy is what Unleash adds when a flag with no strategies there is turned on, and when toggle_flag_environment turns on one whose strategies are all paused. Existing flags get it too, so confirm with the user before something like 100% for everyone in production. " +
+    'Fields you leave out keep their current value, and settings that already match are not written again. Nothing is changed until every name checks out. Default stickiness is set first, then environments are added, then default strategies. There is no rollback: if a step fails, the error lists what was applied and what was not.',
   inputSchema: updateProjectSettingsSchema,
   implementation: updateProjectSettings,
 };

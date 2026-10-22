@@ -38,8 +38,8 @@ export interface WaitingStrategy extends FeatureStrategy {
 export const isWaitingStrategy = (strategy: FeatureStrategy): strategy is WaitingStrategy =>
   'waitingChangeId' in strategy;
 
-// Unleash's own check: ADMIN passes everything, and a permission without a project or
-// environment applies to all of them.
+// Like the Unleash UI, ADMIN doesn't skip approval, although the server would let it. A permission
+// without a project or environment applies to all of them.
 const canSkipChangeRequests = (
   permissions: UserPermission[],
   projectId: string,
@@ -47,20 +47,17 @@ const canSkipChangeRequests = (
 ): boolean =>
   permissions.some(
     (granted) =>
-      (granted.permission === 'ADMIN' || granted.permission === 'SKIP_CHANGE_REQUEST') &&
+      granted.permission === 'SKIP_CHANGE_REQUEST' &&
       (!granted.project || granted.project === projectId || granted.project === '*') &&
       (!granted.environment || granted.environment === environment || granted.environment === '*'),
   );
 
-/**
- * The environments where the caller's writes need approval: change requests are on there, and,
- * as in the Unleash UI, the caller has neither ADMIN nor SKIP_CHANGE_REQUEST.
- */
+/** The environments where change requests are on and the caller doesn't have SKIP_CHANGE_REQUEST. */
 export async function approvalEnvironments(
   context: ServerContext,
   projectId: string,
 ): Promise<string[]> {
-  const configured = await context.unleashClient.changeRequestEnvironments(projectId);
+  const configured = (await context.unleashClient.changeRequestEnvironments(projectId)) ?? [];
   if (configured.length === 0) return [];
   const permissions = await context.unleashClient.getOwnPermissions();
   return configured
@@ -72,12 +69,17 @@ export async function approvalEnvironments(
 export const findApprovalEnvironment = (environments: string[], name: string): string | undefined =>
   environments.find((environment) => environment.toLowerCase() === name.toLowerCase());
 
+// A scheduled change request can't take more changes.
+const EDITABLE_STATES: ChangeRequestRef['state'][] = ['Draft', 'In review', 'Approved'];
+
 export function findWaiting(
   open: OpenChangeRequest[],
   environment: string,
   featureName: string,
 ): Waiting {
-  const changeRequest = open.find((request) => request.environment === environment);
+  const changeRequest = open.find(
+    (request) => request.environment === environment && EDITABLE_STATES.includes(request.state),
+  );
   const changes = changeRequest?.features.find(({ name }) => name === featureName)?.changes ?? [];
   return { changeRequest, changes };
 }
@@ -141,13 +143,87 @@ export function alreadyWaiting<Requested>(
     outcome: 'pendingApproval',
     requested,
     changeRequest: link,
-    notes: [`Change request ${link.id} already ${change}, so nothing was added (${link.url}).`],
+    notes: [
+      link.state === 'Draft'
+        ? `Change request ${link.id} already ${change}, so nothing was added. It is still a draft: submit it in Unleash when it's ready (${link.url}).`
+        : `Change request ${link.id} already ${change}, so nothing was added (${link.url}).`,
+    ],
   };
+}
+
+/** What happened to waiting changes taken back because the call asks for what is live now. */
+export interface Withdrawn {
+  outcome: 'discarded' | 'deleted' | 'cancelled';
+  changeRequest: ChangeRequestLink;
+  note: string;
+}
+
+/**
+ * Takes back waiting changes. The Unleash UI only discards a change from a change request that
+ * holds others, so one that would be left empty is deleted as a draft or cancelled instead.
+ */
+export async function withdraw(
+  context: ServerContext,
+  projectId: string,
+  changeRequest: OpenChangeRequest,
+  changeIds: number[],
+): Promise<Withdrawn> {
+  const { unleashClient } = context;
+  const link = changeRequestLink(context, projectId, changeRequest);
+  const total =
+    changeRequest.features.reduce((sum, { changeCount }) => sum + changeCount, 0) +
+    changeRequest.segmentChangeCount;
+  if (total > changeIds.length) {
+    for (const changeId of changeIds) {
+      await unleashClient.discardChange(projectId, changeRequest.id, changeId);
+    }
+    const review = changeRequest.state === 'Draft' ? '' : ' It may need review again.';
+    return {
+      outcome: 'discarded',
+      changeRequest: link,
+      note: `Removed the waiting change from change request ${link.id}, which keeps its other changes (${link.url}).${review}`,
+    };
+  }
+  if (changeRequest.state === 'Draft') {
+    await unleashClient.deleteDraft(projectId, changeRequest.id);
+    return {
+      outcome: 'deleted',
+      changeRequest: { ...link, state: 'Cancelled' },
+      note: `Deleted draft change request ${link.id}, which held nothing else.`,
+    };
+  }
+  await unleashClient.cancelChangeRequest(projectId, changeRequest.id);
+  return {
+    outcome: 'cancelled',
+    changeRequest: { ...link, state: 'Cancelled' },
+    note: `Cancelled change request ${link.id}, which held nothing else (${link.url}).`,
+  };
+}
+
+// The open change requests were read before the write, so another draft can have been opened since.
+// A failed read counts as no, so the draft is left for the user rather than the error hiding it.
+async function holdsOnly(
+  context: ServerContext,
+  projectId: string,
+  changeRequestId: number,
+  featureName: string,
+  changes: ChangeRequestChange[],
+): Promise<boolean> {
+  const open = await context.unleashClient.openChangeRequests(projectId).catch(() => []);
+  const saved = open.find(({ id }) => id === changeRequestId);
+  return (
+    saved !== undefined &&
+    saved.segmentChangeCount === 0 &&
+    saved.features.length === 1 &&
+    saved.features[0].name === featureName &&
+    saved.features[0].changeCount === changes.length
+  );
 }
 
 /**
  * Puts the changes into the caller's open change request for the environment, replacing the
- * waiting change in `edit`, and sends it for review only when this call created it.
+ * waiting change in `edit`, and sends it for review only when it holds nothing but these changes.
+ * A draft that was already open may hold the user's own unfinished changes.
  */
 export async function requestChange(
   context: ServerContext,
@@ -175,8 +251,11 @@ export async function requestChange(
   }
   const link = changeRequestLink(context, projectId, saved);
 
-  // A draft that was already open may hold the user's own unfinished changes.
-  if (saved.state === 'Draft' && !open) {
+  if (
+    saved.state === 'Draft' &&
+    !open &&
+    (await holdsOnly(context, projectId, saved.id, featureName, changes))
+  ) {
     try {
       await unleashClient.submitChangeRequest(projectId, saved.id);
     } catch (error) {

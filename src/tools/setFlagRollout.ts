@@ -17,7 +17,6 @@ import type {
   SegmentSummary,
   StrategyConstraint,
   StrategyVariant,
-  StrategyVariantPayload,
 } from '../unleash/client.js';
 import { CustomError } from '../utils/errors.js';
 import { createFlagLinks } from '../utils/streaming.js';
@@ -25,40 +24,27 @@ import { jsonResult } from '../utils/toolResult.js';
 import {
   alreadyWaiting,
   approvalEnvironments,
+  type ChangeRequestLink,
   findWaiting,
   isWaitingStrategy,
   type PendingApproval,
   requestChange,
   type Waiting,
+  withdraw,
   withWaitingChanges,
 } from './changeRequests.js';
+import { checkStrategyConstraint, constraintSchema } from './constraints.js';
 import {
-  CONTEXT_DOCS,
-  type ConstraintInput,
-  constraintSchema,
-  invalidConstraint,
-  shapeConstraint,
-} from './constraints.js';
+  findSegment,
+  fixedWeightTotal,
+  sameStrategy,
+  toVariants,
+  variantProblems,
+  variantSchema,
+} from './strategyInput.js';
 
 const SEGMENTS_DOCS = 'https://docs.getunleash.io/concepts/segments';
 const NONE_OF_THESE = '__none__';
-
-const variantPayloadSchema = z.strictObject({
-  type: z.enum(['json', 'csv', 'string', 'number']).describe('Payload type'),
-  value: z.string().min(1).describe('Serialized payload value'),
-}) satisfies z.ZodType<StrategyVariantPayload>;
-
-export const variantSchema = z.strictObject({
-  name: z.string().min(1).describe('Variant name (unique within this feature)'),
-  weight: z.number().int().min(0).max(1000).describe('Variant weight (0-1000)'),
-  weightType: z.enum(['variable', 'fix']).optional().describe('Variant weight type'),
-  stickiness: z
-    .string()
-    .min(1)
-    .optional()
-    .describe('Stickiness to use for this variant (defaults to "default")'),
-  payload: variantPayloadSchema.optional(),
-});
 
 const environmentRolloutSchema = z.strictObject({
   environment: z.string().min(1).describe('Environment name, such as "production"'),
@@ -181,6 +167,8 @@ interface Lookups {
   projectId: string;
   baseUrl: string;
   feature: FeatureDetails;
+  /** The flag as it is now, before any change waiting for approval. */
+  live: FeatureDetails;
   segments: SegmentSummary[];
   contextFields: ContextField[];
   /** By environment, for those where the caller's writes need approval. */
@@ -199,6 +187,8 @@ interface SavedEnvironment {
   segments?: string[];
   constraints?: StrategyConstraint[];
   variants?: StrategyVariant[];
+  /** The change request a waiting change was taken back from. */
+  changeRequest?: ChangeRequestLink;
   previous?: {
     rolloutPercentage: number;
     segments: string[];
@@ -215,12 +205,6 @@ type PendingEnvironment = { environment: string } & PendingApproval<{
   segments?: string[];
   constraints?: StrategyConstraint[];
 }>;
-
-export const normalizeName = (name: string): string =>
-  name
-    .trim()
-    .toLowerCase()
-    .replace(/[\s_-]+/g, ' ');
 
 const segmentName = (id: number, segments: SegmentSummary[]): string =>
   segments.find((segment) => segment.id === id)?.name ?? `#${id}`;
@@ -239,22 +223,6 @@ const STRATEGY_FIELDS = [
 
 const changesStrategy = (entry: EnvironmentRollout): boolean =>
   STRATEGY_FIELDS.some((field) => entry[field] !== undefined);
-
-export const fixedWeightTotal = (variants: z.infer<typeof variantSchema>[]): number | undefined =>
-  variants.every((variant) => variant.weightType === 'fix')
-    ? variants.reduce((total, variant) => total + variant.weight, 0)
-    : undefined;
-
-// Unleash needs one variable variant.
-export const toVariants = (variants: z.infer<typeof variantSchema>[]): StrategyVariant[] =>
-  variants.map((variant, index) => ({
-    ...variant,
-    weightType:
-      index === 0 && fixedWeightTotal(variants) === 1000
-        ? 'variable'
-        : (variant.weightType ?? 'variable'),
-    stickiness: variant.stickiness ?? 'default',
-  }));
 
 function describeConstraint(constraint: StrategyConstraint): string {
   const values = constraint.values?.length
@@ -383,22 +351,16 @@ function resolveSegments(
   if (!entry.segments) return undefined;
 
   const { projectId, baseUrl } = lookups;
-  const usable = lookups.segments.filter(
-    (segment) => !segment.project || segment.project === projectId,
-  );
   const ids: number[] = [];
 
   for (const name of entry.segments) {
-    // Segment names are unique across the instance, so an exact match settles it.
-    const exact = usable.find((segment) => segment.name === name);
-    const loose = usable.filter((segment) => normalizeName(segment.name) === normalizeName(name));
-    const match = exact ?? (loose.length === 1 ? loose[0] : undefined);
-    if (match) {
-      ids.push(match.id);
+    const found = findSegment(name, lookups.segments, projectId);
+    if (found.status === 'found') {
+      ids.push(found.segment.id);
       continue;
     }
 
-    if (usable.length === 0) {
+    if (found.status === 'noneUsable') {
       findings.problems.push({
         environment,
         code: 'SEGMENT_NOT_FOUND',
@@ -408,31 +370,19 @@ function resolveSegments(
       continue;
     }
 
-    const inOtherProject = lookups.segments.find(
-      (segment) =>
-        normalizeName(segment.name) === normalizeName(name) &&
-        segment.project &&
-        segment.project !== projectId,
-    );
-    let message = `No segment named "${name}" exists in project "${projectId}".`;
-    if (loose.length > 1) message = `Several segments have a name like "${name}".`;
-    else if (inOtherProject)
-      message = `Segment "${inOtherProject.name}" belongs to project "${inOtherProject.project}", so this flag cannot use it.`;
-    const candidates = loose.length > 1 ? loose : usable;
-
     findings.choosables.push({
       entryIndex,
       problem: {
         environment,
         code: 'SEGMENT_NOT_FOUND',
-        message,
+        message: found.message,
         hint: 'Ask the user which of these segments they mean, then pass its name. If none fits, ask who should get the flag and target them with constraints instead.',
-        options: candidates.map(({ name, description }) => ({ name, description })),
+        options: found.candidates.map(({ name, description }) => ({ name, description })),
       },
       hintOnceDeclined:
         'The user was shown these segments and picked none. Ask them who should get the flag and target those users with constraints instead.',
       title: `Segment for "${name}" in ${environment}`,
-      options: candidates.map((segment) => ({
+      options: found.candidates.map((segment) => ({
         value: segment.name,
         label: segment.description ? `${segment.name}: ${segment.description}` : segment.name,
       })),
@@ -447,39 +397,6 @@ function resolveSegments(
   return ids.length === entry.segments.length ? [...new Set(ids)] : undefined;
 }
 
-async function checkConstraint(
-  context: ServerContext,
-  input: ConstraintInput,
-  environment: string,
-  lookups: Lookups,
-): Promise<{ constraint: StrategyConstraint } | { problem: Problem }> {
-  const field = lookups.contextFields.find((candidate) => candidate.name === input.contextName);
-  if (!field) {
-    const differentCase = lookups.contextFields.find(
-      (candidate) => candidate.name.toLowerCase() === input.contextName.toLowerCase(),
-    );
-    return {
-      problem: {
-        environment,
-        code: 'CONTEXT_FIELD_NOT_FOUND',
-        message: `"${input.contextName}" is not a context field in project "${lookups.projectId}".`,
-        hint: differentCase
-          ? `Context field names are case-sensitive; did you mean "${differentCase.name}"?`
-          : `Use one of the listed fields, or ask the user whether to create "${input.contextName}" with create_targeting or in Unleash (${lookups.baseUrl}/context/create). A constraint on it only matches when the app also sends "${input.contextName}" in its Unleash context. See ${CONTEXT_DOCS}.`,
-        options: lookups.contextFields.map(({ name }) => name),
-      },
-    };
-  }
-
-  const shaped = shapeConstraint(input);
-  if ('problem' in shaped) return { problem: { environment, ...shaped.problem } };
-
-  const invalid = await invalidConstraint(context.unleashClient, shaped.constraint, field);
-  if (invalid) return { problem: { environment, ...invalid } };
-
-  return shaped;
-}
-
 async function checkConstraints(
   context: ServerContext,
   entry: EnvironmentRollout,
@@ -491,12 +408,12 @@ async function checkConstraints(
 
   const results = await Promise.all(
     entry.constraints.map((constraint) =>
-      checkConstraint(context, constraint, environment, lookups),
+      checkStrategyConstraint(context.unleashClient, constraint, lookups),
     ),
   );
   const constraints: StrategyConstraint[] = [];
   for (const result of results) {
-    if ('problem' in result) findings.problems.push(result.problem);
+    if ('problem' in result) findings.problems.push({ environment, ...result.problem });
     else constraints.push(result.constraint);
   }
   return constraints.length === results.length ? constraints : undefined;
@@ -561,14 +478,8 @@ async function plan(
         hint: `To turn the flag off in "${environment.name}", pass enabled: false. To keep it on, leave strategyDisabled out.`,
       });
     }
-    const total = entry.variants?.length ? fixedWeightTotal(entry.variants) : undefined;
-    if (total !== undefined && total !== 1000) {
-      findings.problems.push({
-        environment: environment.name,
-        code: 'INVALID_VARIANTS',
-        message: `Fixed variant weights must add up to 1000 (100%) when no variant is variable; these add up to ${total}.`,
-        hint: 'Change the weights to add up to 1000, or leave weightType out on one variant so it takes the rest.',
-      });
+    for (const problem of variantProblems(entry.variants ?? [])) {
+      findings.problems.push({ environment: environment.name, ...problem });
     }
     const segmentIds = resolveSegments(entryIndex, entry, environment.name, lookups, findings);
     const constraints = await checkConstraints(context, entry, environment.name, lookups, findings);
@@ -728,12 +639,85 @@ function rolloutNotes(
   return notes;
 }
 
+/** One part of a change, the toggle or the strategy, in an environment that needs approval. */
+type ApprovalStep =
+  | { kind: 'none' }
+  | { kind: 'alreadyWaiting' }
+  | { kind: 'withdraw'; changeId: number }
+  | { kind: 'request'; change: ChangeRequestChange }
+  | { kind: 'edit'; changeId: number; change: ChangeRequestChange };
+
+function planToggle(
+  plan: EnvironmentPlan,
+  live: FeatureEnvironment,
+  waiting: Waiting,
+  onlyPaused: boolean,
+): ApprovalStep {
+  const { entry, environment } = plan;
+  const enabled = entry.enabled ?? environment.enabled;
+  const waitingToggle = waiting.changes.find(({ action }) => action === 'updateEnabled');
+  if (enabled === environment.enabled) {
+    return entry.enabled !== undefined && waitingToggle
+      ? { kind: 'alreadyWaiting' }
+      : { kind: 'none' };
+  }
+  if (waitingToggle && enabled === live.enabled) {
+    return { kind: 'withdraw', changeId: waitingToggle.id };
+  }
+  return {
+    kind: 'request',
+    change: enabled
+      ? {
+          action: 'updateEnabled',
+          payload: { enabled: true, shouldActivateDisabledStrategies: onlyPaused },
+        }
+      : { action: 'updateEnabled', payload: { enabled: false } },
+  };
+}
+
+function planStrategy(
+  target: StrategyTarget,
+  requested: FlexibleRolloutStrategy | undefined,
+  live: FeatureEnvironment,
+  waiting: Waiting,
+): ApprovalStep {
+  if (target.kind === 'keep' || !requested) return { kind: 'none' };
+  const payload = { name: 'flexibleRollout' as const, ...requested };
+  if (target.kind === 'add') return { kind: 'request', change: { action: 'addStrategy', payload } };
+
+  const { strategy } = target;
+  const waitingUpdate = waiting.changes.find(
+    (change) => change.action === 'updateStrategy' && change.payload.id === strategy.id,
+  );
+  if (sameStrategy(strategy, requested)) {
+    return isWaitingStrategy(strategy) || waitingUpdate
+      ? { kind: 'alreadyWaiting' }
+      : { kind: 'none' };
+  }
+  if (isWaitingStrategy(strategy)) {
+    return {
+      kind: 'edit',
+      changeId: strategy.waitingChangeId,
+      change: { action: 'addStrategy', payload },
+    };
+  }
+  const liveStrategy = live.strategies?.find((candidate) => candidate.id === strategy.id);
+  if (waitingUpdate && liveStrategy && sameStrategy(liveStrategy, requested)) {
+    return { kind: 'withdraw', changeId: waitingUpdate.id };
+  }
+  return {
+    kind: 'request',
+    change: { action: 'updateStrategy', payload: { id: strategy.id, ...payload } },
+  };
+}
+
 /** The same changes as applyDirectly, put into the caller's change request for the environment. */
 async function applyThroughApproval(
   context: ServerContext,
   projectId: string,
   featureName: string,
   plan: EnvironmentPlan,
+  live: FeatureEnvironment,
   waiting: Waiting,
   segments: SegmentSummary[],
 ): Promise<EnvironmentResult> {
@@ -741,69 +725,80 @@ async function applyThroughApproval(
   const env = environment.name;
   const enabled = entry.enabled ?? environment.enabled;
   const replacedId = target.kind === 'replace' ? target.strategy.id : undefined;
-  const changes: ChangeRequestChange[] = [];
-  let edit: { changeId: number; change: ChangeRequestChange } | undefined;
-  if (!enabled && environment.enabled) {
-    changes.push({ action: 'updateEnabled', payload: { enabled: false } });
-  }
-  let requested: FlexibleRolloutStrategy | undefined;
-  if (target.kind !== 'keep') {
-    requested = buildStrategy({ ...plan, target }, featureName);
-    const payload = { name: 'flexibleRollout' as const, ...requested };
-    if (target.kind === 'add') {
-      changes.push({ action: 'addStrategy', payload });
-    } else if (isWaitingStrategy(target.strategy)) {
-      edit = {
-        changeId: target.strategy.waitingChangeId,
-        change: { action: 'addStrategy', payload },
-      };
-    } else {
-      changes.push({ action: 'updateStrategy', payload: { id: target.strategy.id, ...payload } });
-    }
-  }
-  if (enabled && !environment.enabled) {
-    // Like applyDirectly: turn paused strategies back on, or Unleash adds the default strategy.
-    const { onlyPaused } = strategiesAfter(environment, replacedId, requested);
-    changes.push({
-      action: 'updateEnabled',
-      payload: { enabled: true, shouldActivateDisabledStrategies: onlyPaused },
-    });
-  }
+  const requested =
+    target.kind === 'keep' ? undefined : buildStrategy({ ...plan, target }, featureName);
+  const strategy = planStrategy(target, requested, live, waiting);
+  // Like applyDirectly: turn paused strategies back on, or Unleash adds the default strategy.
+  const { onlyPaused } = strategiesAfter(environment, replacedId, requested);
+  const toggle = planToggle(plan, live, waiting, onlyPaused);
 
-  if (changes.length === 0 && !edit) {
-    const notes = rolloutNotes(plan, undefined, 'saved');
-    const enabledWaiting = waiting.changes.some(({ action }) => action === 'updateEnabled');
-    if (waiting.changeRequest && entry.enabled !== undefined && enabledWaiting) {
-      const pending = alreadyWaiting(
-        context,
-        projectId,
-        waiting.changeRequest,
-        { enabled },
-        `turns it ${enabled ? 'on' : 'off'}`,
-      );
-      return { ...pending, environment: env, notes: [...pending.notes, ...notes] };
-    }
+  // Turn off before the strategy changes and on after them, as applyDirectly does.
+  const changes = [
+    ...(toggle.kind === 'request' && !enabled ? [toggle.change] : []),
+    ...(strategy.kind === 'request' ? [strategy.change] : []),
+    ...(toggle.kind === 'request' && enabled ? [toggle.change] : []),
+  ];
+  const edit =
+    strategy.kind === 'edit' ? { changeId: strategy.changeId, change: strategy.change } : undefined;
+  const withdrawIds = [toggle, strategy].flatMap((step) =>
+    step.kind === 'withdraw' ? [step.changeId] : [],
+  );
+  const withdrawn =
+    waiting.changeRequest && withdrawIds.length > 0
+      ? await withdraw(context, projectId, waiting.changeRequest, withdrawIds)
+      : undefined;
+  const withdrawNotes = withdrawn ? [withdrawn.note] : [];
+  const summary = {
+    enabled,
+    ...(target.kind === 'replace' &&
+      !isWaitingStrategy(target.strategy) && { strategyId: target.strategy.id }),
+    ...(requested && summarize(requested, segments)),
+  };
+
+  if (changes.length > 0 || edit) {
+    const stillOpen = !withdrawn || withdrawn.outcome === 'discarded';
+    const pending = await requestChange(
+      context,
+      projectId,
+      env,
+      featureName,
+      stillOpen ? waiting : { changes: [] },
+      changes,
+      edit,
+    );
     return {
-      outcome: 'saved',
+      outcome: 'pendingApproval',
       environment: env,
-      strategy: 'unchanged',
-      enabled,
-      ...(notes.length > 0 && { notes }),
+      requested: summary,
+      changeRequest: pending.changeRequest,
+      notes: [
+        ...pending.notes,
+        ...withdrawNotes,
+        ...rolloutNotes(plan, requested, 'pendingApproval'),
+      ],
     };
   }
-
-  const pending = await requestChange(context, projectId, env, featureName, waiting, changes, edit);
+  const notes = [...withdrawNotes, ...rolloutNotes(plan, undefined, 'saved')];
+  if (
+    waiting.changeRequest &&
+    (toggle.kind === 'alreadyWaiting' || strategy.kind === 'alreadyWaiting')
+  ) {
+    const pending = alreadyWaiting(
+      context,
+      projectId,
+      waiting.changeRequest,
+      summary,
+      'makes this change',
+    );
+    return { ...pending, environment: env, notes: [...pending.notes, ...notes] };
+  }
   return {
-    outcome: 'pendingApproval',
+    outcome: 'saved',
     environment: env,
-    requested: {
-      enabled,
-      ...(target.kind === 'replace' &&
-        !isWaitingStrategy(target.strategy) && { strategyId: target.strategy.id }),
-      ...(requested && summarize(requested, segments)),
-    },
-    changeRequest: pending.changeRequest,
-    notes: [...pending.notes, ...rolloutNotes(plan, requested, 'pendingApproval')],
+    strategy: 'unchanged',
+    enabled: live.enabled,
+    ...(withdrawn && { changeRequest: withdrawn.changeRequest }),
+    ...(notes.length > 0 && { notes }),
   };
 }
 
@@ -824,6 +819,7 @@ async function applyDirectly(
   }
 
   let saved: FeatureStrategy | undefined;
+  let unchanged = false;
   if (target.kind === 'add') {
     saved = await context.unleashClient.addFlexibleRolloutStrategy(
       projectId,
@@ -832,13 +828,17 @@ async function applyDirectly(
       buildStrategy({ ...plan, target }, featureName),
     );
   } else if (target.kind === 'replace') {
-    saved = await context.unleashClient.replaceFlexibleRolloutStrategy(
-      projectId,
-      featureName,
-      env,
-      target.strategy.id,
-      buildStrategy({ ...plan, target }, featureName),
-    );
+    const requested = buildStrategy({ ...plan, target }, featureName);
+    unchanged = sameStrategy(target.strategy, requested);
+    saved = unchanged
+      ? target.strategy
+      : await context.unleashClient.replaceFlexibleRolloutStrategy(
+          projectId,
+          featureName,
+          env,
+          target.strategy.id,
+          requested,
+        );
   }
 
   // Turn on after saving, or Unleash adds the project's default strategy next to the new one.
@@ -854,10 +854,16 @@ async function applyDirectly(
   return {
     outcome: 'saved',
     environment: env,
-    strategy: target.kind === 'add' ? 'added' : target.kind === 'replace' ? 'updated' : 'unchanged',
+    strategy:
+      target.kind === 'add'
+        ? 'added'
+        : target.kind === 'replace' && !unchanged
+          ? 'updated'
+          : 'unchanged',
     enabled,
     ...(saved && { strategyId: saved.id, ...summarize(saved, segments) }),
-    ...(target.kind === 'replace' && { previous: summarize(target.strategy, segments) }),
+    ...(target.kind === 'replace' &&
+      !unchanged && { previous: summarize(target.strategy, segments) }),
     ...(notes.length > 0 && { notes }),
   };
 }
@@ -918,7 +924,7 @@ async function loadLookups(
     needsSegments ? context.unleashClient.listSegments() : [],
     needsContextFields ? context.unleashClient.getContextFields(projectId) : [],
   ]);
-  return { projectId, baseUrl, feature, segments, contextFields, waiting };
+  return { projectId, baseUrl, feature, live, segments, contextFields, waiting };
 }
 
 /** Dry run calls no API, so every name in the request counts as found. */
@@ -933,19 +939,21 @@ function dryRunLookups(
   const contextNames = new Set(
     entries.flatMap((entry) => (entry.constraints ?? []).map(({ contextName }) => contextName)),
   );
+  const planned = {
+    ...feature,
+    environments: [...environments].map((name) => ({
+      name,
+      environment: name,
+      featureName: feature.name,
+      enabled: false,
+      strategies: [],
+    })),
+  };
   return {
     projectId,
     baseUrl,
-    feature: {
-      ...feature,
-      environments: [...environments].map((name) => ({
-        name,
-        environment: name,
-        featureName: feature.name,
-        enabled: false,
-        strategies: [],
-      })),
-    },
+    feature: planned,
+    live: planned,
     segments: [...segments].map((name, index) => ({ id: index + 1, name, project: null })),
     contextFields: [...contextNames].map((name) => ({ name, legalValues: [] })),
     waiting: new Map(),
@@ -1037,6 +1045,8 @@ export async function setFlagRollout(
                 projectId,
                 input.featureName,
                 environmentPlan,
+                findEnvironment(lookups.live, environmentPlan.environment.name) ??
+                  environmentPlan.environment,
                 waiting,
                 lookups.segments,
               )
@@ -1057,7 +1067,7 @@ export async function setFlagRollout(
             failedEnvironment: failed,
             applied,
             notChanged: checked.plans.slice(index + 1).map((p) => p.environment.name),
-            hint: `The environments in applied were saved or, where the outcome is pendingApproval, put into a change request. Those in notChanged were not changed. "${failed}" failed and may be partly changed, so check it with get_flag_state. Fix the error, then call set_flag_rollout again for the environments that were not saved.`,
+            hint: `The environments in applied were saved or, where the outcome is pendingApproval, put into a change request. Those in notChanged were not changed. "${failed}" failed and may be partly changed, so check it with get_flag_state, and where it needs approval, check your change requests in Unleash too. Fix the error, then call set_flag_rollout again for the environments that were not saved.`,
           }),
         };
       }
@@ -1108,7 +1118,7 @@ export const setFlagRolloutTool = {
     'Set who gets a feature flag in one or more environments: a rollout percentage, optionally narrowed to segments and to constraints on context fields, and whether the environment is on. ' +
     'Pass segment and context field names as the user said them; do not look them up first. Nothing is changed until every name checks out. When a name does not match, the user is asked to pick, or the error lists the valid options. ' +
     'An environment without strategies gets a new flexibleRollout strategy when the entry sets any strategy field; turning it on with only enabled gives it the project default strategy. With one, that strategy is updated and fields you leave out keep their value; with several, pass strategyId. ' +
-    'In an environment where your changes need approval, the changes go into a change request instead and that environment gets outcome "pendingApproval" with a link to the change request; nothing changes there until it is approved and applied. A later call builds on the changes you already have waiting there. Each environment is decided on its own, so one call can save one and request another.',
+    'In an environment where your changes need approval, the changes go into a change request instead and that environment gets outcome "pendingApproval" with a link to the change request; nothing changes there until it is approved and applied. A later call builds on the changes you already have waiting there, and asking for what is live now takes back your waiting change instead, with outcome "saved". Each environment is decided on its own, so one call can save one and request another.',
   inputSchema: setFlagRolloutSchema,
   implementation: setFlagRollout,
 };

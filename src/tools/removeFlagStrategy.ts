@@ -11,6 +11,7 @@ import { CustomError } from '../utils/errors.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
 import {
+  alreadyWaiting,
   approvalEnvironments,
   findApprovalEnvironment,
   findWaiting,
@@ -75,18 +76,31 @@ export async function removeFlagStrategy(
           'Call get_flag_state to find the strategy IDs.',
         );
       }
-      const pending: PendingApproval<{ removeStrategyId: string }> = {
-        outcome: 'pendingApproval',
-        requested: { removeStrategyId: input.strategyId },
-        ...(await requestChange(
-          context,
-          projectId,
-          approvalEnvironment,
-          input.featureName,
-          findWaiting(open, approvalEnvironment, input.featureName),
-          [{ action: 'deleteStrategy', payload: { id: input.strategyId } }],
-        )),
-      };
+      const waiting = findWaiting(open, approvalEnvironment, input.featureName);
+      const alreadyRemoving = waiting.changes.some(
+        (change) => change.action === 'deleteStrategy' && change.payload.id === input.strategyId,
+      );
+      const pending: PendingApproval<{ removeStrategyId: string }> =
+        waiting.changeRequest && alreadyRemoving
+          ? alreadyWaiting(
+              context,
+              projectId,
+              waiting.changeRequest,
+              { removeStrategyId: input.strategyId },
+              'removes it',
+            )
+          : {
+              outcome: 'pendingApproval',
+              requested: { removeStrategyId: input.strategyId },
+              ...(await requestChange(
+                context,
+                projectId,
+                approvalEnvironment,
+                input.featureName,
+                waiting,
+                [{ action: 'deleteStrategy', payload: { id: input.strategyId } }],
+              )),
+            };
       return jsonResult({
         success: true,
         projectId,

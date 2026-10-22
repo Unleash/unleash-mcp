@@ -237,9 +237,9 @@ Set `UNLEASH_MCP_CLIENT_ATTRIBUTION=off` to disable enrichment and revert to `un
 
 This section describes each of the core tools in detail, including its purpose, parameters, and output.
 
-Before writing, these tools read the project's change request settings and your permissions. As in the Unleash UI, where your changes need approval, `set_flag_rollout`, `toggle_flag_environment` and `remove_flag_strategy` put the change into a [change request](https://docs.getunleash.io/concepts/change-requests); with `ADMIN` or `SKIP_CHANGE_REQUEST` there they write directly. Archiving with `update_flag_lifecycle` goes into a change request for everyone while any environment has change requests on, in a production environment first. The result has `outcome: "pendingApproval"` with `requested` and the change request's `id`, `url` and `state`; elsewhere it is `outcome: "saved"`.
+Before writing, these tools read the project's change request settings and your permissions. As in the Unleash UI, where your changes need approval, `set_flag_rollout`, `toggle_flag_environment` and `remove_flag_strategy` put the change into a [change request](https://docs.getunleash.io/concepts/change-requests), admins included; with `SKIP_CHANGE_REQUEST` there they write directly. Archiving with `update_flag_lifecycle` goes into a change request for everyone while any environment has change requests on, in a production environment first. The result has `outcome: "pendingApproval"` with `requested` and the change request's `id`, `url` and `state`; elsewhere it is `outcome: "saved"`.
 
-The change goes into your open change request for that environment, or a new one, and builds on what you already have waiting there for the flag, so a follow-up changes the waiting change instead of adding a second one. A new change request is sent for review. A draft you already had is not submitted, so you can submit it in Unleash when it's ready, and adding to one in review or approved resets its approvals. Archiving a flag whose archive is already waiting adds nothing.
+The change goes into your open change request for that environment, or a new one, and builds on what you already have waiting there for the flag, so a follow-up changes the waiting change instead of adding a second one. Repeating a change that is already waiting adds nothing, and asking for what is live now removes the waiting change instead of adding one that undoes it. A new change request is sent for review only when it holds nothing but these changes. A draft you already had is not submitted, so you can submit it in Unleash when it's ready, and adding to one in review or approved resets its approvals. Archiving a flag whose archive is already waiting adds nothing.
 
 ### Create flag
 
@@ -1075,7 +1075,7 @@ Returns a JSON object with `changed`, the flag's lifecycle state `before` and `a
 
 ### Update project settings
 
-The `update_project_settings` tool changes how flags in a project are set up: the default strategy of each environment, the default stickiness, and which environments the project has. An environment's default strategy is what Unleash adds when a flag with no enabled strategies there is turned on, existing flags included.
+The `update_project_settings` tool changes how flags in a project are set up: the default strategy of each environment, the default stickiness, and which environments the project has. An environment's default strategy is what Unleash adds when a flag with no strategies there is turned on, and when `toggle_flag_environment` turns on one whose strategies are all paused, existing flags included.
 
 #### When to use
 
@@ -1088,7 +1088,7 @@ Use this tool when the user wants to change a project's defaults. Environments c
 - `addEnvironments` (optional): Names of existing environments to make available in the project.
 - `defaultStrategies` (optional): Per environment, `rolloutPercentage`, `segments` (by name), `constraints`, `stickiness`, `groupId`, `title` and `variants`. Fields left out keep their current value, and `[]` clears `segments`, `constraints` or `variants`. A new default gives each flag its own `groupId`.
 
-At least one of the three settings is required. Nothing is changed until every name and variant checks out, and a current default that is not a `flexibleRollout` strategy is refused rather than replaced. Default stickiness is set first, so on open source Unleash the call fails before anything changes; then environments are added, then default strategies. There is no rollback: if a step fails, the error returns `applied`, `failed` and `notApplied` in the input's own shape. If only reading the settings back fails, the error returns `applied` and says not to send them again.
+At least one of the three settings is required. Nothing is changed until every name and variant checks out, and a current default that is not a `flexibleRollout` strategy is refused rather than replaced. Default stickiness is set first, so on open source Unleash the call fails before anything changes; then environments are added, then default strategies. There is no rollback: if a step fails, the error returns `applied`, `failed` and `notApplied` in the input's own shape. If only reading the settings back fails, the error returns `applied` and says not to send them again. On open source Unleash, `defaultStickiness` comes back under `notSupported` instead of `failed`. Settings that already match are not written again, so a repeated call adds no audit events, and constraints are checked against the instance's limits.
 
 #### Usage example
 
@@ -1111,7 +1111,7 @@ Flags turned on in production of ecommerce should start at 10% for the beta-user
 
 **Tool output**
 
-Returns a JSON object with `applied`, the project's `defaultStickiness`, and each environment's `defaultStrategy` (with the `previous` one for those that changed).
+Returns a JSON object with `applied`, `unchanged` for settings that already matched, the project's `defaultStickiness`, and each environment's `defaultStrategy` (with the `previous` one for those that changed). An added environment where change requests are off gets a note saying so.
 
 ### Cleanup flag
 
@@ -1425,7 +1425,10 @@ This server uses the Unleash Admin API. For complete API documentation, see:
 - `GET /api/admin/projects/{projectId}/change-requests/pending` - Find your open change requests and the changes waiting in them
 - `POST /api/admin/projects/{projectId}/environments/{environment}/change-requests` - Add changes to a change request
 - `PUT /api/admin/projects/{projectId}/change-requests/{id}/changes/{changeId}` - Change a strategy that is waiting to be added
-- `PUT /api/admin/projects/{projectId}/change-requests/{id}/state` - Send a change request for review
+- `PUT /api/admin/projects/{projectId}/change-requests/{id}/state` - Send a change request for review, or cancel one whose only change is taken back
+- `DELETE /api/admin/projects/{projectId}/change-requests/{id}/changes/{changeId}` - Take back one waiting change
+- `DELETE /api/admin/projects/{projectId}/change-requests/{id}` - Delete a draft whose only change is taken back
+- `GET /api/admin/ui-config` - Read the constraint and segment limits a default strategy must stay within
 
 `send_feedback` does not call your Unleash instance. It posts to `POST {UNLEASH_FEEDBACK_URL}/feedback` on the Unleash-hosted feedback instance.
 

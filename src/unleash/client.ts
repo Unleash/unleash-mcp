@@ -165,9 +165,17 @@ const WAITING_ACTIONS: string[] = [
 const isWaitingChange = (change: { action: string }): change is WaitingChange =>
   WAITING_ACTIONS.includes(change.action);
 
+export interface ResourceLimits {
+  constraints?: number;
+  constraintValues?: number;
+  strategySegments?: number;
+}
+
 export interface OpenChangeRequest extends ChangeRequestRef {
   environment: string;
-  features: Array<{ name: string; changes: WaitingChange[] }>;
+  /** changes holds only the kinds the write tools make, and changeCount counts every change. */
+  features: Array<{ name: string; changes: WaitingChange[]; changeCount: number }>;
+  segmentChangeCount: number;
 }
 
 /** A permission as Unleash checks it: root ones have no project, environment ones name both. */
@@ -708,6 +716,23 @@ export class UnleashClient {
     return environments.map(({ name }) => name);
   }
 
+  /** How many constraints and segments a strategy can have, and values a constraint. Older Unleash has no limits. */
+  async getResourceLimits(): Promise<ResourceLimits> {
+    if (this.dryRun) {
+      return {};
+    }
+
+    const { resourceLimits = {} } = await this.requestJson<{ resourceLimits?: ResourceLimits }>(
+      '/api/admin/ui-config',
+      { method: 'GET' },
+      {
+        errorMessage: 'Failed to read the resource limits',
+        networkErrorMessage: 'Failed to connect to Unleash API while reading the resource limits',
+      },
+    );
+    return resourceLimits;
+  }
+
   async addEnvironmentToProject(projectId: string, environment: string): Promise<void> {
     if (this.dryRun) {
       return;
@@ -723,7 +748,7 @@ export class UnleashClient {
     );
   }
 
-  /** The strategy Unleash adds when a flag with no enabled strategies in this environment is turned on. */
+  /** The strategy Unleash adds when a flag with no strategies, or only paused ones, in this environment is turned on. */
   async setProjectDefaultStrategy(
     projectId: string,
     environment: string,
@@ -1188,14 +1213,14 @@ export class UnleashClient {
   }
 
   /**
-   * The project's environments where change requests are on.
-   * Without change requests the endpoint is missing (404), and a token that can't read it (403)
-   * gets Unleash's own refusal from the write, so both count as none.
+   * The project's environments where change requests are on, or undefined when that can't be read:
+   * open source has no such endpoint (404), and a token that can't read it (403) gets Unleash's own
+   * refusal from the write.
    */
   async changeRequestEnvironments(
     projectId: string,
-  ): Promise<Array<{ environment: string; type: string }>> {
-    if (this.dryRun) return [];
+  ): Promise<Array<{ environment: string; type: string }> | undefined> {
+    if (this.dryRun) return undefined;
     try {
       const config = await this.requestJson<
         { environment: string; type: string; changeRequestEnabled: boolean }[]
@@ -1208,7 +1233,9 @@ export class UnleashClient {
         .filter((entry) => entry.changeRequestEnabled)
         .map(({ environment, type }) => ({ environment, type }));
     } catch (error) {
-      if (error instanceof CustomError && ['HTTP_403', 'HTTP_404'].includes(error.code)) return [];
+      if (error instanceof CustomError && ['HTTP_403', 'HTTP_404'].includes(error.code)) {
+        return undefined;
+      }
       throw error;
     }
   }
@@ -1232,6 +1259,7 @@ export class UnleashClient {
         ChangeRequestRef & {
           environment: string;
           features: Array<{ name: string; changes: Array<{ action: string }> }>;
+          segments?: unknown[];
         }
       >
     >(
@@ -1239,14 +1267,16 @@ export class UnleashClient {
       { method: 'GET' },
       { errorMessage: `Failed to read the open change requests of project ${projectId}` },
     );
-    return requests.map(({ id, environment, state, features }) => ({
+    return requests.map(({ id, environment, state, features, segments = [] }) => ({
       id,
       environment,
       state,
       features: features.map(({ name, changes }) => ({
         name,
         changes: changes.filter(isWaitingChange),
+        changeCount: changes.length,
       })),
+      segmentChangeCount: segments.length,
     }));
   }
 
@@ -1286,6 +1316,38 @@ export class UnleashClient {
       `/api/admin/projects/${encodeURIComponent(projectId)}/change-requests/${changeRequestId}/changes/${changeId}`,
       { method: 'PUT', body: JSON.stringify({ feature: featureName, ...change }) },
       { errorMessage: `Failed to change ${featureName} in change request ${changeRequestId}` },
+    );
+  }
+
+  /** Removes one change from a change request that holds others. */
+  async discardChange(projectId: string, changeRequestId: number, changeId: number): Promise<void> {
+    if (this.dryRun) return;
+    await this.request(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/change-requests/${changeRequestId}/changes/${changeId}`,
+      { method: 'DELETE' },
+      {
+        errorMessage: `Failed to remove change ${changeId} from change request ${changeRequestId}`,
+      },
+    );
+  }
+
+  /** Deletes a draft change request with everything in it. */
+  async deleteDraft(projectId: string, changeRequestId: number): Promise<void> {
+    if (this.dryRun) return;
+    await this.request(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/change-requests/${changeRequestId}`,
+      { method: 'DELETE' },
+      { errorMessage: `Failed to delete draft change request ${changeRequestId}` },
+    );
+  }
+
+  /** Withdraws a change request that was sent for review. */
+  async cancelChangeRequest(projectId: string, changeRequestId: number): Promise<void> {
+    if (this.dryRun) return;
+    await this.request(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/change-requests/${changeRequestId}/state`,
+      { method: 'PUT', body: JSON.stringify({ state: 'Cancelled' }) },
+      { errorMessage: `Failed to cancel change request ${changeRequestId}` },
     );
   }
 
