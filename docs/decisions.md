@@ -101,3 +101,10 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 
 - Setup and teardown would be done by an admin in the real world, so tests use a second Unleash client with its own PAT (`UNLEASH_ADMIN_PAT`) for them, instead of giving the user under test more permissions.
 - Exception: a submitted change request can't be deleted, only cancelled, and only by its author, so the user under test cancels the ones its releases create. Cancelled change requests stay in the sandbox.
+
+## 2026-10-21 — Release splits an audience across values
+
+- A target takes `values`, replacing the single `value`, so an audience can be split across several values. Rejected: keeping `value` next to `values` (two ways to say one thing).
+- A value's `share` is an optional percentage (0–100), like `rollout`. Values without one split what is left evenly. Rejected: decimal percentages and Unleash's 0–1000 weights.
+- The result echoes the values as sent, not the shares Unleash resolves. Rejected: echoing the resolved shares, which means copying Unleash's weight logic or extra reads.
+- Left out for now: value stickiness (stays `default`) and Unleash's deprecated per-environment values.
