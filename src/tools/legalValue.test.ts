@@ -7,17 +7,20 @@ import { createLegalValue, deleteLegalValue } from './legalValue.ts';
 const { unleash, admin, close } = createRecordedClient(new URL('./legalValue.snapshot.json', import.meta.url).pathname);
 // Not the fields in contextField.test.ts: test files run in parallel while recording.
 const field = 'mcpLegalValueField';
+const project = 'mcp-server';
+const projectField = 'mcpProjectLegalValueField';
 
-const deleteField = async (): Promise<void> => {
-  await admin.DELETE('/api/admin/context/{contextField}', { params: { path: { contextField: field } } });
+const deleteFields = async (): Promise<void> => {
+  for (const contextField of [field, projectField]) await admin.DELETE('/api/admin/context/{contextField}', { params: { path: { contextField } } });
 };
 
 before(async () => {
-  await deleteField();
+  await deleteFields();
   await admin.POST('/api/admin/context', { body: { name: field } });
+  await admin.POST('/api/admin/context', { body: { name: projectField, project } });
 });
 after(async () => {
-  await deleteField();
+  await deleteFields();
   await close();
 });
 
@@ -53,4 +56,18 @@ test('fails with the Unleash error when the context field to remove a value from
   const output = await deleteLegalValue(unleash, { kind: 'legal_value', action: 'delete', field, value: 'gold' });
 
   assert.deepEqual(output, { kind: 'failed', status: 404, name: 'NotFoundError', reasons: [message] });
+});
+
+test('adds a legal value to a context field in a project', async () => {
+  const output = await createLegalValue(unleash, { kind: 'legal_value', action: 'create', project, field: projectField, value: 'gold' });
+
+  assert.deepEqual(output, { kind: 'created', resource: 'legal_value', field: projectField, value: 'gold' });
+});
+
+test('removes a legal value from a context field in a project', async () => {
+  await admin.POST('/api/admin/context/{contextField}/legal-values', { params: { path: { contextField: projectField } }, body: { value: 'silver' } });
+
+  const output = await deleteLegalValue(unleash, { kind: 'legal_value', action: 'delete', project, field: projectField, value: 'silver' });
+
+  assert.deepEqual(output, { kind: 'deleted', resource: 'legal_value', field: projectField, value: 'silver' });
 });
