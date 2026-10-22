@@ -1,6 +1,17 @@
 import { z } from 'zod';
 import { failed } from '../shared/failed.ts';
 
+const project = z.object({
+  id: z.string(),
+  name: z.string(),
+  createdAt: z.string().optional().describe('ISO timestamp'),
+});
+
+const projects = z.object({
+  kind: z.literal('projects'),
+  projects: z.array(project),
+});
+
 const segment = z.object({
   id: z.number().int(),
   name: z.string(),
@@ -31,7 +42,7 @@ const contextFields = z.object({
   fields: z.array(contextField).describe('Sorted by name'),
 });
 
-const result = z.discriminatedUnion('kind', [segments, contextFields, failed]);
+const result = z.discriminatedUnion('kind', [projects, segments, contextFields, failed]);
 
 export const searchOutput = {
   results: z.array(result).describe('One per query, in the order asked'),
@@ -39,5 +50,6 @@ export const searchOutput = {
 
 export type SearchOutput = z.infer<z.ZodObject<typeof searchOutput>>;
 export type SearchResult = z.infer<typeof result>;
+export type Projects = z.infer<typeof projects>;
 export type Segments = z.infer<typeof segments>;
 export type ContextFields = z.infer<typeof contextFields>;
