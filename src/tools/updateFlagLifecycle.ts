@@ -5,6 +5,12 @@ import type { FeatureLifecycleSnapshot, LifecycleTransitionResult } from '../unl
 import { CustomError } from '../utils/errors.js';
 import { createFlagLinks } from '../utils/streaming.js';
 import { jsonResult } from '../utils/toolResult.js';
+import {
+  alreadyWaiting,
+  findWaiting,
+  type PendingApproval,
+  requestChange,
+} from './changeRequests.js';
 
 const ACTIONS = [
   'complete',
@@ -58,6 +64,14 @@ export async function updateFlagLifecycle(
       `Applying "${input.action}" to "${input.featureName}"...`,
     );
 
+    if (input.action === 'archive') {
+      // Like the Unleash UI: while any environment has change requests on, archiving goes through
+      // one, in a production environment first, even for admins.
+      const configured = await context.unleashClient.changeRequestEnvironments(projectId);
+      const environment = (configured.find(({ type }) => type === 'production') ?? configured[0])
+        ?.environment;
+      if (environment) return await archiveThroughApproval(context, projectId, input, environment);
+    }
     const result = await applyAction(context, projectId, input);
 
     await context.notifyProgress(
@@ -67,29 +81,99 @@ export async function updateFlagLifecycle(
       `Applied "${input.action}" to "${input.featureName}"`,
     );
 
-    const { url, resourceUri } = createFlagLinks(
-      context.config.unleash.baseUrl,
-      projectId,
-      input.featureName,
-    );
-
-    return jsonResult({
-      success: true,
-      dryRun: context.config.server.dryRun,
-      projectId,
-      featureName: input.featureName,
-      action: input.action,
-      changed: result.changed,
-      before: result.before,
-      after: result.after,
-      ...sentDetails(input),
-      summary: summarize(result),
-      help: buildHelp(projectId, input, result),
-      links: { ui: url, resourceUri },
-    });
+    return savedReply(context, projectId, input, result);
   } catch (error) {
     return handleToolError(context, error, 'update_flag_lifecycle');
   }
+}
+
+function savedReply(
+  context: ServerContext,
+  projectId: string,
+  input: UpdateFlagLifecycleInput,
+  result: LifecycleTransitionResult,
+): CallToolResult {
+  const { url, resourceUri } = createFlagLinks(
+    context.config.unleash.baseUrl,
+    projectId,
+    input.featureName,
+  );
+
+  return jsonResult({
+    outcome: 'saved',
+    success: true,
+    dryRun: context.config.server.dryRun,
+    projectId,
+    featureName: input.featureName,
+    action: input.action,
+    changed: result.changed,
+    before: result.before,
+    after: result.after,
+    ...sentDetails(input),
+    summary: summarize(result),
+    help: buildHelp(projectId, input, result),
+    links: { ui: url, resourceUri },
+  });
+}
+
+async function archiveThroughApproval(
+  context: ServerContext,
+  projectId: string,
+  input: UpdateFlagLifecycleInput,
+  environment: string,
+): Promise<CallToolResult> {
+  const { featureName } = input;
+  const current = await context.unleashClient.getLifecycleSnapshot(projectId, featureName);
+  if (current.presence === 'missing') {
+    throw new CustomError(
+      'FLAG_NOT_FOUND',
+      `No flag named "${featureName}" exists in project "${projectId}", active or archived.`,
+      'Search for the flag by name to find its exact name and project.',
+    );
+  }
+  if (current.presence === 'archived') {
+    return savedReply(context, projectId, input, {
+      changed: false,
+      changes: [],
+      before: current,
+      after: current,
+    });
+  }
+
+  const { url, resourceUri } = createFlagLinks(
+    context.config.unleash.baseUrl,
+    projectId,
+    featureName,
+  );
+  const reply = {
+    success: true,
+    projectId,
+    featureName,
+    action: input.action,
+    links: { ui: url, resourceUri },
+  };
+  const open = await context.unleashClient.openChangeRequests(projectId);
+  const waiting = findWaiting(open, environment, featureName);
+  if (waiting.changeRequest && waiting.changes.some(({ action }) => action === 'archiveFeature')) {
+    const pending = alreadyWaiting(
+      context,
+      projectId,
+      waiting.changeRequest,
+      { action: 'archive' },
+      'archives it',
+    );
+    return jsonResult({ ...reply, ...pending });
+  }
+
+  await ensureNoOrphanedChildren(context, projectId, featureName);
+  const pending: PendingApproval<{ action: 'archive' }> = {
+    outcome: 'pendingApproval',
+    requested: { action: 'archive' },
+    ...(await requestChange(context, projectId, environment, featureName, waiting, [
+      { action: 'archiveFeature' },
+    ])),
+  };
+  return jsonResult({ ...reply, ...pending });
 }
 
 function ensureStatusWhenCompleting(input: UpdateFlagLifecycleInput): void {
@@ -265,7 +349,7 @@ export const updateFlagLifecycleTool = {
 Actions:
 - complete: mark the flag's job as done. Requires status "kept" (the feature stays) or "discarded" (the feature was removed).
 - uncomplete: undo complete.
-- archive: archive the flag; SDKs stop receiving it. Refused when other flags depend on it.
+- archive: archive the flag; SDKs stop receiving it. Refused when other flags depend on it. In a project where an environment only takes approved changes, it goes into a change request instead and the result has outcome "pendingApproval" with a link to the change request; the flag stays active until it is approved and applied.
 - revive: restore an archived flag.
 - mark_stale / unmark_stale: set or clear the stale marker, which is independent of the stage.
 

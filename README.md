@@ -236,6 +236,10 @@ Set `UNLEASH_MCP_CLIENT_ATTRIBUTION=off` to disable enrichment and revert to `un
 
 This section describes each of the core tools in detail, including its purpose, parameters, and output.
 
+Before writing, these tools read the project's change request settings and your permissions. As in the Unleash UI, where your changes need approval, `set_flag_rollout`, `toggle_flag_environment` and `remove_flag_strategy` put the change into a [change request](https://docs.getunleash.io/concepts/change-requests); with `ADMIN` or `SKIP_CHANGE_REQUEST` there they write directly. Archiving with `update_flag_lifecycle` goes into a change request for everyone while any environment has change requests on, in a production environment first. The result has `outcome: "pendingApproval"` with `requested` and the change request's `id`, `url` and `state`; elsewhere it is `outcome: "saved"`.
+
+The change goes into your open change request for that environment, or a new one, and builds on what you already have waiting there for the flag, so a follow-up changes the waiting change instead of adding a second one. A new change request is sent for review. A draft you already had is not submitted, so you can submit it in Unleash when it's ready, and adding to one in review or approved resets its approvals. Archiving a flag whose archive is already waiting adds nothing.
+
 ### Create flag
 
 The `create_flag` tool creates a new feature flag in Unleash with comprehensive validation and progress tracking. 
@@ -620,6 +624,7 @@ Use it after `create_flag` to roll the flag out, and later to change who gets it
   - `segments` (optional): Segment names, as the user said them. Case, spaces and hyphens don't matter. `[]` removes all segments.
   - `constraints` (optional): Constraints, each with `contextName`, `operator` (any Unleash constraint operator), `values` or `value`, `inverted` and `caseInsensitive`. `[]` removes all constraints.
   - `strategyId` (optional): The strategy to change when the environment has more than one.
+  - `strategyMode` (optional): `"update"` (the default) changes an existing strategy. `"add"` adds a new `flexibleRollout` strategy next to the existing ones.
   - `stickiness` (optional): Stickiness field. A new strategy uses `"default"`.
   - `groupId` (optional): Group ID for stickiness bucketing. A new strategy uses the flag name.
   - `title` (optional): Descriptive title for the strategy.
@@ -670,13 +675,14 @@ If the request has problems, nothing is changed. The error code is `INVALID_ROLL
 | `INVALID_CONSTRAINT` | A constraint has no value, or Unleash rejects its value, such as text for `NUM_GT` or a value outside the field's legal values. |
 | `STRATEGY_NOT_CHOSEN` | The environment has several `flexibleRollout` strategies and no `strategyId`, or `strategyId` matches none of them. The options list them. |
 | `STRATEGY_NOT_FOUND` | `strategyId` matches no strategy, and the environment has no `flexibleRollout` strategy to pick from instead. |
+| `STRATEGY_CONFLICT` | The entry sets both `strategyMode: "add"` and `strategyId`. |
 | `STRATEGY_NOT_SUPPORTED` | The strategy to change is not a `flexibleRollout` strategy. |
 | `LAST_STRATEGY_PAUSED` | `strategyDisabled: true` would pause the only active strategy in an environment that stays on. Unleash turns an environment off when its last active strategy is paused, and turning it on again adds the project's default strategy. |
 
 Other errors:
 - `VALIDATION_ERROR` for a field the tool doesn't know, such as a misspelt one, so it is never ignored.
 - `HTTP_404` when the flag is not in the project. The hint points to `create_flag` and `search_flags`.
-- If saving fails partway through, the error keeps Unleash's code and adds `failedEnvironment`, `applied` (the environments that were saved) and `notChanged`.
+- If saving fails partway through, the error keeps Unleash's code and adds `failedEnvironment`, `applied` (the environments that were saved or sent for review) and `notChanged`.
 
 ### Create targeting
 
@@ -1367,6 +1373,12 @@ This server uses the Unleash Admin API. For complete API documentation, see:
 - `DELETE /api/admin/projects/{projectId}/features/{featureName}` - Archive flag
 - `POST /api/admin/archive/revive/{featureName}` - Revive archived flag
 - `POST /api/admin/projects/{projectId}/stale` - Mark flag as stale or not stale
+- `GET /api/admin/projects/{projectId}/change-requests/config` - Find the environments that need approval
+- `GET /api/admin/user` - Check whether you may skip change requests
+- `GET /api/admin/projects/{projectId}/change-requests/pending` - Find your open change requests and the changes waiting in them
+- `POST /api/admin/projects/{projectId}/environments/{environment}/change-requests` - Add changes to a change request
+- `PUT /api/admin/projects/{projectId}/change-requests/{id}/changes/{changeId}` - Change a strategy that is waiting to be added
+- `PUT /api/admin/projects/{projectId}/change-requests/{id}/state` - Send a change request for review
 
 `send_feedback` does not call your Unleash instance. It posts to `POST {UNLEASH_FEEDBACK_URL}/feedback` on the Unleash-hosted feedback instance.
 
