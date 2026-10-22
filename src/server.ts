@@ -3,12 +3,12 @@ import pkg from '../package.json' with { type: 'json' };
 import { releaseInput } from './tools/releaseInput.ts';
 import { releaseOutput } from './tools/releaseOutput.ts';
 import { createRelease } from './tools/release.ts';
+import { inspectInput } from './tools/inspectInput.ts';
+import { inspectOutput } from './tools/inspectOutput.ts';
+import { createInspect } from './tools/inspect.ts';
 import { configureInput } from './tools/configureInput.ts';
 import { configureOutput } from './tools/configureOutput.ts';
 import { createConfigure } from './tools/configure.ts';
-import { searchSpikeInput } from './tools/searchSpikeInput.ts';
-import { searchSpikeOutput } from './tools/searchSpikeOutput.ts';
-import { createSearchSpike } from './tools/searchSpike.ts';
 import type { UnleashClient } from './unleash/client.ts';
 
 // At the time of this writing, 
@@ -21,7 +21,7 @@ const toToolResult = <T extends { kind: string }>(result: T) =>
 export const createServer = (unleash: UnleashClient): McpServer => {
   const server = new McpServer({ name: 'unleash-mcp', version: pkg.version });
   const release = createRelease(unleash);
-  const searchSpike = createSearchSpike(unleash);
+  const inspect = createInspect(unleash);
   const configure = createConfigure(unleash);
 
   server.registerTool(
@@ -36,17 +36,16 @@ export const createServer = (unleash: UnleashClient): McpServer => {
     },
   );
 
+  // Each query answers its own failure inside the results, so the inspect as a whole never fails.
   server.registerTool(
-    'search_spike',
+    'inspect',
     {
-      description: 'Look up what is in Unleash: projects, enabled environments, segments, flags, context fields, or the audiences a flag has in an environment. Use it to find the values other tools need.',
-      inputSchema: searchSpikeInput,
-      outputSchema: searchSpikeOutput,
+      description: 'Read Unleash items in full by their ids. One result per query, in the order asked.',
+      inputSchema: inspectInput,
+      outputSchema: inspectOutput,
       annotations: { readOnlyHint: true },
     },
-    async (input) => {
-      return toToolResult(await searchSpike(input));
-    },
+    async (input) => ({ structuredContent: await inspect(input), content: [] }),
   );
 
   server.registerTool(

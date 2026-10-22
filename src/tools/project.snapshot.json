@@ -1,5 +1,48 @@
 [
   {
+    "hash": "CeLI5ICLGoP29QHX8wO9yqndvdavjqK6hcWBtAvitE4",
+    "snapshot": {
+      "request": {
+        "method": "PUT",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/settings",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "109",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"featureNaming\":{\"pattern\":\"^mcp-[a-z-]+$\",\"example\":\"mcp-flag\",\"description\":\"mcp, dash, lowercase words\"}}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "date": "Thu, 22 Oct 2026 10:14:26 GMT",
+            "ratelimit-limit": "20000",
+            "ratelimit-policy": "20000;w=60",
+            "ratelimit-remaining": "19923",
+            "ratelimit-reset": "52",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-22T10:14:26.880Z"
+    }
+  },
+  {
     "hash": "YlRiiUslISDkzfwVWa61d-WbqL7fdvxAM6ItEOW-4x0",
     "snapshot": {
       "request": {
@@ -18,15 +61,15 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "781",
+            "content-length": "826",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Wed, 21 Oct 2026 15:16:23 GMT",
-            "etag": "W/\"30d-wqMy7MEHbDUIdzPWPfO66KNO+PQ\"",
+            "date": "Thu, 22 Oct 2026 10:14:27 GMT",
+            "etag": "W/\"33a-sGM+qNjO7Tf7K/ddz+k1FYoQpx4\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19999",
-            "ratelimit-reset": "60",
+            "ratelimit-remaining": "19916",
+            "ratelimit-reset": "52",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "vary": "Accept-Encoding",
@@ -35,12 +78,12 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJzdGF0cyI6eyJhdmdUaW1lVG9Qcm9kQ3VycmVudFdpbmRvdyI6MCwiY3JlYXRlZEN1cnJlbnRXaW5kb3ciOjEsImNyZWF0ZWRQYXN0V2luZG93IjowLCJhcmNoaXZlZEN1cnJlbnRXaW5kb3ciOjAsImFyY2hpdmVkUGFzdFdpbmRvdyI6MCwicHJvamVjdEFjdGl2aXR5Q3VycmVudFdpbmRvdyI6MjAwLCJwcm9qZWN0QWN0aXZpdHlQYXN0V2luZG93IjowLCJwcm9qZWN0TWVtYmVyc0FkZGVkQ3VycmVudFdpbmRvdyI6MX0sIm5hbWUiOiJtY3Atc2VydmVyIiwiZGVzY3JpcHRpb24iOiIiLCJtb2RlIjoib3BlbiIsImZlYXR1cmVMaW1pdCI6bnVsbCwiZmVhdHVyZU5hbWluZyI6eyJwYXR0ZXJuIjpudWxsLCJleGFtcGxlIjpudWxsLCJkZXNjcmlwdGlvbiI6bnVsbH0sImxpbmtUZW1wbGF0ZXMiOltdLCJkZWZhdWx0U3RpY2tpbmVzcyI6ImRlZmF1bHQiLCJoZWFsdGgiOjEwMCwidGVjaG5pY2FsRGVidCI6MCwiZmF2b3JpdGUiOmZhbHNlLCJ1cGRhdGVkQXQiOiIyMDI2LTEwLTIxVDE0OjQxOjEzLjY0OFoiLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTIwVDA4OjExOjUxLjMxM1oiLCJvbmJvYXJkaW5nU3RhdHVzIjp7InN0YXR1cyI6ImZpcnN0LWZsYWctY3JlYXRlZCIsImZlYXR1cmUiOiJtY3AtbWFudWFsLWNyIn0sImVudmlyb25tZW50cyI6W3siZW52aXJvbm1lbnQiOiJkZXZlbG9wbWVudCJ9LHsiZW52aXJvbm1lbnQiOiJwcm9kdWN0aW9uIn1dLCJmZWF0dXJlVHlwZUNvdW50cyI6W3sidHlwZSI6InJlbGVhc2UiLCJjb3VudCI6Mn1dLCJtZW1iZXJzIjozLCJ2ZXJzaW9uIjoxfQ==",
+          "body": "eyJzdGF0cyI6eyJhdmdUaW1lVG9Qcm9kQ3VycmVudFdpbmRvdyI6MCwiY3JlYXRlZEN1cnJlbnRXaW5kb3ciOjIsImNyZWF0ZWRQYXN0V2luZG93IjowLCJhcmNoaXZlZEN1cnJlbnRXaW5kb3ciOjAsImFyY2hpdmVkUGFzdFdpbmRvdyI6MCwicHJvamVjdEFjdGl2aXR5Q3VycmVudFdpbmRvdyI6NDAyLCJwcm9qZWN0QWN0aXZpdHlQYXN0V2luZG93IjowLCJwcm9qZWN0TWVtYmVyc0FkZGVkQ3VycmVudFdpbmRvdyI6M30sIm5hbWUiOiJtY3Atc2VydmVyIiwiZGVzY3JpcHRpb24iOiIiLCJtb2RlIjoib3BlbiIsImZlYXR1cmVMaW1pdCI6bnVsbCwiZmVhdHVyZU5hbWluZyI6eyJwYXR0ZXJuIjoiXm1jcC1bYS16LV0rJCIsImV4YW1wbGUiOiJtY3AtZmxhZyIsImRlc2NyaXB0aW9uIjoibWNwLCBkYXNoLCBsb3dlcmNhc2Ugd29yZHMifSwibGlua1RlbXBsYXRlcyI6W10sImRlZmF1bHRTdGlja2luZXNzIjoiZGVmYXVsdCIsImhlYWx0aCI6MTAwLCJ0ZWNobmljYWxEZWJ0IjowLCJmYXZvcml0ZSI6ZmFsc2UsInVwZGF0ZWRBdCI6IjIwMjYtMTAtMjJUMDk6MTM6NTguOTE5WiIsImNyZWF0ZWRBdCI6IjIwMjYtMTAtMjBUMDg6MTE6NTEuMzEzWiIsIm9uYm9hcmRpbmdTdGF0dXMiOnsic3RhdHVzIjoiZmlyc3QtZmxhZy1jcmVhdGVkIiwiZmVhdHVyZSI6Im1jcC1kZXRhaWxlZC1mbGFnIn0sImVudmlyb25tZW50cyI6W3siZW52aXJvbm1lbnQiOiJkZXZlbG9wbWVudCJ9LHsiZW52aXJvbm1lbnQiOiJwcm9kdWN0aW9uIn1dLCJmZWF0dXJlVHlwZUNvdW50cyI6W3sidHlwZSI6InJlbGVhc2UiLCJjb3VudCI6Mn1dLCJtZW1iZXJzIjozLCJ2ZXJzaW9uIjoxfQ==",
           "trailers": {}
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-21T15:16:24.003Z"
+      "timestamp": "2026-10-22T10:14:27.224Z"
     }
   },
   {
@@ -65,12 +108,12 @@
             "content-length": "96",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "date": "Wed, 21 Oct 2026 15:16:24 GMT",
+            "date": "Thu, 22 Oct 2026 10:14:27 GMT",
             "etag": "W/\"60-x+SgFGjvftWX8+Joy2PfGDnpSG8\"",
             "ratelimit-limit": "20000",
             "ratelimit-policy": "20000;w=60",
-            "ratelimit-remaining": "19996",
-            "ratelimit-reset": "60",
+            "ratelimit-remaining": "19913",
+            "ratelimit-reset": "52",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "vary": "Accept-Encoding",
@@ -84,7 +127,7 @@
         }
       ],
       "callCount": 0,
-      "timestamp": "2026-10-21T15:16:24.223Z"
+      "timestamp": "2026-10-22T10:14:27.320Z"
     }
   }
 ]
