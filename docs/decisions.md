@@ -127,3 +127,9 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - A tool takes a list of operations when the agent can name each part it changes and each change is one Unleash call with no rules across parts (`configure`). An end state would cost reads to tell create from update and still needs operations to delete.
 - A tool takes an end state and computes the diff when the parts have no identity the agent can name, or rules span them (`release`: hidden strategy ids, order, never zero strategies, one change request).
 - Target names are not identity: they are not unique, and order and the change request still need the whole set. So `release` keeps replacing all targets.
+
+## 2026-10-22 — Tests set up their own data
+
+- Tests recreate everything they need in setup and remove it in teardown; the sandbox holds only the project `mcp-server`. Rejected: depending on predefined flags and settings in the sandbox, which drift and break recordings.
+- Setup copes with what a failed recording leaves behind (a flag with children, a segment with the same name), so a recording never needs a manual sandbox cleanup.
+- Over time, setup should go through the server's own tools instead of the admin API.
