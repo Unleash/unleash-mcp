@@ -68,3 +68,15 @@ test('release tool reports a failure as text', async () => {
   assert.deepEqual(result, { isError: true, content: [{ type: 'text', text: JSON.stringify(failed) }] });
   await client.close();
 });
+
+test('inspect tool returns its results as structured content', async () => {
+  const { unleash: stubbed, stub } = createStubbedClient();
+  stub.intercept({ path: `/api/admin/projects/${project}/overview`, method: 'GET' }).reply(200, { environments: [{ environment: 'development' }] });
+  const client = await connectClient(stubbed);
+
+  const result = await client.callTool({ name: 'inspect', arguments: { queries: [{ kind: 'project', project }] } });
+
+  assert.deepEqual(result.structuredContent, { results: [{ kind: 'project', environments: ['development'] }] });
+  assert.deepEqual(result.content, []);
+  await client.close();
+});
