@@ -88,6 +88,7 @@ describe('remote MCP handler (e2e)', () => {
     expect(toolNames).toEqual([
       'cleanup_flag',
       'create_flag',
+      'create_targeting',
       'detect_flag',
       'evaluate_change',
       'evaluate_flag',
@@ -303,6 +304,17 @@ describe('tool errors (e2e)', () => {
     expect(result.structuredContent).toMatchObject({
       success: false,
       error: { code: 'NETWORK_ERROR' },
+    });
+  });
+
+  it('refuses a tool call whose arguments hold more than 10,000 elements', async () => {
+    const files = Array(10_001).fill('file.ts');
+
+    const result = await callTool('evaluate_change', { files });
+
+    expect(result).toMatchObject({
+      isError: true,
+      content: [{ type: 'text', text: expect.stringContaining('maximum of 10000 elements') }],
     });
   });
 });

@@ -138,7 +138,8 @@ After executing all detection methods and combining results, return your finding
     "confidence": 0.85,
     "reasoning": "Found in the same file you're modifying, added last week, name matches your description",
     "detectionMethod": "file-based"
-  }
+  },
+  "unleashQueries": ["dark mode", "theme"]
 }
 \`\`\`
 
@@ -146,11 +147,13 @@ After executing all detection methods and combining results, return your finding
 \`\`\`json
 {
   "flagFound": false,
-  "candidate": null
+  "candidate": null,
+  "unleashQueries": ["dark mode", "theme"]
 }
 \`\`\`
 
 **Remember**:
+- \`unleashQueries\` lists the \`search_flags\` queries you actually ran; do not fill it without running them
 - Confidence ≥0.7 = High confidence (strong recommendation to reuse)
 - Confidence 0.4-0.7 = Medium confidence (possible match, ask user)
 - Confidence <0.4 = Low confidence (better to create new flag)

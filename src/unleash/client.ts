@@ -208,6 +208,15 @@ export interface ContextField {
   legalValues?: Array<{ value: string; description?: string }>;
 }
 
+export type NewContextField = Omit<ContextField, 'project'> & { sortOrder?: number };
+
+export interface NewSegment {
+  name: string;
+  description?: string;
+  project?: string;
+  constraints: StrategyConstraint[];
+}
+
 export interface FeatureEnvironment {
   name: string;
   enabled: boolean;
@@ -743,6 +752,90 @@ export class UnleashClient {
       project,
       legalValues,
     }));
+  }
+
+  /** Context fields that every project can use. */
+  async getGlobalContextFields(): Promise<ContextField[]> {
+    if (this.dryRun) {
+      return [{ name: 'userId', stickiness: true, legalValues: [] }];
+    }
+
+    const fields = await this.requestJson<ContextField[]>(
+      '/api/admin/context',
+      { method: 'GET' },
+      {
+        errorMessage: 'Failed to fetch global context fields',
+        networkErrorMessage:
+          'Failed to connect to Unleash API while fetching global context fields',
+      },
+    );
+    return fields.map(({ name, description, stickiness, project, legalValues }) => ({
+      name,
+      description,
+      stickiness,
+      project,
+      legalValues,
+    }));
+  }
+
+  /** Needs Unleash 7.4.1 or later. */
+  async createProjectContextField(projectId: string, field: NewContextField): Promise<void> {
+    if (this.dryRun) return;
+
+    await this.request(
+      `/api/admin/projects/${encodeURIComponent(projectId)}/context`,
+      { method: 'POST', body: JSON.stringify(field) },
+      {
+        errorMessage: `Failed to create context field ${field.name} in project ${projectId}`,
+        networkErrorMessage: `Failed to connect to Unleash API while creating context field ${field.name}`,
+      },
+    );
+  }
+
+  async createGlobalContextField(field: NewContextField): Promise<void> {
+    if (this.dryRun) return;
+
+    await this.request(
+      '/api/admin/context',
+      { method: 'POST', body: JSON.stringify(field) },
+      {
+        errorMessage: `Failed to create context field ${field.name}`,
+        networkErrorMessage: `Failed to connect to Unleash API while creating context field ${field.name}`,
+      },
+    );
+  }
+
+  /** The context field with this name, whichever project owns it, or undefined when none exists. */
+  async findContextField(name: string): Promise<ContextField | undefined> {
+    if (this.dryRun) return undefined;
+
+    try {
+      return await this.requestJson<ContextField>(
+        `/api/admin/context/${encodeURIComponent(name)}`,
+        { method: 'GET' },
+        {
+          errorMessage: `Failed to fetch context field ${name}`,
+          networkErrorMessage: `Failed to connect to Unleash API while fetching context field ${name}`,
+        },
+      );
+    } catch (error) {
+      if (error instanceof CustomError && error.code === 'HTTP_404') return undefined;
+      throw error;
+    }
+  }
+
+  /** Creates a segment in `project`, or a global one when `project` is left out. */
+  async createSegment(segment: NewSegment): Promise<void> {
+    if (this.dryRun) return;
+
+    await this.request(
+      '/api/admin/segments',
+      { method: 'POST', body: JSON.stringify(segment) },
+      {
+        errorMessage: `Failed to create segment ${segment.name}`,
+        networkErrorMessage: `Failed to connect to Unleash API while creating segment ${segment.name}`,
+      },
+    );
   }
 
   /**

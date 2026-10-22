@@ -25,6 +25,7 @@ import {
 } from './resources/unleashResources.js';
 import { cleanupFlagTool } from './tools/cleanupFlag.js';
 import { createFlagTool } from './tools/createFlag.js';
+import { createTargetingTool } from './tools/createTargeting.js';
 import { detectFlagTool } from './tools/detectFlag.js';
 import { evaluateChangeTool } from './tools/evaluateChange.js';
 import { evaluateFlagTool } from './tools/evaluateFlag.js';
@@ -113,6 +114,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     '4) Use wrap_change to guard code with an Unleash flag.',
     '5) When a flag is rolled out and ready to be removed, use cleanup_flag to safely remove the flag code while preserving the desired path.',
     "6) When a flag's job is done, mark it completed with update_flag_lifecycle, remove it from code with cleanup_flag, then archive it with update_flag_lifecycle.",
+    '7) Create context fields and segments, for one project or for every project, with create_targeting. set_flag_rollout then targets users with them.',
   ];
 
   const feedbackInstructions = [
@@ -144,6 +146,11 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
         resources: {},
       },
       instructions,
+      // Huge arrays or objects in one tool call can run the server out of memory
+      // (GHSA-46jr-4wx8-v453). 10,000 is the advisory's example. It fits one set_flag_rollout
+      // environment at Unleash's default limits, about 7,600 elements, but not two.
+      // Stdio gets the cap too, since no agent writes a call that big.
+      maxToolInputElements: 10_000,
     },
   );
 
@@ -192,6 +199,7 @@ export function createUnleashMcpServer(options: CreateServerOptions): McpServer 
     wrapChangeTool,
     cleanupFlagTool,
     setFlagRolloutTool,
+    createTargetingTool,
     getFlagStateTool,
     evaluateFlagTool,
     getFlagHistoryTool,

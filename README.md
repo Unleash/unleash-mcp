@@ -25,6 +25,7 @@ The MCP server exposes the following tools:
 - `detect_flag`: Discovers existing feature flags to avoid duplicates.
 - `wrap_change`: Provides guidance on how to wrap a change in a feature flag.
 - `set_flag_rollout`: Sets who gets a feature flag in each environment: rollout percentage, segments, constraints, and whether the environment is on.
+- `create_targeting`: Creates the context fields and segments that `set_flag_rollout` targets, in a project or for every project.
 - `get_flag_state`: Surfaces a feature flag's metadata and its activation strategies.
 - `get_flag_history`: Returns a feature flag's recent changes from the event log, each as a diff of what changed, who changed it, when, and in which environment.
 - `evaluate_flag`: Evaluates a single feature flag against an Unleash context (for example a user ID and custom properties) in an environment, and explains which strategies matched.
@@ -683,6 +684,62 @@ Other errors:
 - `HTTP_404` when the flag is not in the project. The hint points to `create_flag` and `search_flags`.
 - If saving fails partway through, the error keeps Unleash's code and adds `failedEnvironment`, `applied` (the environments that were saved or sent for review) and `notChanged`.
 
+### Create targeting
+
+The `create_targeting` tool creates [context fields](https://docs.getunleash.io/concepts/unleash-context) and [segments](https://docs.getunleash.io/concepts/segments) for `set_flag_rollout` to target. Context fields are created before segments, so one call can create a field and a segment that constrains on it.
+
+Everything belongs to the project by default. `scope: "global"` makes it usable in every project, and cannot be combined with `projectId`. Project context fields need Unleash 7.4.1 or later. Context field and segment names are unique across the whole instance.
+
+Nothing is created until every name and constraint checks out. Each item is then its own API call and nothing is rolled back. A failure partway through stops the call, and the error lists what was `created`, the `failed` item and what was `notAttempted`.
+
+#### Parameters
+
+- `projectId` (optional): Project that owns what is created (defaults to `UNLEASH_DEFAULT_PROJECT`).
+- `scope` (optional): `"project"` (default) or `"global"`.
+- `contextFields` (optional): Fields, each with `name`, `description`, `legalValues`, `stickiness` and `sortOrder`. A name is URL-friendly and at most 100 characters.
+- `segments` (optional): Segments, each with `name`, `description` and `constraints` (same shape as in `set_flag_rollout`).
+
+#### Usage example
+
+**Tool payload**
+
+```json
+{
+  "projectId": "ecommerce",
+  "contextFields": [{ "name": "plan" }],
+  "segments": [
+    {
+      "name": "enterprise customers",
+      "constraints": [{ "contextName": "plan", "operator": "IN", "values": ["enterprise"] }]
+    }
+  ]
+}
+```
+
+**Tool output**
+
+`scope`, `project` (for project scope) and `created`, a list of the context fields and segments with their `kind` and `name`.
+
+#### Errors
+
+If the request has problems, nothing is created. The error code is `INVALID_TARGETING`, and `problems` lists every problem at once, each with the `kind` and `name` of its item, code, message, hint and, where there are any, the valid `options`:
+
+| Code | When |
+|---|---|
+| `DUPLICATE_NAME` | The same context field or segment name appears more than once. |
+| `CONTEXT_FIELD_EXISTS` | A context field with that name exists, in any project. The message says which project owns it. |
+| `SEGMENT_EXISTS` | A segment with that name exists, in any project. |
+| `CONTEXT_FIELD_NOT_FOUND` | A segment constraint names a field that neither exists nor is created in the same call. The hint says when another project owns the name. The options list the fields the segment can use. |
+| `INVALID_CONSTRAINT` | A constraint has no value, or Unleash rejects its value, such as text for `NUM_GT` or a value outside the field's legal values. |
+
+Other errors, also before anything is created:
+- `INVALID_SCOPE`: `scope: "global"` comes with a `projectId`.
+- `PROJECT_NOT_FOUND`: the project does not exist. The hint points to `list_projects`.
+- `VALIDATION_ERROR`: a context field breaks Unleash's limits: a name that is not URL-friendly or is over 100 characters, a description over 250, or a legal value over 100 or repeated.
+- `HTTP_404`: Unleash is older than 7.4.1, so it has no project context fields. The hint suggests `scope: "global"`. Project segments still work on older versions.
+
+If creating fails partway through, the error keeps Unleash's code and adds `failed`, `created` and `notAttempted`.
+
 ### Get flag state
 
 The `get_flag_state` tool fetches a feature flag's current metadata and environment strategies from the Unleash Admin API. It returns the flag's type, enabled/archived status, impression data setting, and each environment's strategies and variants.
@@ -1196,6 +1253,8 @@ src/
 │   ├── detectFlag.ts            # detect_flag tool
 │   ├── wrapChange.ts            # wrap_change tool
 │   ├── cleanupFlag.ts           # cleanup_flag tool
+│   ├── constraints.ts           # Constraint schema and checks shared by set_flag_rollout and create_targeting
+│   ├── createTargeting.ts       # create_targeting tool
 │   ├── setFlagRollout.ts        # set_flag_rollout tool
 │   ├── getFlagState.ts          # get_flag_state tool
 │   ├── listFlags.ts             # list_flags tool
@@ -1296,6 +1355,12 @@ This server uses the Unleash Admin API. For complete API documentation, see:
 - `POST /api/admin/projects/{projectId}/features` - Create feature flag
 - `GET /api/admin/projects/{projectId}/features/{featureName}` - Get flag details
 - `GET /api/admin/segments/{id}` - Get segment
+- `POST /api/admin/segments` - Create segment
+- `GET /api/admin/context` - List global context fields
+- `GET /api/admin/context/{name}` - Get context field
+- `POST /api/admin/context` - Create global context field
+- `GET /api/admin/projects/{projectId}/context` - List a project's context fields
+- `POST /api/admin/projects/{projectId}/context` - Create project context field
 - `GET /api/admin/search/features` - Search feature flags
 - `GET /api/admin/search/events` - Fetch a feature flag's change events
 - `POST /api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies` - Add rollout strategy
