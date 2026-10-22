@@ -1,5 +1,5 @@
-import type { UnleashClient } from '../unleash/client.ts';
-import { type Failed, toFailed } from './failed.ts';
+import type { UnleashClient } from '../../unleash/client.ts';
+import { type Failed, toFailed } from '../shared/failed.ts';
 
 const features = '/api/admin/projects/{projectId}/features';
 const feature = '/api/admin/projects/{projectId}/features/{featureName}';

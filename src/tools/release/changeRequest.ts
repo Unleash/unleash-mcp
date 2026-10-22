@@ -1,6 +1,6 @@
-import type { components } from '../unleash/api.d.ts';
-import type { UnleashClient } from '../unleash/client.ts';
-import { type Failed, toFailed } from './failed.ts';
+import type { components } from '../../unleash/api.d.ts';
+import type { UnleashClient } from '../../unleash/client.ts';
+import { type Failed, toFailed } from '../shared/failed.ts';
 import type { EnvironmentPath, Plan } from './releasePlan.ts';
 
 const uiConfig = '/api/admin/ui-config';

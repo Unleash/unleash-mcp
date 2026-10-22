@@ -1,7 +1,7 @@
-import type { UnleashClient } from '../unleash/client.ts';
+import type { UnleashClient } from '../../unleash/client.ts';
 import type { CreateLegalValue, DeleteLegalValue } from './configureInput.ts';
 import type { Outcome } from './configureOutput.ts';
-import { toFailed } from './failed.ts';
+import { toFailed } from '../shared/failed.ts';
 
 /** Adds a legal value to a context field. Unleash overwrites the description of a value that already exists. */
 export const createLegalValue = async (unleash: UnleashClient, { project, field, value, description }: CreateLegalValue): Promise<Outcome> => {

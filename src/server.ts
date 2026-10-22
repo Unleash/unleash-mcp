@@ -1,14 +1,14 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import pkg from '../package.json' with { type: 'json' };
-import { releaseInput } from './tools/releaseInput.ts';
-import { releaseOutput } from './tools/releaseOutput.ts';
-import { createRelease } from './tools/release.ts';
-import { inspectInput } from './tools/inspectInput.ts';
-import { inspectOutput } from './tools/inspectOutput.ts';
-import { createInspect } from './tools/inspect.ts';
-import { configureInput } from './tools/configureInput.ts';
-import { configureOutput } from './tools/configureOutput.ts';
-import { createConfigure } from './tools/configure.ts';
+import { releaseInput } from './tools/release/releaseInput.ts';
+import { releaseOutput } from './tools/release/releaseOutput.ts';
+import { createRelease } from './tools/release/release.ts';
+import { inspectInput } from './tools/inspect/inspectInput.ts';
+import { inspectOutput } from './tools/inspect/inspectOutput.ts';
+import { createInspect } from './tools/inspect/inspect.ts';
+import { configureInput } from './tools/configure/configureInput.ts';
+import { configureOutput } from './tools/configure/configureOutput.ts';
+import { createConfigure } from './tools/configure/configure.ts';
 import type { UnleashClient } from './unleash/client.ts';
 
 // At the time of this writing, 

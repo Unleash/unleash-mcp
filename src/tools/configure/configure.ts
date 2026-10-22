@@ -1,4 +1,4 @@
-import type { UnleashClient } from '../unleash/client.ts';
+import type { UnleashClient } from '../../unleash/client.ts';
 import type { Change, ConfigureInput } from './configureInput.ts';
 import type { ConfigureOutput, ConfigureResult, Outcome, Target } from './configureOutput.ts';
 import { createContextField, deleteContextField, updateContextField } from './contextField.ts';

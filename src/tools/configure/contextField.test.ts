@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
-import { createRecordedClient, createStubbedClient } from '../unleash/testClient.ts';
-import { unleashError } from '../unleash/testError.ts';
+import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
+import { unleashError } from '../../unleash/testError.ts';
 import { createContextField, deleteContextField, updateContextField } from './contextField.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./contextField.snapshot.json', import.meta.url).pathname);

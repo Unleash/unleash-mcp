@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { type Failed, failed } from './failed.ts';
+import { type Failed, failed } from '../shared/failed.ts';
 
 const contextField = {
   resource: z.literal('context_field'),

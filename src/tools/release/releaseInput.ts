@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { target } from './target.ts';
+import { target } from '../shared/target.ts';
 
 export const releaseInput = {
   project: z.string().describe('Project id'),

@@ -1,7 +1,7 @@
-import type { UnleashClient } from '../unleash/client.ts';
+import type { UnleashClient } from '../../unleash/client.ts';
 import type { ReleaseInput } from './releaseInput.ts';
 import type { ReleaseResult } from './releaseOutput.ts';
-import { type Failed, toFailed } from './failed.ts';
+import { type Failed, toFailed } from '../shared/failed.ts';
 import { ensureFlag } from './flag.ts';
 import { createRouter, requestChanges } from './changeRequest.ts';
 import { type EnvironmentPath, type Plan, planRelease, rolloutOf } from './releasePlan.ts';

@@ -1,9 +1,9 @@
-import type { components } from '../unleash/api.d.ts';
-import type { UnleashClient } from '../unleash/client.ts';
+import type { components } from '../../unleash/api.d.ts';
+import type { UnleashClient } from '../../unleash/client.ts';
 import type { FlagQuery } from './inspectInput.ts';
 import type { Environment, FlagType, InspectResult, Lifecycle, LifecycleStage, Link, Milestone, Parent, ReleasePlan, Tag, Transition } from './inspectOutput.ts';
-import type { Constraint, Target, Value } from './target.ts';
-import { toFailed } from './failed.ts';
+import type { Constraint, Target, Value } from '../shared/target.ts';
+import { toFailed } from '../shared/failed.ts';
 
 export const inspectFlag = async (unleash: UnleashClient, { project, flag }: FlagQuery): Promise<InspectResult> => {
   // The flag endpoint leaves the tags out, so they take a request of their own.
