@@ -1088,7 +1088,7 @@ Use this tool when the user wants to change a project's defaults. Environments c
 - `addEnvironments` (optional): Names of existing environments to make available in the project.
 - `defaultStrategies` (optional): Per environment, `rolloutPercentage`, `segments` (by name), `constraints`, `stickiness`, `groupId`, `title` and `variants`. Fields left out keep their current value, and `[]` clears `segments`, `constraints` or `variants`. A new default gives each flag its own `groupId`.
 
-At least one of the three settings is required. Nothing is changed until every name checks out. Default stickiness is set first, so on open source Unleash the call fails before anything changes; then environments are added, then default strategies. There is no rollback: if a step fails, the error returns `applied`, `failed` and `notApplied` in the input's own shape.
+At least one of the three settings is required. Nothing is changed until every name and variant checks out, and a current default that is not a `flexibleRollout` strategy is refused rather than replaced. Default stickiness is set first, so on open source Unleash the call fails before anything changes; then environments are added, then default strategies. There is no rollback: if a step fails, the error returns `applied`, `failed` and `notApplied` in the input's own shape. If only reading the settings back fails, the error returns `applied` and says not to send them again.
 
 #### Usage example
 

@@ -17,8 +17,8 @@ import type {
 } from '../unleash/client.js';
 import { CustomError } from '../utils/errors.js';
 import { jsonResult } from '../utils/toolResult.js';
-import { constraintSchema, shapeConstraint } from './constraints.js';
-import { normalizeName, toVariants, variantSchema } from './setFlagRollout.js';
+import { constraintSchema, invalidConstraint, shapeConstraint } from './constraints.js';
+import { fixedWeightTotal, normalizeName, toVariants, variantSchema } from './setFlagRollout.js';
 
 const defaultStrategySchema = z.strictObject({
   environment: z.string().min(1).describe('Environment name, such as "production"'),
@@ -84,6 +84,7 @@ const updateProjectSettingsSchema = z
   );
 
 type DefaultStrategyInput = z.infer<typeof defaultStrategySchema>;
+type VariantInput = z.infer<typeof variantSchema>;
 type DefaultStrategy = Omit<FeatureStrategy, 'id'>;
 
 /** The settings part of the input, so an agent can pass what was not applied straight back. */
@@ -223,6 +224,74 @@ async function setDefaultStickiness(
   }
 }
 
+// The default-strategy endpoint stores variants unchecked. Unleash checks them only when it copies the default into a flag.
+function variantProblems(environment: string, variants: VariantInput[]): Problem[] {
+  const invalid = (message: string, hint: string): Problem => ({
+    environment,
+    code: 'INVALID_VARIANTS',
+    message,
+    hint,
+  });
+  const problems: Problem[] = [];
+  const names = variants.map(({ name }) => name);
+  const repeated = [...new Set(names.filter((name, index) => names.indexOf(name) !== index))];
+  if (repeated.length > 0) {
+    problems.push(
+      invalid(
+        `Variant names must be unique, and ${repeated.map((name) => `"${name}"`).join(', ')} appear more than once.`,
+        'Give each variant its own name.',
+      ),
+    );
+  }
+  for (const { name, payload } of variants) {
+    if (encodeURIComponent(name) !== name || name === '.' || name === '..' || name.length > 100) {
+      problems.push(
+        invalid(
+          `Variant name "${name}" must be URL friendly and at most 100 characters.`,
+          'Use letters, digits, "-", "_", "." or "~", with no spaces.',
+        ),
+      );
+    }
+    if (payload?.type === 'json' && !isJsonObject(payload.value)) {
+      problems.push(
+        invalid(
+          `The payload of variant "${name}" must be a JSON object or array.`,
+          'Fix the JSON, or pick another payload type.',
+        ),
+      );
+    }
+  }
+  const allFixed = fixedWeightTotal(variants);
+  const fixed = variants
+    .filter(({ weightType }) => weightType === 'fix')
+    .reduce((total, { weight }) => total + weight, 0);
+  if (variants.length > 0 && allFixed !== undefined && allFixed !== 1000) {
+    problems.push(
+      invalid(
+        `Fixed variant weights must add up to 1000 (100%) when no variant is variable; these add up to ${allFixed}.`,
+        'Change the weights to add up to 1000, or leave weightType out on one variant so it takes the rest.',
+      ),
+    );
+  } else if (fixed > 1000) {
+    problems.push(
+      invalid(
+        `Fixed variant weights add up to ${fixed}, more than 1000 (100%).`,
+        'Lower the fixed weights so the variable variants can take the rest.',
+      ),
+    );
+  }
+  return problems;
+}
+
+const isJsonObject = (value: string): boolean => {
+  try {
+    const parsed = JSON.parse(value);
+    return typeof parsed === 'object' && parsed !== null;
+  } catch {
+    return false;
+  }
+};
+
 async function buildDefaultStrategy(
   context: ServerContext,
   projectId: string,
@@ -232,8 +301,19 @@ async function buildDefaultStrategy(
   projectStickiness: string,
 ): Promise<{ strategy: FlexibleRolloutStrategy } | { problems: Problem[] }> {
   const { environment } = entry;
+  if (current && current.name !== 'flexibleRollout') {
+    return {
+      problems: [
+        {
+          environment,
+          code: 'STRATEGY_NOT_SUPPORTED',
+          message: `The default strategy in "${environment}" is a ${current.name} strategy, and update_project_settings only changes flexibleRollout defaults.`,
+          hint: 'Change it in the project settings in the Unleash UI.',
+        },
+      ],
+    };
+  }
   const problems: Problem[] = [];
-  const base = current?.name === 'flexibleRollout' ? current : undefined;
   const { contextFields } = lookups;
   const usable = lookups.segments.filter(
     (segment) => !segment.project || segment.project === projectId,
@@ -257,12 +337,18 @@ async function buildDefaultStrategy(
 
   const constraints: StrategyConstraint[] = [];
   for (const input of entry.constraints ?? []) {
-    if (!contextFields.some(({ name }) => name === input.contextName)) {
+    const field = contextFields.find(({ name }) => name === input.contextName);
+    if (!field) {
+      const differentCase = contextFields.find(
+        ({ name }) => name.toLowerCase() === input.contextName.toLowerCase(),
+      );
       problems.push({
         environment,
         code: 'CONTEXT_FIELD_NOT_FOUND',
         message: `"${input.contextName}" is not a context field in project "${projectId}".`,
-        hint: 'Ask the user which of these context fields they mean.',
+        hint: differentCase
+          ? `Context field names are case-sensitive; did you mean "${differentCase.name}"?`
+          : 'Ask the user which of these context fields they mean.',
         options: contextFields.map(({ name }) => name),
       });
       continue;
@@ -272,38 +358,31 @@ async function buildDefaultStrategy(
       problems.push({ environment, ...shaped.problem });
       continue;
     }
-    try {
-      await context.unleashClient.validateConstraint(shaped.constraint);
-      constraints.push(shaped.constraint);
-    } catch (error) {
-      if (!(error instanceof CustomError && error.code === 'HTTP_400')) throw error;
-      problems.push({
-        environment,
-        code: 'INVALID_CONSTRAINT',
-        message: error.message,
-        hint: 'Fix the constraint, or ask the user what they meant.',
-      });
-    }
+    const invalid = await invalidConstraint(context.unleashClient, shaped.constraint, field);
+    if (invalid) problems.push({ environment, ...invalid });
+    else constraints.push(shaped.constraint);
   }
+
+  problems.push(...variantProblems(environment, entry.variants ?? []));
 
   if (problems.length > 0) return { problems };
 
   return {
     strategy: {
-      title: entry.title ?? base?.title,
-      disabled: base?.disabled,
-      variants: entry.variants ? toVariants(entry.variants) : base?.variants,
+      title: entry.title ?? current?.title,
+      disabled: current?.disabled,
+      variants: entry.variants ? toVariants(entry.variants) : current?.variants,
       parameters: {
         // Unleash gives each flag its own group only when groupId is "", not when it is missing.
         groupId: '',
-        ...base?.parameters,
-        rollout: String(entry.rolloutPercentage ?? base?.parameters?.rollout ?? 100),
-        stickiness: entry.stickiness ?? base?.parameters?.stickiness ?? projectStickiness,
+        ...current?.parameters,
+        rollout: String(entry.rolloutPercentage ?? current?.parameters?.rollout ?? 100),
+        stickiness: entry.stickiness ?? current?.parameters?.stickiness ?? projectStickiness,
         ...(entry.groupId !== undefined && { groupId: entry.groupId }),
       },
-      constraints: entry.constraints ? constraints : (base?.constraints ?? []),
+      constraints: entry.constraints ? constraints : (current?.constraints ?? []),
       // Unleash fails to turn on a flag whose strategy lists the same segment twice.
-      segments: entry.segments ? [...new Set(segments)] : (base?.segments ?? []),
+      segments: entry.segments ? [...new Set(segments)] : (current?.segments ?? []),
     },
   };
 }
@@ -481,21 +560,34 @@ export async function updateProjectSettings(
       `${mode}Reading back settings for "${projectId}"...`,
     );
 
-    const after: ProjectSettings = dryRun
-      ? {
-          name: before.name,
-          defaultStickiness: projectStickiness,
-          environments: [...available].map((environment) => {
-            const built = strategies.find(({ entry }) => entry.environment === environment);
-            return {
-              environment,
-              defaultStrategy: built
-                ? { name: 'flexibleRollout', ...built.strategy }
-                : currentDefault(environment),
-            };
-          }),
-        }
-      : await fetchSettings(context, projectId);
+    const applied = combine(steps.map(({ change }) => change));
+    let after: ProjectSettings;
+    try {
+      after = dryRun
+        ? {
+            name: before.name,
+            defaultStickiness: projectStickiness,
+            environments: [...available].map((environment) => {
+              const built = strategies.find(({ entry }) => entry.environment === environment);
+              return {
+                environment,
+                defaultStrategy: built
+                  ? { name: 'flexibleRollout', ...built.strategy }
+                  : currentDefault(environment),
+              };
+            }),
+          }
+        : await fetchSettings(context, projectId);
+    } catch (error) {
+      return {
+        isError: true,
+        ...jsonResult({
+          ...toolErrorPayload(context, error, 'update_project_settings'),
+          applied,
+          hint: 'Every setting in applied was saved, but reading them back failed. Do not call update_project_settings again for them. Check the project in Unleash instead.',
+        }),
+      };
+    }
     await context.notifyProgress(
       progressToken,
       100,
@@ -508,7 +600,7 @@ export async function updateProjectSettings(
       success: true,
       dryRun,
       projectId,
-      applied: combine(steps.map(({ change }) => change)),
+      applied,
       defaultStickiness: after.defaultStickiness,
       defaultStrategies: after.environments.map(({ environment, defaultStrategy }) => ({
         environment,

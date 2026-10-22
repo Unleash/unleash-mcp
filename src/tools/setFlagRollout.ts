@@ -240,7 +240,7 @@ const STRATEGY_FIELDS = [
 const changesStrategy = (entry: EnvironmentRollout): boolean =>
   STRATEGY_FIELDS.some((field) => entry[field] !== undefined);
 
-const fixedWeightTotal = (variants: z.infer<typeof variantSchema>[]): number | undefined =>
+export const fixedWeightTotal = (variants: z.infer<typeof variantSchema>[]): number | undefined =>
   variants.every((variant) => variant.weightType === 'fix')
     ? variants.reduce((total, variant) => total + variant.weight, 0)
     : undefined;
