@@ -9,9 +9,13 @@ const name = 'mcpContextField';
 // Each test that needs an existing field gets its own, so tests don't depend on running in order.
 const updatable = 'mcpUpdatableContextField';
 const deletable = 'mcpDeletableContextField';
+const project = 'mcp-server';
+const projectField = 'mcpProjectContextField';
+const updatableProjectField = 'mcpUpdatableProjectContextField';
+const deletableProjectField = 'mcpDeletableProjectContextField';
 
 const deleteFields = async (): Promise<void> => {
-  for (const contextField of [name, updatable, deletable]) await admin.DELETE('/api/admin/context/{contextField}', { params: { path: { contextField } } });
+  for (const contextField of [name, updatable, deletable, projectField, updatableProjectField, deletableProjectField]) await admin.DELETE('/api/admin/context/{contextField}', { params: { path: { contextField } } });
 };
 
 before(deleteFields);
@@ -83,4 +87,26 @@ test('fails with the Unleash error when a flag still uses the context field', as
   const output = await deleteContextField(unleash, { kind: 'context_field', action: 'delete', name });
 
   assert.deepEqual(output, { kind: 'failed', status: 409, name: 'ConflictError', reasons: [message] });
+});
+
+test('creates a context field in a project', async () => {
+  const output = await createContextField(unleash, { kind: 'context_field', action: 'create', project, name: projectField });
+
+  assert.deepEqual(output, { kind: 'created', resource: 'context_field', name: projectField });
+});
+
+test('replaces a context field in a project', async () => {
+  await admin.POST('/api/admin/context', { body: { name: updatableProjectField, project } });
+
+  const output = await updateContextField(unleash, { kind: 'context_field', action: 'update', project, name: updatableProjectField, stickiness: true });
+
+  assert.deepEqual(output, { kind: 'updated', resource: 'context_field', name: updatableProjectField });
+});
+
+test('deletes a context field in a project', async () => {
+  await admin.POST('/api/admin/context', { body: { name: deletableProjectField, project } });
+
+  const output = await deleteContextField(unleash, { kind: 'context_field', action: 'delete', project, name: deletableProjectField });
+
+  assert.deepEqual(output, { kind: 'deleted', resource: 'context_field', name: deletableProjectField });
 });
