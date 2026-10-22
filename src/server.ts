@@ -9,6 +9,9 @@ import { createInspect } from './tools/inspect/inspect.ts';
 import { configureInput } from './tools/configure/configureInput.ts';
 import { configureOutput } from './tools/configure/configureOutput.ts';
 import { createConfigure } from './tools/configure/configure.ts';
+import { searchInput } from './tools/search/searchInput.ts';
+import { searchOutput } from './tools/search/searchOutput.ts';
+import { createSearch } from './tools/search/search.ts';
 import type { UnleashClient } from './unleash/client.ts';
 
 // At the time of this writing, 
@@ -23,6 +26,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   const release = createRelease(unleash);
   const inspect = createInspect(unleash);
   const configure = createConfigure(unleash);
+  const search = createSearch(unleash);
 
   server.registerTool(
     'release',
@@ -46,6 +50,18 @@ export const createServer = (unleash: UnleashClient): McpServer => {
       annotations: { readOnlyHint: true },
     },
     async (input) => ({ structuredContent: await inspect(input), content: [] }),
+  );
+
+  // Each query answers its own failure inside the results, so the search as a whole never fails.
+  server.registerTool(
+    'search',
+    {
+      description: 'Find Unleash items by name and get the ids inspect and release take. One result per query, in the order asked.',
+      inputSchema: searchInput,
+      outputSchema: searchOutput,
+      annotations: { readOnlyHint: true },
+    },
+    async (input) => ({ structuredContent: await search(input), content: [] }),
   );
 
   server.registerTool(
