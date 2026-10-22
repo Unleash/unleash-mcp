@@ -25,11 +25,18 @@ const deleteFlags = async (): Promise<void> => {
   await deleteReleaseTemplate(admin, template);
 };
 
-// Rolls the parent out in development through a release plan, stopped at its first milestone.
+// Rolls the parent out in development through a release plan at its first milestone, moving on by time and then by exposure.
 const addReleasePlan = async (): Promise<void> => {
   // The OpenAPI spec omits the body (it is `createReleasePlanTemplateSchema`).
   const created = await admin.POST('/api/admin/release-plan-templates', {
-    body: { name: template, milestones: [{ name: 'Canary', sortOrder: 0, strategies: [gradual('10')] }, { name: 'Everyone', sortOrder: 1, strategies: [gradual('100')] }] } as never,
+    body: {
+      name: template,
+      milestones: [
+        { name: 'Canary', sortOrder: 0, strategies: [gradual('10')], transitionCondition: { type: 'time', intervalMinutes: 60 } },
+        { name: 'Half', sortOrder: 1, strategies: [gradual('50')], transitionCondition: { type: 'exposure', minimumExposures: 5 } },
+        { name: 'Everyone', sortOrder: 2, strategies: [gradual('100')] },
+      ],
+    } as never,
   });
   const path = { project, featureName: parent, environment: 'development' };
   const plan = await admin.POST('/api/admin/projects/{project}/features/{featureName}/environments/{environment}/release-plans', { params: { path }, body: { templateId: created.data!.id } });
@@ -102,7 +109,8 @@ test('names the flags that depend on a flag and the release plan rolling it out'
         releasePlan: {
           name: template,
           milestones: [
-            { name: 'Canary', active: true, targets: [{ name: 'Everyone', rollout: 10 }] },
+            { name: 'Canary', active: true, transition: { type: 'time', intervalMinutes: 60 }, targets: [{ name: 'Everyone', rollout: 10 }] },
+            { name: 'Half', transition: { type: 'exposure', minimumExposures: 5 }, targets: [{ name: 'Everyone', rollout: 50 }] },
             { name: 'Everyone', targets: [{ name: 'Everyone', rollout: 100 }] },
           ],
         },
@@ -123,6 +131,25 @@ test('names the lifecycle stage as the Unleash UI does, with its status', async 
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', lifecycle: { stage: 'cleanup', status: 'kept', enteredAt: '2026-10-21T09:00:00.000Z' }, environments: [] });
+});
+
+test('treats a transition without a type as time based', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: flagPath, method: 'GET' }).reply(200, {
+    name: flag,
+    type: 'release',
+    environments: [{ name: 'development', enabled: true, releasePlans: [{ name: 'Plan', milestones: [{ id: 'm1', name: 'Canary', transitionCondition: { intervalMinutes: 15 } }] }] }],
+  });
+  stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
+
+  const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
+
+  assert.deepEqual(output, {
+    kind: 'flag',
+    name: flag,
+    type: 'release',
+    environments: [{ name: 'development', enabled: true, releasePlan: { name: 'Plan', milestones: [{ name: 'Canary', transition: { type: 'time', intervalMinutes: 15 } }] } }],
+  });
 });
 
 test('tells when an SDK last saw the flag in each environment', async () => {

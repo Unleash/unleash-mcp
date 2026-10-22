@@ -1,7 +1,7 @@
 import type { components } from '../unleash/api.d.ts';
 import type { UnleashClient } from '../unleash/client.ts';
 import type { FlagQuery } from './inspectInput.ts';
-import type { Environment, FlagType, InspectResult, Lifecycle, LifecycleStage, Link, Milestone, Parent, ReleasePlan, Tag } from './inspectOutput.ts';
+import type { Environment, FlagType, InspectResult, Lifecycle, LifecycleStage, Link, Milestone, Parent, ReleasePlan, Tag, Transition } from './inspectOutput.ts';
 import type { Constraint, Target, Value } from './target.ts';
 import { toFailed } from './failed.ts';
 
@@ -59,12 +59,20 @@ const toEnvironment = ({ name, enabled, lastSeenAt, strategies, releasePlans }: 
 
 const toReleasePlan = ({ name, milestones, activeMilestoneId }: UnleashReleasePlan): ReleasePlan => ({
   name,
-  milestones: milestones.map(({ id, name, strategies }): Milestone => ({
+  milestones: milestones.map(({ id, name, transitionCondition, strategies }): Milestone => ({
     name,
     ...(id === activeMilestoneId ? { active: true } : {}),
+    ...(transitionCondition ? { transition: toTransition(transitionCondition) } : {}),
     ...(strategies?.length ? { targets: strategies.map(toTarget) } : {}),
   })),
 });
+
+
+// TODO: take `transitionConditionSchema` directly once the spec uses it on a plan milestone instead of an empty object.
+const toTransition = (condition: object): Transition => {
+  const c = condition as components['schemas']['transitionConditionSchema'];
+  return c.type === 'exposure' ? { type: 'exposure', minimumExposures: c.minimumExposures } : { type: 'time', intervalMinutes: c.intervalMinutes };
+};
 
 // The reverse of the release plan's toStrategy, so a target can be edited and released again.
 const toTarget = (s: UnleashStrategy): Target & { rollout: number } => ({
