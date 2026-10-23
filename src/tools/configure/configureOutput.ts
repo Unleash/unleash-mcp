@@ -20,7 +20,13 @@ const releaseTemplate = {
   name: z.string(),
 };
 
-const target = z.discriminatedUnion('resource', [z.object(contextField), z.object(legalValue), z.object(releaseTemplate)]);
+const segment = {
+  resource: z.literal('segment'),
+  action: z.enum(['create']),
+  name: z.string(),
+};
+
+const target = z.discriminatedUnion('resource', [z.object(contextField), z.object(legalValue), z.object(releaseTemplate), z.object(segment)]);
 
 const error = failed.omit({ kind: true }).describe('What Unleash answered; the change was not applied');
 
@@ -28,12 +34,14 @@ const applied = z.discriminatedUnion('resource', [
   z.object({ kind: z.literal('applied'), ...contextField }),
   z.object({ kind: z.literal('applied'), ...legalValue }),
   z.object({ kind: z.literal('applied'), ...releaseTemplate, id: z.string().describe('Release template id') }),
+  z.object({ kind: z.literal('applied'), ...segment, id: z.number().int().describe('Segment id, as release targets take it') }),
 ]);
 
 const failedChange = z.discriminatedUnion('resource', [
   z.object({ kind: z.literal('failed'), ...contextField, error }),
   z.object({ kind: z.literal('failed'), ...legalValue, error }),
   z.object({ kind: z.literal('failed'), ...releaseTemplate, error }),
+  z.object({ kind: z.literal('failed'), ...segment, error }),
 ]);
 
 const result = z.discriminatedUnion('kind', [applied, failedChange]);
@@ -49,4 +57,4 @@ export type ConfigureResult = z.infer<typeof result>;
 /** The change a result answers: its resource, action, and what it acted on. */
 export type Target = z.infer<typeof target>;
 /** What a step answers, with the id Unleash gave a created resource that has one. The tool adds the change it answers. */
-export type Outcome = { kind: 'applied'; id?: string } | Failed;
+export type Outcome = { kind: 'applied'; id?: string | number } | Failed;

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { legalValue } from '../shared/legalValue.ts';
-import { target } from '../shared/target.ts';
+import { constraint, target } from '../shared/target.ts';
 
 const project = z.string().optional().describe('Project id of a project field, as a projects search returns it; leave out for a global field');
 
@@ -62,7 +62,16 @@ const createReleaseTemplate = z.object({
   milestones: z.array(milestone).min(1).describe('In release order. Starting a milestone replaces the audiences of the one before'),
 }).describe('Create a release template: a reusable rollout plan for flags, made of milestones');
 
-const change = z.union([createContextField, updateContextField, deleteContextField, createLegalValue, deleteLegalValue, createReleaseTemplate]);
+const createSegment = z.object({
+  kind: z.literal('segment'),
+  action: z.literal('create'),
+  project: z.string().optional().describe('Project id of a project segment, as a projects search returns it; leave out for a segment every project can use'),
+  name: z.string().describe('Unique, e.g. Beta testers'),
+  description: z.string().optional().describe('Who the segment is, shown when picking one for a target'),
+  constraints: z.array(constraint).describe('All must match for a user to be in the segment'),
+}).describe('Create a segment: a reusable audience that release targets refer to by id');
+
+const change = z.union([createContextField, updateContextField, deleteContextField, createLegalValue, deleteLegalValue, createReleaseTemplate, createSegment]);
 
 export const configureInput = {
   changes: z.array(change).min(1).describe('Applied in the order given; one result per change'),
@@ -84,3 +93,5 @@ export type CreateLegalValue = z.infer<typeof createLegalValue>;
 export type DeleteLegalValue = z.infer<typeof deleteLegalValue>;
 /** The change that creates a release template, global or in a project. */
 export type CreateReleaseTemplate = z.infer<typeof createReleaseTemplate>;
+/** The change that creates a segment, global or in a project. */
+export type CreateSegment = z.infer<typeof createSegment>;

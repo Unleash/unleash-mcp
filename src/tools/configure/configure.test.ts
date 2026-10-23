@@ -38,3 +38,14 @@ test('answers a created release template with its id', async () => {
 
   assert.deepEqual(output, { results: [{ kind: 'applied', resource: 'release_template', action: 'create', name: 'Gradual rollout', id }] });
 });
+
+test('answers a created segment with its id', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: '/api/admin/segments', method: 'POST' })
+    .reply(201, { id: 42, name: 'Beta testers', constraints: [] }, { headers: { 'content-type': 'application/json' } });
+  const configure = createConfigure(unleash);
+
+  const output = await configure({ changes: [{ kind: 'segment', action: 'create', name: 'Beta testers', constraints: [] }] });
+
+  assert.deepEqual(output, { results: [{ kind: 'applied', resource: 'segment', action: 'create', name: 'Beta testers', id: 42 }] });
+});
