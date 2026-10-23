@@ -20,7 +20,7 @@ before(async () => {
   await deleteSegmentNamed(admin, segment);
   const created = await admin.POST('/api/admin/segments', { body: { name: segment, description: 'Beta testers', constraints: [{ contextName: beta.field, operator: beta.operator, values: beta.values, caseInsensitive: false, inverted: false }] } });
   id = created.data?.id ?? 0;
-  await createRelease(admin)({ project, flag, environment: 'development', targets: [{ name: 'Beta', segments: [id] }, { name: 'Beta again', segments: [id] }] });
+  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Beta', segments: [id] }, { name: 'Beta again', segments: [id] }] });
 });
 after(async () => {
   await deleteFlag(admin, project, flag);

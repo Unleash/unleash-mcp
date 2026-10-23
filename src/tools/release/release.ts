@@ -10,6 +10,7 @@ import { rolloutOf } from '../shared/strategy.ts';
 const strategies = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies';
 const strategy = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies/{strategyId}';
 const enable = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on';
+const disable = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/off';
 
 export const createRelease = (unleash: UnleashClient) => {
   const routeOf = createRouter(unleash);
@@ -19,14 +20,15 @@ export const createRelease = (unleash: UnleashClient) => {
     const route = await routeOf(project, environment);
     if (route.kind === 'failed') return route;
 
+    const { name, state } = input.flag;
     // The flag is created directly even where changes need approval, as Unleash's own import does.
-    const flag = await ensureFlag(unleash, project, input);
+    const flag = await ensureFlag(unleash, project, { flag: name, state, environment });
     if (flag.kind === 'failed') return flag;
 
-    const path = { projectId: project, featureName: input.flag, environment };
-    const plan = planRelease(input.flag, input.targets, flag);
+    const path = { projectId: project, featureName: name, environment };
+    const plan = planRelease(name, state, input.targets, flag);
     const outcome = {
-      flag: { status: flag.kind, name: input.flag },
+      flag: { status: flag.kind, name, state },
       environment,
       targets: input.targets.map((t) => ({ ...t, rollout: rolloutOf(t) })),
     };
@@ -43,9 +45,14 @@ export const createRelease = (unleash: UnleashClient) => {
   };
 };
 
+// Disabling goes first, so the feature stops being served even if a later write fails.
 // Surplus strategies go last, so the environment never has zero strategies, which would make Unleash disable it.
 // Enabling goes after them, once the environment has its audiences.
 const applyPlan = async (unleash: UnleashClient, path: EnvironmentPath, plan: Plan): Promise<{ kind: 'applied' } | Failed> => {
+  if (plan.toggle === 'off') {
+    const disabled = await unleash.POST(disable, { params: { path } });
+    if (!disabled.response.ok) return toFailed(disabled);
+  }
   for (const { id, strategy: body } of plan.updates) {
     const updated = await unleash.PUT(strategy, { params: { path: { ...path, strategyId: id } }, body });
     if (!updated.response.ok) return toFailed(updated);
@@ -58,7 +65,7 @@ const applyPlan = async (unleash: UnleashClient, path: EnvironmentPath, plan: Pl
     const deleted = await unleash.DELETE(strategy, { params: { path: { ...path, strategyId: id } } });
     if (!deleted.response.ok) return toFailed(deleted);
   }
-  if (plan.enable) {
+  if (plan.toggle === 'on') {
     const enabled = await unleash.POST(enable, { params: { path } });
     if (!enabled.response.ok) return toFailed(enabled);
   }
