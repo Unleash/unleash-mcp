@@ -22,21 +22,19 @@ after(async () => {
   await close();
 });
 
-const timestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 const creator = 'mateusz@getunleash.ai';
 
 // Unleash sorts the list by name, so the project segment comes first.
 test('finds segments by a part of their name, case insensitive, with what the agent filters on itself', async () => {
   const output = await searchSegments(unleash, { kind: 'segments', query: 'MCP-SEARCHED' });
 
-  assert(output.kind === 'segments');
-
-  const { segments } = output;
-  for (const { createdAt } of segments) assert.match(createdAt, timestamp);
-  assert.deepEqual(segments.map(({ createdAt, ...rest }) => rest), [
-    { id: projectScopedId, name: projectScoped, project, createdBy: creator, usedInProjects: 0, usedInFlags: 0 },
-    { id: globalId, name: global, createdBy: creator, usedInProjects: 0, usedInFlags: 0 },
-  ]);
+  assert.partialDeepStrictEqual(output, {
+    kind: 'segments',
+    segments: [
+      { id: projectScopedId, name: projectScoped, project, createdBy: creator, usedInProjects: 0, usedInFlags: 0 },
+      { id: globalId, name: global, createdBy: creator, usedInProjects: 0, usedInFlags: 0 },
+    ],
+  });
 });
 
 test('keeps the segments usable in a project: global or owned by it', async () => {

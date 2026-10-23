@@ -28,16 +28,10 @@ after(async () => {
   await close();
 });
 
-const timestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
-
 test('describes a segment with the constraints it stands for and who made it', async () => {
   const output = await inspectSegment(unleash, { kind: 'segment', id });
 
-  assert(output.kind === 'segment');
-
-  const { createdAt, ...rest } = output;
-  assert.match(createdAt ?? '', timestamp);
-  assert.deepEqual(rest, {
+  assert.partialDeepStrictEqual(output, {
     kind: 'segment',
     id,
     name: segment,

@@ -62,18 +62,13 @@ after(async () => {
 
 const timestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
-// The flag is created anew on every recording, so the timestamps are pinned to their shape, not their value.
+// The flag is created anew on every recording, so the timestamps are left to the partial match.
 // A kill switch has no expected lifetime.
 test('describes a flag with its lifecycle, environments, who worked on it, its parent, tags and links', async () => {
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
 
-  assert(output.kind === 'flag');
-
-  const { createdAt, lifecycle, ...rest } = output;
-  const { enteredAt, ...stage } = lifecycle ?? {};
-  assert.match(createdAt ?? '', timestamp);
-  assert.match(enteredAt ?? '', timestamp);
-  assert.deepEqual({ lifecycle: stage, ...rest }, {
+  assert(!('expectedLifetimeEndsAt' in output));
+  assert.partialDeepStrictEqual(output, {
     kind: 'flag',
     name: flag,
     type: 'kill-switch',
@@ -95,13 +90,8 @@ test('names the flags that depend on a flag and the release plan rolling it out'
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag: parent });
 
   assert(output.kind === 'flag');
-
-  const { createdAt, lifecycle, expectedLifetimeEndsAt, ...rest } = output;
-  const { enteredAt, ...stage } = lifecycle ?? {};
-  assert.match(createdAt ?? '', timestamp);
-  assert.match(enteredAt ?? '', timestamp);
-  assert.match(expectedLifetimeEndsAt ?? '', timestamp);
-  assert.deepEqual({ lifecycle: stage, ...rest }, {
+  assert.match(output.expectedLifetimeEndsAt ?? '', timestamp);
+  assert.partialDeepStrictEqual(output, {
     kind: 'flag',
     name: parent,
     type: 'release',

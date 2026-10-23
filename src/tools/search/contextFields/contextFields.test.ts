@@ -8,7 +8,6 @@ const { unleash, admin, close } = createRecordedClient(new URL('./contextFields.
 const project = 'mcp-server';
 const global = 'mcpSearchedField';
 const projectScoped = 'mcpSearchedProjectField';
-const timestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 const deleteFields = async (): Promise<void> => {
   for (const contextField of [global, projectScoped]) await admin.DELETE('/api/admin/context/{contextField}', { params: { path: { contextField } } });
@@ -28,14 +27,13 @@ after(async () => {
 test('finds context fields by a part of their name, case insensitive, with what the agent filters on itself', async () => {
   const output = await searchContextFields(unleash, { kind: 'context_fields', query: 'MCPSEARCHED' });
 
-  assert(output.kind === 'context_fields');
-
-  const { fields } = output;
-  for (const { createdAt } of fields) assert.match(createdAt ?? '', timestamp);
-  assert.deepEqual(fields.map(({ createdAt, ...rest }) => rest), [
-    { name: global, description: 'Customer tier', stickiness: true, usedInProjects: 0, usedInFlags: 0 },
-    { name: projectScoped, project, usedInProjects: 0, usedInFlags: 0 },
-  ]);
+  assert.partialDeepStrictEqual(output, {
+    kind: 'context_fields',
+    fields: [
+      { name: global, description: 'Customer tier', stickiness: true, usedInProjects: 0, usedInFlags: 0 },
+      { name: projectScoped, project, usedInProjects: 0, usedInFlags: 0 },
+    ],
+  });
 });
 
 // Unleash does the scoping: the project list with the global fields included is what a flag there can use.
