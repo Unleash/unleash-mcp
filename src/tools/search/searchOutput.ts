@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { failed } from '../shared/failed.ts';
 import { lifecycleStage } from '../shared/lifecycleStage.ts';
+import { tag } from '../shared/tag.ts';
 
 const project = z.object({
   id: z.string(),
@@ -26,7 +27,7 @@ const flag = z.object({
   stage: lifecycleStage.optional().describe('Where the flag is in its life'),
   createdAt: z.string().optional().describe('ISO timestamp'),
   createdBy: z.string().optional().describe('Name of the user who created the flag'),
-  tags: z.array(z.object({ type: z.string(), value: z.string() })).optional(),
+  tags: z.array(tag).optional(),
   environments: z.array(flagEnvironment),
 });
 

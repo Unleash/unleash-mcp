@@ -2,6 +2,7 @@ import type { UnleashClient } from '../../unleash/client.ts';
 import type { FlagLifecycleInput, Operation } from './flagLifecycleInput.ts';
 import type { FlagLifecycleOutput, FlagLifecycleResult, Outcome } from './flagLifecycleOutput.ts';
 import { completeFlag } from './complete.ts';
+import { createFlag } from './create.ts';
 
 /** Builds the flag lifecycle tool: applies the operations one after another, one result per operation. */
 export const createFlagLifecycle =
@@ -14,6 +15,7 @@ export const createFlagLifecycle =
 
 const apply = (unleash: UnleashClient, operation: Operation): Promise<Outcome> => {
   switch (operation.action) {
+    case 'create': return createFlag(unleash, operation);
     case 'complete': return completeFlag(unleash, operation);
   }
 };

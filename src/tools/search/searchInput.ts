@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { lifecycleStage } from '../shared/lifecycleStage.ts';
+import { tag } from '../shared/tag.ts';
 
 const segments = z.object({
   kind: z.literal('segments'),
@@ -28,7 +29,7 @@ const flags = z.object({
   query: z.string().optional().describe('Case-insensitive text the name or a tag contains; leave out to list all'),
   stages: z.array(lifecycleStage).min(1).optional().describe('Keeps flags in any of these lifecycle stages; archived flags only come back when archived is listed'),
   segments: matching(z.string()).optional().describe('Keeps flags whose targets match these segments, by exact name as a segments search returns it'),
-  tags: matching(z.object({ type: z.string(), value: z.string() })).optional().describe('Keeps flags whose tags match these, as flag rows return them'),
+  tags: matching(tag).optional().describe('Keeps flags whose tags match these, as flag rows return them'),
   // A flag has one creator, so all and notAll could never differ from any and none; the shared match stays for lists.
   createdBy: z.object({
     match: z.enum(['any', 'none']).describe('any: created by one of them; none: created by none of them'),
