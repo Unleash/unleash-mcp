@@ -188,3 +188,8 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - `release` must let an agent turn a feature off ("turn the awesome-new-checkout feature off"), within the end-state design: `flag` becomes `{ name, state: 'on' | 'off' }`. Rejected: a flat `flagName` and `flagState`, and a top-level `state` next to a `flag` string.
 - `targets` stays required for both states, so every call describes the full end state. Rejected: optional targets that keep the environment's audiences.
 - Turning off a missing flag fails with Unleash's 404. Only turning on creates a missing flag. Rejected: creating it, off. Supersedes "a missing flag is always created" (2026-10-21 Release tool takes complete input).
+
+## 2026-10-23 — Single-flag playground route in the generated client
+
+- The single-flag playground route is beta from Unleash 8.3.0, but `main` still reports 8.2.0, so the sandbox spec leaves it out. I copied just that route in from a local Unleash in dev mode, which serves alpha routes. Rejected: the whole local spec, which reorders and drops routes, and faking the beta version as 8.2.
+- Don't regenerate the spec until the sandbox is on 8.3.0, or the route drops out.
