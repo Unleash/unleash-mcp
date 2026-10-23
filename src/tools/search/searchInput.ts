@@ -37,7 +37,14 @@ const flags = z.object({
   limit: z.number().int().min(1).max(50).default(20).describe('Flags per page'),
 }).describe('Flags by name or tag, paged. Unleash pages and matches; rows carry type, lifecycle stage, tags and where the flag is enabled');
 
-const query = z.discriminatedUnion('kind', [projects, flags, segments, contextFields]);
+const flagCreators = z.object({
+  kind: z.literal('flag_creators'),
+  query: z.string().optional().describe('Case-insensitive text the name contains, or the username or email starts with; leave out to list all'),
+  offset: z.number().int().min(0).default(0).describe('Creators to skip; page with offset and limit until total is reached'),
+  limit: z.number().int().min(1).max(50).default(20).describe('Creators per page'),
+}).describe('Users who created a flag in a project the token can see, paged, with their ids. Unleash matches and pages');
+
+const query = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, flagCreators]);
 
 export const searchInput = {
   queries: z.array(query).min(1).describe('Run together; one result per query, in the order asked'),
@@ -50,3 +57,4 @@ export type FlagsQuery = z.infer<typeof flags>;
 export type Match = z.infer<typeof match>;
 export type SegmentsQuery = z.infer<typeof segments>;
 export type ContextFieldsQuery = z.infer<typeof contextFields>;
+export type FlagCreatorsQuery = z.infer<typeof flagCreators>;
