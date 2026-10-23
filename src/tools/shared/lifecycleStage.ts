@@ -10,3 +10,7 @@ export type UnleashStage = 'initial' | 'pre-live' | 'live' | 'completed' | 'arch
 const stages: Record<UnleashStage, LifecycleStage> = { initial: 'define', 'pre-live': 'develop', live: 'production', completed: 'cleanup', archived: 'archived' };
 
 export const toLifecycleStage = (stage: UnleashStage): LifecycleStage => stages[stage];
+
+const unleashStages = Object.fromEntries(Object.entries(stages).map(([unleashStage, stage]) => [stage, unleashStage])) as Record<LifecycleStage, UnleashStage>;
+
+export const toUnleashStage = (stage: LifecycleStage): UnleashStage => unleashStages[stage];
