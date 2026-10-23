@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { failed } from '../shared/failed.ts';
+import { lifecycleStage } from '../shared/lifecycleStage.ts';
 
 const project = z.object({
   id: z.string(),
@@ -10,6 +11,29 @@ const project = z.object({
 const projects = z.object({
   kind: z.literal('projects'),
   projects: z.array(project),
+});
+
+const flagEnvironment = z.object({
+  name: z.string(),
+  enabled: z.boolean(),
+  lastSeenAt: z.string().optional().describe('ISO timestamp an SDK last evaluated the flag here'),
+});
+
+const flag = z.object({
+  name: z.string(),
+  project: z.string(),
+  type: z.string(),
+  stage: lifecycleStage.optional().describe('Where the flag is in its life'),
+  createdAt: z.string().optional().describe('ISO timestamp'),
+  createdBy: z.string().optional().describe('Name of the user who created the flag'),
+  tags: z.array(z.object({ type: z.string(), value: z.string() })).optional(),
+  environments: z.array(flagEnvironment),
+});
+
+const flags = z.object({
+  kind: z.literal('flags'),
+  total: z.number().int().describe('Flags matching the query across all pages'),
+  flags: z.array(flag).describe('One page, oldest first'),
 });
 
 const segment = z.object({
@@ -42,7 +66,7 @@ const contextFields = z.object({
   fields: z.array(contextField).describe('Sorted by name'),
 });
 
-const result = z.discriminatedUnion('kind', [projects, segments, contextFields, failed]);
+const result = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, failed]);
 
 export const searchOutput = {
   results: z.array(result).describe('One per query, in the order asked'),
@@ -51,5 +75,6 @@ export const searchOutput = {
 export type SearchOutput = z.infer<z.ZodObject<typeof searchOutput>>;
 export type SearchResult = z.infer<typeof result>;
 export type Projects = z.infer<typeof projects>;
+export type Flags = z.infer<typeof flags>;
 export type Segments = z.infer<typeof segments>;
 export type ContextFields = z.infer<typeof contextFields>;

@@ -17,7 +17,15 @@ const projects = z.object({
   query: z.string().optional().describe('Case-insensitive text the id or name contains; leave out to list all'),
 }).describe('Projects by id or name, with the ids the other queries and tools take');
 
-const query = z.discriminatedUnion('kind', [projects, segments, contextFields]);
+const flags = z.object({
+  kind: z.literal('flags'),
+  project: z.string().optional().describe('Project id; leave out to search every project'),
+  query: z.string().optional().describe('Case-insensitive text the name or a tag contains; leave out to list all'),
+  offset: z.number().int().min(0).default(0).describe('Flags to skip; page with offset and limit until total is reached'),
+  limit: z.number().int().min(1).max(50).default(20).describe('Flags per page'),
+}).describe('Flags by name or tag, paged. Unleash pages and matches; rows carry type, lifecycle stage, tags and where the flag is enabled');
+
+const query = z.discriminatedUnion('kind', [projects, flags, segments, contextFields]);
 
 export const searchInput = {
   queries: z.array(query).min(1).describe('Run together; one result per query, in the order asked'),
@@ -26,5 +34,6 @@ export const searchInput = {
 export type SearchInput = z.infer<z.ZodObject<typeof searchInput>>;
 export type Query = z.infer<typeof query>;
 export type ProjectsQuery = z.infer<typeof projects>;
+export type FlagsQuery = z.infer<typeof flags>;
 export type SegmentsQuery = z.infer<typeof segments>;
 export type ContextFieldsQuery = z.infer<typeof contextFields>;

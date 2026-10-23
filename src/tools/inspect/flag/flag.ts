@@ -1,10 +1,11 @@
 import type { components } from '../../../unleash/api.d.ts';
 import type { UnleashClient } from '../../../unleash/client.ts';
 import type { FlagQuery } from '../inspectInput.ts';
-import type { Environment, FlagType, InspectResult, Lifecycle, LifecycleStage, Link, Milestone, Parent, ReleasePlan, Tag, Transition } from '../inspectOutput.ts';
+import type { Environment, FlagType, InspectResult, Lifecycle, Link, Milestone, Parent, ReleasePlan, Tag, Transition } from '../inspectOutput.ts';
 import type { Target, Value } from '../../shared/target.ts';
 import { toConstraint, type UnleashConstraint } from '../shared/constraint.ts';
 import { toFailed } from '../../shared/failed.ts';
+import { toLifecycleStage, type UnleashStage } from '../../shared/lifecycleStage.ts';
 
 export const inspectFlag = async (unleash: UnleashClient, { project, flag }: FlagQuery): Promise<InspectResult> => {
   // The flag endpoint leaves the tags out, so they take a request of their own.
@@ -89,13 +90,8 @@ const toValue = ({ name, payload, weight, weightType }: UnleashVariant): Value =
   ...(weightType === 'fix' ? { share: weight / 10 } : {}),
 });
 
-type UnleashStage = 'initial' | 'pre-live' | 'live' | 'completed' | 'archived';
-
-// A stage Unleash adds fails to compile here until it has a UI name.
-const stages: Record<UnleashStage, LifecycleStage> = { initial: 'define', 'pre-live': 'develop', live: 'production', completed: 'cleanup', archived: 'archived' };
-
 const toLifecycle = ({ stage, status, enteredStageAt }: { stage: UnleashStage; status?: string | null; enteredStageAt: string }): Lifecycle => ({
-  stage: stages[stage],
+  stage: toLifecycleStage(stage),
   ...(status ? { status } : {}),
   enteredAt: enteredStageAt,
 });
