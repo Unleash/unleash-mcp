@@ -10,15 +10,18 @@ const operators = [
 
 export const constraint = z.object({
   field: z.string().describe('Context field name, as a context fields search returns it, e.g. userId, email, appName'),
-  operator: z.enum(operators),
-  values: z.array(z.string()).min(1),
-  inverted: z.boolean().optional(),
-  caseInsensitive: z.boolean().optional(),
+  operator: z.enum(operators).describe('How the field is compared with the values'),
+  values: z.array(z.string()).min(1).describe('Matches when the field matches any of them'),
+  inverted: z.boolean().optional().describe('Matches when the comparison does not'),
+  caseInsensitive: z.boolean().optional().describe('Ignores case in string comparisons'),
 });
 
 const value = z.object({
-  name: z.string(),
-  payload: z.object({ type: z.enum(['string', 'json', 'csv', 'number']), value: z.string() }).optional(),
+  name: z.string().describe('What the code receives to tell values apart, e.g. blue-button'),
+  payload: z.object({
+    type: z.enum(['string', 'json', 'csv', 'number']).describe('How the code should parse the value'),
+    value: z.string().describe('e.g. {"color":"blue"}'),
+  }).optional().describe('Data the code receives with the value'),
   share: z.number().int().min(0).max(100).optional().describe('Percentage of the audience that gets this value. Values without one split what is left evenly'),
 });
 

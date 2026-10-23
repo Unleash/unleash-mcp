@@ -4,7 +4,8 @@ import type { ReleaseResult } from './releaseOutput.ts';
 import { type Failed, toFailed } from '../shared/failed.ts';
 import { ensureFlag } from './flag.ts';
 import { createRouter, requestChanges } from './changeRequest.ts';
-import { type EnvironmentPath, type Plan, planRelease, rolloutOf } from './releasePlan.ts';
+import { type EnvironmentPath, type Plan, planRelease } from './releasePlan.ts';
+import { rolloutOf } from '../shared/strategy.ts';
 
 const strategies = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies';
 const strategy = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies/{strategyId}';

@@ -1,0 +1,136 @@
+[
+  {
+    "hash": "z29wBmPZX6fxsctolY6SgnczBWCvowGSX7E_XDkrors",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G5wGAOScWlXtiA/JawHOdJviJV8K/HrOh4RhBVinvde31Rflz/+5fG4zHqb92Z4nyMZVtDfbXQNGPi+MtMPDA85aEJyIHp7aWQ2Gzf+dqshG1Abv/xDVEEEoW82G1WrNRry+4ZOLaTarb4ZZersgETGyQyLIqbNwjhqlRxKR08nXgc0wEEE45emA8QErasZFQkWSx1mZ3ZGINIfvr3oIyhoiyM66TmpwVmvbB3i1Dg7OQqgETyKy+2FpIkyvdUQa5fdOdcrIYB0RZJ+DyosrR8dLj27ZEJGwv9GYIppN6ZivymKcXFxcTy7y8XVZlWM7qrn04f8/AwF9qFCFhKeCpXFecAedhvEqqrPR7mp6nuR0xXb0enRWZCzj1bXRl+voGcxBKrIBTQa8qBkTvBJZFdOUWeQXQZpGukZ9IBxt7yCg7L55SAxRJPdvEGw3g5RpwfYBDL7DvavUKhzhXYU3cEgAMD5CvsCDjRRIG5QdbQ8PH+BF/eLhCD44GbBV6COwDnhP+5FkDAr4TwoeA/QHp8q1bH1Kj+o7ym4ptWpNhyZAcpbgPVIVPEiHcOVVtolhjLSA+nBVGiz4XoWAqF9loPPvI8imUab1C/UisgPu1avaQ6c0+mAN+himcv/WCEBLQZNhJY0gdzhTUFLrYwQ+OJSdVkaZtksikqrz/H2M8ZTBGK1R3Y7m/HpYD9mUTqv0tjg7y6fj4doIOJiH1W+VDzivaSWSStAkzopyFYQZ43XKdb69muSr8m5yV5zyu/O7+vzm/IpL8CJboDHKtJ6M6oODlgbIkngcowOa1IyKLBMpjXNKSZVq9EGZdjZYLY1Hl3rpoACPQ3lQHiQ4lFofQVvT/ucFiXGV0MYANA14aw06LRH1lXK/nOZbiGFjHXagDr7voLHaOvAqgOwwRLC3xuM+YOgdyEYdlN8r0wJqFWIINaxIo1oNd9PhdV5e3ZTV/DabVulwfE0ry9EdYeYIuvlr5QPKBzyrWSZoIXgSV7TABlOkfx8B",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G3UHAORUTaf1wJQmCSTVuf33/NtdboWRzjIBinyQVIx3kHXKMGbgnD7SGc14WPHb7BSlH7/DIgEjPTHSjscDZy0ILqLH25qjwWGzOl94cVLQDd79IaojglC2WU7qzZZNeXPN5+eLfNlcT/LsZk0iYuSARJATZ+EMNUqPJCK7k68Du0kggnDKs5jxmJUN4yKlIi2SvMpvSUS6zfdX3QVlDRHkyLpBanBWazsGeLEOds6CqgyeRGT1w9JEmFHriHTKt04NyshgHRFknYMDiiun+wuP7mdHRMr+Rn0SabmgM76pyll6fn41Py9mV1VdzeSoVtKH//8MBPShADUcngmWJUXJ/QgawmuxTqdHl4uztKAbdkSvpqdlznJeXwl/sdWeGxsoIo9pGvOyYUzwWuR1QjMmop8HaTrpOvWOsLejg4By+OLhYIhWsn2FYJsZpEwPdgxg8I3uXaVWYQ9vKryCY4IK+oeHLwjCSjWENijZ2xEuPiAY4xcPR/DByYC9Qh+BdeD3nF8SHkMN/k8IHgOMO1ClWvb+SI+OOcpuKbXqzYAmwOEsVW+aKuNBOoSUV7VdAjOmJal3qMJgwY8qKMTxVgba/9qD7DplelwICtF22KoX1cKgNPpgDfoEFrJ9rVRBLAWnE1byCOEOZwpKar2PwAeHctDKKNM3iWvSYT//OCZ8SmOMFrFupit+NWkmbEEXdXZTnp4Wi9lkKzgdPKfVb1XEnDe0FmktaJrkZTUKUhnjZcptcXg5LzbV7fy2POG3Z7fN2fXZpS/BHps1GqNM751RbbDT0gAZEo9jNKZpw6jIc5HRpKAuqVyDPijTW0OrpfHschw6CMGlUB6UBwkOpdZ70Nb03wVDiHGHQBsD0HTgrTXoYok4ppT75TRfQgIH1uEAaufHATqrrQOvAsgBQwStNR7bgGF0IDu1U75VpgfUKiSgakiZibWZHC0mV0V1eV3Vq5t8UWeT2RWtJcuwB8vh7uavVcSUxzxvWC5oKXia1LTkhjNo0Q/zDc/L4vL0fHt0W67OTs5u+en5dC6adhdbMkzMOQf0IKMx5zC4SHmSVpSd/RgI6Q13OJydgEf3G91s4c95ysKz6u8D",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-22T15:02:32.515Z"
+    }
+  },
+  {
+    "hash": "qGjXkEivNmLIZNfJfZOxM6hxulULeuwEdNw4Ul_iYj0",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "1114",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"name\":\"mcp-release-template\",\"description\":\"Created by the MCP server tests\",\"milestones\":[{\"name\":\"Internal\",\"sortOrder\":0,\"strategies\":[{\"name\":\"flexibleRollout\",\"title\":\"Employees\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[{\"contextName\":\"email\",\"operator\":\"STR_ENDS_WITH\",\"values\":[\"@getunleash.io\"],\"inverted\":false,\"caseInsensitive\":false}],\"segments\":[],\"variants\":[{\"name\":\"new\",\"weight\":0,\"weightType\":\"variable\",\"stickiness\":\"default\"}],\"sortOrder\":0}],\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"name\":\"Half\",\"sortOrder\":1,\"strategies\":[{\"name\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"50\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[],\"segments\":[],\"variants\":[],\"sortOrder\":0}],\"transitionCondition\":{\"type\":\"exposure\",\"minimumExposures\":1000}},{\"name\":\"Everyone\",\"sortOrder\":2,\"strategies\":[{\"name\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[],\"segments\":[],\"variants\":[],\"sortOrder\":0}]}]}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G2oHAMT/lmqna+adcQbhzsmlNmL9ZJlFyAMkXUOXA4cfi8cYZYPmtrANtDBPowIsDDhbyzIqO8NszWHn1mhFPfjWJCft6hc6hgSPxsWBKJZLm/lyODmUu4vZ4iDmy0YLDFYlBInk/sg5MqQ85WYbKGCIUr4JiusBEoKLUi7iOSFWUVFyIfPiOV/hBzDEQfiTH0GnFhJNxeqnFaSuM27Onjy5D3JPgXzwYJgE8TaQ9t0Yhlj7u9OJtiqkDhIgPrLxvfbk+jGkKFQYEm3Ih9SShzxaeth+UG50u5v6at4clyvldklW79tAzioDBp+6MHUxOUjOYP64mVG2Ra956neX2r4D5/TBqUBvGssjy3wpWtud6OSXw0WDN3tLgG+tDzsPyMOCDoYg0U4eJv0m8oahw2rcIjUmfQ/Q2vqeXJTF8yjkL5xyKBFxfotF+v5fW/IeEmORZVjGLISd+f2dZbLHRCWUZcgYkle0lLahW7J+JgD9FVBkUKK0AUO0eqifly5Xi2t70lpet/1VDwwrsN2yhzyi9kbh3RpS/t+zTnFm0PaDXKAY8lUZTwx35alvhzRyzsnODEH9USAIvydY+gRDKpKQQ+FmzOr7QZBaHb0YMj45OzN4ekvIPOpMWVW9GEiD2Zkh5UaIOGYztXEjAvmL8JjEoBMCQ4j/034oM9b2PZCHLPEsY9Q5TEQz0Wsf8tGhKRrbqLmn8IieMq/sADCi7+UVdpPZNurNCq1SedcttXpSGHIx5f99kPtOLVUAijUPiyrc++hHHvJhnNXJe9I+OqOHjDgnwWGl/aQ02VYK1UFzXO5ui1vJdmM2EQAUcpnVxXySb8zFrtnZFCaHcUsKws5m6k9sX/EKK+suZOcM",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-22T15:02:32.445Z"
+    }
+  },
+  {
+    "hash": "aLc_KjYJs-pnonvq3B-AYBGMgK6o-Omf0qAhuDes_6Q",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M5J2576VQSKNZ7GRPRZ2QSBD",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-22T15:02:32.597Z"
+    }
+  }
+]
