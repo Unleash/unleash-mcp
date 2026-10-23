@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
-import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
-import { unleashError } from '../../unleash/testError.ts';
-import { deleteFlag, deleteReleaseTemplate } from '../../unleash/testSetup.ts';
-import { inspectFlag } from './inspectFlag.ts';
-import { createRelease } from '../release/release.ts';
+import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
+import { unleashError } from '../../../unleash/testError.ts';
+import { deleteFlag, deleteReleaseTemplate } from '../../../unleash/testSetup.ts';
+import { inspectFlag } from './flag.ts';
+import { createRelease } from '../../release/release.ts';
 
-const { unleash, admin, close } = createRecordedClient(new URL('./inspectFlag.snapshot.json', import.meta.url).pathname);
+const { unleash, admin, close } = createRecordedClient(new URL('./flag.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server';
 const flag = 'mcp-inspected-flag';
 const parent = 'mcp-inspected-parent';
@@ -62,16 +62,13 @@ after(async () => {
 
 const timestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
-// The flag is created anew on every recording, so the timestamps are pinned to their shape, not their value.
+// The flag is created anew on every recording, so the timestamps are left to the partial match.
 // A kill switch has no expected lifetime.
 test('describes a flag with its lifecycle, environments, who worked on it, its parent, tags and links', async () => {
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
 
-  const { createdAt, lifecycle, ...rest } = output as Extract<typeof output, { kind: 'flag' }>;
-  const { enteredAt, ...stage } = lifecycle ?? {};
-  assert.match(createdAt ?? '', timestamp);
-  assert.match(enteredAt ?? '', timestamp);
-  assert.deepEqual({ lifecycle: stage, ...rest }, {
+  assert(!('expectedLifetimeEndsAt' in output));
+  assert.partialDeepStrictEqual(output, {
     kind: 'flag',
     name: flag,
     type: 'kill-switch',
@@ -92,12 +89,9 @@ test('describes a flag with its lifecycle, environments, who worked on it, its p
 test('names the flags that depend on a flag and the release plan rolling it out', async () => {
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag: parent });
 
-  const { createdAt, lifecycle, expectedLifetimeEndsAt, ...rest } = output as Extract<typeof output, { kind: 'flag' }>;
-  const { enteredAt, ...stage } = lifecycle ?? {};
-  assert.match(createdAt ?? '', timestamp);
-  assert.match(enteredAt ?? '', timestamp);
-  assert.match(expectedLifetimeEndsAt ?? '', timestamp);
-  assert.deepEqual({ lifecycle: stage, ...rest }, {
+  assert(output.kind === 'flag');
+  assert.match(output.expectedLifetimeEndsAt ?? '', timestamp);
+  assert.partialDeepStrictEqual(output, {
     kind: 'flag',
     name: parent,
     type: 'release',

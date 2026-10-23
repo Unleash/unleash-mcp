@@ -116,7 +116,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - A change names its resource in `kind` and its operation in `action`. Rejected: one kind per operation (`create_tag_type`) and an end state the tool upserts.
 - Updating a context field replaces it, like Unleash's PUT: properties left out are reset. Rejected: a partial update that reads the field and merges (2 requests).
 - Project context fields are supported, after the global ones.
-- Left out of `configure`: reading context fields, their usage (both belong in `search`), validating a name (create already answers it) and `sortOrder` (Unleash's PUT resets it to 0).
+- Left out of `configure`: reading context fields and their usage (reading a context field is an `inspect` query), validating a name (create already answers it) and `sortOrder` (Unleash's PUT resets it to 0).
 - Adding a legal value is `action: 'create'`, although Unleash overwrites the description of a value that exists. Rejected: `update`, and both mapping to the same call.
 - A legal value result names its `field` and `value`, mirroring the input. Rejected: `name` for the value.
 - Every result names the change it answers, failures included: `resource`, `action` and its target (`name`, or `field` and `value`). Matching by position alone is error prone in a batch. `kind` is `applied` or `failed`, with Unleash's answer under `error`. Supersedes the `created`/`updated`/`deleted` kinds. Rejected: a caller-chosen id per change, and echoing the target without `action`. Only `configure` changes; `release` and `search` keep the shared `failed`.
@@ -140,6 +140,16 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Response bodies are kept verbatim even though they carry ids and timestamps: they are the truth about the API, and ids echo into later request URLs, so normalising them would break replay.
 - undici's per-entry recording timestamp stays: stripping it needs code that rewrites the snapshot file, and one line per exchange is easy to skim past.
 
+## 2026-10-22 — Opt-in parts of a read
+
+- A read returns everything it gets cheaply. Parts that cost Unleash real work, such as the usage of a context field (a scan of every strategy), are named in an `include` enum list on the query and left out unless named. Rejected: a boolean per part (doesn't scale), always fetching usage, and a GraphQL-style selection of the response shape (the output schema can't follow it, absence stops meaning anything, and the savings stop at request boundaries anyway).
+
+## 2026-10-22 — Search tool
+
+- Search fetches all segments for now and returns every match, without a limit or a total: most people don't have that many segments, and letting the agent do the filtering and mapping is fine for now. The rows carry scope, author, creation date and usage counts, and the tool tells the agent to search all and filter itself. Rejected for now: a default limit with a total, and typed filters applied on our side, since Unleash's segments list offers none.
+- Context field search lets Unleash scope the list, as its UI does: a project's fields with the global ones included, or the global ones with every project's included. The name match stays on our side. Rows carry the usage counts the list gives for free; legal values stay on `inspect`.
+- Project search matches the query on the id or the name on our side, over the core view. Rows are id, name and creation date: `archivedAt` is left off because the list excludes archived projects unless asked, and `description` because Unleash deprecates it.
+
 ## 2026-10-22 — Release templates in configure
 
 - `configure` creates release templates, global or in a project (the project endpoint is beta). Only create for now.
@@ -147,3 +157,10 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - A milestone can advance on its own (`advance`: after minutes or after exposures).
 - A created template answers with its `id` next to its `name`. Release template ids are shown to the agent, the same exception as segment and change request ids. Rejected: the name only.
 - The project template test is stubbed, not recorded: the sandbox's limit of 10 release templates leaves room for only one of ours. Rejected: freeing slots in the sandbox, and creating one template at a time.
+
+## 2026-10-23 — Flag search
+
+- Flag search uses Unleash's search endpoint, paged with offset, limit and total, so Unleash does the matching and paging. Rejected for now: the project features list with `view=core`, which is far cheaper for Unleash but has no paging.
+- The search endpoint is Unleash's heaviest flag read (checked in its source: the ranking joins every matching flag before the page is cut, and no core view exists). Accepted for now; the fix is a core view on the search endpoint in Unleash.
+- Only project and query filters for now; typed filters and sorting wait for a use case. Rows are a summary; strategies stay on `inspect`.
+- A step returns only the results it can produce (`Flags | Failed`), not the tool's whole result union: the compiler then checks each kind's output and tests need no casts. Rejected: the spike's habit of returning the union everywhere.
