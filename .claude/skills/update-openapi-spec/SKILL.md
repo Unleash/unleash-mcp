@@ -5,8 +5,8 @@ description: Regenerate the Unleash API types (src/unleash/api.d.ts) from the Un
 
 # Update the OpenAPI spec
 
-1. `npm run spec:update` downloads the spec from the Unleash sandbox to `src/unleash/openapi.json` (gitignored) and regenerates `src/unleash/api.d.ts`. If the spec is already downloaded, `npm run spec:generate` only regenerates.
+1. `pnpm spec:update` downloads the spec from the Unleash sandbox to `src/unleash/openapi.json` (gitignored) and regenerates `src/unleash/api.d.ts`. If the spec is already downloaded, `pnpm spec:generate` only regenerates.
 2. Review the `api.d.ts` diff for changes to endpoints the code uses.
-3. Run `npm test`.
+3. Run `pnpm test`.
 
 Don't upgrade TypeScript past 5.x: `openapi-typescript` needs the compiler API that TypeScript 7 no longer ships.
