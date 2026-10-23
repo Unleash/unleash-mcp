@@ -6712,6 +6712,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/playground/features/{featureName}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * [ALPHA] Evaluate a single feature flag against an Unleash context in an environment.
+         * @description **[ALPHA]** This API is in alpha state, which means it may change or be removed in the future.
+         *
+         *     Use the provided `context` and `environment` to evaluate a single feature flag on this Unleash instance. The project is resolved from the flag name. Returns what the flag evaluates to, together with the input parameters that were provided.
+         */
+        post: operations["evaluateFeature"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -18688,6 +18710,17 @@ export interface components {
              * @enum {string}
              */
             edgeLicenseState: "Valid" | "Invalid" | "Expired";
+        };
+        /** @description The GitHub repositories the GitHub integration can access. */
+        githubRepositoriesSchema: {
+            /**
+             * @description Names of the repositories the GitHub App installation can access.
+             * @example [
+             *       "unleash",
+             *       "unleash-client-node"
+             *     ]
+             */
+            repositories: string[];
         };
         /** @description A schema representing a single licensed user data point. */
         licensedUserSchema: {
@@ -53219,6 +53252,108 @@ export interface operations {
                         /**
                          * @description A description of what went wrong.
                          * @example We do not accept the content-type you provided (application/xml). Try using one of the content-types we do accept instead (application/json) and make sure the body is in the corresponding format.
+                         */
+                        message?: string;
+                    };
+                };
+            };
+        };
+    };
+    evaluateFeature: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                featureName: string;
+            };
+            cookie?: never;
+        };
+        /** @description playgroundFeatureRequestSchema */
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["playgroundFeatureRequestSchema"];
+            };
+        };
+        responses: {
+            /** @description playgroundFeatureResponseSchema */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["playgroundFeatureResponseSchema"];
+                };
+            };
+            /** @description The request data does not match what we expect. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description The ID of the error instance
+                         * @example 9c40958a-daac-400e-98fb-3bb438567008
+                         */
+                        id?: string;
+                        /**
+                         * @description The name of the error kind
+                         * @example ValidationError
+                         */
+                        name?: string;
+                        /**
+                         * @description A description of what went wrong.
+                         * @example The request payload you provided doesn't conform to the schema. The .parameters property should be object. You sent [].
+                         */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authorization information is missing or invalid. Provide a valid API token as the `authorization` header, e.g. `authorization:*.*.my-admin-token`. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description The ID of the error instance
+                         * @example 9c40958a-daac-400e-98fb-3bb438567008
+                         */
+                        id?: string;
+                        /**
+                         * @description The name of the error kind
+                         * @example AuthenticationRequired
+                         */
+                        name?: string;
+                        /**
+                         * @description A description of what went wrong.
+                         * @example You must log in to use Unleash. Your request had no authorization header, so we could not authorize you. Try logging in at /auth/simple/login.
+                         */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description The requested resource was not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description The ID of the error instance
+                         * @example 9c40958a-daac-400e-98fb-3bb438567008
+                         */
+                        id?: string;
+                        /**
+                         * @description The name of the error kind
+                         * @example NotFoundError
+                         */
+                        name?: string;
+                        /**
+                         * @description A description of what went wrong.
+                         * @example Could not find the addon with ID "12345".
                          */
                         message?: string;
                     };
