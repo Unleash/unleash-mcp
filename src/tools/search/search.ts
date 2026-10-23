@@ -2,6 +2,7 @@ import type { UnleashClient } from '../../unleash/client.ts';
 import type { Query, SearchInput } from './searchInput.ts';
 import type { SearchOutput, SearchResult } from './searchOutput.ts';
 import { searchProjects } from './projects/projects.ts';
+import { searchFlags } from './flags/flags.ts';
 import { searchSegments } from './segments/segments.ts';
 import { searchContextFields } from './contextFields/contextFields.ts';
 
@@ -13,6 +14,7 @@ export const createSearch =
 const search = (unleash: UnleashClient, query: Query): Promise<SearchResult> => {
   switch (query.kind) {
     case 'projects': return searchProjects(unleash, query);
+    case 'flags': return searchFlags(unleash, query);
     case 'segments': return searchSegments(unleash, query);
     case 'context_fields': return searchContextFields(unleash, query);
   }

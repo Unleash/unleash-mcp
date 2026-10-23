@@ -149,3 +149,9 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Search fetches all segments for now and returns every match, without a limit or a total: most people don't have that many segments, and letting the agent do the filtering and mapping is fine for now. The rows carry scope, author, creation date and usage counts, and the tool tells the agent to search all and filter itself. Rejected for now: a default limit with a total, and typed filters applied on our side, since Unleash's segments list offers none.
 - Context field search lets Unleash scope the list, as its UI does: a project's fields with the global ones included, or the global ones with every project's included. The name match stays on our side. Rows carry the usage counts the list gives for free; legal values stay on `inspect`.
 - Project search matches the query on the id or the name on our side, over the core view. Rows are id, name and creation date: `archivedAt` is left off because the list excludes archived projects unless asked, and `description` because Unleash deprecates it.
+
+## 2026-10-23 — Flag search
+
+- Flag search uses Unleash's search endpoint, paged with offset, limit and total, so Unleash does the matching and paging. Rejected for now: the project features list with `view=core`, which is far cheaper for Unleash but has no paging.
+- The search endpoint is Unleash's heaviest flag read (checked in its source: the ranking joins every matching flag before the page is cut, and no core view exists). Accepted for now; the fix is a core view on the search endpoint in Unleash.
+- Only project and query filters for now; typed filters and sorting wait for a use case. Rows are a summary; strategies stay on `inspect`.

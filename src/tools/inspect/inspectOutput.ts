@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { constraint, target } from '../shared/target.ts';
 import { failed } from '../shared/failed.ts';
 import { legalValue } from '../shared/legalValue.ts';
+import { lifecycleStage } from '../shared/lifecycleStage.ts';
 
 const flagNaming = z.object({
   pattern: z.string().describe('JavaScript regular expression new flag names must match'),
@@ -27,9 +28,6 @@ const parent = z.object({
 const tag = z.object({ type: z.string(), value: z.string() });
 
 const link = z.object({ url: z.string(), title: z.string().optional() });
-
-// The stages as the Unleash UI names them; the API calls them initial, pre-live, live, completed and archived.
-const lifecycleStage = z.enum(['define', 'develop', 'production', 'cleanup', 'archived']);
 
 const lifecycle = z.object({
   stage: lifecycleStage,
@@ -124,6 +122,5 @@ export type Environment = z.infer<typeof environment>;
 export type ReleasePlan = z.infer<typeof releasePlan>;
 export type Milestone = z.infer<typeof milestone>;
 export type Transition = z.infer<typeof transition>;
-export type LifecycleStage = z.infer<typeof lifecycleStage>;
 export type Tag = z.infer<typeof tag>;
 export type Link = z.infer<typeof link>;
