@@ -164,6 +164,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - The search endpoint is Unleash's heaviest flag read (checked in its source: the ranking joins every matching flag before the page is cut, and no core view exists). Accepted for now; the fix is a core view on the search endpoint in Unleash.
 - Only project and query filters for now; typed filters and sorting wait for a use case. Rows are a summary; strategies stay on `inspect`.
 - A step returns only the results it can produce (`Flags | Failed`), not the tool's whole result union: the compiler then checks each kind's output and tests need no casts. Rejected: the spike's habit of returning the union everywhere.
+- No favorites filter: favorites belong to the human user behind the token, not to an agent.
 
 ## 2026-10-23 — Search prepares the options
 
