@@ -33,7 +33,9 @@ const timestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 test('describes a segment with the constraints it stands for and who made it', async () => {
   const output = await inspectSegment(unleash, { kind: 'segment', id });
 
-  const { createdAt, ...rest } = output as Extract<typeof output, { kind: 'segment' }>;
+  assert(output.kind === 'segment');
+
+  const { createdAt, ...rest } = output;
   assert.match(createdAt ?? '', timestamp);
   assert.deepEqual(rest, {
     kind: 'segment',
@@ -48,7 +50,9 @@ test('describes a segment with the constraints it stands for and who made it', a
 test('lists each flag environment targeting the segment when usage is included', async () => {
   const output = await inspectSegment(unleash, { kind: 'segment', id, include: ['usage'] });
 
-  const { usedBy } = output as Extract<typeof output, { kind: 'segment' }>;
+  assert(output.kind === 'segment');
+
+  const { usedBy } = output;
   assert.deepEqual(usedBy, [{ project, flag, environment: 'development' }]);
 });
 

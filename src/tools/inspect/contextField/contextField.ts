@@ -1,10 +1,10 @@
 import type { UnleashClient } from '../../../unleash/client.ts';
 import type { ContextFieldQuery } from '../inspectInput.ts';
-import type { InspectResult } from '../inspectOutput.ts';
+import type { ContextField } from '../inspectOutput.ts';
 import { toUsedBy } from '../shared/usage.ts';
-import { toFailed } from '../../shared/failed.ts';
+import { type Failed, toFailed } from '../../shared/failed.ts';
 
-export const inspectContextField = async (unleash: UnleashClient, { project, name, include = [] }: ContextFieldQuery): Promise<InspectResult> => {
+export const inspectContextField = async (unleash: UnleashClient, { project, name, include = [] }: ContextFieldQuery): Promise<ContextField | Failed> => {
   const usage = include.includes('usage');
   const [found, used] = await Promise.all([
     project

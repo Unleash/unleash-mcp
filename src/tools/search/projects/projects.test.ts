@@ -13,7 +13,9 @@ after(close);
 test('finds projects by a part of their id, case insensitive', async () => {
   const output = await searchProjects(unleash, { kind: 'projects', query: 'MCP-SERVER' });
 
-  const { projects } = output as Extract<typeof output, { kind: 'projects' }>;
+  assert(output.kind === 'projects');
+
+  const { projects } = output;
   for (const { createdAt } of projects) assert.match(createdAt ?? '', timestamp);
   assert.deepEqual(projects.map(({ createdAt, ...rest }) => rest), [{ id: 'mcp-server', name: 'mcp-server' }]);
 });

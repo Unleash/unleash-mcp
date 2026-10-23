@@ -28,7 +28,9 @@ after(async () => {
 test('finds context fields by a part of their name, case insensitive, with what the agent filters on itself', async () => {
   const output = await searchContextFields(unleash, { kind: 'context_fields', query: 'MCPSEARCHED' });
 
-  const { fields } = output as Extract<typeof output, { kind: 'context_fields' }>;
+  assert(output.kind === 'context_fields');
+
+  const { fields } = output;
   for (const { createdAt } of fields) assert.match(createdAt ?? '', timestamp);
   assert.deepEqual(fields.map(({ createdAt, ...rest }) => rest), [
     { name: unowned, description: 'Customer tier', stickiness: true, usedInProjects: 0, usedInFlags: 0 },

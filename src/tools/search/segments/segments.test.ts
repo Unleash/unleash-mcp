@@ -30,7 +30,9 @@ const created = '2026-10-22T08:00:00.000Z';
 test('finds segments by a part of their name, case insensitive, with what the agent filters on itself', async () => {
   const output = await searchSegments(unleash, { kind: 'segments', query: 'MCP-SEARCHED' });
 
-  const { segments } = output as Extract<typeof output, { kind: 'segments' }>;
+  assert(output.kind === 'segments');
+
+  const { segments } = output;
   for (const { createdAt } of segments) assert.match(createdAt, timestamp);
   assert.deepEqual(segments.map(({ createdAt, ...rest }) => rest), [
     { id: ownedId, name: owned, project, createdBy: creator, usedInProjects: 0, usedInFlags: 0 },
