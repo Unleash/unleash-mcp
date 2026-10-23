@@ -38,3 +38,22 @@ test('answers a created release template with its id', async () => {
 
   assert.deepEqual(output, { results: [{ kind: 'applied', resource: 'release_template', action: 'create', name: 'Gradual rollout', id }] });
 });
+
+test('names the tag type and the tag a result answers', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: '/api/admin/tag-types/team', method: 'PUT' }).reply(200, { version: 1, tagType: { name: 'team', description: '' } });
+  stub.intercept({ path: '/api/admin/tags/team/payments', method: 'DELETE' }).reply(200);
+  const configure = createConfigure(unleash);
+
+  const output = await configure({ changes: [
+    { kind: 'tag_type', action: 'update', name: 'team' },
+    { kind: 'tag', action: 'delete', type: 'team', value: 'payments' },
+  ] });
+
+  assert.deepEqual(output, {
+    results: [
+      { kind: 'applied', resource: 'tag_type', action: 'update', name: 'team' },
+      { kind: 'applied', resource: 'tag', action: 'delete', type: 'team', value: 'payments' },
+    ],
+  });
+});

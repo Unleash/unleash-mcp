@@ -198,3 +198,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 ## 2026-10-23 — Evaluate defaults appName to unleash-mcp
 
 - Unleash needs an `appName` to evaluate, and someone testing a flag from a chat agent won't know their app's name, so `evaluate` defaults it to `unleash-mcp`. People can target `unleash-mcp` with an app name rule, apart from their real apps. Rejected: requiring it, and the UI playground's `playground`.
+
+## 2026-10-23 — Deleting a resource in use
+
+- Deleting a resource in use is refused where it changes how flags behave (context fields, segments): Unleash refuses those itself and the refusal is passed through. Deletes that only remove labels (tags, tag types) cascade, as in the UI; the search rows carry the usage, so the agent checks and asks before. 
