@@ -173,3 +173,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 ## 2026-10-23 — Node versions
 
 - Pin Node 26 for development, but the minimum supported stays 24. The snapshots replay only on the Node major they were recorded on, because undici hashes the request headers and `accept-encoding` changes between majors. Node 24 is in maintenance but supported until 2028-04-30; Node 26 becomes LTS on 2026-10-28. Rejected for now: raising `engines` to 26, which buys the code nothing.
+
+## 2026-10-23 — Test speed
+
+- Type checking dominated `npm test`, because of the generated Unleash types, not our code. Make `tsc` incremental so repeated runs skip what did not change.
