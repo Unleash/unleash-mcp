@@ -20,13 +20,23 @@ const releaseTemplate = {
   name: z.string(),
 };
 
-const segment = {
+// A segment has no id until it is created, so the target differs by action.
+const createdSegment = {
   resource: z.literal('segment'),
-  action: z.enum(['create']),
+  action: z.literal('create'),
   name: z.string(),
 };
 
-const target = z.discriminatedUnion('resource', [z.object(contextField), z.object(legalValue), z.object(releaseTemplate), z.object(segment)]);
+const updatedSegment = {
+  resource: z.literal('segment'),
+  action: z.literal('update'),
+  id: z.number().int(),
+  name: z.string(),
+};
+
+const segment = z.discriminatedUnion('action', [z.object(createdSegment), z.object(updatedSegment)]);
+
+const target = z.discriminatedUnion('resource', [z.object(contextField), z.object(legalValue), z.object(releaseTemplate), segment]);
 
 const error = failed.omit({ kind: true }).describe('What Unleash answered; the change was not applied');
 
@@ -34,14 +44,20 @@ const applied = z.discriminatedUnion('resource', [
   z.object({ kind: z.literal('applied'), ...contextField }),
   z.object({ kind: z.literal('applied'), ...legalValue }),
   z.object({ kind: z.literal('applied'), ...releaseTemplate, id: z.string().describe('Release template id') }),
-  z.object({ kind: z.literal('applied'), ...segment, id: z.number().int().describe('Segment id, as release targets take it') }),
+  z.discriminatedUnion('action', [
+    z.object({ kind: z.literal('applied'), ...createdSegment, id: z.number().int().describe('Segment id, as release targets take it') }),
+    z.object({ kind: z.literal('applied'), ...updatedSegment }),
+  ]),
 ]);
 
 const failedChange = z.discriminatedUnion('resource', [
   z.object({ kind: z.literal('failed'), ...contextField, error }),
   z.object({ kind: z.literal('failed'), ...legalValue, error }),
   z.object({ kind: z.literal('failed'), ...releaseTemplate, error }),
-  z.object({ kind: z.literal('failed'), ...segment, error }),
+  z.discriminatedUnion('action', [
+    z.object({ kind: z.literal('failed'), ...createdSegment, error }),
+    z.object({ kind: z.literal('failed'), ...updatedSegment, error }),
+  ]),
 ]);
 
 const result = z.discriminatedUnion('kind', [applied, failedChange]);
