@@ -1,0 +1,7 @@
+minimumReleaseAge: 10080
+minimumReleaseAgeIgnoreMissingTime: false
+# Locked before the cooldown existed; drop once all are a week old (2026-10-27).
+minimumReleaseAgeExclude:
+  - fast-uri@3.1.9
+  - jose@6.2.13
+  - undici@8.12.3
