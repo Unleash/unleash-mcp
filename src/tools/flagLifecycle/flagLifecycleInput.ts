@@ -9,7 +9,7 @@ const define = z.object({
   flag: z.string().describe('Name, unique across projects, e.g. new-checkout'),
   type: flagType.optional().describe('What the flag is for; a new flag is release when left out. Permanent kinds (kill-switch, permission) never count as stale'),
   description: z.string().optional().describe('What the flag controls, shown to people'),
-  tags: z.array(tag).optional().describe('Exactly the tags the flag has, by type and value as flag rows show them; the type must exist. An empty list removes them all'),
+  tags: z.array(tag).optional().describe('Exactly the tags the flag has, by type and value as flag rows show them. The type must exist; a value that does not exist yet is created, so check a tags search first when it should match an existing one. An empty list removes them all'),
   links: z.array(link).optional().describe('Exactly the related URLs the flag has, such as the pull request or the ticket, matched by URL: a changed title is not applied. An empty list removes them all'),
 }).describe('Make sure the flag exists as listed: creates it, off in every environment, or changes an existing one to match. What is listed is what the flag ends up with; what is left out is left alone. Release turns a flag on');
 
