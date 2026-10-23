@@ -9,7 +9,7 @@ const operators = [
 ] as const;
 
 export const constraint = z.object({
-  field: z.string().describe('Context field name, e.g. userId, email, appName'),
+  field: z.string().describe('Context field name, as a context fields search returns it, e.g. userId, email, appName'),
   operator: z.enum(operators).describe('How the field is compared with the values'),
   values: z.array(z.string()).min(1).describe('Matches when the field matches any of them'),
   inverted: z.boolean().optional().describe('Matches when the comparison does not'),
@@ -36,7 +36,7 @@ export const target = z.object({
   name: z.string().describe('What the audience is, e.g. Beta testers. Shown in the Unleash UI'),
   rollout: z.number().int().min(0).max(100).optional().describe('Percentage of the audience that gets the feature, default 100'),
   constraints: z.array(constraint).optional().describe('All must match for a user to be in the audience'),
-  segments: z.array(z.number().int()).optional().describe('Ids of audiences already defined in Unleash'),
+  segments: z.array(z.number().int()).optional().describe('Ids of audiences already defined in Unleash, as a segments search returns them'),
   values: values.optional().describe('Values the audience gets, split by share'),
 });
 

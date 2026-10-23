@@ -165,6 +165,10 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Only project and query filters for now; typed filters and sorting wait for a use case. Rows are a summary; strategies stay on `inspect`.
 - A step returns only the results it can produce (`Flags | Failed`), not the tool's whole result union: the compiler then checks each kind's output and tests need no casts. Rejected: the spike's habit of returning the union everywhere.
 
+## 2026-10-23 — Search prepares the options
+
+- `search` and `inspect` prepare the data options for the commands and queries that take filters or references: they are the dropdowns of the UI, but for agents. A command or filtered query takes what those rows give (an id, a name) and never resolves it itself; the agent runs the lookup query first. Rejected: a step calling another step to resolve a reference, which repeats a request the agent already made.
+
 ## 2026-10-23 — Release turns a flag on or off
 
 - `release` must let an agent turn a feature off ("turn the awesome-new-checkout feature off"), within the end-state design: `flag` becomes `{ name, state: 'on' | 'off' }`. Rejected: a flat `flagName` and `flagState`, and a top-level `state` next to a `flag` string.

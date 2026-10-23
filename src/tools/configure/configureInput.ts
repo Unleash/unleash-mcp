@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { legalValue } from '../shared/legalValue.ts';
 import { target } from '../shared/target.ts';
 
-const project = z.string().optional().describe('Project id of a project field; leave out for a global field');
+const project = z.string().optional().describe('Project id of a project field, as a projects search returns it; leave out for a global field');
 
 const contextField = {
   kind: z.literal('context_field'),
@@ -30,7 +30,7 @@ const createLegalValue = z.object({
   kind: z.literal('legal_value'),
   action: z.literal('create'),
   project,
-  field: z.string().describe('Name of the context field the value belongs to'),
+  field: z.string().describe('Name of the context field the value belongs to, as a context fields search returns it'),
   ...legalValue.shape,
 }).describe('Add a legal value to a context field. If the value exists, it gets the new description');
 
@@ -38,7 +38,7 @@ const deleteLegalValue = z.object({
   kind: z.literal('legal_value'),
   action: z.literal('delete'),
   project,
-  field: z.string().describe('Name of the context field the value belongs to'),
+  field: z.string().describe('Name of the context field the value belongs to, as a context fields search returns it'),
   value: z.string().describe('The value to remove, e.g. gold'),
 }).describe('Remove a legal value from a context field. Succeeds when the value is not there. Constraints that use it keep it');
 
