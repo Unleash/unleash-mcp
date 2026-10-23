@@ -62,16 +62,24 @@ const createReleaseTemplate = z.object({
   milestones: z.array(milestone).min(1).describe('In release order. Starting a milestone replaces the audiences of the one before'),
 }).describe('Create a release template: a reusable rollout plan for flags, made of milestones');
 
-const createSegment = z.object({
+const segment = {
   kind: z.literal('segment'),
-  action: z.literal('create'),
   project: z.string().optional().describe('Project id of a project segment, as a projects search returns it; leave out for a segment every project can use'),
   name: z.string().describe('Unique, e.g. Beta testers'),
   description: z.string().optional().describe('Who the segment is, shown when picking one for a target'),
   constraints: z.array(constraint).describe('All must match for a user to be in the segment'),
-}).describe('Create a segment: a reusable audience that release targets refer to by id');
+};
 
-const change = z.union([createContextField, updateContextField, deleteContextField, createLegalValue, deleteLegalValue, createReleaseTemplate, createSegment]);
+const createSegment = z.object({ ...segment, action: z.literal('create') })
+  .describe('Create a segment: a reusable audience that release targets refer to by id');
+
+const updateSegment = z.object({
+  ...segment,
+  action: z.literal('update'),
+  id: z.number().int().describe('Id of the segment to replace, as a segments search returns it'),
+}).describe('Replace a segment\'s name, constraints and project; a left out project makes it global, a left out description stays. Every flag targeting it changes audience');
+
+const change = z.union([createContextField, updateContextField, deleteContextField, createLegalValue, deleteLegalValue, createReleaseTemplate, createSegment, updateSegment]);
 
 export const configureInput = {
   changes: z.array(change).min(1).describe('Applied in the order given; one result per change'),
@@ -95,3 +103,5 @@ export type DeleteLegalValue = z.infer<typeof deleteLegalValue>;
 export type CreateReleaseTemplate = z.infer<typeof createReleaseTemplate>;
 /** The change that creates a segment, global or in a project. */
 export type CreateSegment = z.infer<typeof createSegment>;
+/** The change that replaces a segment, keeping its description when left out. */
+export type UpdateSegment = z.infer<typeof updateSegment>;
