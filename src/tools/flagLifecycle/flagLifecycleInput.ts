@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { flagType } from '../shared/flagType.ts';
 import { tag } from '../shared/tag.ts';
+import { link } from '../shared/link.ts';
 
 const create = z.object({
   action: z.literal('create'),
@@ -9,7 +10,8 @@ const create = z.object({
   type: flagType.optional().describe('What the flag is for; release when left out. Permanent kinds (kill-switch, permission) never count as stale'),
   description: z.string().optional().describe('What the flag controls, shown to people'),
   tags: z.array(tag).optional().describe('Tags to put on the flag, by type and value as flag rows show them; the type must exist'),
-}).describe('Create a flag, off in every environment; release turns it on');
+  links: z.array(link).optional().describe('Related URLs, such as the pull request or the ticket'),
+}).describe('Create a flag, off in every environment; release turns it on. Tags and links are set after the flag is created, one request each, so a failure among them leaves the flag created with only what came before');
 
 const kept = z.object({
   kind: z.literal('kept'),
