@@ -1,13 +1,13 @@
 import type { components } from '../../../unleash/api.d.ts';
 import type { UnleashClient } from '../../../unleash/client.ts';
 import type { FlagQuery } from '../inspectInput.ts';
-import type { Environment, FlagType, InspectResult, Lifecycle, Link, Milestone, Parent, ReleasePlan, Tag, Transition } from '../inspectOutput.ts';
+import type { Environment, Flag, FlagType, Lifecycle, Link, Milestone, Parent, ReleasePlan, Tag, Transition } from '../inspectOutput.ts';
 import type { Target, Value } from '../../shared/target.ts';
 import { toConstraint, type UnleashConstraint } from '../shared/constraint.ts';
-import { toFailed } from '../../shared/failed.ts';
+import { type Failed, toFailed } from '../../shared/failed.ts';
 import { toLifecycleStage, type UnleashStage } from '../../shared/lifecycleStage.ts';
 
-export const inspectFlag = async (unleash: UnleashClient, { project, flag }: FlagQuery): Promise<InspectResult> => {
+export const inspectFlag = async (unleash: UnleashClient, { project, flag }: FlagQuery): Promise<Flag | Failed> => {
   // The flag endpoint leaves the tags out, so they take a request of their own.
   const [found, tagged] = await Promise.all([
     unleash.GET('/api/admin/projects/{projectId}/features/{featureName}', { params: { path: { projectId: project, featureName: flag } } }),

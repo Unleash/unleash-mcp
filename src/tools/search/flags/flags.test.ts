@@ -33,7 +33,9 @@ after(async () => {
 test('finds a page of flags by a part of their name, with the total across pages', async () => {
   const output = await searchFlags(unleash, { kind: 'flags', project, query: 'MCP-SEARCHED', offset: 0, limit: 1 });
 
-  const { total, flags } = output as Extract<typeof output, { kind: 'flags' }>;
+  assert(output.kind === 'flags');
+
+  const { total, flags } = output;
   assert.equal(total, 2);
   for (const { createdAt } of flags) assert.match(createdAt ?? '', timestamp);
   assert.deepEqual(flags.map(({ createdAt, stage, ...rest }) => rest), [{
@@ -49,7 +51,9 @@ test('finds a page of flags by a part of their name, with the total across pages
 test('skips the first page with the offset', async () => {
   const output = await searchFlags(unleash, { kind: 'flags', project, query: 'mcp-searched', offset: 1, limit: 1 });
 
-  const { total, flags } = output as Extract<typeof output, { kind: 'flags' }>;
+  assert(output.kind === 'flags');
+
+  const { total, flags } = output;
   assert.equal(total, 2);
   assert.deepEqual(flags.map(({ name }) => name), [second]);
 });

@@ -1,15 +1,15 @@
 import type { components } from '../../../unleash/api.d.ts';
 import type { UnleashClient } from '../../../unleash/client.ts';
 import type { FlagsQuery } from '../searchInput.ts';
-import type { SearchResult } from '../searchOutput.ts';
-import { toFailed } from '../../shared/failed.ts';
+import type { Flags } from '../searchOutput.ts';
+import { type Failed, toFailed } from '../../shared/failed.ts';
 import { toLifecycleStage } from '../../shared/lifecycleStage.ts';
 
 type UnleashFlag = components['schemas']['featureSearchResponseSchema'];
 
 // Unleash matches, filters and pages on its side, so large instances stay cheap to read; the rows
 // drop what the search computes per flag (strategies, variants, plans) and keep the summary.
-export const searchFlags = async (unleash: UnleashClient, { project, query, offset, limit }: FlagsQuery): Promise<SearchResult> => {
+export const searchFlags = async (unleash: UnleashClient, { project, query, offset, limit }: FlagsQuery): Promise<Flags | Failed> => {
   const found = await unleash.GET('/api/admin/search/features', {
     params: { query: { ...(project ? { project: `IS:${project}` } : {}), ...(query ? { query } : {}), offset: String(offset), limit: String(limit) } },
   });

@@ -67,7 +67,9 @@ const timestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 test('describes a flag with its lifecycle, environments, who worked on it, its parent, tags and links', async () => {
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
 
-  const { createdAt, lifecycle, ...rest } = output as Extract<typeof output, { kind: 'flag' }>;
+  assert(output.kind === 'flag');
+
+  const { createdAt, lifecycle, ...rest } = output;
   const { enteredAt, ...stage } = lifecycle ?? {};
   assert.match(createdAt ?? '', timestamp);
   assert.match(enteredAt ?? '', timestamp);
@@ -92,7 +94,9 @@ test('describes a flag with its lifecycle, environments, who worked on it, its p
 test('names the flags that depend on a flag and the release plan rolling it out', async () => {
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag: parent });
 
-  const { createdAt, lifecycle, expectedLifetimeEndsAt, ...rest } = output as Extract<typeof output, { kind: 'flag' }>;
+  assert(output.kind === 'flag');
+
+  const { createdAt, lifecycle, expectedLifetimeEndsAt, ...rest } = output;
   const { enteredAt, ...stage } = lifecycle ?? {};
   assert.match(createdAt ?? '', timestamp);
   assert.match(enteredAt ?? '', timestamp);
