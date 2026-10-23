@@ -34,7 +34,13 @@ const updatedSegment = {
   name: z.string(),
 };
 
-const segment = z.discriminatedUnion('action', [z.object(createdSegment), z.object(updatedSegment)]);
+const deletedSegment = {
+  resource: z.literal('segment'),
+  action: z.literal('delete'),
+  id: z.number().int(),
+};
+
+const segment = z.discriminatedUnion('action', [z.object(createdSegment), z.object(updatedSegment), z.object(deletedSegment)]);
 
 const target = z.discriminatedUnion('resource', [z.object(contextField), z.object(legalValue), z.object(releaseTemplate), segment]);
 
@@ -47,6 +53,7 @@ const applied = z.discriminatedUnion('resource', [
   z.discriminatedUnion('action', [
     z.object({ kind: z.literal('applied'), ...createdSegment, id: z.number().int().describe('Segment id, as release targets take it') }),
     z.object({ kind: z.literal('applied'), ...updatedSegment }),
+    z.object({ kind: z.literal('applied'), ...deletedSegment }),
   ]),
 ]);
 
@@ -57,6 +64,7 @@ const failedChange = z.discriminatedUnion('resource', [
   z.discriminatedUnion('action', [
     z.object({ kind: z.literal('failed'), ...createdSegment, error }),
     z.object({ kind: z.literal('failed'), ...updatedSegment, error }),
+    z.object({ kind: z.literal('failed'), ...deletedSegment, error }),
   ]),
 ]);
 

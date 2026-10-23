@@ -59,3 +59,13 @@ test('names an updated segment by its id', async () => {
 
   assert.deepEqual(output, { results: [{ kind: 'applied', resource: 'segment', action: 'update', id: 42, name: 'Beta testers' }] });
 });
+
+test('names a deleted segment by its id', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: '/api/admin/segments/42', method: 'DELETE' }).reply(204, '');
+  const configure = createConfigure(unleash);
+
+  const output = await configure({ changes: [{ kind: 'segment', action: 'delete', id: 42 }] });
+
+  assert.deepEqual(output, { results: [{ kind: 'applied', resource: 'segment', action: 'delete', id: 42 }] });
+});
