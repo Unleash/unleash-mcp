@@ -177,3 +177,8 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 ## 2026-10-23 — Test speed
 
 - Type checking dominated `npm test`, because of the generated Unleash types, not our code. Make `tsc` incremental so repeated runs skip what did not change.
+
+## 2026-10-23 — pnpm
+
+- pnpm instead of npm, the same as v1: a 7-day `minimumReleaseAge` cooldown, and dependency install scripts are blocked by default. The shared npm release workflow installs with pnpm too.
+- Three versions npm locked this week are exempt from the cooldown until 2026-10-27, so the lockfile stays the one the tests passed on. Rejected: resolving again, which moves every version.
