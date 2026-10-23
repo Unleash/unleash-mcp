@@ -3,15 +3,15 @@ import { flagType } from '../shared/flagType.ts';
 import { tag } from '../shared/tag.ts';
 import { link } from '../shared/link.ts';
 
-const create = z.object({
-  action: z.literal('create'),
+const define = z.object({
+  action: z.literal('define'),
   project: z.string().describe('Project id, as a projects search returns it'),
   flag: z.string().describe('Name, unique across projects, e.g. new-checkout'),
-  type: flagType.optional().describe('What the flag is for; release when left out. Permanent kinds (kill-switch, permission) never count as stale'),
+  type: flagType.optional().describe('What the flag is for; a new flag is release when left out. Permanent kinds (kill-switch, permission) never count as stale'),
   description: z.string().optional().describe('What the flag controls, shown to people'),
-  tags: z.array(tag).optional().describe('Tags to put on the flag, by type and value as flag rows show them; the type must exist'),
-  links: z.array(link).optional().describe('Related URLs, such as the pull request or the ticket'),
-}).describe('Create a flag, off in every environment; release turns it on. Tags and links are set after the flag is created, one request each, so a failure among them leaves the flag created with only what came before');
+  tags: z.array(tag).optional().describe('Exactly the tags the flag has, by type and value as flag rows show them; the type must exist. An empty list removes them all'),
+  links: z.array(link).optional().describe('Exactly the related URLs the flag has, such as the pull request or the ticket, matched by URL: a changed title is not applied. An empty list removes them all'),
+}).describe('Make sure the flag exists as listed: creates it, off in every environment, or changes an existing one to match. What is listed is what the flag ends up with; what is left out is left alone. Release turns a flag on');
 
 const kept = z.object({
   kind: z.literal('kept'),
@@ -27,7 +27,7 @@ const complete = z.object({
   outcome: z.discriminatedUnion('kind', [kept, discarded]).describe('How the rollout ended'),
 }).describe('Mark a flag completed: its rollout is over and the code is ready for cleanup. Only a note for people; SDKs are not affected');
 
-const operation = z.discriminatedUnion('action', [create, complete]);
+const operation = z.discriminatedUnion('action', [define, complete]);
 
 export const flagLifecycleInput = {
   operations: z.array(operation).min(1).describe('Applied in the order given; one result per operation'),
@@ -37,7 +37,7 @@ export const flagLifecycleInput = {
 export type FlagLifecycleInput = z.infer<z.ZodObject<typeof flagLifecycleInput>>;
 /** One operation on a flag's lifecycle, tagged by `action`. */
 export type Operation = z.infer<typeof operation>;
-/** The operation that creates a flag. */
-export type Create = z.infer<typeof create>;
+/** The operation that creates a flag or brings an existing one to have what is listed. */
+export type Define = z.infer<typeof define>;
 /** The operation that marks a flag completed. */
 export type Complete = z.infer<typeof complete>;
