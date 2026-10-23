@@ -23,6 +23,7 @@ const flags = z.object({
   project: z.string().optional().describe('Project id; leave out to search every project'),
   query: z.string().optional().describe('Case-insensitive text the name or a tag contains; leave out to list all'),
   stages: z.array(lifecycleStage).min(1).optional().describe('Keeps flags in any of these lifecycle stages; archived flags only come back when archived is listed'),
+  segments: z.array(z.string()).min(1).optional().describe('Keeps flags with a target on any of these segments, by exact name as a segments search returns it'),
   offset: z.number().int().min(0).default(0).describe('Flags to skip; page with offset and limit until total is reached'),
   limit: z.number().int().min(1).max(50).default(20).describe('Flags per page'),
 }).describe('Flags by name or tag, paged. Unleash pages and matches; rows carry type, lifecycle stage, tags and where the flag is enabled');

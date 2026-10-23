@@ -9,13 +9,14 @@ type UnleashFlag = components['schemas']['featureSearchResponseSchema'];
 
 // Unleash matches, filters and pages on its side, so large instances stay cheap to read; the rows
 // drop what the search computes per flag (strategies, variants, plans) and keep the summary.
-export const searchFlags = async (unleash: UnleashClient, { project, query, stages, offset, limit }: FlagsQuery): Promise<Flags | Failed> => {
+export const searchFlags = async (unleash: UnleashClient, { project, query, stages, segments, offset, limit }: FlagsQuery): Promise<Flags | Failed> => {
   const found = await unleash.GET('/api/admin/search/features', {
     params: {
       query: {
         ...(project ? { project: `IS:${project}` } : {}),
         ...(query ? { query } : {}),
         ...(stages ? { lifecycle: `IS_ANY_OF:${stages.map(toUnleashStage).join(',')}` } : {}),
+        ...(segments ? { segment: `INCLUDE_ANY_OF:${segments.join(',')}` } : {}),
         offset: String(offset),
         limit: String(limit),
       },
