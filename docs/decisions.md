@@ -150,6 +150,14 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Context field search lets Unleash scope the list, as its UI does: a project's fields with the global ones included, or the global ones with every project's included. The name match stays on our side. Rows carry the usage counts the list gives for free; legal values stay on `inspect`.
 - Project search matches the query on the id or the name on our side, over the core view. Rows are id, name and creation date: `archivedAt` is left off because the list excludes archived projects unless asked, and `description` because Unleash deprecates it.
 
+## 2026-10-22 — Release templates in configure
+
+- `configure` creates release templates, global or in a project (the project endpoint is beta). Only create for now.
+- A milestone takes `targets`, the audience shape `release` takes. Rejected: Unleash strategies as they are.
+- A milestone can advance on its own (`advance`: after minutes or after exposures).
+- A created template answers with its `id` next to its `name`. Release template ids are shown to the agent, the same exception as segment and change request ids. Rejected: the name only.
+- The project template test is stubbed, not recorded: the sandbox's limit of 10 release templates leaves room for only one of ours. Rejected: freeing slots in the sandbox, and creating one template at a time.
+
 ## 2026-10-23 — Flag search
 
 - Flag search uses Unleash's search endpoint, paged with offset, limit and total, so Unleash does the matching and paging. Rejected for now: the project features list with `view=core`, which is far cheaper for Unleash but has no paging.

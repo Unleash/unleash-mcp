@@ -3,6 +3,7 @@ import type { Change, ConfigureInput } from './configureInput.ts';
 import type { ConfigureOutput, ConfigureResult, Outcome, Target } from './configureOutput.ts';
 import { createContextField, deleteContextField, updateContextField } from './contextField.ts';
 import { createLegalValue, deleteLegalValue } from './legalValue.ts';
+import { createReleaseTemplate } from './releaseTemplate.ts';
 
 /** Builds the configure tool: applies changes to Unleash resources one after another, one result per change. */
 export const createConfigure =
@@ -26,12 +27,14 @@ const apply = (unleash: UnleashClient, change: Change): Promise<Outcome> => {
         case 'create': return createLegalValue(unleash, change);
         case 'delete': return deleteLegalValue(unleash, change);
       }
+    case 'release_template': return createReleaseTemplate(unleash, change);
   }
 };
 
 const resultOf = (change: Change, outcome: Outcome): ConfigureResult => {
   const target = targetOf(change);
-  if (outcome.kind === 'applied') return { kind: 'applied', ...target };
+  // Only the steps for resources that have an id answer one, which the types can't tie to `resource`.
+  if (outcome.kind === 'applied') return { ...outcome, ...target } as ConfigureResult;
   const { kind, ...error } = outcome;
   return { kind: 'failed', ...target, error };
 };
@@ -40,5 +43,6 @@ const targetOf = (change: Change): Target => {
   switch (change.kind) {
     case 'context_field': return { resource: 'context_field', action: change.action, name: change.name };
     case 'legal_value': return { resource: 'legal_value', action: change.action, field: change.field, value: change.value };
+    case 'release_template': return { resource: 'release_template', action: change.action, name: change.name };
   }
 };
