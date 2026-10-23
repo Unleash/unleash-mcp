@@ -66,7 +66,18 @@ const contextFields = z.object({
   fields: z.array(contextField).describe('Sorted by name'),
 });
 
-const result = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, failed]);
+const flagCreator = z.object({
+  id: z.number().int().describe('User id'),
+  name: z.string().describe('Name of the user, or the username or email when no name is set'),
+});
+
+const flagCreators = z.object({
+  kind: z.literal('flag_creators'),
+  total: z.number().int().describe('Creators matching the query across all pages'),
+  creators: z.array(flagCreator).describe('One page, sorted by name'),
+});
+
+const result = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, flagCreators, failed]);
 
 export const searchOutput = {
   results: z.array(result).describe('One per query, in the order asked'),
@@ -78,3 +89,4 @@ export type Projects = z.infer<typeof projects>;
 export type Flags = z.infer<typeof flags>;
 export type Segments = z.infer<typeof segments>;
 export type ContextFields = z.infer<typeof contextFields>;
+export type FlagCreators = z.infer<typeof flagCreators>;

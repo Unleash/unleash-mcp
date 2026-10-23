@@ -5,6 +5,7 @@ import { searchProjects } from './projects/projects.ts';
 import { searchFlags } from './flags/flags.ts';
 import { searchSegments } from './segments/segments.ts';
 import { searchContextFields } from './contextFields/contextFields.ts';
+import { searchFlagCreators } from './flagCreators/flagCreators.ts';
 
 // Queries are independent, so they run together and each one answers its HTTP failures on its own.
 export const createSearch =
@@ -17,5 +18,6 @@ const search = (unleash: UnleashClient, query: Query): Promise<SearchResult> => 
     case 'flags': return searchFlags(unleash, query);
     case 'segments': return searchSegments(unleash, query);
     case 'context_fields': return searchContextFields(unleash, query);
+    case 'flag_creators': return searchFlagCreators(unleash, query);
   }
 };
