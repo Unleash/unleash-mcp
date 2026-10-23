@@ -169,6 +169,15 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 
 - `search` and `inspect` prepare the data options for the commands and queries that take filters or references: they are the dropdowns of the UI, but for agents. A command or filtered query takes what those rows give (an id, a name) and never resolves it itself; the agent runs the lookup query first. Rejected: a step calling another step to resolve a reference, which repeats a request the agent already made.
 
+## 2026-10-23 — Node versions
+
+- Pin Node 26 for development, but the minimum supported stays 24. The snapshots replay only on the Node major they were recorded on, because undici hashes the request headers and `accept-encoding` changes between majors. Node 24 is in maintenance but supported until 2028-04-30; Node 26 becomes LTS on 2026-10-28. Rejected for now: raising `engines` to 26, which buys the code nothing.
+
+## 2026-10-23 — pnpm
+
+- pnpm instead of npm, the same as v1: a 7-day `minimumReleaseAge` cooldown, and dependency install scripts are blocked by default. The shared npm release workflow installs with pnpm too.
+- Three versions npm locked this week are exempt from the cooldown until 2026-10-27, so the lockfile stays the one the tests passed on. Rejected: resolving again, which moves every version.
+
 ## 2026-10-23 — Release turns a flag on or off
 
 - `release` must let an agent turn a feature off ("turn the awesome-new-checkout feature off"), within the end-state design: `flag` becomes `{ name, state: 'on' | 'off' }`. Rejected: a flat `flagName` and `flagState`, and a top-level `state` next to a `flag` string.

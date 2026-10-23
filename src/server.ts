@@ -12,14 +12,17 @@ import { createConfigure } from './tools/configure/configure.ts';
 import { searchInput } from './tools/search/searchInput.ts';
 import { searchOutput } from './tools/search/searchOutput.ts';
 import { createSearch } from './tools/search/search.ts';
+import type { Failed } from './tools/shared/failed.ts';
 import type { UnleashClient } from './unleash/client.ts';
 
-// At the time of this writing, 
+const toToolResult = (structuredContent: Record<string, unknown>) => ({ structuredContent, content: [] });
+
+// At the time of this writing,
 // Claude Code shows the model only the text blocks of an error result, so failures are text.
-const toToolResult = <T extends { kind: string }>(result: T) =>
-  result.kind === 'failed'
-    ? { isError: true, content: [{ type: 'text' as const, text: JSON.stringify({ result }) }] }
-    : { structuredContent: { result }, content: [] };
+const toFailedToolResult = (result: Failed) => ({
+  isError: true,
+  content: [{ type: 'text' as const, text: JSON.stringify({ result }) }],
+});
 
 export const createServer = (unleash: UnleashClient): McpServer => {
   const server = new McpServer({ name: 'unleash-mcp', version: pkg.version });
@@ -36,7 +39,8 @@ export const createServer = (unleash: UnleashClient): McpServer => {
       outputSchema: releaseOutput,
     },
     async (input) => {
-      return toToolResult(await release(input));
+      const result = await release(input);
+      return result.kind === 'failed' ? toFailedToolResult(result) : toToolResult({ result });
     },
   );
 
@@ -49,7 +53,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
       outputSchema: inspectOutput,
       annotations: { readOnlyHint: true },
     },
-    async (input) => ({ structuredContent: await inspect(input), content: [] }),
+    async (input) => toToolResult(await inspect(input)),
   );
 
   // Each query answers its own failure inside the results, so the search as a whole never fails.
@@ -61,7 +65,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
       outputSchema: searchOutput,
       annotations: { readOnlyHint: true },
     },
-    async (input) => ({ structuredContent: await search(input), content: [] }),
+    async (input) => toToolResult(await search(input)),
   );
 
   server.registerTool(
@@ -71,9 +75,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
       inputSchema: configureInput,
       outputSchema: configureOutput,
     },
-    async (input) => {
-      return { structuredContent: await configure(input), content: [] };
-    },
+    async (input) => toToolResult(await configure(input)),
   );
 
   return server;

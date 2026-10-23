@@ -12,13 +12,13 @@ Unleash MCP Server v2: an interface to Unleash that can replace the UI, built fo
 ## Commands
 
 ```bash
-npm install
-npm start               # stdio server from source
-npm test                # typecheck + tests, replaying recorded snapshots
-npm run typecheck
-npm run test:record     # see the record-snapshots skill
-npm run spec:update     # see the update-openapi-spec skill
-npm run spec:generate
+pnpm install
+pnpm start              # stdio server from source
+pnpm test               # typecheck + tests, replaying recorded snapshots
+pnpm typecheck
+pnpm test:record        # see the record-snapshots skill
+pnpm spec:update        # see the update-openapi-spec skill
+pnpm spec:generate
 ```
 
 ## Where things live
