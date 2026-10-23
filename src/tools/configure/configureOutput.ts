@@ -14,25 +14,42 @@ const legalValue = {
   value: z.string(),
 };
 
+const tagType = {
+  resource: z.literal('tag_type'),
+  action: z.enum(['create', 'update', 'delete']),
+  name: z.string(),
+};
+
+const tag = {
+  resource: z.literal('tag'),
+  action: z.enum(['delete']),
+  type: z.string(),
+  value: z.string(),
+};
+
 const releaseTemplate = {
   resource: z.literal('release_template'),
   action: z.enum(['create']),
   name: z.string(),
 };
 
-const target = z.discriminatedUnion('resource', [z.object(contextField), z.object(legalValue), z.object(releaseTemplate)]);
+const target = z.discriminatedUnion('resource', [z.object(contextField), z.object(legalValue), z.object(tagType), z.object(tag), z.object(releaseTemplate)]);
 
 const error = failed.omit({ kind: true }).describe('What Unleash answered; the change was not applied');
 
 const applied = z.discriminatedUnion('resource', [
   z.object({ kind: z.literal('applied'), ...contextField }),
   z.object({ kind: z.literal('applied'), ...legalValue }),
+  z.object({ kind: z.literal('applied'), ...tagType }),
+  z.object({ kind: z.literal('applied'), ...tag }),
   z.object({ kind: z.literal('applied'), ...releaseTemplate, id: z.string().describe('Release template id') }),
 ]);
 
 const failedChange = z.discriminatedUnion('resource', [
   z.object({ kind: z.literal('failed'), ...contextField, error }),
   z.object({ kind: z.literal('failed'), ...legalValue, error }),
+  z.object({ kind: z.literal('failed'), ...tagType, error }),
+  z.object({ kind: z.literal('failed'), ...tag, error }),
   z.object({ kind: z.literal('failed'), ...releaseTemplate, error }),
 ]);
 

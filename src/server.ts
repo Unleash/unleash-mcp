@@ -75,7 +75,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   server.registerTool(
     'configure',
     {
-      description: 'Change Unleash configuration: create, replace and delete context fields, global or in a project, add or remove their legal values, and create release templates. Applies the changes in order and reports each one.',
+      description: 'Change Unleash configuration: create, replace and delete context fields, global or in a project, add or remove their legal values, create, replace and delete tag types, delete tags, and create release templates. Applies the changes in order and reports each one.',
       inputSchema: configureInput,
       outputSchema: configureOutput,
     },
