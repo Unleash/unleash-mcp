@@ -7,24 +7,23 @@ import { searchSegments } from './segments.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./segments.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server';
-const unowned = 'mcp-searched-segment';
-const owned = 'mcp-searched-project-segment';
-let unownedId = 0;
-let ownedId = 0;
+const global = 'mcp-searched-segment';
+const projectScoped = 'mcp-searched-project-segment';
+let globalId = 0;
+let projectScopedId = 0;
 
 before(async () => {
-  for (const name of [unowned, owned]) await deleteSegmentNamed(admin, name);
-  unownedId = (await admin.POST('/api/admin/segments', { body: { name: unowned, constraints: [] } })).data?.id ?? 0;
-  ownedId = (await admin.POST('/api/admin/segments', { body: { name: owned, project, constraints: [] } })).data?.id ?? 0;
+  for (const name of [global, projectScoped]) await deleteSegmentNamed(admin, name);
+  globalId = (await admin.POST('/api/admin/segments', { body: { name: global, constraints: [] } })).data?.id ?? 0;
+  projectScopedId = (await admin.POST('/api/admin/segments', { body: { name: projectScoped, project, constraints: [] } })).data?.id ?? 0;
 });
 after(async () => {
-  for (const name of [unowned, owned]) await deleteSegmentNamed(admin, name);
+  for (const name of [global, projectScoped]) await deleteSegmentNamed(admin, name);
   await close();
 });
 
 const timestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 const creator = 'mateusz@getunleash.ai';
-const created = '2026-10-22T08:00:00.000Z';
 
 // Unleash sorts the list by name, so the project segment comes first.
 test('finds segments by a part of their name, case insensitive, with what the agent filters on itself', async () => {
@@ -35,23 +34,23 @@ test('finds segments by a part of their name, case insensitive, with what the ag
   const { segments } = output;
   for (const { createdAt } of segments) assert.match(createdAt, timestamp);
   assert.deepEqual(segments.map(({ createdAt, ...rest }) => rest), [
-    { id: ownedId, name: owned, project, createdBy: creator, usedInProjects: 0, usedInFlags: 0 },
-    { id: unownedId, name: unowned, createdBy: creator, usedInProjects: 0, usedInFlags: 0 },
+    { id: projectScopedId, name: projectScoped, project, createdBy: creator, usedInProjects: 0, usedInFlags: 0 },
+    { id: globalId, name: global, createdBy: creator, usedInProjects: 0, usedInFlags: 0 },
   ]);
 });
 
 test('keeps the segments usable in a project: global or owned by it', async () => {
-  const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: '/api/admin/segments', method: 'GET' }).reply(200, {
-    segments: [{ id: 1, name: 'Everyone', createdAt: created }, { id: 2, name: 'Ours', project, createdAt: created }, { id: 3, name: 'Theirs', project: 'other', createdAt: created }],
-  });
+  const output = await searchSegments(unleash, { kind: 'segments', project, query: 'mcp-searched' });
 
-  const output = await searchSegments(unleash, { kind: 'segments', project });
+  assert.partialDeepStrictEqual(output, { kind: 'segments', segments: [{ name: projectScoped, project }, { name: global }] });
+});
 
-  assert.deepEqual(output, {
-    kind: 'segments',
-    segments: [{ id: 1, name: 'Everyone', createdAt: created, usedInProjects: 0, usedInFlags: 0 }, { id: 2, name: 'Ours', project, createdAt: created, usedInProjects: 0, usedInFlags: 0 }],
-  });
+test('leaves out the segments owned by another project', async () => {
+  const output = await searchSegments(unleash, { kind: 'segments', project: 'mcp-other', query: 'mcp-searched' });
+
+  assert(output.kind === 'segments');
+  assert.equal(output.segments.length, 1);
+  assert.partialDeepStrictEqual(output.segments, [{ name: global }]);
 });
 
 test('fails with the Unleash error when the segments cannot be listed', async () => {

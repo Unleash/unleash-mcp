@@ -6,18 +6,18 @@ import { searchContextFields } from './contextFields.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./contextFields.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server';
-const unowned = 'mcpSearchedField';
-const owned = 'mcpSearchedProjectField';
+const global = 'mcpSearchedField';
+const projectScoped = 'mcpSearchedProjectField';
 const timestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 const deleteFields = async (): Promise<void> => {
-  for (const contextField of [unowned, owned]) await admin.DELETE('/api/admin/context/{contextField}', { params: { path: { contextField } } });
+  for (const contextField of [global, projectScoped]) await admin.DELETE('/api/admin/context/{contextField}', { params: { path: { contextField } } });
 };
 
 before(async () => {
   await deleteFields();
-  await admin.POST('/api/admin/context', { body: { name: unowned, description: 'Customer tier', stickiness: true } });
-  await admin.POST('/api/admin/projects/{projectId}/context', { params: { path: { projectId: project } }, body: { name: owned } });
+  await admin.POST('/api/admin/context', { body: { name: global, description: 'Customer tier', stickiness: true } });
+  await admin.POST('/api/admin/projects/{projectId}/context', { params: { path: { projectId: project } }, body: { name: projectScoped } });
 });
 after(async () => {
   await deleteFields();
@@ -33,20 +33,16 @@ test('finds context fields by a part of their name, case insensitive, with what 
   const { fields } = output;
   for (const { createdAt } of fields) assert.match(createdAt ?? '', timestamp);
   assert.deepEqual(fields.map(({ createdAt, ...rest }) => rest), [
-    { name: unowned, description: 'Customer tier', stickiness: true, usedInProjects: 0, usedInFlags: 0 },
-    { name: owned, project, usedInProjects: 0, usedInFlags: 0 },
+    { name: global, description: 'Customer tier', stickiness: true, usedInProjects: 0, usedInFlags: 0 },
+    { name: projectScoped, project, usedInProjects: 0, usedInFlags: 0 },
   ]);
 });
 
-// Unleash does the scoping: the project list with the global fields included. Only that endpoint is stubbed,
-// so asking the global list instead would fail here.
+// Unleash does the scoping: the project list with the global fields included is what a flag there can use.
 test('asks Unleash for the fields usable in a project: global or owned by it', async () => {
-  const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: `/api/admin/projects/${project}/context`, query: { include: 'root' }, method: 'GET' }).reply(200, [{ name: 'tier' }, { name: 'plan', project }]);
+  const output = await searchContextFields(unleash, { kind: 'context_fields', project, query: 'mcpsearched' });
 
-  const output = await searchContextFields(unleash, { kind: 'context_fields', project });
-
-  assert.deepEqual(output, { kind: 'context_fields', fields: [{ name: 'tier', usedInProjects: 0, usedInFlags: 0 }, { name: 'plan', project, usedInProjects: 0, usedInFlags: 0 }] });
+  assert.partialDeepStrictEqual(output, { kind: 'context_fields', fields: [{ name: global }, { name: projectScoped, project }] });
 });
 
 test('fails with the Unleash error when the context fields cannot be listed', async () => {
