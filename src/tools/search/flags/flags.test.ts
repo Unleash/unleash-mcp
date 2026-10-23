@@ -89,31 +89,52 @@ test('searches every project when none is given, naming the lifecycle stage as t
   });
 });
 
-// The archived stage is the one Unleash sets synchronously (on archive), so it is the stage a recording can rely on.
 test('keeps only flags in the given lifecycle stages, archived ones included when asked', async () => {
   const output = await searchFlags(unleash, { kind: 'flags', project, query: 'mcp-searched', stages: ['archived'], offset: 0, limit: 20 });
 
-  assert.partialDeepStrictEqual(output, { kind: 'flags', total: 1, flags: [{ name: archived, stage: 'archived' }] });
-});
-
-test('names the stages as Unleash does in the request', async () => {
-  const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: '/api/admin/search/features', query: { lifecycle: 'IS_ANY_OF:initial,pre-live,live,completed,archived', offset: '0', limit: '20' }, method: 'GET' }).reply(200, { total: 0, features: [] });
-
-  const output = await searchFlags(unleash, { kind: 'flags', stages: ['define', 'develop', 'production', 'cleanup', 'archived'], offset: 0, limit: 20 });
-
-  assert.deepEqual(output, { kind: 'flags', total: 0, flags: [] });
+  assert.partialDeepStrictEqual(output, { kind: 'flags', total: 1, flags: [{ name: archived }] });
 });
 
 test('keeps only flags with a target on any of the given segments', async () => {
-  const output = await searchFlags(unleash, { kind: 'flags', project, query: 'mcp-searched', segments: [segment], offset: 0, limit: 20 });
+  const output = await searchFlags(unleash, { kind: 'flags', project, query: 'mcp-searched', segments: { match: 'any', of: [segment] }, offset: 0, limit: 20 });
   assert.partialDeepStrictEqual(output, { kind: 'flags', total: 1, flags: [{ name: second }] });
 });
 
-test('names the segments in the request as Unleash does', async () => {
+test('keeps only flags carrying all of the given tags', async () => {
+  const output = await searchFlags(unleash, { kind: 'flags', project, query: 'mcp-searched', tags: { match: 'all', of: [{ type: 'simple', value: 'mcp-search' }] }, offset: 0, limit: 20 });
+
+  assert.partialDeepStrictEqual(output, { kind: 'flags', total: 1, flags: [{ name: first }] });
+});
+
+// One stub for the whole request: a new filter adds a key here, next to how Unleash spells it.
+// The recorded tests replay by full request, so they pin the any and all spellings; the exclusions are spelled here.
+test('sends every filter as Unleash spells it', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: '/api/admin/search/features', query: { segment: 'INCLUDE_ANY_OF:Beta users,Staff', offset: '0', limit: '20' }, method: 'GET' }).reply(200, { total: 0, features: [] });
-  const output = await searchFlags(unleash, { kind: 'flags', segments: ['Beta users', 'Staff'], offset: 0, limit: 20 });
+  stub.intercept({
+    path: '/api/admin/search/features',
+    query: {
+      project: 'IS:web',
+      query: 'checkout',
+      lifecycle: 'IS_ANY_OF:initial,pre-live,live,completed,archived',
+      segment: 'EXCLUDE_IF_ANY_OF:Beta users,Staff',
+      tag: 'EXCLUDE_ALL:simple:beta,team:payments',
+      offset: '0',
+      limit: '20',
+    },
+    method: 'GET',
+  }).reply(200, { total: 0, features: [] });
+
+  const output = await searchFlags(unleash, {
+    kind: 'flags',
+    project: 'web',
+    query: 'checkout',
+    stages: ['define', 'develop', 'production', 'cleanup', 'archived'],
+    segments: { match: 'none', of: ['Beta users', 'Staff'] },
+    tags: { match: 'notAll', of: [{ type: 'simple', value: 'beta' }, { type: 'team', value: 'payments' }] },
+    offset: 0,
+    limit: 20,
+  });
+
   assert.deepEqual(output, { kind: 'flags', total: 0, flags: [] });
 });
 
