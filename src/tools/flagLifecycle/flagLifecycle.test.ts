@@ -9,18 +9,19 @@ test('applies the operations after a failed one, naming the operation each resul
   const { unleash, stub } = createStubbedClient();
   const message = 'There\'s no feature named "gone" in project "web".';
   stub.intercept({ path: '/api/admin/projects/web/features/gone/lifecycle/complete', method: 'POST' }).reply(404, unleashError('NotFoundError', message));
-  stub.intercept({ path: '/api/admin/projects/web/features/checkout/lifecycle/complete', method: 'POST' }).reply(200);
+  stub.intercept({ path: '/api/admin/projects/web/features/checkout', method: 'GET' }).reply(404, unleashError('NotFoundError', 'No feature named checkout'));
+  stub.intercept({ path: '/api/admin/projects/web/features', method: 'POST' }).reply(201, { name: 'checkout' });
   const flagLifecycle = createFlagLifecycle(unleash);
 
   const output = await flagLifecycle({ operations: [
     { action: 'complete', project: 'web', flag: 'gone', outcome: { kind: 'discarded' } },
-    { action: 'complete', project: 'web', flag: 'checkout', outcome: { kind: 'kept' } },
+    { action: 'define', project: 'web', flag: 'checkout' },
   ] });
 
   assert.deepEqual(output, {
     results: [
       { kind: 'failed', action: 'complete', project: 'web', flag: 'gone', error: { status: 404, name: 'NotFoundError', reasons: [message] } },
-      { kind: 'applied', action: 'complete', project: 'web', flag: 'checkout' },
+      { kind: 'applied', action: 'define', project: 'web', flag: 'checkout', status: 'new', changed: [] },
     ],
   });
 });
