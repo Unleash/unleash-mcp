@@ -30,7 +30,7 @@ before(async () => {
   await deleteSegmentNamed(admin, segment);
   const created = await admin.POST('/api/admin/segments', { body: { name: segment, constraints: [] } });
   segmentId = created.data?.id ?? 0;
-  await createRelease(admin)({ project, flag: second, environment: 'development', targets: [{ name: 'Beta', segments: [segmentId] }] });
+  await createRelease(admin)({ project, flag: { name: second, state: 'on' }, environment: 'development', targets: [{ name: 'Beta', segments: [segmentId] }] });
   await admin.DELETE('/api/admin/projects/{projectId}/features/{featureName}', { params: { path: { projectId: project, featureName: archived } } });
 });
 // The flags go first: Unleash may refuse to delete a segment in use.

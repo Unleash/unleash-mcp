@@ -97,7 +97,7 @@ test('fails with the Unleash error when the change request config cannot be read
 const path = { projectId: project, featureName: 'mcp-flag', environment: 'production' };
 const changeRequests = `/api/admin/projects/${project}/environments/production/change-requests`;
 const defaultStrategy = { name: 'flexibleRollout', title: 'Everyone', parameters: { rollout: '100', stickiness: 'default', groupId: 'mcp-flag' }, constraints: [], segments: [], variants: [] };
-const defaultPlan = { updates: [], adds: [], deletes: [], enable: false };
+const defaultPlan = { updates: [], adds: [], deletes: [] };
 const draft = { id: 7, state: 'Draft', environment: 'production', project, minApprovals: 1, features: [], segments: [] };
 const submitted = `/api/admin/projects/${project}/change-requests/7/state`;
 // Only a request for review matches, so a release that doesn't submit fails the test.
@@ -117,9 +117,24 @@ test('submits every change of a release in one change request', async () => {
   stub.intercept({ path: changeRequests, method: 'POST', body: actions }).reply(200, draft);
   stubSubmit(stub);
 
-  const requested = await requestChanges(unleash, path, { updates: [{ id: 's1', strategy: defaultStrategy }], adds: [beta], deletes: ['s2'], enable: true });
+  const requested = await requestChanges(unleash, path, { updates: [{ id: 's1', strategy: defaultStrategy }], adds: [beta], deletes: ['s2'], toggle: 'on' });
 
   assert.deepEqual(requested, { kind: 'requested', changeRequest: { id: 7, state: 'In review' } });
+});
+
+test('turns the environment off before changing its audiences in the change request', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const disablesFirst = (body: string): boolean =>
+    isDeepStrictEqual(JSON.parse(body), [
+      { feature: 'mcp-flag', action: 'updateEnabled', payload: { enabled: false } },
+      { feature: 'mcp-flag', action: 'updateStrategy', payload: { id: 's1', ...defaultStrategy } },
+    ]);
+  stub.intercept({ path: changeRequests, method: 'POST', body: disablesFirst }).reply(200, draft);
+  stubSubmit(stub);
+
+  const requested = await requestChanges(unleash, path, { ...defaultPlan, updates: [{ id: 's1', strategy: defaultStrategy }], toggle: 'off' });
+
+  assert.equal(requested.kind, 'requested');
 });
 
 test('leaves an enabled environment as it is in the change request', async () => {
