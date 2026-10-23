@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { deleteFlag } from '../../../unleash/testSetup.ts';
+import { deleteFlag, deleteSegmentNamed } from '../../../unleash/testSetup.ts';
+import { createRelease } from '../../release/release.ts';
 import { searchFlags } from './flags.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./flags.snapshot.json', import.meta.url).pathname);
@@ -10,7 +11,9 @@ const project = 'mcp-server';
 const first = 'mcp-searched-first';
 const second = 'mcp-searched-second';
 const archived = 'mcp-searched-archived';
+const segment = 'mcp-searched-segment';
 const features = '/api/admin/projects/{projectId}/features';
+let segmentId = 0;
 
 const deleteFlags = async (): Promise<void> => {
   await deleteFlag(admin, project, first);
@@ -24,10 +27,16 @@ before(async () => {
   await admin.POST('/api/admin/features/{featureName}/tags', { params: { path: { featureName: first } }, body: { type: 'simple', value: 'mcp-search' } });
   await admin.POST(features, { params: { path: { projectId: project } }, body: { name: second } });
   await admin.POST(features, { params: { path: { projectId: project } }, body: { name: archived } });
+  await deleteSegmentNamed(admin, segment);
+  const created = await admin.POST('/api/admin/segments', { body: { name: segment, constraints: [] } });
+  segmentId = created.data?.id ?? 0;
+  await createRelease(admin)({ project, flag: second, environment: 'development', targets: [{ name: 'Beta', segments: [segmentId] }] });
   await admin.DELETE('/api/admin/projects/{projectId}/features/{featureName}', { params: { path: { projectId: project, featureName: archived } } });
 });
+// The flags go first: Unleash may refuse to delete a segment in use.
 after(async () => {
   await deleteFlags();
+  await deleteSegmentNamed(admin, segment);
   await close();
 });
 
@@ -93,6 +102,18 @@ test('names the stages as Unleash does in the request', async () => {
 
   const output = await searchFlags(unleash, { kind: 'flags', stages: ['define', 'develop', 'production', 'cleanup', 'archived'], offset: 0, limit: 20 });
 
+  assert.deepEqual(output, { kind: 'flags', total: 0, flags: [] });
+});
+
+test('keeps only flags with a target on any of the given segments', async () => {
+  const output = await searchFlags(unleash, { kind: 'flags', project, query: 'mcp-searched', segments: [segment], offset: 0, limit: 20 });
+  assert.partialDeepStrictEqual(output, { kind: 'flags', total: 1, flags: [{ name: second }] });
+});
+
+test('names the segments in the request as Unleash does', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: '/api/admin/search/features', query: { segment: 'INCLUDE_ANY_OF:Beta users,Staff', offset: '0', limit: '20' }, method: 'GET' }).reply(200, { total: 0, features: [] });
+  const output = await searchFlags(unleash, { kind: 'flags', segments: ['Beta users', 'Staff'], offset: 0, limit: 20 });
   assert.deepEqual(output, { kind: 'flags', total: 0, flags: [] });
 });
 
