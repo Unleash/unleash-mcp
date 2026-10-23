@@ -29,7 +29,7 @@ test('pages the creators and tells how many match in all', async () => {
   const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: '/api/admin/flag-creators', query: { q: 'a', offset: '1', limit: '1' }, method: 'GET' }).reply(200, {
     total: 3,
-    flagCreators: [{ id: 7, name: 'Alice' }],
+    flagCreators: [{ id: 7, name: 'Alice', username: 'alice' }],
   });
 
   const output = await searchFlagCreators(unleash, { kind: 'flag_creators', query: 'a', offset: 1, limit: 1 });
