@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { type Failed, failed } from '../shared/failed.ts';
 
 const target = {
-  action: z.enum(['complete']),
+  action: z.enum(['create', 'complete']),
   project: z.string(),
   flag: z.string(),
 };
