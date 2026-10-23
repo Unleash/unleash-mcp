@@ -78,7 +78,24 @@ const flagCreators = z.object({
   creators: z.array(flagCreator).describe('One page, sorted by name'),
 });
 
-const result = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, flagCreators, failed]);
+const tagType = z.object({
+  name: z.string(),
+  description: z.string().optional(),
+  valueCount: z.number().int().describe('Tags of this type'),
+  usedInProjects: z.number().int(),
+});
+
+const tagTypes = z.object({
+  kind: z.literal('tag_types'),
+  tagTypes: z.array(tagType),
+});
+
+const tags = z.object({
+  kind: z.literal('tags'),
+  tags: z.array(tag),
+});
+
+const result = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, tagTypes, tags, flagCreators, failed]);
 
 export const searchOutput = {
   results: z.array(result).describe('One per query, in the order asked'),
@@ -90,4 +107,6 @@ export type Projects = z.infer<typeof projects>;
 export type Flags = z.infer<typeof flags>;
 export type Segments = z.infer<typeof segments>;
 export type ContextFields = z.infer<typeof contextFields>;
+export type TagTypes = z.infer<typeof tagTypes>;
+export type Tags = z.infer<typeof tags>;
 export type FlagCreators = z.infer<typeof flagCreators>;

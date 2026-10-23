@@ -50,7 +50,18 @@ const flagCreators = z.object({
   limit: z.number().int().min(1).max(50).default(20).describe('Creators per page'),
 }).describe('Users who created a flag in a project the token can see, paged, with their ids. Unleash matches and pages');
 
-const query = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, flagCreators]);
+const tagTypes = z.object({
+  kind: z.literal('tag_types'),
+  query: z.string().optional().describe('Case-insensitive text the name contains; leave out to list all'),
+}).describe('Tag types by name: the categories a tag on a flag belongs to, such as simple or team');
+
+const tags = z.object({
+  kind: z.literal('tags'),
+  type: z.string().optional().describe('Tag type to list the tags of; leave out for every type'),
+  query: z.string().optional().describe('Case-insensitive text the value contains; leave out to list all'),
+}).describe('Tags in use by value, as type and value. Tagging a flag creates the tag; only the type must exist');
+
+const query = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, tagTypes, tags, flagCreators]);
 
 export const searchInput = {
   queries: z.array(query).min(1).describe('Run together; one result per query, in the order asked'),
@@ -63,4 +74,6 @@ export type FlagsQuery = z.infer<typeof flags>;
 export type Match = z.infer<typeof match>;
 export type SegmentsQuery = z.infer<typeof segments>;
 export type ContextFieldsQuery = z.infer<typeof contextFields>;
+export type TagTypesQuery = z.infer<typeof tagTypes>;
+export type TagsQuery = z.infer<typeof tags>;
 export type FlagCreatorsQuery = z.infer<typeof flagCreators>;
