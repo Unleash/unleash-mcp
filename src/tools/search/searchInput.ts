@@ -29,6 +29,10 @@ const flags = z.object({
   stages: z.array(lifecycleStage).min(1).optional().describe('Keeps flags in any of these lifecycle stages; archived flags only come back when archived is listed'),
   segments: matching(z.string()).optional().describe('Keeps flags whose targets match these segments, by exact name as a segments search returns it'),
   tags: matching(z.object({ type: z.string(), value: z.string() })).optional().describe('Keeps flags whose tags match these, as flag rows return them'),
+  createdAt: z.object({
+    match: z.enum(['before', 'onOrAfter']).describe('before: created before the day; onOrAfter: created on the day or later'),
+    date: z.iso.date().describe('A day, YYYY-MM-DD'),
+  }).optional().describe('Keeps flags by the day they were created; one bound, as the UI offers'),
   offset: z.number().int().min(0).default(0).describe('Flags to skip; page with offset and limit until total is reached'),
   limit: z.number().int().min(1).max(50).default(20).describe('Flags per page'),
 }).describe('Flags by name or tag, paged. Unleash pages and matches; rows carry type, lifecycle stage, tags and where the flag is enabled');
