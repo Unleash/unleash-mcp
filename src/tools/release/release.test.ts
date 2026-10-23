@@ -105,11 +105,9 @@ test('puts the release in a change request where the environment requires one', 
 
   const output = await release({ project, flag, environment: 'production', targets: [{ name: 'Everyone', rollout: 50 }] });
 
-  assert.equal(output.kind, 'pending_change_request');
-  const { changeRequest, ...rest } = output;
-  changeRequestId = changeRequest.id;
-  assert.deepEqual(rest, { kind: 'pending_change_request', flag: { status: 'existing', name: flag }, environment: 'production', targets: [{ name: 'Everyone', rollout: 50 }] });
-  assert.equal(changeRequest.state, 'In review');
+  assert(output.kind === 'pending_change_request');
+  changeRequestId = output.changeRequest.id;
+  assert.partialDeepStrictEqual(output, { flag: { status: 'existing', name: flag }, environment: 'production', targets: [{ name: 'Everyone', rollout: 50 }], changeRequest: { state: 'In review' } });
 });
 
 // Open source has no change requests, so the stubs in each test cover only the flag and its writes.

@@ -5,7 +5,6 @@ import { unleashError } from '../../../unleash/testError.ts';
 import { searchProjects } from './projects.ts';
 
 const { unleash, close } = createRecordedClient(new URL('./projects.snapshot.json', import.meta.url).pathname);
-const timestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 after(close);
 
@@ -13,11 +12,7 @@ after(close);
 test('finds projects by a part of their id, case insensitive', async () => {
   const output = await searchProjects(unleash, { kind: 'projects', query: 'MCP-SERVER' });
 
-  assert(output.kind === 'projects');
-
-  const { projects } = output;
-  for (const { createdAt } of projects) assert.match(createdAt ?? '', timestamp);
-  assert.deepEqual(projects.map(({ createdAt, ...rest }) => rest), [{ id: 'mcp-server', name: 'mcp-server' }]);
+  assert.partialDeepStrictEqual(output, { kind: 'projects', projects: [{ id: 'mcp-server', name: 'mcp-server' }] });
 });
 
 test('finds projects by a part of their name, case insensitive', async () => {

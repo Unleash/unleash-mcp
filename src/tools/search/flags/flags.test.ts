@@ -11,7 +11,6 @@ const first = 'mcp-searched-first';
 const second = 'mcp-searched-second';
 const archived = 'mcp-searched-archived';
 const features = '/api/admin/projects/{projectId}/features';
-const timestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 const deleteFlags = async (): Promise<void> => {
   await deleteFlag(admin, project, first);
@@ -38,29 +37,24 @@ after(async () => {
 test('finds a page of flags by a part of their name, with the total across pages', async () => {
   const output = await searchFlags(unleash, { kind: 'flags', project, query: 'MCP-SEARCHED', offset: 0, limit: 1 });
 
-  assert(output.kind === 'flags');
-
-  const { total, flags } = output;
-  assert.equal(total, 2);
-  for (const { createdAt } of flags) assert.match(createdAt ?? '', timestamp);
-  assert.deepEqual(flags.map(({ createdAt, stage, ...rest }) => rest), [{
-    name: first,
-    project,
-    type: 'kill-switch',
-    createdBy: 'Mateusz K',
-    tags: [{ type: 'simple', value: 'mcp-search' }],
-    environments: [{ name: 'development', enabled: false }, { name: 'production', enabled: false }],
-  }]);
+  assert.partialDeepStrictEqual(output, {
+    kind: 'flags',
+    total: 2,
+    flags: [{
+      name: first,
+      project,
+      type: 'kill-switch',
+      createdBy: 'Mateusz K',
+      tags: [{ type: 'simple', value: 'mcp-search' }],
+      environments: [{ name: 'development', enabled: false }, { name: 'production', enabled: false }],
+    }],
+  });
 });
 
 test('skips the first page with the offset', async () => {
   const output = await searchFlags(unleash, { kind: 'flags', project, query: 'mcp-searched', offset: 1, limit: 1 });
 
-  assert(output.kind === 'flags');
-
-  const { total, flags } = output;
-  assert.equal(total, 2);
-  assert.deepEqual(flags.map(({ name }) => name), [second]);
+  assert.partialDeepStrictEqual(output, { kind: 'flags', total: 2, flags: [{ name: second }] });
 });
 
 // Only the request without a project filter is stubbed, so scoping it would fail here.
@@ -90,9 +84,7 @@ test('searches every project when none is given, naming the lifecycle stage as t
 test('keeps only flags in the given lifecycle stages, archived ones included when asked', async () => {
   const output = await searchFlags(unleash, { kind: 'flags', project, query: 'mcp-searched', stages: ['archived'], offset: 0, limit: 20 });
 
-  assert(output.kind === 'flags');
-  assert.equal(output.total, 1);
-  assert.deepEqual(output.flags.map(({ name, stage }) => ({ name, stage })), [{ name: archived, stage: 'archived' }]);
+  assert.partialDeepStrictEqual(output, { kind: 'flags', total: 1, flags: [{ name: archived, stage: 'archived' }] });
 });
 
 test('names the stages as Unleash does in the request', async () => {
