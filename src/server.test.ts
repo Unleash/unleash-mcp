@@ -36,11 +36,11 @@ test('release tool reports the targets', async () => {
 
   const result = await client.callTool({
     name: 'release',
-    arguments: { project, flag, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] },
+    arguments: { project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] },
   });
 
   assert.deepEqual(result.structuredContent, {
-    result: { kind: 'released', flag: { status: 'new', name: flag }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] },
+    result: { kind: 'released', flag: { status: 'new', name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] },
   });
   assert.deepEqual(result.content, []);
   await client.close();
@@ -55,7 +55,7 @@ test('release tool reports a failure as text', async () => {
 
   const result = await client.callTool({
     name: 'release',
-    arguments: { project, flag, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] },
+    arguments: { project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] },
   });
 
   const failed = { result: { kind: 'failed', status: 403, name: 'PermissionError', reasons: [message] } };

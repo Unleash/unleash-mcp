@@ -44,11 +44,14 @@ export type Requested = { kind: 'requested'; changeRequest: { id: number; state:
 // user's open draft, if any, and the whole draft is submitted for review unless it already was.
 export const requestChanges = async (unleash: UnleashClient, path: EnvironmentPath, plan: Plan): Promise<Requested | Failed> => {
   const feature = path.featureName;
+  // Ordered as the direct writes are: disabling first, enabling last.
+  const toggle = { feature, action: 'updateEnabled' as const, payload: { enabled: plan.toggle === 'on' } };
   const changes = [
+    ...(plan.toggle === 'off' ? [toggle] : []),
     ...plan.updates.map(({ id, strategy }) => ({ feature, action: 'updateStrategy' as const, payload: { id, ...strategy } })),
     ...plan.adds.map((strategy) => ({ feature, action: 'addStrategy' as const, payload: strategy })),
     ...plan.deletes.map((id) => ({ feature, action: 'deleteStrategy' as const, payload: { id } })),
-    ...(plan.enable ? [{ feature, action: 'updateEnabled' as const, payload: { enabled: true } }] : []),
+    ...(plan.toggle === 'on' ? [toggle] : []),
   ];
   const created = await unleash.POST(changeRequests, {
     params: { path: { projectId: path.projectId, environment: path.environment } },
