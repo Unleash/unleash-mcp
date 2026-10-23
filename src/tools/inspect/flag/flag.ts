@@ -1,7 +1,8 @@
 import type { components } from '../../../unleash/api.d.ts';
 import type { UnleashClient } from '../../../unleash/client.ts';
 import type { FlagQuery } from '../inspectInput.ts';
-import type { Environment, Flag, Lifecycle, Link, Milestone, Parent, ReleasePlan, Transition } from '../inspectOutput.ts';
+import type { Environment, Flag, Lifecycle, Milestone, Parent, ReleasePlan, Transition } from '../inspectOutput.ts';
+import type { Link } from '../../shared/link.ts';
 import type { FlagType } from '../../shared/flagType.ts';
 import type { Tag } from '../../shared/tag.ts';
 import type { Target, Value } from '../../shared/target.ts';

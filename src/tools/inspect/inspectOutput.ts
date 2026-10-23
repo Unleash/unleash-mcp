@@ -1,10 +1,18 @@
 import { z } from 'zod';
 import { flagType } from '../shared/flagType.ts';
 import { tag } from '../shared/tag.ts';
+import { link } from '../shared/link.ts';
 import { constraint, target } from '../shared/target.ts';
 import { failed } from '../shared/failed.ts';
 import { legalValue } from '../shared/legalValue.ts';
 import { lifecycleStage } from '../shared/lifecycleStage.ts';
+
+// The types Unleash accepts on create; its read schema loosens them to a string.
+const parent = z.object({
+  flag: z.string(),
+  enabled: z.literal(false).optional().describe('Set when the parent must be disabled; absent means it must be enabled'),
+  variants: z.array(z.string()).optional().describe('Variants the parent must resolve to'),
+});
 
 const flagNaming = z.object({
   pattern: z.string().describe('JavaScript regular expression new flag names must match'),
@@ -17,15 +25,6 @@ const project = z.object({
   environments: z.array(z.string()).describe('Names release accepts as environment'),
   flagNaming: flagNaming.optional().describe('Set when the project enforces a naming pattern on new flags'),
 });
-
-// The types Unleash accepts on create; its read schema loosens them to a string.
-const parent = z.object({
-  flag: z.string(),
-  enabled: z.literal(false).optional().describe('Set when the parent must be disabled; absent means it must be enabled'),
-  variants: z.array(z.string()).optional().describe('Variants the parent must resolve to'),
-});
-
-const link = z.object({ url: z.string(), title: z.string().optional() });
 
 const lifecycle = z.object({
   stage: lifecycleStage,
@@ -113,10 +112,9 @@ export type Flag = z.infer<typeof flag>;
 export type ContextField = z.infer<typeof contextField>;
 export type Usage = z.infer<typeof usage>;
 export type Segment = z.infer<typeof segment>;
-export type Parent = z.infer<typeof parent>;
 export type Lifecycle = z.infer<typeof lifecycle>;
 export type Environment = z.infer<typeof environment>;
 export type ReleasePlan = z.infer<typeof releasePlan>;
 export type Milestone = z.infer<typeof milestone>;
 export type Transition = z.infer<typeof transition>;
-export type Link = z.infer<typeof link>;
+export type Parent = z.infer<typeof parent>;

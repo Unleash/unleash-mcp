@@ -35,7 +35,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "982",
+            "content-encoding": "br",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -44,9 +44,10 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
           },
-          "body": "eyJlbnZpcm9ubWVudHMiOlt7Im5hbWUiOiJkZXZlbG9wbWVudCIsImxhc3RTZWVuQXQiOm51bGwsImVuYWJsZWQiOmZhbHNlLCJ5ZXMiOjAsIm5vIjowLCJ0eXBlIjoiZGV2ZWxvcG1lbnQiLCJzb3J0T3JkZXIiOjIsInN0cmF0ZWdpZXMiOltdLCJyZWxlYXNlUGxhbnMiOltdLCJzYWZlZ3VhcmRzIjpbXX0seyJuYW1lIjoicHJvZHVjdGlvbiIsImxhc3RTZWVuQXQiOm51bGwsImVuYWJsZWQiOmZhbHNlLCJ5ZXMiOjAsIm5vIjowLCJ0eXBlIjoicHJvZHVjdGlvbiIsInNvcnRPcmRlciI6OCwic3RyYXRlZ2llcyI6W10sInJlbGVhc2VQbGFucyI6W10sInNhZmVndWFyZHMiOltdfV0sIm5hbWUiOiJtY3AtY3JlYXRlZC1mbGFnIiwiZmF2b3JpdGUiOmZhbHNlLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImRlc2NyaXB0aW9uIjoiRGVncmFkZXMgY2hlY2tvdXQgZ3JhY2VmdWxseSIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTIzVDE1OjI3OjM3LjkxOVoiLCJjcmVhdGVkQnkiOnsiaWQiOjI0OCwibmFtZSI6ImxpbWl0ZWQtdG9rZW4iLCJpbWFnZVVybCI6Imh0dHBzOi8vZ3JhdmF0YXIuY29tL2F2YXRhci9iYmRlOGQ3MmIzOGUyYmFlNWIxMjdlMjM0ZTVlNjYyMzBkMjY1YTdlMzgyYzAxYTU1M2M4ZTg2NDI4MDU4NThkP3M9NDImZD1yZXRybyZyPWcifSwidHlwZSI6ImtpbGwtc3dpdGNoIiwiYXJjaGl2ZWQiOmZhbHNlLCJleHBlY3RlZExpZmV0aW1lRW5kc0F0IjpudWxsLCJkZXBlbmRlbmNpZXMiOltdLCJjaGlsZHJlbiI6W10sImxpbmtzIjpbXSwiY29sbGFib3JhdG9ycyI6eyJ1c2VycyI6W3siaWQiOjI0OCwibmFtZSI6ImxpbWl0ZWQtdG9rZW4iLCJpbWFnZVVybCI6Imh0dHBzOi8vZ3JhdmF0YXIuY29tL2F2YXRhci9iYmRlOGQ3MmIzOGUyYmFlNWIxMjdlMjM0ZTVlNjYyMzBkMjY1YTdlMzgyYzAxYTU1M2M4ZTg2NDI4MDU4NThkP3M9NDImZD1yZXRybyZyPWcifV19fQ==",
+          "body": "G0YFAMT/lqanq+c5yQllJVBhSen1C/5qGaMygOw+cqpYFav0Hp6HH/BckGq/SLn07PtGAxpIcdgMaJlObOqmHiJs5yaiWZqebWHpC8ycSzC/LjDRyDBIW/5+I08ZAoFS/sQ8Pcgw0xqCQDKDQw5mRyGxwBknmFJgmq+CfLbs9Lg0x/wuOo4wUiDlSJkHzwnm1x+ByIEp8ftA06wz0Y6HlaJbxV0JgEg8Q1N+nnp0o/ANtgb+CG20S5G5fYRdsQs0QIB3lK+QjfTHlIlGxhUqIBdUIwaPeYjkOFXtm5/XfDBEsrxbQziDQJQIfOq5xPGYIwRSpnAYDObOBxkGspRtUZWFVJ+rxihllL6p6/Ynlk4/PIO5gHcwstYf9UnBjz6zK/J8xBME/EgDf4kBBvucl2Q2myHSMWWKv1EAen3aTd871q6TvdIse+Kmr2THUtXccNtKVTrZNtSx0tKWFTWNspp1W0tdNrrR7l66U8sb7k7kHOcb8c6AK4F8Zr2ZIx9CkU58tnsIRAaF5HgJny5sM7vXfsfZj/xkckkgaDATa8WH+ARk72uC37E9s4FhLpAyDQyDugRZCJRNbo/dp0wDc9u7beRPXAkEPx151jfwDgZl9aZ58/7B9+rxk6Zrpe62Tz+/fFvV799AYKXV9nm/9sP9ZQpMab9Zn28rRrtsljWETQWB7HNgGLxfQziInPJfhUCMT6Imtas/AnUHXurnSHmOCeYCa+II9h9JAGKSqzp/69Ibyrym84NX2H4ea6dk5+yurrRu2fZ12247Z6lRTm0rIkVU17rvJLWKts5ppaWzSlpbtU1lm/jn6go=",
           "trailers": {}
         }
       ],
@@ -187,7 +188,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLWNyZWF0ZWQtZmxhZyIsImRlc2NyaXB0aW9uIjoiRGVncmFkZXMgY2hlY2tvdXQgZ3JhY2VmdWxseSIsInR5cGUiOiJraWxsLXN3aXRjaCIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTIzVDE1OjI3OjM3LjkxOVoiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
+          "body": "eyJuYW1lIjoibWNwLWNyZWF0ZWQtZmxhZyIsImRlc2NyaXB0aW9uIjoiRGVncmFkZXMgY2hlY2tvdXQgZ3JhY2VmdWxseSIsInR5cGUiOiJraWxsLXN3aXRjaCIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTIzVDE1OjMzOjM4Ljg0NloiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
           "trailers": {}
         }
       ],
@@ -227,6 +228,42 @@
             "x-permitted-cross-domain-policies": "none"
           },
           "body": "eyJ2ZXJzaW9uIjoxLCJ0YWdzIjpbeyJ0eXBlIjoic2ltcGxlIiwidmFsdWUiOiJtY3AtY3JlYXRlZCIsImNvbG9yIjoiI0ZGRkZGRiJ9XX0=",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "J8cv7OSG1awI4Gucc0jBSIRSLnhO5RA35zLANlUijjA",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-created-flag/link",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "78",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"url\":\"https://github.com/Unleash/unleash-mcp/pull/1\",\"title\":\"Pull request\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 204,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "",
           "trailers": {}
         }
       ],

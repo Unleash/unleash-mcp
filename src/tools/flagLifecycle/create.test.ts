@@ -17,17 +17,24 @@ after(async () => {
   await close();
 });
 
-// The recording replays by full request, so it pins the type and the description on the create, and the tag on the second request.
-test('creates a flag with its type, description and tags', async () => {
+// The recording replays by full request, so it pins each request's body: the type and description on the create,
+// then the tag and the link on their own requests.
+test('creates a flag with its type, description, tags and links', async () => {
   const outcome = await createFlag(unleash, {
-    action: 'create', project, flag, type: 'kill-switch', description: 'Degrades checkout gracefully', tags: [{ type: 'simple', value: 'mcp-created' }],
+    action: 'create',
+    project,
+    flag,
+    type: 'kill-switch',
+    description: 'Degrades checkout gracefully',
+    tags: [{ type: 'simple', value: 'mcp-created' }],
+    links: [{ url: 'https://github.com/Unleash/unleash-mcp/pull/1', title: 'Pull request' }],
   });
 
   assert.deepEqual(outcome, { kind: 'applied' });
 });
 
-// Only the create is stubbed, so a tag request for a flag without tags fails the test.
-test('creates a flag without tags in one request', async () => {
+// Only the create is stubbed, so any further request for a bare flag fails the test.
+test('creates a bare flag in one request', async () => {
   const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: '/api/admin/projects/web/features', method: 'POST' }).reply(201, { name: 'checkout' });
 
@@ -46,7 +53,7 @@ test('fails with the Unleash error when the flag cannot be created', async () =>
   assert.deepEqual(outcome, { kind: 'failed', status: 409, name: 'NameExistsError', reasons: [message] });
 });
 
-// The flag is created by then: the failure tells the agent the tagging is what did not happen.
+// The flag is created by then, so the failure leaves it without the tag.
 test('fails with the Unleash error when the flag cannot be tagged', async () => {
   const { unleash, stub } = createStubbedClient();
   const message = 'No tag type named "team" exists';
@@ -56,4 +63,31 @@ test('fails with the Unleash error when the flag cannot be tagged', async () => 
   const outcome = await createFlag(unleash, { action: 'create', project: 'web', flag: 'checkout', tags: [{ type: 'team', value: 'payments' }] });
 
   assert.deepEqual(outcome, { kind: 'failed', status: 404, name: 'NotFoundError', reasons: [message] });
+});
+
+// The flag is created by then, so the failure leaves it without the link.
+test('fails with the Unleash error when a link cannot be added', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const message = 'Invalid URL';
+  stub.intercept({ path: '/api/admin/projects/web/features', method: 'POST' }).reply(201, { name: 'checkout' });
+  stub.intercept({ path: '/api/admin/projects/web/features/checkout/link', method: 'POST' }).reply(400, unleashError('BadDataError', message));
+
+  const outcome = await createFlag(unleash, { action: 'create', project: 'web', flag: 'checkout', links: [{ url: 'not a url' }] });
+
+  assert.deepEqual(outcome, { kind: 'failed', status: 400, name: 'BadDataError', reasons: [message] });
+});
+
+// Each stub answers once: skipping the second link, or going on after its failure, fails the test.
+test('adds the links in order and stops at the first that fails', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const message = 'Invalid URL';
+  stub.intercept({ path: '/api/admin/projects/web/features', method: 'POST' }).reply(201, { name: 'checkout' });
+  stub.intercept({ path: '/api/admin/projects/web/features/checkout/link', method: 'POST' }).reply(204);
+  stub.intercept({ path: '/api/admin/projects/web/features/checkout/link', method: 'POST' }).reply(400, unleashError('BadDataError', message));
+
+  const outcome = await createFlag(unleash, {
+    action: 'create', project: 'web', flag: 'checkout', links: [{ url: 'https://example.com/pr/1' }, { url: 'not a url' }, { url: 'https://example.com/pr/3' }],
+  });
+
+  assert.deepEqual(outcome, { kind: 'failed', status: 400, name: 'BadDataError', reasons: [message] });
 });
