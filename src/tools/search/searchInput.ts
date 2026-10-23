@@ -29,6 +29,11 @@ const flags = z.object({
   stages: z.array(lifecycleStage).min(1).optional().describe('Keeps flags in any of these lifecycle stages; archived flags only come back when archived is listed'),
   segments: matching(z.string()).optional().describe('Keeps flags whose targets match these segments, by exact name as a segments search returns it'),
   tags: matching(z.object({ type: z.string(), value: z.string() })).optional().describe('Keeps flags whose tags match these, as flag rows return them'),
+  // A flag has one creator, so all and notAll could never differ from any and none; the shared match stays for lists.
+  createdBy: z.object({
+    match: z.enum(['any', 'none']).describe('any: created by one of them; none: created by none of them'),
+    of: z.array(z.number().int()).min(1).describe('User ids, as a flag_creators search returns them'),
+  }).optional().describe('Keeps flags by who created them. Run a flag_creators query first to find the ids by name'),
   createdAt: z.object({
     match: z.enum(['before', 'onOrAfter']).describe('before: created before the day; onOrAfter: created on the day or later'),
     date: z.iso.date().describe('A day, YYYY-MM-DD'),
