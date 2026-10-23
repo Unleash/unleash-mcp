@@ -18,12 +18,17 @@ const projects = z.object({
   query: z.string().optional().describe('Case-insensitive text the id or name contains; leave out to list all'),
 }).describe('Projects by id or name, with the ids the other queries and tools take');
 
+// The four ways the UI lets several values match; its single-value include and do-not-include are any and none.
+export const match = z.enum(['any', 'all', 'none', 'notAll']).describe('any: has at least one; all: has every one; none: has not one of them; notAll: lacks at least one');
+const matching = <T extends z.ZodType>(item: T) => z.object({ match, of: z.array(item).min(1) });
+
 const flags = z.object({
   kind: z.literal('flags'),
   project: z.string().optional().describe('Project id; leave out to search every project'),
   query: z.string().optional().describe('Case-insensitive text the name or a tag contains; leave out to list all'),
   stages: z.array(lifecycleStage).min(1).optional().describe('Keeps flags in any of these lifecycle stages; archived flags only come back when archived is listed'),
-  segments: z.array(z.string()).min(1).optional().describe('Keeps flags with a target on any of these segments, by exact name as a segments search returns it'),
+  segments: matching(z.string()).optional().describe('Keeps flags whose targets match these segments, by exact name as a segments search returns it'),
+  tags: matching(z.object({ type: z.string(), value: z.string() })).optional().describe('Keeps flags whose tags match these, as flag rows return them'),
   offset: z.number().int().min(0).default(0).describe('Flags to skip; page with offset and limit until total is reached'),
   limit: z.number().int().min(1).max(50).default(20).describe('Flags per page'),
 }).describe('Flags by name or tag, paged. Unleash pages and matches; rows carry type, lifecycle stage, tags and where the flag is enabled');
@@ -38,5 +43,6 @@ export type SearchInput = z.infer<z.ZodObject<typeof searchInput>>;
 export type Query = z.infer<typeof query>;
 export type ProjectsQuery = z.infer<typeof projects>;
 export type FlagsQuery = z.infer<typeof flags>;
+export type Match = z.infer<typeof match>;
 export type SegmentsQuery = z.infer<typeof segments>;
 export type ContextFieldsQuery = z.infer<typeof contextFields>;
