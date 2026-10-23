@@ -1,6 +1,8 @@
 import { z } from 'zod';
-import { target } from '../shared/target.ts';
+import { constraint, target } from '../shared/target.ts';
 import { failed } from '../shared/failed.ts';
+import { legalValue } from '../shared/legalValue.ts';
+import { lifecycleStage } from '../shared/lifecycleStage.ts';
 
 const flagNaming = z.object({
   pattern: z.string().describe('JavaScript regular expression new flag names must match'),
@@ -26,9 +28,6 @@ const parent = z.object({
 const tag = z.object({ type: z.string(), value: z.string() });
 
 const link = z.object({ url: z.string(), title: z.string().optional() });
-
-// The stages as the Unleash UI names them; the API calls them initial, pre-live, live, completed and archived.
-const lifecycleStage = z.enum(['define', 'develop', 'production', 'cleanup', 'archived']);
 
 const lifecycle = z.object({
   stage: lifecycleStage,
@@ -79,7 +78,31 @@ const flag = z.object({
   links: z.array(link).optional().describe('Related URLs, such as the pull request or the ticket'),
 });
 
-const result = z.discriminatedUnion('kind', [project, flag, failed]);
+const usage = z.object({ project: z.string(), flag: z.string(), environment: z.string() });
+
+const contextField = z.object({
+  kind: z.literal('context_field'),
+  name: z.string(),
+  project: z.string().optional().describe('Set on a project field; absent on a global one'),
+  description: z.string().optional(),
+  stickiness: z.boolean().describe('Whether flags can use the field for custom stickiness'),
+  legalValues: z.array(legalValue).optional().describe('Set when constraints on the field may only use these values'),
+  usedBy: z.array(usage).optional().describe('Set when usage is included; every flag environment with a constraint on the field'),
+});
+
+const segment = z.object({
+  kind: z.literal('segment'),
+  id: z.number().int(),
+  name: z.string(),
+  project: z.string().optional().describe('Set on a project segment; absent on a global one'),
+  description: z.string().optional(),
+  constraints: z.array(constraint).describe('All must match for a user to be in the segment'),
+  createdAt: z.string().optional().describe('ISO timestamp'),
+  createdBy: z.string().optional().describe('Email of the user who created the segment'),
+  usedBy: z.array(usage).optional().describe('Set when usage is included; every flag environment with a target on the segment'),
+});
+
+const result = z.discriminatedUnion('kind', [project, flag, contextField, segment, failed]);
 
 export const inspectOutput = {
   results: z.array(result).describe('One per query, in the order asked'),
@@ -89,6 +112,9 @@ export type InspectOutput = z.infer<z.ZodObject<typeof inspectOutput>>;
 export type InspectResult = z.infer<typeof result>;
 export type Project = z.infer<typeof project>;
 export type Flag = z.infer<typeof flag>;
+export type ContextField = z.infer<typeof contextField>;
+export type Usage = z.infer<typeof usage>;
+export type Segment = z.infer<typeof segment>;
 export type FlagType = z.infer<typeof flagType>;
 export type Parent = z.infer<typeof parent>;
 export type Lifecycle = z.infer<typeof lifecycle>;
@@ -96,6 +122,5 @@ export type Environment = z.infer<typeof environment>;
 export type ReleasePlan = z.infer<typeof releasePlan>;
 export type Milestone = z.infer<typeof milestone>;
 export type Transition = z.infer<typeof transition>;
-export type LifecycleStage = z.infer<typeof lifecycleStage>;
 export type Tag = z.infer<typeof tag>;
 export type Link = z.infer<typeof link>;

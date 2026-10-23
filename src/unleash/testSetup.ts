@@ -21,3 +21,11 @@ export const deleteReleaseTemplate = async (admin: UnleashClient, name: string):
     await admin.DELETE('/api/admin/release-plan-templates/{templateId}', { params: { path: { templateId: template.id } } });
   }
 };
+
+// A failed recording can leave the segment behind, and Unleash refuses a second one with the same name.
+export const deleteSegmentNamed = async (admin: UnleashClient, name: string): Promise<void> => {
+  const listed = await admin.GET('/api/admin/segments');
+  for (const segment of (listed.data?.segments ?? []).filter((s) => s.name === name)) {
+    await admin.DELETE('/api/admin/segments/{id}', { params: { path: { id: segment.id } } });
+  }
+};

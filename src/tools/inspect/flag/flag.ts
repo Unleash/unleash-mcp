@@ -1,11 +1,13 @@
-import type { components } from '../../unleash/api.d.ts';
-import type { UnleashClient } from '../../unleash/client.ts';
-import type { FlagQuery } from './inspectInput.ts';
-import type { Environment, FlagType, InspectResult, Lifecycle, LifecycleStage, Link, Milestone, Parent, ReleasePlan, Tag, Transition } from './inspectOutput.ts';
-import type { Constraint, Target, Value } from '../shared/target.ts';
-import { toFailed } from '../shared/failed.ts';
+import type { components } from '../../../unleash/api.d.ts';
+import type { UnleashClient } from '../../../unleash/client.ts';
+import type { FlagQuery } from '../inspectInput.ts';
+import type { Environment, Flag, FlagType, Lifecycle, Link, Milestone, Parent, ReleasePlan, Tag, Transition } from '../inspectOutput.ts';
+import type { Target, Value } from '../../shared/target.ts';
+import { toConstraint, type UnleashConstraint } from '../shared/constraint.ts';
+import { type Failed, toFailed } from '../../shared/failed.ts';
+import { toLifecycleStage, type UnleashStage } from '../../shared/lifecycleStage.ts';
 
-export const inspectFlag = async (unleash: UnleashClient, { project, flag }: FlagQuery): Promise<InspectResult> => {
+export const inspectFlag = async (unleash: UnleashClient, { project, flag }: FlagQuery): Promise<Flag | Failed> => {
   // The flag endpoint leaves the tags out, so they take a request of their own.
   const [found, tagged] = await Promise.all([
     unleash.GET('/api/admin/projects/{projectId}/features/{featureName}', { params: { path: { projectId: project, featureName: flag } } }),
@@ -36,7 +38,6 @@ export const inspectFlag = async (unleash: UnleashClient, { project, flag }: Fla
 
 type UnleashEnvironment = components['schemas']['featureEnvironmentSchema'];
 type UnleashReleasePlan = components['schemas']['releasePlanSchema'];
-type UnleashConstraint = components['schemas']['constraintSchema'];
 type UnleashVariant = components['schemas']['strategyVariantSchema'];
 // What a feature strategy and a release plan milestone strategy have in common.
 type UnleashStrategy = {
@@ -67,7 +68,6 @@ const toReleasePlan = ({ name, milestones, activeMilestoneId }: UnleashReleasePl
   })),
 });
 
-
 // TODO: take `transitionConditionSchema` directly once the spec uses it on a plan milestone instead of an empty object.
 const toTransition = (condition: object): Transition => {
   const c = condition as components['schemas']['transitionConditionSchema'];
@@ -83,15 +83,6 @@ const toTarget = (s: UnleashStrategy): Target & { rollout: number } => ({
   ...(s.variants?.length ? { values: s.variants.map(toValue) } : {}),
 });
 
-const toConstraint = (c: UnleashConstraint): Constraint => ({
-  field: c.contextName,
-  operator: c.operator,
-  // Single-value operators (numbers, dates, semver) keep their value in `value`.
-  values: c.values?.length ? c.values : c.value ? [c.value] : [],
-  ...(c.inverted ? { inverted: true } : {}),
-  ...(c.caseInsensitive ? { caseInsensitive: true } : {}),
-});
-
 // A variable weight is what Unleash resolved, not what was asked for, so only a fixed one comes back as a share.
 const toValue = ({ name, payload, weight, weightType }: UnleashVariant): Value => ({
   name,
@@ -99,13 +90,8 @@ const toValue = ({ name, payload, weight, weightType }: UnleashVariant): Value =
   ...(weightType === 'fix' ? { share: weight / 10 } : {}),
 });
 
-type UnleashStage = 'initial' | 'pre-live' | 'live' | 'completed' | 'archived';
-
-// A stage Unleash adds fails to compile here until it has a UI name.
-const stages: Record<UnleashStage, LifecycleStage> = { initial: 'define', 'pre-live': 'develop', live: 'production', completed: 'cleanup', archived: 'archived' };
-
 const toLifecycle = ({ stage, status, enteredStageAt }: { stage: UnleashStage; status?: string | null; enteredStageAt: string }): Lifecycle => ({
-  stage: stages[stage],
+  stage: toLifecycleStage(stage),
   ...(status ? { status } : {}),
   enteredAt: enteredStageAt,
 });

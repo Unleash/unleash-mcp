@@ -1,0 +1,771 @@
+[
+  {
+    "hash": "B4F8wk9dXpABT-CF55fowXmwy_3OjQ_t34GzQhT8BAg",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-searched-first",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "212",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3Atc2VhcmNoZWQtZmlyc3RcIiBpbiBwcm9qZWN0IFwibWNwLXNlcnZlclwiLiIsImRldGFpbHMiOlt7Im1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3Atc2VhcmNoZWQtZmlyc3RcIiBpbiBwcm9qZWN0IFwibWNwLXNlcnZlclwiLiJ9XX0=",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G/8DAMRSWxWlr3qIvEPgB46Y++we0HlAdu/yTd0Ue8VXWrVxLE2gDfbaFgm4bJ9HAQXygH8BRZxu8+mpNxGzaecUYs+Q8AXoX2fMNDE0ypa/b+JZoOAoyCfm+alAz1vnFIoZnLLQHbnACkcO0InCvMwGOa6W7guLl3fesofOFIJ4Eu5HDtC//ih4dkyB3zuapfFAHfdb8lbLulEOEj7DUOMyj7Kh4oLdgD8qnMzKUpliu+lGHwQKyFPEClGKXpAQkIZtVaCufuH7EDYItc7jd+yhEIScSVIq/jLbpwKNLMmqTZpssvxz0ugy0UUd5W3yE6qzz47QZ4wWOq19/8obEt6G061XUBgn6vmLd9AYRNag47j3tCMh/1MCaPvYmBubZ7U1XZE2TcXmqqiqtraGytzmbUqUExVFc1VnVOXUWtvkTWZNnhmTVmVqHoeHRXbPPvQsfrnnH/a4UZBjgBauR+c2YT+KGaBA/ilknBA+rGyE7euxYxknfjnbkAOUr2Sa/CJpjyRi3NixORrH0GcEoZ6h0XqgCoXOyOOw/STUM6wLTZQk5U/cKLhxvj6IWRy/Kxmgz9gG9g/rfwB3/9zcAA==",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-23T08:50:48.554Z"
+    }
+  },
+  {
+    "hash": "mr0EOVa7soOAlKFETGuwZI7BKMa3x-ObeR1PDD_yp5I",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-searched-first",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "106",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBmZWF0dXJlIGZsYWcgZm91bmQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiTm8gZmVhdHVyZSBmbGFnIGZvdW5kIn1dfQ==",
+          "trailers": {}
+        },
+        {
+          "statusCode": 202,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-23T08:50:48.781Z"
+    }
+  },
+  {
+    "hash": "ahE2Nfj4RCXiun1TQ4hAayWDBV3evkPKwIc32NyeCw8",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/archive/mcp-searched-first",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-23T08:50:48.915Z"
+    }
+  },
+  {
+    "hash": "oI49-dpRlvjdElzh1Eqvrf7RvAI-HnL6fLm6mu8s0f4",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-searched-second",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "214",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3Atc2VhcmNoZWQtc2Vjb25kXCIgaW4gcHJvamVjdCBcIm1jcC1zZXJ2ZXJcIi4iLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiVGhlcmUncyBubyBmZWF0dXJlIG5hbWVkIFwibWNwLXNlYXJjaGVkLXNlY29uZFwiIGluIHByb2plY3QgXCJtY3Atc2VydmVyXCIuIn1dfQ==",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "GxIEAMQvdX5Ve/MOKsV2ZNYBV8z7pY0DMoy0AZq8JTbFCYx463nxeTGBfrBpP0me/edRQIEMcBdQxOk2n556EzGddU4h+gwJW4T5dcZAPcOgbPn7eh4ECp6ifGIengrMsPVeoZjBKQezIB9Z4cgRJlMYxtkix8nSfXEM8i44DjBaIUog4W7FEebXH4XAninye0+DNBlpwd2WgtOyrspBgc8w1mocRtVQecFuwB8V9nZiqUTsZoXYQyhAL0JWSlP8goSQNFyvAnVyjAQk0EFE8yxhxwEKUcibFGrFX2b3VGCgM13N5tlM55+zxpSZKeqkqpqfUJ19doQ5Y+Vg5rXzX3lDwtt4uvUKCqueOv4SPAyWIlM0adoF2pFQ+CoBvH1syo3Lde3sopg3TcX2pqiqtnaWytzl7ZwoJyqK5qbWVOXUOtfkjXY219bOq3JuH8eHhb7nHgaWMN4LDztcFeSYIQJ7CAXmT+m6ceXDxFbYvV4tWFY9vxxcjB6tZ5kWKUymvXLCS8BZ5uNXC7ZH6xnmjCjUMQy6EdSh0Cx5AnafhDp+CvRCk2Tz7CeuCn41bA6iRk/5SkeYM7aRw1v7nxS4f65X",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-23T08:50:48.995Z"
+    }
+  },
+  {
+    "hash": "qLq5ZFGsdHoqBxBsVzuF89bTqS1vHngc4sHW0LsnRtQ",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-searched-second",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "106",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBmZWF0dXJlIGZsYWcgZm91bmQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiTm8gZmVhdHVyZSBmbGFnIGZvdW5kIn1dfQ==",
+          "trailers": {}
+        },
+        {
+          "statusCode": 202,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-23T08:50:49.169Z"
+    }
+  },
+  {
+    "hash": "7-kJBcHrTOBr6DzBy3e1amRMzUdHqAhynKN0F0TwH9s",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/archive/mcp-searched-second",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-23T08:50:49.324Z"
+    }
+  },
+  {
+    "hash": "3dDO2xb48ffs8cyDTpIwyJ_mie2P5eLeqRlBmT0pnbE",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-searched-archived",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "218",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3Atc2VhcmNoZWQtYXJjaGl2ZWRcIiBpbiBwcm9qZWN0IFwibWNwLXNlcnZlclwiLiIsImRldGFpbHMiOlt7Im1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3Atc2VhcmNoZWQtYXJjaGl2ZWRcIiBpbiBwcm9qZWN0IFwibWNwLXNlcnZlclwiLiJ9XX0=",
+          "trailers": {}
+        },
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "182",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCBmZWF0dXJlIGZsYWcgd2l0aCBuYW1lIG1jcC1zZWFyY2hlZC1hcmNoaXZlZCIsImRldGFpbHMiOlt7Im1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCBmZWF0dXJlIGZsYWcgd2l0aCBuYW1lIG1jcC1zZWFyY2hlZC1hcmNoaXZlZCJ9XX0=",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-23T08:50:49.411Z"
+    }
+  },
+  {
+    "hash": "uZYTz9wDK07tI8bvQAz_tM51xd_s-vZX1NkYwkiN6pQ",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-searched-archived",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "106",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBmZWF0dXJlIGZsYWcgZm91bmQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiTm8gZmVhdHVyZSBmbGFnIGZvdW5kIn1dfQ==",
+          "trailers": {}
+        },
+        {
+          "statusCode": 202,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        },
+        {
+          "statusCode": 202,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-23T08:50:49.706Z"
+    }
+  },
+  {
+    "hash": "424FhcU3vvwkSTLk2jboKSJUlpGAGz0lNSpLVT0Eofc",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/archive/mcp-searched-archived",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-23T08:50:49.966Z"
+    }
+  },
+  {
+    "hash": "iUIqpQ1TYImzorifWmq5snnrcRx0wi6QuZDSVbA_RD8",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "50",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"name\":\"mcp-searched-first\",\"type\":\"kill-switch\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "headers": {
+            "content-length": "185",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoibWNwLXNlYXJjaGVkLWZpcnN0IiwiZGVzY3JpcHRpb24iOm51bGwsInR5cGUiOiJraWxsLXN3aXRjaCIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTIzVDA4OjUwOjQ3LjM5MFoiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-23T08:50:47.475Z"
+    }
+  },
+  {
+    "hash": "u1ydLa8XFV8cZsMgyO93KSirwlJNM2KKO5XigAkAqzE",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/features/mcp-searched-first/tags",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "38",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"type\":\"simple\",\"value\":\"mcp-search\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "headers": {
+            "content-length": "38",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "location": "mcp-searched-first/tags",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJ0eXBlIjoic2ltcGxlIiwidmFsdWUiOiJtY3Atc2VhcmNoIn0=",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-23T08:50:47.590Z"
+    }
+  },
+  {
+    "hash": "QLtnOaxU1ZvwkAJbsUTwbBB1d1ZH8W_7w_c_FBJ9a6I",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "30",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"name\":\"mcp-searched-second\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "headers": {
+            "content-length": "182",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoibWNwLXNlYXJjaGVkLXNlY29uZCIsImRlc2NyaXB0aW9uIjpudWxsLCJ0eXBlIjoicmVsZWFzZSIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTIzVDA4OjUwOjQ3LjY2OFoiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-23T08:50:47.732Z"
+    }
+  },
+  {
+    "hash": "GMvDPsLsJA6lVHaxJCn7kZHtbEy3PgLuMR6eUSdYd3U",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "32",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"name\":\"mcp-searched-archived\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "headers": {
+            "content-length": "184",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoibWNwLXNlYXJjaGVkLWFyY2hpdmVkIiwiZGVzY3JpcHRpb24iOm51bGwsInR5cGUiOiJyZWxlYXNlIiwicHJvamVjdCI6Im1jcC1zZXJ2ZXIiLCJzdGFsZSI6ZmFsc2UsImNyZWF0ZWRBdCI6IjIwMjYtMTAtMjNUMDg6NTA6NDcuODU4WiIsImltcHJlc3Npb25EYXRhIjpmYWxzZSwiYXJjaGl2ZWQiOmZhbHNlfQ==",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-23T08:50:47.908Z"
+    }
+  },
+  {
+    "hash": "bGjiFfhRy3xHkM9nvQSAkX8Zt4tddlsHgqAMn1OdBGM",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/features?project=IS%3Amcp-server&query=MCP-SEARCHED&offset=0&limit=1",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "979",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJmZWF0dXJlcyI6W3sidHlwZSI6ImtpbGwtc3dpdGNoIiwiZGVzY3JpcHRpb24iOm51bGwsInByb2plY3QiOiJtY3Atc2VydmVyIiwiZmF2b3JpdGUiOmZhbHNlLCJuYW1lIjoibWNwLXNlYXJjaGVkLWZpcnN0IiwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yM1QwODo1MDo0Ny4zOTBaIiwic3RhbGUiOmZhbHNlLCJhcmNoaXZlZEF0IjpudWxsLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImRlcGVuZGVuY3lUeXBlIjpudWxsLCJlbnZpcm9ubWVudHMiOlt7Im5hbWUiOiJkZXZlbG9wbWVudCIsImVuYWJsZWQiOmZhbHNlLCJ0eXBlIjoiZGV2ZWxvcG1lbnQiLCJzb3J0T3JkZXIiOjIsInZhcmlhbnRDb3VudCI6MCwibGFzdFNlZW5BdCI6bnVsbCwiaGFzU3RyYXRlZ2llcyI6ZmFsc2UsImhhc0VuYWJsZWRTdHJhdGVnaWVzIjpmYWxzZSwieWVzIjowLCJubyI6MCwiY2hhbmdlUmVxdWVzdElkcyI6W119LHsibmFtZSI6InByb2R1Y3Rpb24iLCJlbmFibGVkIjpmYWxzZSwidHlwZSI6InByb2R1Y3Rpb24iLCJzb3J0T3JkZXIiOjgsInZhcmlhbnRDb3VudCI6MCwibGFzdFNlZW5BdCI6bnVsbCwiaGFzU3RyYXRlZ2llcyI6ZmFsc2UsImhhc0VuYWJsZWRTdHJhdGVnaWVzIjpmYWxzZSwieWVzIjowLCJubyI6MCwiY2hhbmdlUmVxdWVzdElkcyI6W119XSwic2VnbWVudHMiOltdLCJjcmVhdGVkQnkiOnsiaWQiOjE3LCJuYW1lIjoiTWF0ZXVzeiBLIiwiaW1hZ2VVcmwiOiJodHRwczovL2dyYXZhdGFyLmNvbS9hdmF0YXIvZThkMzI3ZGNmNDE4ODZlY2I0NjY5N2RjYTUzZDM5MWFhM2FhNDQ4YjcyYTYzYTlkZDgzODJkYzMyY2MxNjUxYz9zPTQyJmQ9cmV0cm8mcj1nIn0sImxpZmVjeWNsZSI6eyJzdGFnZSI6ImluaXRpYWwiLCJlbnRlcmVkU3RhZ2VBdCI6IjIwMjYtMTAtMjNUMDg6NTA6NDguMDA1WiJ9LCJ0YWdzIjpbeyJ0eXBlIjoic2ltcGxlIiwiY29sb3IiOiIjRkZGRkZGIiwidmFsdWUiOiJtY3Atc2VhcmNoIn1dfV0sInRvdGFsIjoyfQ==",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-23T08:50:48.258Z"
+    }
+  },
+  {
+    "hash": "V1VRb99r32AS0CrcbE2qWNj1Q2Bi0CWk2R8tD4bl8d0",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/features?project=IS%3Amcp-server&query=mcp-searched&offset=1&limit=1",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "910",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJmZWF0dXJlcyI6W3sidHlwZSI6InJlbGVhc2UiLCJkZXNjcmlwdGlvbiI6bnVsbCwicHJvamVjdCI6Im1jcC1zZXJ2ZXIiLCJmYXZvcml0ZSI6ZmFsc2UsIm5hbWUiOiJtY3Atc2VhcmNoZWQtc2Vjb25kIiwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yM1QwODo1MDo0Ny42NjhaIiwic3RhbGUiOmZhbHNlLCJhcmNoaXZlZEF0IjpudWxsLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImRlcGVuZGVuY3lUeXBlIjpudWxsLCJlbnZpcm9ubWVudHMiOlt7Im5hbWUiOiJkZXZlbG9wbWVudCIsImVuYWJsZWQiOmZhbHNlLCJ0eXBlIjoiZGV2ZWxvcG1lbnQiLCJzb3J0T3JkZXIiOjIsInZhcmlhbnRDb3VudCI6MCwibGFzdFNlZW5BdCI6bnVsbCwiaGFzU3RyYXRlZ2llcyI6ZmFsc2UsImhhc0VuYWJsZWRTdHJhdGVnaWVzIjpmYWxzZSwieWVzIjowLCJubyI6MCwiY2hhbmdlUmVxdWVzdElkcyI6W119LHsibmFtZSI6InByb2R1Y3Rpb24iLCJlbmFibGVkIjpmYWxzZSwidHlwZSI6InByb2R1Y3Rpb24iLCJzb3J0T3JkZXIiOjgsInZhcmlhbnRDb3VudCI6MCwibGFzdFNlZW5BdCI6bnVsbCwiaGFzU3RyYXRlZ2llcyI6ZmFsc2UsImhhc0VuYWJsZWRTdHJhdGVnaWVzIjpmYWxzZSwieWVzIjowLCJubyI6MCwiY2hhbmdlUmVxdWVzdElkcyI6W119XSwic2VnbWVudHMiOltdLCJjcmVhdGVkQnkiOnsiaWQiOjE3LCJuYW1lIjoiTWF0ZXVzeiBLIiwiaW1hZ2VVcmwiOiJodHRwczovL2dyYXZhdGFyLmNvbS9hdmF0YXIvZThkMzI3ZGNmNDE4ODZlY2I0NjY5N2RjYTUzZDM5MWFhM2FhNDQ4YjcyYTYzYTlkZDgzODJkYzMyY2MxNjUxYz9zPTQyJmQ9cmV0cm8mcj1nIn0sImxpZmVjeWNsZSI6eyJzdGFnZSI6ImluaXRpYWwiLCJlbnRlcmVkU3RhZ2VBdCI6IjIwMjYtMTAtMjNUMDg6NTA6NDguMDEwWiJ9fV0sInRvdGFsIjoyfQ==",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-23T08:50:48.354Z"
+    }
+  },
+  {
+    "hash": "Vtc8V2m94Go4H3WCyq-Yq27K2XSvMtXPyrKvDocklpE",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/features?project=IS%3Amcp-server&query=mcp-searched&lifecycle=IS_ANY_OF%3Aarchived&offset=0&limit=20",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "935",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJmZWF0dXJlcyI6W3sidHlwZSI6InJlbGVhc2UiLCJkZXNjcmlwdGlvbiI6bnVsbCwicHJvamVjdCI6Im1jcC1zZXJ2ZXIiLCJmYXZvcml0ZSI6ZmFsc2UsIm5hbWUiOiJtY3Atc2VhcmNoZWQtYXJjaGl2ZWQiLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTIzVDA4OjUwOjQ3Ljg1OFoiLCJzdGFsZSI6ZmFsc2UsImFyY2hpdmVkQXQiOiIyMDI2LTEwLTIzVDA4OjUwOjQ4LjA3M1oiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImRlcGVuZGVuY3lUeXBlIjpudWxsLCJlbnZpcm9ubWVudHMiOlt7Im5hbWUiOiJkZXZlbG9wbWVudCIsImVuYWJsZWQiOmZhbHNlLCJ0eXBlIjoiZGV2ZWxvcG1lbnQiLCJzb3J0T3JkZXIiOjIsInZhcmlhbnRDb3VudCI6MCwibGFzdFNlZW5BdCI6bnVsbCwiaGFzU3RyYXRlZ2llcyI6ZmFsc2UsImhhc0VuYWJsZWRTdHJhdGVnaWVzIjpmYWxzZSwieWVzIjowLCJubyI6MCwiY2hhbmdlUmVxdWVzdElkcyI6W119LHsibmFtZSI6InByb2R1Y3Rpb24iLCJlbmFibGVkIjpmYWxzZSwidHlwZSI6InByb2R1Y3Rpb24iLCJzb3J0T3JkZXIiOjgsInZhcmlhbnRDb3VudCI6MCwibGFzdFNlZW5BdCI6bnVsbCwiaGFzU3RyYXRlZ2llcyI6ZmFsc2UsImhhc0VuYWJsZWRTdHJhdGVnaWVzIjpmYWxzZSwieWVzIjowLCJubyI6MCwiY2hhbmdlUmVxdWVzdElkcyI6W119XSwic2VnbWVudHMiOltdLCJjcmVhdGVkQnkiOnsiaWQiOjE3LCJuYW1lIjoiTWF0ZXVzeiBLIiwiaW1hZ2VVcmwiOiJodHRwczovL2dyYXZhdGFyLmNvbS9hdmF0YXIvZThkMzI3ZGNmNDE4ODZlY2I0NjY5N2RjYTUzZDM5MWFhM2FhNDQ4YjcyYTYzYTlkZDgzODJkYzMyY2MxNjUxYz9zPTQyJmQ9cmV0cm8mcj1nIn0sImxpZmVjeWNsZSI6eyJzdGFnZSI6ImFyY2hpdmVkIiwiZW50ZXJlZFN0YWdlQXQiOiIyMDI2LTEwLTIzVDA4OjUwOjQ4LjQwMloifX1dLCJ0b3RhbCI6MX0=",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0,
+      "timestamp": "2026-10-23T08:50:48.453Z"
+    }
+  }
+]

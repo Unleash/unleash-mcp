@@ -88,3 +88,15 @@ test('inspect tool returns its results as structured content', async () => {
   assert.deepEqual(result.content, []);
   await client.close();
 });
+
+test('search tool returns its results as structured content', async () => {
+  const { unleash: stubbed, stub } = createStubbedClient();
+  stub.intercept({ path: '/api/admin/segments', method: 'GET' }).reply(200, { segments: [{ id: 1, name: 'Beta', createdAt: '2026-10-22T08:00:00.000Z', usedInProjects: 2, usedInFeatures: 3 }] });
+  const client = await connectClient(stubbed);
+
+  const result = await client.callTool({ name: 'search', arguments: { queries: [{ kind: 'segments', query: 'beta' }] } });
+
+  assert.deepEqual(result.structuredContent, { results: [{ kind: 'segments', segments: [{ id: 1, name: 'Beta', createdAt: '2026-10-22T08:00:00.000Z', usedInProjects: 2, usedInFlags: 3 }] }] });
+  assert.deepEqual(result.content, []);
+  await client.close();
+});
