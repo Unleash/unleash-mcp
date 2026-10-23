@@ -183,3 +183,10 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - `release` must let an agent turn a feature off ("turn the awesome-new-checkout feature off"), within the end-state design: `flag` becomes `{ name, state: 'on' | 'off' }`. Rejected: a flat `flagName` and `flagState`, and a top-level `state` next to a `flag` string.
 - `targets` stays required for both states, so every call describes the full end state. Rejected: optional targets that keep the environment's audiences.
 - Turning off a missing flag fails with Unleash's 404. Only turning on creates a missing flag. Rejected: creating it, off. Supersedes "a missing flag is always created" (2026-10-21 Release tool takes complete input).
+
+## 2026-10-23 — Segments in configure
+
+- `configure` creates, updates and deletes segments. Reading them stays on `inspect` and `search`.
+- Update and delete name the segment by id, as release targets do; create answers with the new id. Rejected: by name, which needs a list read to resolve it.
+- Updating a segment replaces it, like Unleash's PUT: name and constraints are required, a left out project makes it global, a left out description stays. Rejected: a partial update that reads and merges (2 requests).
+- Change requests for project segments are left out for now: Unleash's refusal comes back as `failed`.

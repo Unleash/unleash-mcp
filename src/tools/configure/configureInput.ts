@@ -79,7 +79,13 @@ const updateSegment = z.object({
   id: z.number().int().describe('Id of the segment to replace, as a segments search returns it'),
 }).describe('Replace a segment\'s name, constraints and project; a left out project makes it global, a left out description stays. Every flag targeting it changes audience');
 
-const change = z.union([createContextField, updateContextField, deleteContextField, createLegalValue, deleteLegalValue, createReleaseTemplate, createSegment, updateSegment]);
+const deleteSegment = z.object({
+  kind: z.literal('segment'),
+  action: z.literal('delete'),
+  id: z.number().int().describe('Id of the segment to delete, as a segments search returns it'),
+}).describe('Delete a segment. Unleash refuses while a flag targets it; inspect the segment with usage to find those flags');
+
+const change = z.union([createContextField, updateContextField, deleteContextField, createLegalValue, deleteLegalValue, createReleaseTemplate, createSegment, updateSegment, deleteSegment]);
 
 export const configureInput = {
   changes: z.array(change).min(1).describe('Applied in the order given; one result per change'),
@@ -105,3 +111,5 @@ export type CreateReleaseTemplate = z.infer<typeof createReleaseTemplate>;
 export type CreateSegment = z.infer<typeof createSegment>;
 /** The change that replaces a segment, keeping its description when left out. */
 export type UpdateSegment = z.infer<typeof updateSegment>;
+/** The change that deletes a segment. */
+export type DeleteSegment = z.infer<typeof deleteSegment>;
