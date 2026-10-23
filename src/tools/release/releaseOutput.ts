@@ -1,17 +1,18 @@
 import { z } from 'zod';
 import { target } from '../shared/target.ts';
 import { failed, type Failed } from '../shared/failed.ts';
+import { flagState as state } from './releaseInput.ts';
 
 const flag = z.discriminatedUnion('status', [
-  z.object({ status: z.literal('new'), name: z.string() }),
-  z.object({ status: z.literal('existing'), name: z.string() }),
+  z.object({ status: z.literal('new'), name: z.string(), state }),
+  z.object({ status: z.literal('existing'), name: z.string(), state }),
 ]);
 
 const released = z.object({
   kind: z.literal('released'),
   flag,
   environment: z.string(),
-  targets: z.array(target.required({ rollout: true })).describe('The audiences that now get the feature'),
+  targets: z.array(target.required({ rollout: true })).describe('The audiences that get the feature while it is on'),
 });
 
 const pendingChangeRequest = z.object({
@@ -19,7 +20,7 @@ const pendingChangeRequest = z.object({
   flag,
   environment: z.string(),
   changeRequest: z.object({ id: z.number(), state: z.string() }).describe('The change request holding the release, submitted for review'),
-  targets: z.array(target.required({ rollout: true })).describe('The audiences that get the feature once the change request is applied'),
+  targets: z.array(target.required({ rollout: true })).describe('The audiences that get the feature while it is on, once the change request is applied'),
 });
 
 const result = z.discriminatedUnion('kind', [released, pendingChangeRequest, failed]);

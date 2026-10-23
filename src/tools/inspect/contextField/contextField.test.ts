@@ -24,7 +24,7 @@ before(async () => {
   await deleteFields();
   await admin.POST('/api/admin/context', { body: { name: field, description: 'Customer tier', stickiness: true, legalValues } });
   await admin.POST('/api/admin/projects/{projectId}/context', { params: { path: { projectId: project } }, body: { name: projectField } });
-  await createRelease(admin)({ project, flag, environment: 'development', targets: [{ name: 'Gold', constraints: [gold] }, { name: 'Gold again', constraints: [gold] }] });
+  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Gold', constraints: [gold] }, { name: 'Gold again', constraints: [gold] }] });
 });
 after(async () => {
   await deleteFlag(admin, project, flag);
