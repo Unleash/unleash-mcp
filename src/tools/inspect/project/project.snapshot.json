@@ -33,8 +33,7 @@
           "trailers": {}
         }
       ],
-      "callCount": 0,
-      "timestamp": "2026-10-23T12:13:08.301Z"
+      "callCount": 0
     }
   },
   {
@@ -56,7 +55,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "825",
+            "content-length": "827",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -67,12 +66,11 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJzdGF0cyI6eyJhdmdUaW1lVG9Qcm9kQ3VycmVudFdpbmRvdyI6MCwiY3JlYXRlZEN1cnJlbnRXaW5kb3ciOjMsImNyZWF0ZWRQYXN0V2luZG93IjowLCJhcmNoaXZlZEN1cnJlbnRXaW5kb3ciOjAsImFyY2hpdmVkUGFzdFdpbmRvdyI6MCwicHJvamVjdEFjdGl2aXR5Q3VycmVudFdpbmRvdyI6MTI3OCwicHJvamVjdEFjdGl2aXR5UGFzdFdpbmRvdyI6MCwicHJvamVjdE1lbWJlcnNBZGRlZEN1cnJlbnRXaW5kb3ciOjN9LCJuYW1lIjoibWNwLXNlcnZlciIsImRlc2NyaXB0aW9uIjoiIiwibW9kZSI6Im9wZW4iLCJmZWF0dXJlTGltaXQiOm51bGwsImZlYXR1cmVOYW1pbmciOnsicGF0dGVybiI6Il5tY3AtW2Etei1dKyQiLCJleGFtcGxlIjoibWNwLWZsYWciLCJkZXNjcmlwdGlvbiI6Im1jcCwgZGFzaCwgbG93ZXJjYXNlIHdvcmRzIn0sImxpbmtUZW1wbGF0ZXMiOltdLCJkZWZhdWx0U3RpY2tpbmVzcyI6ImRlZmF1bHQiLCJoZWFsdGgiOjEwMCwidGVjaG5pY2FsRGVidCI6MCwiZmF2b3JpdGUiOmZhbHNlLCJ1cGRhdGVkQXQiOiIyMDI2LTEwLTIzVDEyOjA3OjM0LjMyM1oiLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTIwVDA4OjExOjUxLjMxM1oiLCJvbmJvYXJkaW5nU3RhdHVzIjp7InN0YXR1cyI6ImZpcnN0LWZsYWctY3JlYXRlZCIsImZlYXR1cmUiOiJtY3Atc2VydmVyLWZsYWcifSwiZW52aXJvbm1lbnRzIjpbeyJlbnZpcm9ubWVudCI6ImRldmVsb3BtZW50In0seyJlbnZpcm9ubWVudCI6InByb2R1Y3Rpb24ifV0sImZlYXR1cmVUeXBlQ291bnRzIjpbeyJ0eXBlIjoicmVsZWFzZSIsImNvdW50IjozfV0sIm1lbWJlcnMiOjMsInZlcnNpb24iOjF9",
+          "body": "eyJzdGF0cyI6eyJhdmdUaW1lVG9Qcm9kQ3VycmVudFdpbmRvdyI6MCwiY3JlYXRlZEN1cnJlbnRXaW5kb3ciOjMsImNyZWF0ZWRQYXN0V2luZG93IjowLCJhcmNoaXZlZEN1cnJlbnRXaW5kb3ciOjAsImFyY2hpdmVkUGFzdFdpbmRvdyI6MCwicHJvamVjdEFjdGl2aXR5Q3VycmVudFdpbmRvdyI6MTI3OCwicHJvamVjdEFjdGl2aXR5UGFzdFdpbmRvdyI6MCwicHJvamVjdE1lbWJlcnNBZGRlZEN1cnJlbnRXaW5kb3ciOjN9LCJuYW1lIjoibWNwLXNlcnZlciIsImRlc2NyaXB0aW9uIjoiIiwibW9kZSI6Im9wZW4iLCJmZWF0dXJlTGltaXQiOm51bGwsImZlYXR1cmVOYW1pbmciOnsicGF0dGVybiI6Il5tY3AtW2Etei1dKyQiLCJleGFtcGxlIjoibWNwLWZsYWciLCJkZXNjcmlwdGlvbiI6Im1jcCwgZGFzaCwgbG93ZXJjYXNlIHdvcmRzIn0sImxpbmtUZW1wbGF0ZXMiOltdLCJkZWZhdWx0U3RpY2tpbmVzcyI6ImRlZmF1bHQiLCJoZWFsdGgiOjEwMCwidGVjaG5pY2FsRGVidCI6MCwiZmF2b3JpdGUiOmZhbHNlLCJ1cGRhdGVkQXQiOiIyMDI2LTEwLTIzVDEzOjA4OjE3Ljk5NFoiLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTIwVDA4OjExOjUxLjMxM1oiLCJvbmJvYXJkaW5nU3RhdHVzIjp7InN0YXR1cyI6ImZpcnN0LWZsYWctY3JlYXRlZCIsImZlYXR1cmUiOiJtY3AtZGV0YWlsZWQtZmxhZyJ9LCJlbnZpcm9ubWVudHMiOlt7ImVudmlyb25tZW50IjoiZGV2ZWxvcG1lbnQifSx7ImVudmlyb25tZW50IjoicHJvZHVjdGlvbiJ9XSwiZmVhdHVyZVR5cGVDb3VudHMiOlt7InR5cGUiOiJyZWxlYXNlIiwiY291bnQiOjJ9XSwibWVtYmVycyI6MywidmVyc2lvbiI6MX0=",
           "trailers": {}
         }
       ],
-      "callCount": 0,
-      "timestamp": "2026-10-23T12:13:08.538Z"
+      "callCount": 0
     }
   },
   {
@@ -109,8 +107,7 @@
           "trailers": {}
         }
       ],
-      "callCount": 0,
-      "timestamp": "2026-10-23T12:13:08.768Z"
+      "callCount": 0
     }
   }
 ]
