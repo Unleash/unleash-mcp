@@ -9,7 +9,7 @@ type UnleashFlag = components['schemas']['featureSearchResponseSchema'];
 
 // Unleash matches, filters and pages on its side, so large instances stay cheap to read; the rows
 // drop what the search computes per flag (strategies, variants, plans) and keep the summary.
-export const searchFlags = async (unleash: UnleashClient, { project, query, stages, segments, tags, offset, limit }: FlagsQuery): Promise<Flags | Failed> => {
+export const searchFlags = async (unleash: UnleashClient, { project, query, stages, segments, tags, createdBy, createdAt, offset, limit }: FlagsQuery): Promise<Flags | Failed> => {
   const found = await unleash.GET('/api/admin/search/features', {
     params: {
       query: {
@@ -18,6 +18,8 @@ export const searchFlags = async (unleash: UnleashClient, { project, query, stag
         ...(stages ? { lifecycle: `IS_ANY_OF:${stages.map(toUnleashStage).join(',')}` } : {}),
         ...(segments ? { segment: `${toOperator[segments.match]}:${segments.of.join(',')}` } : {}),
         ...(tags ? { tag: `${toOperator[tags.match]}:${tags.of.map(({ type, value }) => `${type}:${value}`).join(',')}` } : {}),
+        ...(createdBy ? { createdBy: `${createdBy.match === 'any' ? 'IS_ANY_OF' : 'IS_NONE_OF'}:${createdBy.of.join(',')}` } : {}),
+        ...(createdAt ? { createdAt: `${createdAt.match === 'before' ? 'IS_BEFORE' : 'IS_ON_OR_AFTER'}:${createdAt.date}` } : {}),
         offset: String(offset),
         limit: String(limit),
       },

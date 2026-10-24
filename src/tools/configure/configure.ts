@@ -6,6 +6,8 @@ import { createContextField, deleteContextField, updateContextField } from './co
 import { createLegalValue, deleteLegalValue } from './legalValue.ts';
 import { createReleaseTemplate } from './releaseTemplate.ts';
 import { createSegment, deleteSegment, updateSegment } from './segment.ts';
+import { createTagType, deleteTagType, updateTagType } from './tagType.ts';
+import { deleteTag } from './tag.ts';
 
 /** Builds the configure tool: applies changes to Unleash resources one after another, one result per change. */
 export const createConfigure = (unleash: UnleashClient) => {
@@ -30,6 +32,13 @@ const apply = (unleash: UnleashClient, environmentsOf: ChangeRequestReader, chan
         case 'create': return createLegalValue(unleash, change);
         case 'delete': return deleteLegalValue(unleash, change);
       }
+    case 'tag_type':
+      switch (change.action) {
+        case 'create': return createTagType(unleash, change);
+        case 'update': return updateTagType(unleash, change);
+        case 'delete': return deleteTagType(unleash, change);
+      }
+    case 'tag': return deleteTag(unleash, change);
     case 'release_template': return createReleaseTemplate(unleash, change);
     case 'segment':
       switch (change.action) {
@@ -53,6 +62,8 @@ const targetOf = (change: Change): Target => {
   switch (change.kind) {
     case 'context_field': return { resource: 'context_field', action: change.action, name: change.name };
     case 'legal_value': return { resource: 'legal_value', action: change.action, field: change.field, value: change.value };
+    case 'tag_type': return { resource: 'tag_type', action: change.action, name: change.name };
+    case 'tag': return { resource: 'tag', action: change.action, type: change.type, value: change.value };
     case 'release_template': return { resource: 'release_template', action: change.action, name: change.name };
     case 'segment':
       switch (change.action) {

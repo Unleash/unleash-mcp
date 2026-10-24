@@ -11,6 +11,7 @@ const project = 'mcp-server';
 const first = 'mcp-searched-first';
 const second = 'mcp-searched-second';
 const archived = 'mcp-searched-archived';
+const user = 17;
 const segment = 'mcp-searched-segment';
 const features = '/api/admin/projects/{projectId}/features';
 let segmentId = 0;
@@ -66,8 +67,7 @@ test('skips the first page with the offset', async () => {
   assert.partialDeepStrictEqual(output, { kind: 'flags', total: 2, flags: [{ name: second }] });
 });
 
-// Only the request without a project filter is stubbed, so scoping it would fail here.
-test('searches every project when none is given, naming the lifecycle stage as the UI does', async () => {
+test('maps a row, naming the lifecycle stage as the UI does', async () => {
   const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: '/api/admin/search/features', query: { offset: '0', limit: '20' }, method: 'GET' }).reply(200, {
     total: 1,
@@ -106,8 +106,22 @@ test('keeps only flags carrying all of the given tags', async () => {
   assert.partialDeepStrictEqual(output, { kind: 'flags', total: 1, flags: [{ name: first }] });
 });
 
+// Both sandbox tokens belong to the same user, who created every fixture: leaving that user out leaves nothing.
+test('leaves out the flags created by any of the given users', async () => {
+  const output = await searchFlags(unleash, { kind: 'flags', project, query: 'mcp-searched', createdBy: { match: 'none', of: [user] }, offset: 0, limit: 20 });
+
+  assert.deepEqual(output, { kind: 'flags', total: 0, flags: [] });
+});
+
+// The flags are created while recording, so a day well before the recording keeps them all and the archived one out.
+test('keeps only flags created on or after a day', async () => {
+  const output = await searchFlags(unleash, { kind: 'flags', project, query: 'mcp-searched', createdAt: { match: 'onOrAfter', date: '2026-10-01' }, offset: 0, limit: 20 });
+
+  assert.partialDeepStrictEqual(output, { kind: 'flags', total: 2, flags: [{ name: first }, { name: second }] });
+});
+
 // One stub for the whole request: a new filter adds a key here, next to how Unleash spells it.
-// The recorded tests replay by full request, so they pin the any and all spellings; the exclusions are spelled here.
+// The recorded tests replay by full request, so they pin the spellings they send; the stub spells the rest.
 test('sends every filter as Unleash spells it', async () => {
   const { unleash, stub } = createStubbedClient();
   stub.intercept({
@@ -118,6 +132,8 @@ test('sends every filter as Unleash spells it', async () => {
       lifecycle: 'IS_ANY_OF:initial,pre-live,live,completed,archived',
       segment: 'EXCLUDE_IF_ANY_OF:Beta users,Staff',
       tag: 'EXCLUDE_ALL:simple:beta,team:payments',
+      createdBy: 'IS_ANY_OF:17,18',
+      createdAt: 'IS_BEFORE:2026-10-05',
       offset: '0',
       limit: '20',
     },
@@ -131,6 +147,8 @@ test('sends every filter as Unleash spells it', async () => {
     stages: ['define', 'develop', 'production', 'cleanup', 'archived'],
     segments: { match: 'none', of: ['Beta users', 'Staff'] },
     tags: { match: 'notAll', of: [{ type: 'simple', value: 'beta' }, { type: 'team', value: 'payments' }] },
+    createdBy: { match: 'any', of: [17, 18] },
+    createdAt: { match: 'before', date: '2026-10-05' },
     offset: 0,
     limit: 20,
   });
