@@ -68,7 +68,15 @@ const failedChange = z.discriminatedUnion('resource', [
   ]),
 ]);
 
-const result = z.discriminatedUnion('kind', [applied, failedChange]);
+const changeRequest = z.object({ id: z.number(), state: z.string() }).describe('The change request holding the change, submitted for review');
+
+// Only segments in a project whose changes need approval wait for a change request.
+const pendingChange = z.discriminatedUnion('action', [
+  z.object({ kind: z.literal('pending_change_request'), ...updatedSegment, changeRequest }),
+  z.object({ kind: z.literal('pending_change_request'), ...deletedSegment, changeRequest }),
+]);
+
+const result = z.discriminatedUnion('kind', [applied, failedChange, pendingChange]);
 
 export const configureOutput = {
   results: z.array(result).describe('One per change, in the order given, each naming the change it answers'),
@@ -82,3 +90,5 @@ export type ConfigureResult = z.infer<typeof result>;
 export type Target = z.infer<typeof target>;
 /** What a step answers, with the id Unleash gave a created resource that has one. The tool adds the change it answers. */
 export type Outcome = { kind: 'applied'; id?: string | number } | Failed;
+/** What a step answers when the change waits for approval: the change request holding it. */
+export type PendingChange = { kind: 'pending_change_request'; changeRequest: { id: number; state: string } };

@@ -189,4 +189,6 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - `configure` creates, updates and deletes segments. Reading them stays on `inspect` and `search`.
 - Update and delete name the segment by id, as release targets do; create answers with the new id. Rejected: by name, which needs a list read to resolve it.
 - Updating a segment replaces it, like Unleash's PUT: name and constraints are required, a left out project makes it global, a left out description stays. Rejected: a partial update that reads and merges (2 requests).
-- Change requests for project segments are left out for now: Unleash's refusal comes back as `failed`.
+- Updating or deleting a segment in a project with change requests goes into a change request, submitted for review, and answers `pending_change_request` with its id and state. Supersedes "change requests for project segments are left out for now".
+- Delete takes an optional project, as update does. Rejected: reading the segment first (one more request per delete), and writing directly then falling back on Unleash's refusal (depends on its error text).
+- Whether a project needs change requests is checked the way the release tool does it (edition, then the project's change request config). Its environment is the one the Unleash UI picks: a production one first.
