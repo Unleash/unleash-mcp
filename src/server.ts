@@ -60,7 +60,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   server.registerTool(
     'search',
     {
-      description: 'Find Unleash items by name and get the ids inspect and release take. One result per query, in the order asked.',
+      description: 'Find Unleash items by name and get the ids inspect, release and configure take. One result per query, in the order asked.',
       inputSchema: searchInput,
       outputSchema: searchOutput,
       annotations: { readOnlyHint: true },
@@ -71,7 +71,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   server.registerTool(
     'configure',
     {
-      description: 'Change Unleash configuration: create, replace and delete context fields, global or in a project, add or remove their legal values, and create release templates. Applies the changes in order and reports each one.',
+      description: 'Change Unleash configuration: context fields and their legal values, segments, and release templates. Takes ids and names as search returns them; inspect an item first to replace it, since a replace drops what is left out. Applies the changes in order and reports each one.',
       inputSchema: configureInput,
       outputSchema: configureOutput,
     },
