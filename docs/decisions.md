@@ -192,3 +192,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Updating or deleting a segment in a project with change requests goes into a change request, submitted for review, and answers `pending_change_request` with its id and state. Supersedes "change requests for project segments are left out for now".
 - Delete takes an optional project, as update does. Rejected: reading the segment first (one more request per delete), and writing directly then falling back on Unleash's refusal (depends on its error text).
 - Whether a project needs change requests is checked the way the release tool does it (edition, then the project's change request config). Its environment is the one the Unleash UI picks: a production one first.
+
+## 2026-10-24 — Inputs say where their values come from
+
+- Every input parameter, and every tool description, says where to get its value from: the `search` or `inspect` result that gives it. Agents then look values up before writing. Prompted by real usage of `configure`: a constraint value that was not a legal value became a change request Unleash could not apply, and a change request id was sent as a segment id.
