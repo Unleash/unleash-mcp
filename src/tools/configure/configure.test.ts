@@ -69,3 +69,19 @@ test('names a deleted segment by its id', async () => {
 
   assert.deepEqual(output, { results: [{ kind: 'applied', resource: 'segment', action: 'delete', id: 42 }] });
 });
+
+test('answers a change waiting for approval with its change request', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const draft = { id: 7, state: 'In review', environment: 'production', project: 'mcp-server', minApprovals: 1, features: [], segments: [] };
+  stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(200, { environment: 'Enterprise', versionInfo: { current: { oss: '8.2.0', enterprise: '8.2.1' } } });
+  stub.intercept({ path: '/api/admin/projects/mcp-server/change-requests/config', method: 'GET' })
+    .reply(200, [{ environment: 'production', type: 'production', requiredApprovals: 1, changeRequestEnabled: true }]);
+  stub.intercept({ path: '/api/admin/projects/mcp-server/environments/production/change-requests', method: 'POST' }).reply(200, draft);
+  const configure = createConfigure(unleash);
+
+  const output = await configure({ changes: [{ kind: 'segment', action: 'delete', id: 42, project: 'mcp-server' }] });
+
+  assert.deepEqual(output, {
+    results: [{ kind: 'pending_change_request', resource: 'segment', action: 'delete', id: 42, changeRequest: { id: 7, state: 'In review' } }],
+  });
+});

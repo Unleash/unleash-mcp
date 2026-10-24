@@ -1,24 +1,38 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
+import { isDeepStrictEqual } from 'node:util';
+import type { Interceptable } from 'undici';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { deleteSegmentNamed } from '../../unleash/testSetup.ts';
+import { createChangeRequestReader } from '../shared/changeRequest.ts';
 import { createSegment, deleteSegment, updateSegment } from './segment.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./segment.snapshot.json', import.meta.url).pathname);
+const environmentsOf = createChangeRequestReader(unleash);
 const name = 'mcp-configured-segment';
 const projectSegment = 'mcp-configured-project-segment';
 const updatable = 'mcp-updatable-segment';
 const updated = 'mcp-updated-segment';
 const deletable = 'mcp-deletable-segment';
+const reviewed = 'mcp-reviewed-segment';
+const reviewedDeletion = 'mcp-reviewed-deletion-segment';
 const project = 'mcp-server';
+// Unleash adds a change to the user's open change request, in review or not, so both tests can answer the same one.
+const changeRequestIds = new Set<number>();
 
 const deleteSegments = async (): Promise<void> => {
-  for (const segment of [name, projectSegment, updatable, updated, deletable]) await deleteSegmentNamed(admin, segment);
+  for (const segment of [name, projectSegment, updatable, updated, deletable, reviewed, reviewedDeletion]) await deleteSegmentNamed(admin, segment);
 };
 
 before(deleteSegments);
+// The change requests go first, so nothing pending refers to the segments.
 after(async () => {
+  // A submitted change request can't be deleted, only cancelled, and only by its author. The OpenAPI spec omits the body.
+  for (const id of changeRequestIds) await unleash.PUT('/api/admin/projects/{projectId}/change-requests/{id}/state', {
+    params: { path: { projectId: project, id: String(id) } },
+    body: { state: 'Cancelled' } as never,
+  });
   await deleteSegments();
   await close();
 });
@@ -55,7 +69,7 @@ test('fails with the Unleash error when the segment name is taken', async () => 
 test('replaces a segment', async () => {
   const id = (await admin.POST('/api/admin/segments', { body: { name: updatable, constraints: [] } })).data?.id ?? 0;
 
-  const output = await updateSegment(unleash, {
+  const output = await updateSegment(unleash, environmentsOf, {
     kind: 'segment',
     action: 'update',
     id,
@@ -71,7 +85,7 @@ test('fails with the Unleash error when the segment to update does not exist', a
   const message = 'No segment exists with id 404';
   stub.intercept({ path: '/api/admin/segments/404', method: 'PUT' }).reply(404, unleashError('NotFoundError', message));
 
-  const output = await updateSegment(unleash, { kind: 'segment', action: 'update', id: 404, name, constraints: [] });
+  const output = await updateSegment(unleash, environmentsOf, { kind: 'segment', action: 'update', id: 404, name, constraints: [] });
 
   assert.deepEqual(output, { kind: 'failed', status: 404, name: 'NotFoundError', reasons: [message] });
 });
@@ -79,7 +93,7 @@ test('fails with the Unleash error when the segment to update does not exist', a
 test('deletes a segment', async () => {
   const id = (await admin.POST('/api/admin/segments', { body: { name: deletable, constraints: [] } })).data?.id ?? 0;
 
-  const output = await deleteSegment(unleash, { kind: 'segment', action: 'delete', id });
+  const output = await deleteSegment(unleash, environmentsOf, { kind: 'segment', action: 'delete', id });
 
   assert.deepEqual(output, { kind: 'applied' });
 });
@@ -88,7 +102,7 @@ test('fails with a reason when a flag still targets the segment, which Unleash l
   const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: '/api/admin/segments/42', method: 'DELETE' }).reply(409, '');
 
-  const output = await deleteSegment(unleash, { kind: 'segment', action: 'delete', id: 42 });
+  const output = await deleteSegment(unleash, environmentsOf, { kind: 'segment', action: 'delete', id: 42 });
 
   assert.deepEqual(output, {
     kind: 'failed',
@@ -96,4 +110,67 @@ test('fails with a reason when a flag still targets the segment, which Unleash l
     name: 'ConflictError',
     reasons: ['A flag still targets the segment; inspect the segment with usage to find which'],
   });
+});
+
+// `mcp-server` requires change requests in production.
+test('puts the update of a segment in a change request where the project requires one', async () => {
+  const id = (await admin.POST('/api/admin/segments', { body: { name: reviewed, project, constraints: [] } })).data?.id ?? 0;
+
+  const output = await updateSegment(unleash, environmentsOf, { kind: 'segment', action: 'update', id, project, name: reviewed, constraints: [] });
+
+  assert(output.kind === 'pending_change_request');
+  changeRequestIds.add(output.changeRequest.id);
+  assert.equal(output.changeRequest.state, 'In review');
+});
+
+test('puts the deletion of a segment in a change request where the project requires one', async () => {
+  const id = (await admin.POST('/api/admin/segments', { body: { name: reviewedDeletion, project, constraints: [] } })).data?.id ?? 0;
+
+  const output = await deleteSegment(unleash, environmentsOf, { kind: 'segment', action: 'delete', id, project });
+
+  assert(output.kind === 'pending_change_request');
+  changeRequestIds.add(output.changeRequest.id);
+  assert.equal(output.changeRequest.state, 'In review');
+});
+
+const enterprise = { environment: 'Enterprise', versionInfo: { current: { oss: '8.2.0', enterprise: '8.2.1' } } };
+const config = `/api/admin/projects/${project}/change-requests/config`;
+const draft = { id: 7, state: 'Draft', environment: 'production', project, minApprovals: 1, features: [], segments: [] };
+const stubChangeRequestsIn = (stub: Interceptable, ...environments: { environment: string; type: string }[]) => {
+  stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(200, enterprise);
+  stub.intercept({ path: config, method: 'GET' }).reply(200, environments.map((e) => ({ ...e, requiredApprovals: 1, changeRequestEnabled: true })));
+};
+
+test('replaces a project segment directly where the project requires no change requests', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stubChangeRequestsIn(stub);
+  stub.intercept({ path: '/api/admin/segments/42', method: 'PUT' }).reply(204, '');
+
+  const output = await updateSegment(unleash, createChangeRequestReader(unleash), { kind: 'segment', action: 'update', id: 42, project, name, constraints: [] });
+
+  assert.deepEqual(output, { kind: 'applied' });
+});
+
+// Only the production environment's change requests are stubbed, so opening one elsewhere fails the test.
+test('opens the change request in a production environment first, as the Unleash UI does', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stubChangeRequestsIn(stub, { environment: 'development', type: 'development' }, { environment: 'live', type: 'production' });
+  const deletes = (body: string): boolean => isDeepStrictEqual(JSON.parse(body), { action: 'deleteSegment', payload: { id: 42 } });
+  stub.intercept({ path: `/api/admin/projects/${project}/environments/live/change-requests`, method: 'POST', body: deletes }).reply(200, draft);
+  stub.intercept({ path: `/api/admin/projects/${project}/change-requests/7/state`, method: 'PUT' }).reply(200, { ...draft, state: 'In review' });
+
+  const output = await deleteSegment(unleash, createChangeRequestReader(unleash), { kind: 'segment', action: 'delete', id: 42, project });
+
+  assert.deepEqual(output, { kind: 'pending_change_request', changeRequest: { id: 7, state: 'In review' } });
+});
+
+test('fails with the Unleash error when the change request cannot be opened', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const message = 'You need the UPDATE_PROJECT_SEGMENT permission';
+  stubChangeRequestsIn(stub, { environment: 'production', type: 'production' });
+  stub.intercept({ path: `/api/admin/projects/${project}/environments/production/change-requests`, method: 'POST' }).reply(403, unleashError('PermissionError', message));
+
+  const output = await updateSegment(unleash, createChangeRequestReader(unleash), { kind: 'segment', action: 'update', id: 42, project, name, constraints: [] });
+
+  assert.deepEqual(output, { kind: 'failed', status: 403, name: 'PermissionError', reasons: [message] });
 });

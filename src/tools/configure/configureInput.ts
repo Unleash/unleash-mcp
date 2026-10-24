@@ -77,13 +77,14 @@ const updateSegment = z.object({
   ...segment,
   action: z.literal('update'),
   id: z.number().int().describe('Id of the segment to replace, as a segments search returns it'),
-}).describe('Replace a segment\'s name, constraints and project; a left out project makes it global, a left out description stays. Every flag targeting it changes audience');
+}).describe('Replace a segment\'s name, constraints and project; a left out project makes it global, a left out description stays. Every flag targeting it changes audience. In a project whose changes need approval, it goes into a change request');
 
 const deleteSegment = z.object({
   kind: z.literal('segment'),
   action: z.literal('delete'),
   id: z.number().int().describe('Id of the segment to delete, as a segments search returns it'),
-}).describe('Delete a segment. Unleash refuses while a flag targets it; inspect the segment with usage to find those flags');
+  project: z.string().optional().describe('Project id of a project segment, as a segments search returns it; leave out for a global segment'),
+}).describe('Delete a segment. Unleash refuses while a flag targets it; inspect the segment with usage to find those flags. In a project whose changes need approval, it goes into a change request');
 
 const change = z.union([createContextField, updateContextField, deleteContextField, createLegalValue, deleteLegalValue, createReleaseTemplate, createSegment, updateSegment, deleteSegment]);
 
