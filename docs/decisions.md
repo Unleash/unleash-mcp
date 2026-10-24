@@ -149,6 +149,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Search fetches all segments for now and returns every match, without a limit or a total: most people don't have that many segments, and letting the agent do the filtering and mapping is fine for now. The rows carry scope, author, creation date and usage counts, and the tool tells the agent to search all and filter itself. Rejected for now: a default limit with a total, and typed filters applied on our side, since Unleash's segments list offers none.
 - Context field search lets Unleash scope the list, as its UI does: a project's fields with the global ones included, or the global ones with every project's included. The name match stays on our side. Rows carry the usage counts the list gives for free; legal values stay on `inspect`.
 - Project search matches the query on the id or the name on our side, over the core view. Rows are id, name and creation date: `archivedAt` is left off because the list excludes archived projects unless asked, and `description` because Unleash deprecates it.
+- Tag type and tag search match on our side, since neither list filters; tags of one type come from Unleash's by-type list. Tag type rows leave off icon and colour, which an agent doesn't act on.
 
 ## 2026-10-22 — Release templates in configure
 
@@ -164,6 +165,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - The search endpoint is Unleash's heaviest flag read (checked in its source: the ranking joins every matching flag before the page is cut, and no core view exists). Accepted for now; the fix is a core view on the search endpoint in Unleash.
 - Only project and query filters for now; typed filters and sorting wait for a use case. Rows are a summary; strategies stay on `inspect`.
 - A step returns only the results it can produce (`Flags | Failed`), not the tool's whole result union: the compiler then checks each kind's output and tests need no casts. Rejected: the spike's habit of returning the union everywhere.
+- No favorites filter: favorites belong to the human user behind the token, not to an agent.
 
 ## 2026-10-23 — Search prepares the options
 
@@ -172,6 +174,10 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 ## 2026-10-23 — Node versions
 
 - Pin Node 26 for development, but the minimum supported stays 24. The snapshots replay only on the Node major they were recorded on, because undici hashes the request headers and `accept-encoding` changes between majors. Node 24 is in maintenance but supported until 2028-04-30; Node 26 becomes LTS on 2026-10-28. Rejected for now: raising `engines` to 26, which buys the code nothing.
+
+## 2026-10-23 — Test speed
+
+- Type checking dominated `npm test`, because of the generated Unleash types, not our code. Make `tsc` incremental so repeated runs skip what did not change.
 
 ## 2026-10-23 — pnpm
 
@@ -192,6 +198,19 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Updating or deleting a segment in a project with change requests goes into a change request, submitted for review, and answers `pending_change_request` with its id and state. Supersedes "change requests for project segments are left out for now".
 - Delete takes an optional project, as update does. Rejected: reading the segment first (one more request per delete), and writing directly then falling back on Unleash's refusal (depends on its error text).
 - Whether a project needs change requests is checked the way the release tool does it (edition, then the project's change request config). Its environment is the one the Unleash UI picks: a production one first.
+
+## 2026-10-23 — Single-flag playground route in the generated client
+
+- The single-flag playground route is beta from Unleash 8.3.0, but `main` still reports 8.2.0, so the sandbox spec leaves it out. I copied just that route in from a local Unleash in dev mode, which serves alpha routes. Rejected: the whole local spec, which reorders and drops routes, and faking the beta version as 8.2.
+- Don't regenerate the spec until the sandbox is on 8.3.0, or the route drops out.
+
+## 2026-10-23 — Evaluate defaults appName to unleash-mcp
+
+- Unleash needs an `appName` to evaluate, and someone testing a flag from a chat agent won't know their app's name, so `evaluate` defaults it to `unleash-mcp`. People can target `unleash-mcp` with an app name rule, apart from their real apps. Rejected: requiring it, and the UI playground's `playground`.
+
+## 2026-10-23 — Deleting a resource in use
+
+- Deleting a resource in use is refused where it changes how flags behave (context fields, segments): Unleash refuses those itself and the refusal is passed through. Deletes that only remove labels (tags, tag types) cascade, as in the UI; the search rows carry the usage, so the agent checks and asks before.
 
 ## 2026-10-24 — Inputs say where their values come from
 

@@ -7,7 +7,7 @@ paths:
 # Tests
 
 - No hand-written fetch mocks. Tests run against Unleash through undici's `SnapshotAgent`: `pnpm test` replays checked-in snapshots, the `record-snapshots` skill re-records them.
-- Snapshots leave out churning response headers (`excludeHeaders` in `createRecordedClient`); bodies stay verbatim. Why: `docs/decisions.md` (Snapshots hold only what matters).
+- Snapshots leave out churning response headers (`excludeHeaders` in `createRecordedClient`) and undici's per-entry recording timestamp (stripped after recording); bodies stay verbatim. Why: `docs/decisions.md` (Snapshots hold only what matters).
 - The only sandbox fixture is the project `mcp-server`. Tests create everything else they need in `before` and remove it in `after`, with the helpers in `src/unleash/testSetup.ts`, and cope with leftovers from a failed recording. Flag names match the pattern `^mcp-[a-z-]+$`, which `project.test.ts` sets on the project.
 - Test files that write to Unleash use their own flag (e.g. `mcp-server-flag` in `server.test.ts`): files record in parallel.
 - Tests must be subsecond. Avoid network I/O, timers and process spawning.

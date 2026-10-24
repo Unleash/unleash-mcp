@@ -12,6 +12,9 @@ import { createConfigure } from './tools/configure/configure.ts';
 import { searchInput } from './tools/search/searchInput.ts';
 import { searchOutput } from './tools/search/searchOutput.ts';
 import { createSearch } from './tools/search/search.ts';
+import { flagLifecycleInput } from './tools/flagLifecycle/flagLifecycleInput.ts';
+import { flagLifecycleOutput } from './tools/flagLifecycle/flagLifecycleOutput.ts';
+import { createFlagLifecycle } from './tools/flagLifecycle/flagLifecycle.ts';
 import type { Failed } from './tools/shared/failed.ts';
 import type { UnleashClient } from './unleash/client.ts';
 
@@ -30,6 +33,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   const inspect = createInspect(unleash);
   const configure = createConfigure(unleash);
   const search = createSearch(unleash);
+  const flagLifecycle = createFlagLifecycle(unleash);
 
   server.registerTool(
     'release',
@@ -71,11 +75,21 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   server.registerTool(
     'configure',
     {
-      description: 'Change Unleash configuration: context fields and their legal values, segments, and release templates. Takes ids and names as search returns them; inspect an item first to replace it, since a replace drops what is left out. Applies the changes in order and reports each one.',
+      description: 'Change Unleash configuration: context fields and their legal values, segments, tag types and tags, and release templates. Takes ids and names as search returns them; inspect an item first to replace it, since a replace drops what is left out. Applies the changes in order and reports each one.',
       inputSchema: configureInput,
       outputSchema: configureOutput,
     },
     async (input) => toToolResult(await configure(input)),
+  );
+
+  server.registerTool(
+    'flag_lifecycle',
+    {
+      description: 'Move flags through their lifecycle: define them (create, or bring an existing one to what is listed), mark them completed. Applies the operations in order and reports each one.',
+      inputSchema: flagLifecycleInput,
+      outputSchema: flagLifecycleOutput,
+    },
+    async (input) => toToolResult(await flagLifecycle(input)),
   );
 
   return server;

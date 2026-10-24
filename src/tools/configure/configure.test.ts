@@ -85,3 +85,22 @@ test('answers a change waiting for approval with its change request', async () =
     results: [{ kind: 'pending_change_request', resource: 'segment', action: 'delete', id: 42, changeRequest: { id: 7, state: 'In review' } }],
   });
 });
+
+test('names the tag type and the tag a result answers', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: '/api/admin/tag-types/team', method: 'PUT' }).reply(200, { version: 1, tagType: { name: 'team', description: '' } });
+  stub.intercept({ path: '/api/admin/tags/team/payments', method: 'DELETE' }).reply(200);
+  const configure = createConfigure(unleash);
+
+  const output = await configure({ changes: [
+    { kind: 'tag_type', action: 'update', name: 'team' },
+    { kind: 'tag', action: 'delete', type: 'team', value: 'payments' },
+  ] });
+
+  assert.deepEqual(output, {
+    results: [
+      { kind: 'applied', resource: 'tag_type', action: 'update', name: 'team' },
+      { kind: 'applied', resource: 'tag', action: 'delete', type: 'team', value: 'payments' },
+    ],
+  });
+});

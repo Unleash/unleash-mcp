@@ -48,8 +48,7 @@
           "trailers": {}
         }
       ],
-      "callCount": 0,
-      "timestamp": "2026-10-22T14:01:24.263Z"
+      "callCount": 0
     }
   },
   {
@@ -101,8 +100,7 @@
           "trailers": {}
         }
       ],
-      "callCount": 0,
-      "timestamp": "2026-10-22T14:01:24.538Z"
+      "callCount": 0
     }
   },
   {
@@ -138,12 +136,11 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwTGVnYWxWYWx1ZUZpZWxkIiwiZGVzY3JpcHRpb24iOm51bGwsInN0aWNraW5lc3MiOmZhbHNlLCJzb3J0T3JkZXIiOjAsImxlZ2FsVmFsdWVzIjpbXSwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yMlQxNDowMToyMi42MTBaIn0=",
+          "body": "eyJuYW1lIjoibWNwTGVnYWxWYWx1ZUZpZWxkIiwiZGVzY3JpcHRpb24iOm51bGwsInN0aWNraW5lc3MiOmZhbHNlLCJzb3J0T3JkZXIiOjAsImxlZ2FsVmFsdWVzIjpbXSwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yM1QxMzoxMjo0Ny4yMjNaIn0=",
           "trailers": {}
         }
       ],
-      "callCount": 0,
-      "timestamp": "2026-10-22T14:01:22.669Z"
+      "callCount": 0
     }
   },
   {
@@ -179,12 +176,11 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwUHJvamVjdExlZ2FsVmFsdWVGaWVsZCIsImRlc2NyaXB0aW9uIjpudWxsLCJzdGlja2luZXNzIjpmYWxzZSwic29ydE9yZGVyIjowLCJsZWdhbFZhbHVlcyI6W10sImNyZWF0ZWRBdCI6IjIwMjYtMTAtMjJUMTQ6MDE6MjIuODA3WiIsInByb2plY3QiOiJtY3Atc2VydmVyIn0=",
+          "body": "eyJuYW1lIjoibWNwUHJvamVjdExlZ2FsVmFsdWVGaWVsZCIsImRlc2NyaXB0aW9uIjpudWxsLCJzdGlja2luZXNzIjpmYWxzZSwic29ydE9yZGVyIjowLCJsZWdhbFZhbHVlcyI6W10sImNyZWF0ZWRBdCI6IjIwMjYtMTAtMjNUMTM6MTI6NDcuNDQ3WiIsInByb2plY3QiOiJtY3Atc2VydmVyIn0=",
           "trailers": {}
         }
       ],
-      "callCount": 0,
-      "timestamp": "2026-10-22T14:01:22.839Z"
+      "callCount": 0
     }
   },
   {
@@ -221,8 +217,7 @@
           "trailers": {}
         }
       ],
-      "callCount": 0,
-      "timestamp": "2026-10-22T14:01:22.944Z"
+      "callCount": 0
     }
   },
   {
@@ -259,8 +254,7 @@
           "trailers": {}
         }
       ],
-      "callCount": 0,
-      "timestamp": "2026-10-22T14:01:23.263Z"
+      "callCount": 0
     }
   },
   {
@@ -295,8 +289,7 @@
           "trailers": {}
         }
       ],
-      "callCount": 0,
-      "timestamp": "2026-10-22T14:01:23.468Z"
+      "callCount": 0
     }
   },
   {
@@ -333,8 +326,7 @@
           "trailers": {}
         }
       ],
-      "callCount": 0,
-      "timestamp": "2026-10-22T14:01:23.627Z"
+      "callCount": 0
     }
   },
   {
@@ -371,8 +363,7 @@
           "trailers": {}
         }
       ],
-      "callCount": 0,
-      "timestamp": "2026-10-22T14:01:23.788Z"
+      "callCount": 0
     }
   },
   {
@@ -407,8 +398,7 @@
           "trailers": {}
         }
       ],
-      "callCount": 0,
-      "timestamp": "2026-10-22T14:01:24.070Z"
+      "callCount": 0
     }
   }
 ]

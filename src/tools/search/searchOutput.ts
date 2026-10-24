@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { failed } from '../shared/failed.ts';
 import { lifecycleStage } from '../shared/lifecycleStage.ts';
+import { tag } from '../shared/tag.ts';
 
 const project = z.object({
   id: z.string(),
@@ -26,7 +27,7 @@ const flag = z.object({
   stage: lifecycleStage.optional().describe('Where the flag is in its life'),
   createdAt: z.string().optional().describe('ISO timestamp'),
   createdBy: z.string().optional().describe('Name of the user who created the flag'),
-  tags: z.array(z.object({ type: z.string(), value: z.string() })).optional(),
+  tags: z.array(tag).optional(),
   environments: z.array(flagEnvironment),
 });
 
@@ -66,7 +67,35 @@ const contextFields = z.object({
   fields: z.array(contextField).describe('Sorted by name'),
 });
 
-const result = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, failed]);
+const flagCreator = z.object({
+  id: z.number().int().describe('User id'),
+  name: z.string().describe('Name of the user, or the username or email when no name is set'),
+});
+
+const flagCreators = z.object({
+  kind: z.literal('flag_creators'),
+  total: z.number().int().describe('Creators matching the query across all pages'),
+  creators: z.array(flagCreator).describe('One page, sorted by name'),
+});
+
+const tagType = z.object({
+  name: z.string(),
+  description: z.string().optional(),
+  valueCount: z.number().int().describe('Tags of this type'),
+  usedInProjects: z.number().int(),
+});
+
+const tagTypes = z.object({
+  kind: z.literal('tag_types'),
+  tagTypes: z.array(tagType),
+});
+
+const tags = z.object({
+  kind: z.literal('tags'),
+  tags: z.array(tag),
+});
+
+const result = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, tagTypes, tags, flagCreators, failed]);
 
 export const searchOutput = {
   results: z.array(result).describe('One per query, in the order asked'),
@@ -78,3 +107,6 @@ export type Projects = z.infer<typeof projects>;
 export type Flags = z.infer<typeof flags>;
 export type Segments = z.infer<typeof segments>;
 export type ContextFields = z.infer<typeof contextFields>;
+export type TagTypes = z.infer<typeof tagTypes>;
+export type Tags = z.infer<typeof tags>;
+export type FlagCreators = z.infer<typeof flagCreators>;

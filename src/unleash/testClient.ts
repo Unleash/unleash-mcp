@@ -1,3 +1,4 @@
+import { readFile, writeFile } from 'node:fs/promises';
 import { type Dispatcher, type Interceptable, MockAgent, SnapshotAgent } from 'undici';
 import { z } from 'zod';
 import { readConfig } from '../config.ts';
@@ -26,8 +27,18 @@ export const createRecordedClient = (snapshotPath: string): { unleash: UnleashCl
     fetch: createFetch(agent),
   });
   // Closing the agent writes the snapshots when recording.
-  const close = (): Promise<void> => agent.close();
+  const close = async (): Promise<void> => {
+    await agent.close();
+    if (record) await stripTimestamps(snapshotPath);
+  };
   return { unleash, admin, close };
+};
+
+// undici stamps every exchange with when it was recorded and nothing reads it back: left out so re-recording only diffs what matters.
+const stripTimestamps = async (snapshotPath: string): Promise<void> => {
+  const entries: { snapshot: { timestamp?: string } }[] = JSON.parse(await readFile(snapshotPath, 'utf8'));
+  for (const { snapshot } of entries) delete snapshot.timestamp;
+  await writeFile(snapshotPath, JSON.stringify(entries, null, 2));
 };
 
 // Response headers that change on every recording and that nothing reads: left out so re-recording only diffs what matters.
