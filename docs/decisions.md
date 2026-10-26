@@ -222,6 +222,12 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - It takes a list of queries, like `inspect`: each query is one flag in one environment, with one context.
 - Results carry `flag` and `environment`, so a failure reads on its own. Order is what tells apart queries that differ only in context. Rejected: echoing the context back in every result, which costs tokens.
 - Unknown is its own result next to on and off: only a target Unleash cannot evaluate on the server, such as a custom strategy, could have turned the feature on, and SDKs may still serve it. An environment that is off or an unsatisfied parent still answers off. Rejected: answering off, which tells an agent a feature is off when an SDK may still serve it.
+- A result lists every target in the order Unleash checks them, the active milestone's first and then the environment's, as inspect lists each, with its name when it has one and whether it matched, missed or is unknown. Rejected: naming an unnamed target by its Unleash strategy type (`flexibleRollout`), which is misleading and not unique, and listing only the first match, which hides that another target would still let the user in, and an id or position per target, which no other tool takes.
+- The value is the one the code receives, once per result. Rejected: a value on every matched target, since only the first is served.
+
+## 2026-10-26 — A target bundles who, how many and what
+
+- Segments and constraints say who, and all of them must match. A target bundles that with how many (rollout) and what they get (values); separate targets are alternatives. Its name says why the audience exists. Rejected: a target being just a segment or a constraint, which has nowhere to put a rollout or values, nor a segment and a constraint together.
 
 ## 2026-10-26 — Change request links
 
