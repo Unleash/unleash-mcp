@@ -6,7 +6,7 @@ import type { Link } from '../../shared/link.ts';
 import type { FlagType } from '../../shared/flagType.ts';
 import type { Tag } from '../../shared/tag.ts';
 import type { Target, Value } from '../../shared/target.ts';
-import { toConstraint, type UnleashConstraint } from '../shared/constraint.ts';
+import { toConstraint, type UnleashConstraint } from '../../shared/constraint.ts';
 import { type Failed, toFailed } from '../../shared/failed.ts';
 import { toLifecycleStage, type UnleashStage } from '../../shared/lifecycleStage.ts';
 

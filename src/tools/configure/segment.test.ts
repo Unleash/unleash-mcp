@@ -157,7 +157,7 @@ test('opens the change request in a production environment first, as the Unleash
 
   const output = await deleteSegment(unleash, createChangeRequestReader(unleash), { kind: 'segment', action: 'delete', id: 42, project });
 
-  assert.deepEqual(output, { kind: 'pending_change_request', changeRequest: { id: 7, state: 'In review' } });
+  assert.deepEqual(output, { kind: 'pending_change_request', changeRequest: { id: 7, state: 'In review', url: `https://unleash.example/projects/${project}/change-requests/7` } });
 });
 
 test('fails with the Unleash error when the change request cannot be opened', async () => {

@@ -229,6 +229,11 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 
 - Segments and constraints say who, and all of them must match. A target bundles that with how many (rollout) and what they get (values); separate targets are alternatives. Its name says why the audience exists. Rejected: a target being just a segment or a constraint, which has nowhere to put a rollout or values, nor a segment and a constraint together.
 
+## 2026-10-26 — Change request links
+
+- Every change request result carries a `url` to the change request in the Unleash UI, so people can open it instead of looking it up by number.
+- The link is built from our `UNLEASH_BASE_URL`, the address the user configured. Rejected: Unleash's own `unleashUrl` from `ui-config`, which self-hosted instances that never set it report as `http://localhost:4242`.
+
 ## 2026-10-26 — Release through a release template
 
 - `release` takes a release template id, `template`, to release a flag through the template's milestones instead of targets built from scratch.

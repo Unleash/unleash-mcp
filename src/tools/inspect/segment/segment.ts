@@ -2,7 +2,7 @@ import type { UnleashClient } from '../../../unleash/client.ts';
 import type { SegmentQuery } from '../inspectInput.ts';
 import type { Segment } from '../inspectOutput.ts';
 import { type Failed, toFailed } from '../../shared/failed.ts';
-import { toConstraint } from '../shared/constraint.ts';
+import { toConstraint } from '../../shared/constraint.ts';
 import { toUsedBy } from '../shared/usage.ts';
 
 // Usage is the strategies-by-segment request the Unleash UI makes before a delete. Unleash answers it with an
