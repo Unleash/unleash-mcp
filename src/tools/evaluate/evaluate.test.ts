@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import type { components } from '../../unleash/api.d.ts';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
@@ -16,16 +17,20 @@ const child = 'mcp-evaluated-child';
 const segment = 'mcp-evaluated-segment';
 const environment = 'development';
 const sdkOnlyStrategy = 'mcp-custom-strategy';
-const users = { targeted: '1', targetedBySdkOnly: '2', untargeted: '3' };
-const userIn = (userId: string) => ({ field: 'userId', operator: 'IN', values: [userId] });
+const users = { targeted: '1', outsideRollout: '9', targetedBySdkOnly: '2', untargeted: '3' };
+const userIn = (...values: string[]) => ({ field: 'userId', operator: 'IN' as const, values });
+const beta = userIn(users.targeted, users.outsideRollout);
 const paused = { name: 'Paused', result: 'disabled' };
+const sessionOutsideRollout = 'b';
+const everyone = { name: 'Everyone', result: 'matched', matchedBy: {} };
+const bySession = (missedBy: object) => ({ name: 'By session', result: 'missed', missedBy });
 let segmentId = 0;
 
+const addTarget = (featureName: string, env: string, body: components['schemas']['createFeatureStrategySchema']) =>
+  admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies', { params: { path: { projectId: project, featureName, environment: env } }, body });
+
 const addSdkOnlyTarget = (featureName: string, env: string) =>
-  admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies', {
-    params: { path: { projectId: project, featureName, environment: env } },
-    body: { name: sdkOnlyStrategy, constraints: [{ contextName: 'userId', operator: 'IN', values: [users.targetedBySdkOnly], caseInsensitive: false, inverted: false }] },
-  });
+  addTarget(featureName, env, { name: sdkOnlyStrategy, constraints: [{ contextName: 'userId', operator: 'IN', values: [users.targetedBySdkOnly], caseInsensitive: false, inverted: false }] });
 
 const deleteSetup = async () => {
   for (const name of [flag, child, parent]) await deleteFlag(admin, project, name);
@@ -39,13 +44,12 @@ before(async () => {
   await admin.POST('/api/admin/strategies', { body: { name: sdkOnlyStrategy, parameters: [] } });
   const created = await createSegment(admin, { kind: 'segment', action: 'create', name: segment, constraints: [{ field: 'appName', operator: 'IN', values: ['unleash-mcp'] }] });
   segmentId = created.kind === 'applied' ? created.id : 0;
-  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment, audience: { targets: [{ name: 'Beta', segments: [segmentId], constraints: [{ field: 'userId', operator: 'IN', values: [users.targeted] }], values: [{ name: 'blue', payload: { type: 'string', value: 'b' } }] }] } });
-  await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies', {
-    params: { path: { projectId: project, featureName: flag, environment } },
-    body: { name: 'flexibleRollout', title: paused.name, disabled: true },
-  });
+  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment, audience: { targets: [{ name: 'Beta', rollout: 80, segments: [segmentId], constraints: [beta], values: [{ name: 'blue', payload: { type: 'string', value: 'b' } }] }] } });
+  await addTarget(flag, environment, { name: 'flexibleRollout', title: paused.name, disabled: true });
   await addSdkOnlyTarget(flag, environment);
   await addSdkOnlyTarget(flag, 'production');
+  await addTarget(flag, 'production', { name: 'flexibleRollout', title: 'Everyone', parameters: { rollout: '100', stickiness: 'default', groupId: flag } });
+  await addTarget(flag, 'production', { name: 'flexibleRollout', title: 'By session', parameters: { rollout: '50', stickiness: 'sessionId', groupId: flag } });
   for (const name of [parent, child]) await defineFlag(admin, { action: 'define', project, flag: name });
   await addSdkOnlyTarget(child, environment);
   await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on', { params: { path: { projectId: project, featureName: child, environment } } });
@@ -66,7 +70,7 @@ test('the feature is on for a context a target matches, with the value it serves
       kind: 'evaluated', flag, environment, result: 'on',
       value: { name: 'blue', payload: { type: 'string', value: 'b' } },
       targets: [
-        { name: 'Beta', result: 'matched', matchedBy: { segments: [{ id: segmentId, name: segment }], constraints: [userIn(users.targeted)] } },
+        { name: 'Beta', result: 'matched', matchedBy: { segments: [{ id: segmentId, name: segment }], constraints: [beta], rollout: 80 } },
         paused,
         { result: 'missed', missedBy: { constraints: [userIn(users.targetedBySdkOnly)] } },
       ],
@@ -81,7 +85,7 @@ test('the feature is unknown when only a target Unleash cannot evaluate could tu
     results: [{
       kind: 'evaluated', flag, environment, result: 'unknown',
       targets: [
-        { name: 'Beta', result: 'missed', missedBy: { constraints: [userIn(users.targeted)] } },
+        { name: 'Beta', result: 'missed', missedBy: { constraints: [beta] } },
         paused,
         { result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } },
       ],
@@ -90,13 +94,18 @@ test('the feature is unknown when only a target Unleash cannot evaluate could tu
 });
 
 test('the feature is off for a context no target matches, a disabled one aside, each naming only what kept the context out', async () => {
-  const output = await evaluateAs({ appName: 'unleash-mcp', userId: users.untargeted }, { appName: 'another-app', userId: users.targeted });
+  const output = await evaluateAs(
+    { appName: 'unleash-mcp', userId: users.untargeted },
+    { appName: 'another-app', userId: users.targeted },
+    { appName: 'unleash-mcp', userId: users.outsideRollout },
+  );
 
   const sdkOnlyMissed = { result: 'missed', missedBy: { constraints: [userIn(users.targetedBySdkOnly)] } };
   assert.deepEqual(output, {
     results: [
-      { kind: 'evaluated', flag, environment, result: 'off', targets: [{ name: 'Beta', result: 'missed', missedBy: { constraints: [userIn(users.targeted)] } }, paused, sdkOnlyMissed] },
+      { kind: 'evaluated', flag, environment, result: 'off', targets: [{ name: 'Beta', result: 'missed', missedBy: { constraints: [beta] } }, paused, sdkOnlyMissed] },
       { kind: 'evaluated', flag, environment, result: 'off', targets: [{ name: 'Beta', result: 'missed', missedBy: { segments: [{ id: segmentId, name: segment }] } }, paused, sdkOnlyMissed] },
+      { kind: 'evaluated', flag, environment, result: 'off', targets: [{ name: 'Beta', result: 'missed', missedBy: { rollout: 80 } }, paused, sdkOnlyMissed] },
     ],
   });
 });
@@ -108,8 +117,22 @@ test('the feature is off when its environment is off or its parent is unsatisfie
 
   assert.deepEqual(output, {
     results: [
-      { kind: 'evaluated', flag, environment: 'production', result: 'off', targets: [{ result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } }] },
+      { kind: 'evaluated', flag, environment: 'production', result: 'off', targets: [{ result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } }, everyone, bySession({})] },
       { kind: 'evaluated', flag: child, environment, result: 'off', targets: [{ result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } }] },
+    ],
+  });
+});
+
+test('a target names its rollout only when it is under 100 and the context has the field the rollout sticks to', async () => {
+  const context = { appName: 'unleash-mcp', userId: users.untargeted };
+
+  const output = await createEvaluate(unleash)({ queries: [{ flag, environment: 'production', context }, { flag, environment: 'production', context: { ...context, sessionId: sessionOutsideRollout } }] });
+
+  const sdkOnlyMissed = { result: 'missed', missedBy: { constraints: [userIn(users.targetedBySdkOnly)] } };
+  assert.deepEqual(output, {
+    results: [
+      { kind: 'evaluated', flag, environment: 'production', result: 'off', targets: [sdkOnlyMissed, everyone, bySession({})] },
+      { kind: 'evaluated', flag, environment: 'production', result: 'off', targets: [sdkOnlyMissed, everyone, bySession({ rollout: 50 })] },
     ],
   });
 });
