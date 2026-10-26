@@ -10,7 +10,7 @@ const servedValue = z.object({
 
 const evaluatedTarget = z.object({
   name: z.string().optional(),
-  result: z.enum(['matched', 'missed', 'unknown']).describe('unknown: Unleash cannot evaluate it on the server'),
+  result: z.enum(['matched', 'missed', 'unknown', 'disabled']).describe('unknown: Unleash cannot evaluate it on the server. disabled: SDKs never get it'),
 });
 
 const evaluated = z.object({
