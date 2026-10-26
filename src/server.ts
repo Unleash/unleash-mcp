@@ -28,7 +28,10 @@ const toFailedToolResult = (result: Failed) => ({
 });
 
 export const createServer = (unleash: UnleashClient): McpServer => {
-  const server = new McpServer({ name: 'unleash-mcp', version: pkg.version });
+  // Huge arrays or objects in one tool call can run the server out of memory (GHSA-46jr-4wx8-v453).
+  // 10,000 is the advisory's example. The largest call that can't be split is a context field update, which resends
+  // every legal value, so a field with more than about 3,300 described values can't be updated through configure.
+  const server = new McpServer({ name: 'unleash-mcp', version: pkg.version }, { maxToolInputElements: 10_000 });
   const release = createRelease(unleash);
   const inspect = createInspect(unleash);
   const configure = createConfigure(unleash);
