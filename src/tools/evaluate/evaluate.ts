@@ -18,7 +18,8 @@ const evaluate = async (unleash: UnleashClient, { flag, environment, context }: 
   });
   if (!evaluated.response.ok || !evaluated.data) return { ...toFailed(evaluated), flag, environment };
   const { isEnabled, isEnabledInCurrentEnvironment, hasUnsatisfiedDependency, strategies, variant } = evaluated.data.feature;
-  const onlySdksCanTell = isEnabledInCurrentEnvironment && !hasUnsatisfiedDependency && strategies.result === 'unknown';
+  // Unleash answers unknown for a disabled target, but SDKs never get one.
+  const onlySdksCanTell = isEnabledInCurrentEnvironment && !hasUnsatisfiedDependency && strategies.data.some((s) => !s.disabled && s.result.enabled === 'unknown');
   return {
     kind: 'evaluated',
     flag,
@@ -31,7 +32,7 @@ const evaluate = async (unleash: UnleashClient, { flag, environment, context }: 
 
 const toValue = ({ name, payload }: UnleashVariant): ServedValue => ({ name, ...(payload ? { payload } : {}) });
 
-const toTarget = ({ title, result }: UnleashStrategy): EvaluatedTarget => ({
+const toTarget = ({ title, disabled, result }: UnleashStrategy): EvaluatedTarget => ({
   ...(title ? { name: title } : {}),
-  result: result.enabled === 'unknown' ? 'unknown' : result.enabled ? 'matched' : 'missed',
+  result: disabled ? 'disabled' : result.enabled === 'unknown' ? 'unknown' : result.enabled ? 'matched' : 'missed',
 });
