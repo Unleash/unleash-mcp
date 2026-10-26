@@ -8,7 +8,7 @@ export const toStrategy = (groupId: string, target: Target) => ({
   name: 'flexibleRollout',
   title: target.name,
   parameters: { rollout: String(rolloutOf(target)), stickiness: 'default', groupId },
-  constraints: (target.constraints ?? []).map(toConstraint),
+  constraints: (target.constraints ?? []).map(toUnleashConstraint),
   segments: target.segments ?? [],
   variants: (target.values ?? []).map(toVariant),
 });
@@ -21,7 +21,8 @@ const toVariant = ({ share, ...value }: Value, i: number, all: Value[]) => {
   return { ...value, weight: (share ?? 0) * 10, weightType: fixed ? ('fix' as const) : ('variable' as const), stickiness: 'default' };
 };
 
-const toConstraint = (c: Constraint) => ({
+/** Turns an agent-facing constraint into the shape Unleash stores on strategies and segments. */
+export const toUnleashConstraint = (c: Constraint) => ({
   contextName: c.field,
   operator: c.operator,
   values: c.values,

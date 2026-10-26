@@ -33,7 +33,7 @@ test('creates a release template whose milestones advance on their own, answerin
   });
 
   assert.ok(output.kind === 'applied');
-  assert.match(output.id ?? '', ulid);
+  assert.match(String(output.id), ulid);
 });
 
 // Stubbed, not recorded: the sandbox's limit of 10 release templates leaves no room for a second one.

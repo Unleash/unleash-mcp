@@ -11,7 +11,7 @@ const operators = [
 export const constraint = z.object({
   field: z.string().describe('Context field name, as a context fields search returns it, e.g. userId, email, appName'),
   operator: z.enum(operators).describe('How the field is compared with the values'),
-  values: z.array(z.string()).min(1).describe('Matches when the field matches any of them'),
+  values: z.array(z.string()).min(1).describe('Matches when the field matches any of them. On a field with legal values, only those, as a context field inspect lists them'),
   inverted: z.boolean().optional().describe('Matches when the comparison does not'),
   caseInsensitive: z.boolean().optional().describe('Ignores case in string comparisons'),
 });

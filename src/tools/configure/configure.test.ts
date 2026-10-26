@@ -39,6 +39,53 @@ test('answers a created release template with its id', async () => {
   assert.deepEqual(output, { results: [{ kind: 'applied', resource: 'release_template', action: 'create', name: 'Gradual rollout', id }] });
 });
 
+test('answers a created segment with its id', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: '/api/admin/segments', method: 'POST' })
+    .reply(201, { id: 42, name: 'Beta testers', constraints: [] }, { headers: { 'content-type': 'application/json' } });
+  const configure = createConfigure(unleash);
+
+  const output = await configure({ changes: [{ kind: 'segment', action: 'create', name: 'Beta testers', constraints: [] }] });
+
+  assert.deepEqual(output, { results: [{ kind: 'applied', resource: 'segment', action: 'create', name: 'Beta testers', id: 42 }] });
+});
+
+test('names an updated segment by its id', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: '/api/admin/segments/42', method: 'PUT' }).reply(204, '');
+  const configure = createConfigure(unleash);
+
+  const output = await configure({ changes: [{ kind: 'segment', action: 'update', id: 42, name: 'Beta testers', constraints: [] }] });
+
+  assert.deepEqual(output, { results: [{ kind: 'applied', resource: 'segment', action: 'update', id: 42, name: 'Beta testers' }] });
+});
+
+test('names a deleted segment by its id', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: '/api/admin/segments/42', method: 'DELETE' }).reply(204, '');
+  const configure = createConfigure(unleash);
+
+  const output = await configure({ changes: [{ kind: 'segment', action: 'delete', id: 42 }] });
+
+  assert.deepEqual(output, { results: [{ kind: 'applied', resource: 'segment', action: 'delete', id: 42 }] });
+});
+
+test('answers a change waiting for approval with its change request', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const draft = { id: 7, state: 'In review', environment: 'production', project: 'mcp-server', minApprovals: 1, features: [], segments: [] };
+  stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(200, { environment: 'Enterprise', versionInfo: { current: { oss: '8.2.0', enterprise: '8.2.1' } } });
+  stub.intercept({ path: '/api/admin/projects/mcp-server/change-requests/config', method: 'GET' })
+    .reply(200, [{ environment: 'production', type: 'production', requiredApprovals: 1, changeRequestEnabled: true }]);
+  stub.intercept({ path: '/api/admin/projects/mcp-server/environments/production/change-requests', method: 'POST' }).reply(200, draft);
+  const configure = createConfigure(unleash);
+
+  const output = await configure({ changes: [{ kind: 'segment', action: 'delete', id: 42, project: 'mcp-server' }] });
+
+  assert.deepEqual(output, {
+    results: [{ kind: 'pending_change_request', resource: 'segment', action: 'delete', id: 42, changeRequest: { id: 7, state: 'In review' } }],
+  });
+});
+
 test('names the tag type and the tag a result answers', async () => {
   const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: '/api/admin/tag-types/team', method: 'PUT' }).reply(200, { version: 1, tagType: { name: 'team', description: '' } });
