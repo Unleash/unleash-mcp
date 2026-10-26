@@ -3,6 +3,7 @@ import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { deleteFlag } from '../../unleash/testSetup.ts';
+import { defineFlag } from '../flagLifecycle/define.ts';
 import { createRelease } from '../release/release.ts';
 import { createEvaluate } from './evaluate.ts';
 
@@ -30,10 +31,10 @@ const deleteFlagsAndStrategy = async () => {
 before(async () => {
   await deleteFlagsAndStrategy();
   await admin.POST('/api/admin/strategies', { body: { name: sdkOnlyStrategy, parameters: [] } });
-  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment, targets: [{ name: 'Beta', constraints: [{ field: 'userId', operator: 'IN', values: [users.targeted] }] }] });
+  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment, targets: [{ name: 'Beta', constraints: [{ field: 'userId', operator: 'IN', values: [users.targeted] }], values: [{ name: 'blue', payload: { type: 'string', value: 'b' } }] }] });
   await addSdkOnlyTarget(flag, environment);
   await addSdkOnlyTarget(flag, 'production');
-  for (const name of [parent, child]) await admin.POST('/api/admin/projects/{projectId}/features', { params: { path: { projectId: project } }, body: { name } });
+  for (const name of [parent, child]) await defineFlag(admin, { action: 'define', project, flag: name });
   await addSdkOnlyTarget(child, environment);
   await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on', { params: { path: { projectId: project, featureName: child, environment } } });
   await admin.POST('/api/admin/projects/{projectId}/features/{child}/dependencies', { params: { path: { projectId: project, child } }, body: { feature: parent } });
@@ -45,22 +46,32 @@ after(async () => {
 
 const evaluateFor = (userId: string) => createEvaluate(unleash)({ queries: [{ flag, environment, context: { appName: 'unleash-mcp', userId } }] });
 
-test('the feature is on for a context a target matches', async () => {
+test('the feature is on, with the value its target serves, for a context a target matches', async () => {
   const output = await evaluateFor(users.targeted);
 
-  assert.deepEqual(output, { results: [{ kind: 'evaluated', flag, environment, result: 'on' }] });
+  assert.deepEqual(output, {
+    results: [{
+      kind: 'evaluated', flag, environment, result: 'on',
+      value: { name: 'blue', payload: { type: 'string', value: 'b' } },
+      targets: [{ name: 'Beta', result: 'matched' }, { result: 'missed' }],
+    }],
+  });
 });
 
 test('the feature is unknown when only a target Unleash cannot evaluate could turn it on', async () => {
   const output = await evaluateFor(users.targetedBySdkOnly);
 
-  assert.deepEqual(output, { results: [{ kind: 'evaluated', flag, environment, result: 'unknown' }] });
+  assert.deepEqual(output, {
+    results: [{ kind: 'evaluated', flag, environment, result: 'unknown', targets: [{ name: 'Beta', result: 'missed' }, { result: 'unknown' }] }],
+  });
 });
 
 test('the feature is off for a context no target matches', async () => {
   const output = await evaluateFor(users.untargeted);
 
-  assert.deepEqual(output, { results: [{ kind: 'evaluated', flag, environment, result: 'off' }] });
+  assert.deepEqual(output, {
+    results: [{ kind: 'evaluated', flag, environment, result: 'off', targets: [{ name: 'Beta', result: 'missed' }, { result: 'missed' }] }],
+  });
 });
 
 test('the feature is off when its environment is off or its parent is unsatisfied, whatever its targets', async () => {
@@ -70,8 +81,8 @@ test('the feature is off when its environment is off or its parent is unsatisfie
 
   assert.deepEqual(output, {
     results: [
-      { kind: 'evaluated', flag, environment: 'production', result: 'off' },
-      { kind: 'evaluated', flag: child, environment, result: 'off' },
+      { kind: 'evaluated', flag, environment: 'production', result: 'off', targets: [{ result: 'unknown' }] },
+      { kind: 'evaluated', flag: child, environment, result: 'off', targets: [{ result: 'unknown' }] },
     ],
   });
 });
@@ -79,7 +90,7 @@ test('the feature is off when its environment is off or its parent is unsatisfie
 test('answers each query in the order asked, a failure naming its flag and environment', async () => {
   const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: '/api/admin/playground/features/missing', method: 'POST' }).reply(404, unleashError('NotFoundError', 'Could not find feature flag missing'));
-  stub.intercept({ path: `/api/admin/playground/features/${flag}`, method: 'POST' }).reply(200, { feature: { isEnabled: true } });
+  stub.intercept({ path: `/api/admin/playground/features/${flag}`, method: 'POST' }).reply(200, { feature: { isEnabled: true, strategies: { data: [] } } });
   const evaluate = createEvaluate(unleash);
 
   const output = await evaluate({
