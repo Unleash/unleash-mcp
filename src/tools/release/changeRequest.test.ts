@@ -50,6 +50,21 @@ test('applies the template before removing the audiences it replaces in the chan
   assert.equal(requested.kind, 'requested');
 });
 
+test('starts the milestone before removing the audiences it replaces in the change request', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const milestoneFirst = (body: string): boolean =>
+    isDeepStrictEqual(JSON.parse(body), [
+      { feature: 'mcp-flag', action: 'startMilestone', payload: { planId: 'p1', milestoneId: 'm2' } },
+      { feature: 'mcp-flag', action: 'deleteStrategy', payload: { id: 's1' } },
+    ]);
+  stub.intercept({ path: changeRequests, method: 'POST', body: milestoneFirst }).reply(200, draft);
+  stubSubmit(stub);
+
+  const requested = await requestRelease(unleash, path, { ...defaultPlan, deletes: ['s1'], milestone: { planId: 'p1', milestoneId: 'm2' } });
+
+  assert.equal(requested.kind, 'requested');
+});
+
 test('turns the environment off before changing its audiences in the change request', async () => {
   const { unleash, stub } = createStubbedClient();
   const disablesFirst = (body: string): boolean =>

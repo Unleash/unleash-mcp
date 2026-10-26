@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { Target } from '../shared/target.ts';
-import { planRelease, planTemplate } from './releasePlan.ts';
+import { planMilestone, planRelease, planTemplate } from './releasePlan.ts';
 
 const variantsOf = (target: Target) => planRelease('mcp-flag', 'on', [target], { enabled: true, strategyIds: [] }).adds[0]?.variants;
 
@@ -57,4 +57,12 @@ test('removes every audience of the environment when a template replaces them', 
   const plan = planTemplate('01JB9GGTGQYEQ9D40R17T3YVW2', 'on', { enabled: true, strategyIds: ['s1', 's2'] });
 
   assert.deepEqual(plan, { updates: [], adds: [], deletes: ['s1', 's2'], template: '01JB9GGTGQYEQ9D40R17T3YVW2' });
+});
+
+test('removes every audience of the environment when a milestone replaces them', () => {
+  const milestone = { planId: '01JB9GGTGQYEQ9D40R17T3YVW3', milestoneId: 'm2' };
+
+  const plan = planMilestone(milestone, 'on', { enabled: false, strategyIds: ['s1'] });
+
+  assert.deepEqual(plan, { updates: [], adds: [], deletes: ['s1'], milestone, toggle: 'on' });
 });
