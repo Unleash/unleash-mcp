@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import type { Interceptable } from 'undici';
 import type { UnleashClient } from '../../unleash/client.ts';
 import { createStubbedClient } from '../../unleash/testClient.ts';
-import { createChangeRequestReader, requestChanges, routeToEnvironment, routeToProject } from './changeRequest.ts';
+import { createChangeRequestReader, createEditionReader, requestChanges, routeToEnvironment, routeToProject } from './changeRequest.ts';
 
 const project = 'mcp-server';
 const uiConfig = '/api/admin/ui-config';
@@ -72,6 +72,17 @@ test('reads the edition once', async () => {
   const second = await route('production');
 
   assert.deepEqual(second, { kind: 'changeRequest', project, environment: 'production' });
+});
+
+// The edition is stubbed once: a second read while the first is under way would fail.
+test('reads the edition once for callers asking at the same time', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stubEdition(stub, enterprise);
+  const editionOf = createEditionReader(unleash);
+
+  const editions = await Promise.all([editionOf(), editionOf()]);
+
+  assert.deepEqual(editions, [{ kind: 'enterprise' }, { kind: 'enterprise' }]);
 });
 
 test('reads the edition again after it could not be read', async () => {
