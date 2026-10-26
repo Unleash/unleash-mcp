@@ -33,7 +33,29 @@ const releaseTemplate = {
   name: z.string(),
 };
 
-const target = z.discriminatedUnion('resource', [z.object(contextField), z.object(legalValue), z.object(tagType), z.object(tag), z.object(releaseTemplate)]);
+// A segment has no id until it is created, so the target differs by action.
+const createdSegment = {
+  resource: z.literal('segment'),
+  action: z.literal('create'),
+  name: z.string(),
+};
+
+const updatedSegment = {
+  resource: z.literal('segment'),
+  action: z.literal('update'),
+  id: z.number().int(),
+  name: z.string(),
+};
+
+const deletedSegment = {
+  resource: z.literal('segment'),
+  action: z.literal('delete'),
+  id: z.number().int(),
+};
+
+const segment = z.discriminatedUnion('action', [z.object(createdSegment), z.object(updatedSegment), z.object(deletedSegment)]);
+
+const target = z.discriminatedUnion('resource', [z.object(contextField), z.object(legalValue), z.object(tagType), z.object(tag), z.object(releaseTemplate), segment]);
 
 const error = failed.omit({ kind: true }).describe('What Unleash answered; the change was not applied');
 
@@ -43,6 +65,11 @@ const applied = z.discriminatedUnion('resource', [
   z.object({ kind: z.literal('applied'), ...tagType }),
   z.object({ kind: z.literal('applied'), ...tag }),
   z.object({ kind: z.literal('applied'), ...releaseTemplate, id: z.string().describe('Release template id') }),
+  z.discriminatedUnion('action', [
+    z.object({ kind: z.literal('applied'), ...createdSegment, id: z.number().int().describe('Segment id, as release targets take it') }),
+    z.object({ kind: z.literal('applied'), ...updatedSegment }),
+    z.object({ kind: z.literal('applied'), ...deletedSegment }),
+  ]),
 ]);
 
 const failedChange = z.discriminatedUnion('resource', [
@@ -51,9 +78,22 @@ const failedChange = z.discriminatedUnion('resource', [
   z.object({ kind: z.literal('failed'), ...tagType, error }),
   z.object({ kind: z.literal('failed'), ...tag, error }),
   z.object({ kind: z.literal('failed'), ...releaseTemplate, error }),
+  z.discriminatedUnion('action', [
+    z.object({ kind: z.literal('failed'), ...createdSegment, error }),
+    z.object({ kind: z.literal('failed'), ...updatedSegment, error }),
+    z.object({ kind: z.literal('failed'), ...deletedSegment, error }),
+  ]),
 ]);
 
-const result = z.discriminatedUnion('kind', [applied, failedChange]);
+const changeRequest = z.object({ id: z.number(), state: z.string() }).describe('The change request holding the change, submitted for review');
+
+// Only segments in a project whose changes need approval wait for a change request.
+const pendingChange = z.discriminatedUnion('action', [
+  z.object({ kind: z.literal('pending_change_request'), ...updatedSegment, changeRequest }),
+  z.object({ kind: z.literal('pending_change_request'), ...deletedSegment, changeRequest }),
+]);
+
+const result = z.discriminatedUnion('kind', [applied, failedChange, pendingChange]);
 
 export const configureOutput = {
   results: z.array(result).describe('One per change, in the order given, each naming the change it answers'),
@@ -66,4 +106,6 @@ export type ConfigureResult = z.infer<typeof result>;
 /** The change a result answers: its resource, action, and what it acted on. */
 export type Target = z.infer<typeof target>;
 /** What a step answers, with the id Unleash gave a created resource that has one. The tool adds the change it answers. */
-export type Outcome = { kind: 'applied'; id?: string } | Failed;
+export type Outcome = { kind: 'applied'; id?: string | number } | Failed;
+/** What a step answers when the change waits for approval: the change request holding it. */
+export type PendingChange = { kind: 'pending_change_request'; changeRequest: { id: number; state: string } };

@@ -13,5 +13,6 @@ paths:
 - A read returns everything it gets cheaply. A part that costs Unleash real work (a scan, such as the usage of a context field) is named in an `include` enum list on the query and left out unless named (`include: ['usage']`).
 - Take a list of operations when the agent can name each part and each change is one Unleash call. Take an end state and diff it when parts have no agent-facing identity or rules span them.
 - `search` and `inspect` rows are the dropdowns for agents: a filter or a command takes what those rows give (an id, a name) and never resolves it itself. A step never calls another step to look a reference up; the agent runs the lookup query first.
+- Every input parameter's description says where to get its value from (e.g. `as a segments search returns it`, `as a context field inspect lists them`).
 
-Why: `docs/decisions.md` (Tool structure, Unleash HTTP client, Tool layering, End state or operations, Opt-in parts of a read, Search prepares the options).
+Why: `docs/decisions.md` (Tool structure, Unleash HTTP client, Tool layering, End state or operations, Opt-in parts of a read, Search prepares the options, Inputs say where their values come from).

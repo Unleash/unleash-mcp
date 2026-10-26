@@ -190,6 +190,15 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - `targets` stays required for both states, so every call describes the full end state. Rejected: optional targets that keep the environment's audiences.
 - Turning off a missing flag fails with Unleash's 404. Only turning on creates a missing flag. Rejected: creating it, off. Supersedes "a missing flag is always created" (2026-10-21 Release tool takes complete input).
 
+## 2026-10-23 — Segments in configure
+
+- `configure` creates, updates and deletes segments. Reading them stays on `inspect` and `search`.
+- Update and delete name the segment by id, as release targets do; create answers with the new id. Rejected: by name, which needs a list read to resolve it.
+- Updating a segment replaces it, like Unleash's PUT: name and constraints are required, a left out project makes it global, a left out description stays. Rejected: a partial update that reads and merges (2 requests).
+- Updating or deleting a segment in a project with change requests goes into a change request, submitted for review, and answers `pending_change_request` with its id and state. Supersedes "change requests for project segments are left out for now".
+- Delete takes an optional project, as update does. Rejected: reading the segment first (one more request per delete), and writing directly then falling back on Unleash's refusal (depends on its error text).
+- Whether a project needs change requests is checked the way the release tool does it (edition, then the project's change request config). Its environment is the one the Unleash UI picks: a production one first.
+
 ## 2026-10-23 — Single-flag playground route in the generated client
 
 - The single-flag playground route is beta from Unleash 8.3.0, but `main` still reports 8.2.0, so the sandbox spec leaves it out. I copied just that route in from a local Unleash in dev mode, which serves alpha routes. Rejected: the whole local spec, which reorders and drops routes, and faking the beta version as 8.2.
@@ -201,4 +210,8 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 
 ## 2026-10-23 — Deleting a resource in use
 
-- Deleting a resource in use is refused where it changes how flags behave (context fields, segments): Unleash refuses those itself and the refusal is passed through. Deletes that only remove labels (tags, tag types) cascade, as in the UI; the search rows carry the usage, so the agent checks and asks before. 
+- Deleting a resource in use is refused where it changes how flags behave (context fields, segments): Unleash refuses those itself and the refusal is passed through. Deletes that only remove labels (tags, tag types) cascade, as in the UI; the search rows carry the usage, so the agent checks and asks before.
+
+## 2026-10-24 — Inputs say where their values come from
+
+- Every input parameter, and every tool description, says where to get its value from: the `search` or `inspect` result that gives it. Agents then look values up before writing. Prompted by real usage of `configure`: a constraint value that was not a legal value became a change request Unleash could not apply, and a change request id was sent as a segment id.
