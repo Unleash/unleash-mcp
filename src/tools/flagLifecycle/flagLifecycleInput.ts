@@ -33,7 +33,13 @@ const archive = z.object({
   flag: z.string().describe('Flag name, as a flags search returns it'),
 }).describe('Archive a flag: SDKs stop getting it and treat it as off. In a project whose changes need approval, it goes into a change request');
 
-const operation = z.discriminatedUnion('action', [define, complete, archive]);
+const revive = z.object({
+  action: z.literal('revive'),
+  project: z.string().describe('Project id, as a flags search returns it'),
+  flag: z.string().describe('Flag name, as a flags search with the archived stage returns it'),
+}).describe('Bring an archived flag back, off in every environment. A flag that is not archived is left as it is');
+
+const operation = z.discriminatedUnion('action', [define, complete, archive, revive]);
 
 export const flagLifecycleInput = {
   operations: z.array(operation).min(1).describe('Applied in the order given; one result per operation'),
@@ -49,3 +55,5 @@ export type Define = z.infer<typeof define>;
 export type Complete = z.infer<typeof complete>;
 /** The operation that archives a flag. */
 export type Archive = z.infer<typeof archive>;
+/** The operation that brings an archived flag back. */
+export type Revive = z.infer<typeof revive>;
