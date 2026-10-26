@@ -12,7 +12,12 @@ const released = z.object({
   kind: z.literal('released'),
   flag,
   environment: z.string(),
-  targets: z.array(target.required({ rollout: true })).describe('The audiences that get the feature while it is on'),
+  targets: z.array(target.required({ rollout: true })).optional().describe('The audiences that get the feature while it is on'),
+  template: z.object({
+    id: z.string(),
+    plan: z.string().describe('The release plan copied from the template'),
+    milestone: z.string().describe('The milestone being served'),
+  }).optional().describe('The release template the release went through'),
 });
 
 const pendingChangeRequest = z.object({
@@ -20,7 +25,8 @@ const pendingChangeRequest = z.object({
   flag,
   environment: z.string(),
   changeRequest: z.object({ id: z.number(), state: z.string() }).describe('The change request holding the release, submitted for review'),
-  targets: z.array(target.required({ rollout: true })).describe('The audiences that get the feature while it is on, once the change request is applied'),
+  targets: z.array(target.required({ rollout: true })).optional().describe('The audiences that get the feature while it is on, once the change request is applied'),
+  template: z.object({ id: z.string() }).optional().describe('The release template applied once the change request is applied'),
 });
 
 const result = z.discriminatedUnion('kind', [released, pendingChangeRequest, failed]);

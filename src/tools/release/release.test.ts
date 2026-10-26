@@ -236,6 +236,55 @@ test('stops serving the feature before changing its audiences', async () => {
   assert.deepEqual(output, { kind: 'failed', status: 403, name: 'PermissionError', reasons: ['You need the UPDATE_FEATURE_ENVIRONMENT permission'] });
 });
 
+// Stubbed, not recorded: the sandbox's limit of 10 release templates leaves room for only configure's.
+// The delete is stubbed only once the plan is in, so removing the old audience first fails the test.
+test('releases through a release template, replacing the audiences', async () => {
+  const { unleash, stub } = createStubbedOpenSource();
+  const release = createRelease(unleash);
+  const template = '01JB9GGTGQYEQ9D40R17T3YVW2';
+  stub.intercept({ path: feature, method: 'GET' }).reply(200, development('s1'));
+  stub.intercept({ path: `${base}/release-plans`, method: 'POST' }).reply(200, () => {
+    stub.intercept({ path: `${base}/strategies/s1`, method: 'DELETE' }).reply(200, {});
+    return { name: 'Gradual rollout', activeMilestoneId: 'm1', milestones: [{ id: 'm1', name: 'Internal' }] };
+  }, { headers: { 'content-type': 'application/json' } });
+
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { template } });
+
+  assert.deepEqual(output, {
+    kind: 'released',
+    flag: { status: 'existing', name: flag, state: 'on' },
+    environment: 'development',
+    template: { id: template, plan: 'Gradual rollout', milestone: 'Internal' },
+  });
+});
+
+test('puts a template release in a change request where the environment requires one', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const template = '01JB9GGTGQYEQ9D40R17T3YVW2';
+  stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(200, { environment: 'Enterprise', versionInfo: { current: { enterprise: '8.2.1' } } });
+  stub.intercept({ path: `/api/admin/projects/${project}/change-requests/config`, method: 'GET' }).reply(200, [{ environment: 'production', type: 'production', changeRequestEnabled: true }]);
+  stub.intercept({ path: feature, method: 'GET' }).reply(200, { name: flag });
+  stub.intercept({ path: `/api/admin/projects/${project}/environments/production/change-requests`, method: 'POST' }).reply(200, { id: 7, state: 'In review' });
+  const release = createRelease(unleash);
+
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'production', audience: { template } });
+
+  assert.deepEqual(output, {
+    kind: 'pending_change_request',
+    flag: { status: 'existing', name: flag, state: 'on' },
+    environment: 'production',
+    template: { id: template },
+    changeRequest: { id: 7, state: 'In review' },
+  });
+});
+
+test('takes either targets or a release template', () => {
+  const both = { targets: [{ name: 'Everyone' }], template: '01JB9GGTGQYEQ9D40R17T3YVW2' };
+
+  assert.equal(releaseInput.audience.safeParse({}).success, false);
+  assert.equal(releaseInput.audience.safeParse(both).success, false);
+});
+
 test('refuses an audience with a key it does not know', () => {
   const parsed = releaseInput.audience.safeParse({ targets: [{ name: 'Everyone' }], target: [{ name: 'Beta testers' }] });
 

@@ -38,7 +38,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   server.registerTool(
     'release',
     {
-      description: 'Release a feature flag to audiences in an environment, or turn it off, optionally splitting an audience across values by share. Turning on creates the flag if it does not exist. Where the environment requires change requests, the release goes into a change request submitted for review instead of being applied.',
+      description: 'Release a feature flag in an environment to audiences, optionally splitting an audience across values by share, or through a release template, or turn it off. Turning on creates the flag if it does not exist. Where the environment requires change requests, the release goes into a change request submitted for review instead of being applied.',
       inputSchema: releaseInput,
       outputSchema: releaseOutput,
     },
