@@ -132,7 +132,7 @@ test('treats a transition without a type as time based', async () => {
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, {
     name: flag,
     type: 'release',
-    environments: [{ name: 'development', enabled: true, releasePlans: [{ name: 'Plan', milestones: [{ id: 'm1', name: 'Canary', transitionCondition: { intervalMinutes: 15 } }] }] }],
+    environments: [{ name: 'development', enabled: true, releasePlans: [{ id: 'p1', name: 'Plan', milestones: [{ id: 'm1', name: 'Canary', transitionCondition: { intervalMinutes: 15 } }] }] }],
   });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
@@ -142,7 +142,7 @@ test('treats a transition without a type as time based', async () => {
     kind: 'flag',
     name: flag,
     type: 'release',
-    environments: [{ name: 'development', enabled: true, releasePlan: { name: 'Plan', milestones: [{ name: 'Canary', transition: { type: 'time', intervalMinutes: 15 } }] } }],
+    environments: [{ name: 'development', enabled: true, releasePlan: { id: 'p1', name: 'Plan', milestones: [{ id: 'm1', name: 'Canary', transition: { type: 'time', intervalMinutes: 15 } }] } }],
   });
 });
 

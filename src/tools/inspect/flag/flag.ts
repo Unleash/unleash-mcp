@@ -62,9 +62,11 @@ const toEnvironment = ({ name, enabled, lastSeenAt, strategies, releasePlans }: 
   ...(releasePlans?.[0] ? { releasePlan: toReleasePlan(releasePlans[0]) } : {}),
 });
 
-const toReleasePlan = ({ name, milestones, activeMilestoneId }: UnleashReleasePlan): ReleasePlan => ({
+const toReleasePlan = ({ id: planId, name, milestones, activeMilestoneId }: UnleashReleasePlan): ReleasePlan => ({
+  id: planId,
   name,
   milestones: milestones.map(({ id, name, transitionCondition, strategies }): Milestone => ({
+    id,
     name,
     ...(id === activeMilestoneId ? { active: true } : {}),
     ...(transitionCondition ? { transition: toTransition(transitionCondition) } : {}),

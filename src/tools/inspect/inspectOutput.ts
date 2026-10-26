@@ -34,6 +34,7 @@ const transition = z.discriminatedUnion('type', [
 ]);
 
 const milestone = z.object({
+  id: z.string(),
   name: z.string(),
   active: z.literal(true).optional().describe('Set on the milestone the plan is at'),
   transition: transition.optional().describe('Set when the plan moves on from this milestone by itself, once the condition is met'),
@@ -41,6 +42,7 @@ const milestone = z.object({
 });
 
 const releasePlan = z.object({
+  id: z.string(),
   name: z.string(),
   milestones: z.array(milestone).describe('In order; the plan moves from one to the next'),
 });
