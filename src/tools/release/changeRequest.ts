@@ -14,6 +14,7 @@ export const requestRelease = (unleash: UnleashClient, path: EnvironmentPath, pl
     ...plan.updates.map(({ id, strategy }) => ({ feature, action: 'updateStrategy' as const, payload: { id, ...strategy } })),
     ...plan.adds.map((strategy) => ({ feature, action: 'addStrategy' as const, payload: strategy })),
     ...(plan.template ? [{ feature, action: 'addReleasePlan' as const, payload: { templateId: plan.template } }] : []),
+    ...(plan.milestone ? [{ feature, action: 'startMilestone' as const, payload: plan.milestone }] : []),
     ...plan.deletes.map((id) => ({ feature, action: 'deleteStrategy' as const, payload: { id } })),
     ...(plan.toggle === 'on' ? [toggle] : []),
   ];

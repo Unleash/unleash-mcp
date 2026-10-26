@@ -259,3 +259,9 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 ## 2026-10-26 — Release plan and milestone ids in inspect
 
 - `inspect` shows the id of an environment's release plan and of each milestone. The agent needs both to start a milestone. Release plan and milestone ids are shown to the agent, the same exception as segment, change request and release template ids. Rejected: the milestone id only.
+
+## 2026-10-26 — Start a release plan milestone
+
+- `release` takes a third audience, `{ releasePlan, milestone }`, with the ids inspect shows, to move a flag's release plan to any of its milestones. Rejected: a milestone next to `template` (a fresh plan's milestone ids are unknown beforehand), and a separate tool.
+- Applying a template still starts its first milestone: Unleash does it when it creates the plan, and that is acceptable.
+- Where change requests are required, the start goes into the release's change request (`startMilestone`), as the other audiences do.
