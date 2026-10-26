@@ -35,6 +35,21 @@ test('submits every change of a release in one change request', async () => {
   assert.partialDeepStrictEqual(requested, { kind: 'requested', changeRequest: { id: 7 } });
 });
 
+test('applies the template before removing the audiences it replaces in the change request', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const templateFirst = (body: string): boolean =>
+    isDeepStrictEqual(JSON.parse(body), [
+      { feature: 'mcp-flag', action: 'addReleasePlan', payload: { templateId: 't1' } },
+      { feature: 'mcp-flag', action: 'deleteStrategy', payload: { id: 's1' } },
+    ]);
+  stub.intercept({ path: changeRequests, method: 'POST', body: templateFirst }).reply(200, draft);
+  stubSubmit(stub);
+
+  const requested = await requestRelease(unleash, path, { ...defaultPlan, deletes: ['s1'], template: 't1' });
+
+  assert.equal(requested.kind, 'requested');
+});
+
 test('turns the environment off before changing its audiences in the change request', async () => {
   const { unleash, stub } = createStubbedClient();
   const disablesFirst = (body: string): boolean =>

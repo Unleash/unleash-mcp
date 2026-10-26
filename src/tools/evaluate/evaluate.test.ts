@@ -31,7 +31,7 @@ const deleteFlagsAndStrategy = async () => {
 before(async () => {
   await deleteFlagsAndStrategy();
   await admin.POST('/api/admin/strategies', { body: { name: sdkOnlyStrategy, parameters: [] } });
-  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment, targets: [{ name: 'Beta', constraints: [{ field: 'userId', operator: 'IN', values: [users.targeted] }], values: [{ name: 'blue', payload: { type: 'string', value: 'b' } }] }] });
+  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment, audience: { targets: [{ name: 'Beta', constraints: [{ field: 'userId', operator: 'IN', values: [users.targeted] }], values: [{ name: 'blue', payload: { type: 'string', value: 'b' } }] }] } });
   await addSdkOnlyTarget(flag, environment);
   await addSdkOnlyTarget(flag, 'production');
   for (const name of [parent, child]) await defineFlag(admin, { action: 'define', project, flag: name });

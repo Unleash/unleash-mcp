@@ -5,7 +5,8 @@ import { type Failed, toFailed } from '../shared/failed.ts';
 import { ensureFlag } from './flag.ts';
 import { requestRelease } from './changeRequest.ts';
 import { createChangeRequestReader, routeToEnvironment } from '../shared/changeRequest.ts';
-import { type EnvironmentPath, type Plan, planRelease } from './releasePlan.ts';
+import { type EnvironmentPath, type Plan, planRelease, planTemplate } from './releasePlan.ts';
+import { type AppliedTemplate, applyTemplate } from './template.ts';
 import { rolloutOf } from '../shared/strategy.ts';
 
 const strategies = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies';
@@ -27,29 +28,31 @@ export const createRelease = (unleash: UnleashClient) => {
     if (flag.kind === 'failed') return flag;
 
     const path = { projectId: project, featureName: name, environment };
-    const plan = planRelease(name, state, input.targets, flag);
+    const { audience } = input;
+    const template = 'template' in audience ? audience.template : undefined;
+    const plan = 'template' in audience ? planTemplate(audience.template, state, flag) : planRelease(name, state, audience.targets, flag);
     const outcome = {
       flag: { status: flag.kind, name, state },
       environment,
-      targets: input.targets.map((t) => ({ ...t, rollout: rolloutOf(t) })),
+      ...('targets' in audience && { targets: audience.targets.map((t) => ({ ...t, rollout: rolloutOf(t) })) }),
     };
 
     if (route.kind === 'changeRequest') {
       const requested = await requestRelease(unleash, path, plan);
       if (requested.kind === 'failed') return requested;
-      return { kind: 'pending_change_request', ...outcome, changeRequest: requested.changeRequest };
+      return { kind: 'pending_change_request', ...outcome, ...(template && { template: { id: template } }), changeRequest: requested.changeRequest };
     }
 
     const applied = await applyPlan(unleash, path, plan);
     if (applied.kind === 'failed') return applied;
-    return { kind: 'released', ...outcome };
+    return { kind: 'released', ...outcome, ...(applied.template && { template: applied.template }) };
   };
 };
 
 // Disabling goes first, so the feature stops being served even if a later write fails.
-// Surplus strategies go last, so the environment never has zero strategies, which would make Unleash disable it.
-// Enabling goes after them, once the environment has its audiences.
-const applyPlan = async (unleash: UnleashClient, path: EnvironmentPath, plan: Plan): Promise<{ kind: 'applied' } | Failed> => {
+// A template's plan goes in after the strategies, and surplus strategies go last, so the environment never has zero
+// strategies, which would make Unleash disable it. Enabling goes after them, once the environment has its audiences.
+const applyPlan = async (unleash: UnleashClient, path: EnvironmentPath, plan: Plan): Promise<{ kind: 'applied'; template?: AppliedTemplate['template'] } | Failed> => {
   if (plan.toggle === 'off') {
     const disabled = await unleash.POST(disable, { params: { path } });
     if (!disabled.response.ok) return toFailed(disabled);
@@ -62,6 +65,8 @@ const applyPlan = async (unleash: UnleashClient, path: EnvironmentPath, plan: Pl
     const added = await unleash.POST(strategies, { params: { path }, body });
     if (!added.response.ok) return toFailed(added);
   }
+  const applied = plan.template ? await applyTemplate(unleash, path, plan.template) : undefined;
+  if (applied?.kind === 'failed') return applied;
   for (const id of plan.deletes) {
     const deleted = await unleash.DELETE(strategy, { params: { path: { ...path, strategyId: id } } });
     if (!deleted.response.ok) return toFailed(deleted);
@@ -70,5 +75,5 @@ const applyPlan = async (unleash: UnleashClient, path: EnvironmentPath, plan: Pl
     const enabled = await unleash.POST(enable, { params: { path } });
     if (!enabled.response.ok) return toFailed(enabled);
   }
-  return { kind: 'applied' };
+  return { kind: 'applied', template: applied?.template };
 };
