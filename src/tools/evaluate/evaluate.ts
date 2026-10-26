@@ -40,7 +40,7 @@ const toValue = ({ name, payload }: UnleashVariant): ServedValue => ({ name, ...
 const toTarget = (strategy: UnleashStrategy, context: EvaluateQuery['context']): EvaluatedTarget => {
   const named = strategy.title ? { name: strategy.title } : {};
   if (strategy.disabled) return { ...named, result: 'disabled' };
-  if (strategy.result.enabled === 'unknown') return { ...named, result: 'unknown', matchedBy: passedConditions(strategy) };
+  if (strategy.result.enabled === 'unknown') return { ...named, result: 'unknown', strategy: strategy.name, matchedBy: passedConditions(strategy) };
   const stickiness = stickinessField(strategy.parameters.stickiness || 'default', context);
   if (strategy.result.enabled) return { ...named, result: 'matched', matchedBy: { ...passedConditions(strategy), ...rolloutConditions(strategy, stickiness) } };
   const failed = failedConditions(strategy);
