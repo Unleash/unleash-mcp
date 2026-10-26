@@ -1,11 +1,14 @@
 import type { components } from '../../unleash/api.d.ts';
 import type { UnleashClient } from '../../unleash/client.ts';
 import type { EvaluateInput, EvaluateQuery } from './evaluateInput.ts';
-import type { EvaluateOutput, EvaluateResult, EvaluatedTarget, ServedValue } from './evaluateOutput.ts';
+import type { Conditions, EvaluateOutput, EvaluateResult, EvaluatedTarget, ServedValue } from './evaluateOutput.ts';
+import { toConstraint } from '../shared/constraint.ts';
 import { toFailed } from '../shared/failed.ts';
 
 type UnleashVariant = NonNullable<components['schemas']['playgroundFeatureSchema']['variant']>;
 type UnleashStrategy = components['schemas']['playgroundStrategySchema'];
+type UnleashSegment = components['schemas']['playgroundSegmentSchema'];
+type UnleashConstraint = components['schemas']['playgroundConstraintSchema'];
 
 export const createEvaluate =
   (unleash: UnleashClient) =>
@@ -32,7 +35,22 @@ const evaluate = async (unleash: UnleashClient, { flag, environment, context }: 
 
 const toValue = ({ name, payload }: UnleashVariant): ServedValue => ({ name, ...(payload ? { payload } : {}) });
 
-const toTarget = ({ title, disabled, result }: UnleashStrategy): EvaluatedTarget => ({
-  ...(title ? { name: title } : {}),
-  result: disabled ? 'disabled' : result.enabled === 'unknown' ? 'unknown' : result.enabled ? 'matched' : 'missed',
+const toTarget = (strategy: UnleashStrategy): EvaluatedTarget => {
+  const named = strategy.title ? { name: strategy.title } : {};
+  if (strategy.disabled) return { ...named, result: 'disabled' };
+  if (strategy.result.enabled === 'unknown') return { ...named, result: 'unknown', matchedBy: passedConditions(strategy) };
+  return strategy.result.enabled
+    ? { ...named, result: 'matched', matchedBy: passedConditions(strategy) }
+    : { ...named, result: 'missed', missedBy: failedConditions(strategy) };
+};
+
+const passedConditions = ({ segments, constraints }: UnleashStrategy): Conditions =>
+  toConditions(segments.filter((s) => s.result), constraints.filter((c) => c.result));
+
+const failedConditions = ({ segments, constraints }: UnleashStrategy): Conditions =>
+  toConditions(segments.filter((s) => !s.result), constraints.filter((c) => !c.result));
+
+const toConditions = (segments: UnleashSegment[], constraints: UnleashConstraint[]): Conditions => ({
+  ...(segments.length ? { segments: segments.map(({ id, name }) => ({ id, name })) } : {}),
+  ...(constraints.length ? { constraints: constraints.map(toConstraint) } : {}),
 });
