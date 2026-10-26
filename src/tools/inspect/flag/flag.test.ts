@@ -79,7 +79,7 @@ test('describes a flag with its lifecycle, environments, who worked on it, its p
     ],
     createdBy: 'Mateusz K',
     collaborators: ['Mateusz K'],
-    parent: { flag: parent },
+    parent: { kind: 'on', flag: parent },
     tags: [{ type: 'simple', value: 'mcp-inspect' }],
     links: [{ url: 'https://example.com/mcp-inspect', title: 'Spec' }],
   });
@@ -165,24 +165,24 @@ test('tells when an SDK last saw the flag in each environment', async () => {
   });
 });
 
-test('tells which variants the parent must resolve to', async () => {
+test('tells which values the parent must serve', async () => {
   const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release', dependencies: [{ feature: parent, enabled: true, variants: ['blue'] }] });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
 
-  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', environments: [], parent: { flag: parent, variants: ['blue'] } });
+  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', environments: [], parent: { kind: 'on', flag: parent, values: ['blue'] } });
 });
 
-test('tells when the parent must be disabled', async () => {
+test('tells when the parent must be off', async () => {
   const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release', dependencies: [{ feature: parent, enabled: false, variants: [] }] });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
   const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
 
-  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', environments: [], parent: { flag: parent, enabled: false } });
+  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', environments: [], parent: { kind: 'off', flag: parent } });
 });
 
 test('fails with the Unleash error when the flag does not exist', async () => {
