@@ -5,6 +5,7 @@ import { type ChangeRequestReader, createChangeRequestReader } from '../shared/c
 import { archiveFlag } from './archive.ts';
 import { completeFlag } from './complete.ts';
 import { defineFlag } from './define.ts';
+import { reviveFlag } from './revive.ts';
 
 /** Builds the flag lifecycle tool: applies the operations one after another, one result per operation. */
 export const createFlagLifecycle = (unleash: UnleashClient) => {
@@ -21,6 +22,7 @@ const apply = (unleash: UnleashClient, environmentsOf: ChangeRequestReader, oper
     case 'define': return defineFlag(unleash, operation);
     case 'complete': return completeFlag(unleash, operation);
     case 'archive': return archiveFlag(unleash, environmentsOf, operation);
+    case 'revive': return reviveFlag(unleash, operation);
   }
 };
 
