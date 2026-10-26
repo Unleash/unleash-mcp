@@ -80,8 +80,8 @@ test('describes a flag with its lifecycle, environments, who worked on it, its p
     type: 'kill-switch',
     lifecycle: { stage: 'define' },
     environments: [
-      { name: 'development', enabled: true, targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values }] },
-      { name: 'production', enabled: false },
+      { name: 'development', state: 'on', targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values }] },
+      { name: 'production', state: 'off' },
     ],
     createdBy: 'Mateusz K',
     collaborators: ['Mateusz K'],
@@ -105,7 +105,7 @@ test('names the flags that depend on a flag and the release plan rolling it out'
     environments: [
       {
         name: 'development',
-        enabled: false,
+        state: 'off',
         releasePlan: {
           name: template,
           milestones: [
@@ -115,7 +115,7 @@ test('names the flags that depend on a flag and the release plan rolling it out'
           ],
         },
       },
-      { name: 'production', enabled: false },
+      { name: 'production', state: 'off' },
     ],
     createdBy: 'Mateusz K',
     collaborators: ['Mateusz K'],
@@ -148,7 +148,7 @@ test('treats a transition without a type as time based', async () => {
     kind: 'flag',
     name: flag,
     type: 'release',
-    environments: [{ name: 'development', enabled: true, releasePlan: { name: 'Plan', milestones: [{ name: 'Canary', transition: { type: 'time', intervalMinutes: 15 } }] } }],
+    environments: [{ name: 'development', state: 'on', releasePlan: { name: 'Plan', milestones: [{ name: 'Canary', transition: { type: 'time', intervalMinutes: 15 } }] } }],
   });
 });
 
@@ -167,7 +167,7 @@ test('tells when an SDK last saw the flag in each environment', async () => {
     kind: 'flag',
     name: flag,
     type: 'release',
-    environments: [{ name: 'development', enabled: true, lastSeenAt: '2026-10-21T09:00:00.000Z' }, { name: 'production', enabled: false }],
+    environments: [{ name: 'development', state: 'on', lastSeenAt: '2026-10-21T09:00:00.000Z' }, { name: 'production', state: 'off' }],
   });
 });
 

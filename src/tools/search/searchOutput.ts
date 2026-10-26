@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { failed } from '../shared/failed.ts';
 import { lifecycleStage } from '../shared/lifecycleStage.ts';
 import { tag } from '../shared/tag.ts';
+import { flagState } from '../shared/flagState.ts';
 
 const project = z.object({
   id: z.string(),
@@ -16,7 +17,7 @@ const projects = z.object({
 
 const flagEnvironment = z.object({
   name: z.string(),
-  enabled: z.boolean(),
+  state: flagState,
   lastSeenAt: z.string().optional().describe('ISO timestamp an SDK last evaluated the flag here'),
 });
 

@@ -1,6 +1,6 @@
 import type { Target } from '../shared/target.ts';
 import { type Strategy, toStrategy } from '../shared/strategy.ts';
-import type { FlagState } from './releaseInput.ts';
+import type { FlagState } from '../shared/flagState.ts';
 
 export type EnvironmentPath = { projectId: string; featureName: string; environment: string };
 

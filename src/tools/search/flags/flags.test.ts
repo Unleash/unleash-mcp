@@ -57,7 +57,7 @@ test('finds a page of flags by a part of their name, with the total across pages
       type: 'kill-switch',
       createdBy: 'Mateusz K',
       tags: [{ type: 'simple', value: 'mcp-search' }],
-      environments: [{ name: 'development', enabled: false }, { name: 'production', enabled: false }],
+      environments: [{ name: 'development', state: 'off' }, { name: 'production', state: 'off' }],
     }],
   });
 });
@@ -86,7 +86,7 @@ test('maps a row, naming the lifecycle stage as the UI does', async () => {
   assert.deepEqual(output, {
     kind: 'flags',
     total: 1,
-    flags: [{ name: 'checkout', project: 'web', type: 'release', stage: 'develop', environments: [{ name: 'production', enabled: true, lastSeenAt: '2026-10-22T08:00:00.000Z' }] }],
+    flags: [{ name: 'checkout', project: 'web', type: 'release', stage: 'develop', environments: [{ name: 'production', state: 'on', lastSeenAt: '2026-10-22T08:00:00.000Z' }] }],
   });
 });
 

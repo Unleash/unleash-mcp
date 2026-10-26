@@ -41,7 +41,7 @@ const flags = z.object({
   }).optional().describe('Keeps flags by the day they were created; one bound, as the UI offers'),
   offset: z.number().int().min(0).default(0).describe('Flags to skip; page with offset and limit until total is reached'),
   limit: z.number().int().min(1).max(50).default(20).describe('Flags per page'),
-}).describe('Flags by name or tag, paged. Unleash pages and matches; rows carry type, lifecycle stage, tags and where the flag is enabled');
+}).describe('Flags by name or tag, paged. Unleash pages and matches; rows carry type, lifecycle stage, tags and where the flag is on');
 
 const flagCreators = z.object({
   kind: z.literal('flag_creators'),
