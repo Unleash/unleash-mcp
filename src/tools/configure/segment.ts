@@ -6,7 +6,7 @@ import { type Failed, toFailed } from '../shared/failed.ts';
 import { toUnleashConstraint } from '../shared/strategy.ts';
 
 /** Creates a segment, global or in a project, answering with its id so release targets can refer to it. */
-export const createSegment = async (unleash: UnleashClient, { project, name, description, constraints }: CreateSegment): Promise<Outcome> => {
+export const createSegment = async (unleash: UnleashClient, { project, name, description, constraints }: CreateSegment): Promise<{ kind: 'applied'; id: number } | Failed> => {
   const body = { name, description, project, constraints: constraints.map(toUnleashConstraint) };
   const created = await unleash.POST('/api/admin/segments', { body });
   if (!created.response.ok || !created.data) return toFailed(created);

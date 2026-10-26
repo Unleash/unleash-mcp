@@ -3,6 +3,7 @@ import { after, before, test } from 'node:test';
 import { createStubbedClient, createRecordedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { cancelChangeRequest, deleteFlag, deleteSegmentNamed } from '../../unleash/testSetup.ts';
+import { createSegment } from '../configure/segment.ts';
 import { createRelease } from './release.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./release.snapshot.json', import.meta.url).pathname);
@@ -17,8 +18,8 @@ let changeRequestId: number | undefined;
 before(async () => {
   await deleteFlag(admin, project, flag);
   await deleteSegmentNamed(admin, segment);
-  const created = await admin.POST('/api/admin/segments', { body: { name: segment, constraints: [] } });
-  segmentId = created.data?.id;
+  const created = await createSegment(admin, { kind: 'segment', action: 'create', name: segment, constraints: [] });
+  segmentId = created.kind === 'applied' ? created.id : undefined;
 });
 // The change request goes first, and the flag before the segment:
 // Unleash may refuse to delete a segment that is in use.

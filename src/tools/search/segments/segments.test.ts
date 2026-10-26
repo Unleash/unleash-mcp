@@ -3,6 +3,7 @@ import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
 import { deleteSegmentNamed } from '../../../unleash/testSetup.ts';
+import { createSegment } from '../../configure/segment.ts';
 import { searchSegments } from './segments.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./segments.snapshot.json', import.meta.url).pathname);
@@ -14,8 +15,10 @@ let projectScopedId = 0;
 
 before(async () => {
   for (const name of [global, projectScoped]) await deleteSegmentNamed(admin, name);
-  globalId = (await admin.POST('/api/admin/segments', { body: { name: global, constraints: [] } })).data?.id ?? 0;
-  projectScopedId = (await admin.POST('/api/admin/segments', { body: { name: projectScoped, project, constraints: [] } })).data?.id ?? 0;
+  const createdGlobal = await createSegment(admin, { kind: 'segment', action: 'create', name: global, constraints: [] });
+  globalId = createdGlobal.kind === 'applied' ? createdGlobal.id : 0;
+  const createdProjectScoped = await createSegment(admin, { kind: 'segment', action: 'create', project, name: projectScoped, constraints: [] });
+  projectScopedId = createdProjectScoped.kind === 'applied' ? createdProjectScoped.id : 0;
 });
 after(async () => {
   for (const name of [global, projectScoped]) await deleteSegmentNamed(admin, name);
