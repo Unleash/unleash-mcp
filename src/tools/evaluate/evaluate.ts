@@ -29,19 +29,31 @@ const evaluate = async (unleash: UnleashClient, { flag, environment, context }: 
     environment,
     result: isEnabled ? 'on' : onlySdksCanTell ? 'unknown' : 'off',
     ...(variant?.enabled ? { value: toValue(variant) } : {}),
-    ...(strategies.data.length ? { targets: strategies.data.map(toTarget) } : {}),
+    ...(strategies.data.length ? { targets: strategies.data.map((strategy) => toTarget(strategy, context)) } : {}),
   };
 };
 
 const toValue = ({ name, payload }: UnleashVariant): ServedValue => ({ name, ...(payload ? { payload } : {}) });
 
-const toTarget = (strategy: UnleashStrategy): EvaluatedTarget => {
+const toTarget = (strategy: UnleashStrategy, context: EvaluateQuery['context']): EvaluatedTarget => {
   const named = strategy.title ? { name: strategy.title } : {};
   if (strategy.disabled) return { ...named, result: 'disabled' };
   if (strategy.result.enabled === 'unknown') return { ...named, result: 'unknown', matchedBy: passedConditions(strategy) };
-  return strategy.result.enabled
-    ? { ...named, result: 'matched', matchedBy: passedConditions(strategy) }
-    : { ...named, result: 'missed', missedBy: failedConditions(strategy) };
+  if (strategy.result.enabled) return { ...named, result: 'matched', matchedBy: { ...passedConditions(strategy), ...partialRollout(strategy) } };
+  const failed = failedConditions(strategy);
+  const keptOutByRollout = !failed.segments && !failed.constraints && hasStickinessValue(strategy, context);
+  return { ...named, result: 'missed', missedBy: keptOutByRollout ? partialRollout(strategy) : failed };
+};
+
+// Unleash misses a rollout whose stickiness field the context lacks before it checks the percentage.
+const hasStickinessValue = ({ parameters }: UnleashStrategy, context: EvaluateQuery['context']) => {
+  const stickiness = parameters.stickiness ?? 'default';
+  return stickiness === 'default' || stickiness === 'random' || Boolean(context[stickiness]);
+};
+
+const partialRollout = ({ parameters }: UnleashStrategy): Conditions => {
+  const rollout = Number(parameters.rollout ?? 100);
+  return rollout < 100 ? { rollout } : {};
 };
 
 const passedConditions = ({ segments, constraints }: UnleashStrategy): Conditions =>

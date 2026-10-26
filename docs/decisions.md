@@ -261,3 +261,8 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - `search` finds release templates so an agent can get the id `release` takes. Rows are the id and the name only: templates carry a lot we don't want to disclose yet, such as the strategies underneath.
 - With a project, the search lists the templates usable there, the project's own and the global ones (the project endpoint is beta); without, the global ones only. Rejected: the global list only, which hides project templates.
 - The sandbox's release template limit was raised, so template tests are recorded. This supersedes the stubbed project template test in "Release templates in configure".
+
+## 2026-10-26 — A target's rollout explains it too
+
+- `matchedBy` names the rollout when it is under 100. `missedBy` names it only when every segment and constraint let the context in and the context has the field the rollout sticks to, since only then did the percentage keep it out. Without that field Unleash misses the target before it checks the percentage, so naming the rollout would send an agent to change the percentage.
+- A rollout of 100 never shows: it lets everyone in, so it explains no match. Rejected: always showing the rollout as inspect does.
