@@ -82,7 +82,7 @@ test('answers a change waiting for approval with its change request', async () =
   const output = await configure({ changes: [{ kind: 'segment', action: 'delete', id: 42, project: 'mcp-server' }] });
 
   assert.deepEqual(output, {
-    results: [{ kind: 'pending_change_request', resource: 'segment', action: 'delete', id: 42, changeRequest: { id: 7, state: 'In review' } }],
+    results: [{ kind: 'pending_change_request', resource: 'segment', action: 'delete', id: 42, changeRequest: { id: 7, state: 'In review', url: 'https://unleash.example/projects/mcp-server/change-requests/7' } }],
   });
 });
 
