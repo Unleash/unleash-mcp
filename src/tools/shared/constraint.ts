@@ -1,5 +1,5 @@
-import type { components } from '../../../unleash/api.d.ts';
-import type { Constraint } from '../../shared/target.ts';
+import type { components } from '../../unleash/api.d.ts';
+import type { Constraint } from './target.ts';
 
 export type UnleashConstraint = components['schemas']['constraintSchema'];
 
