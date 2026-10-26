@@ -26,6 +26,7 @@ const everyone = { name: 'Everyone', result: 'matched', matchedBy: {} };
 const bySession = (missedBy: object) => ({ name: 'By session', result: 'missed', missedBy });
 const nobodyYet = (stickiness: string) => ({ name: 'Nobody yet', result: 'missed', missedBy: { rollout: 0, stickiness } });
 const sdkOnlyMissed = { result: 'missed', missedBy: { constraints: [userIn(users.targetedBySdkOnly)] } };
+const sdkOnlyUnknown = { result: 'unknown', strategy: sdkOnlyStrategy, matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } };
 let segmentId = 0;
 
 const addTarget = (featureName: string, env: string, body: components['schemas']['createFeatureStrategySchema']) =>
@@ -90,7 +91,7 @@ test('the feature is unknown when only a target Unleash cannot evaluate could tu
       targets: [
         { name: 'Beta', result: 'missed', missedBy: { constraints: [beta] } },
         paused,
-        { result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } },
+        sdkOnlyUnknown,
       ],
     }],
   });
@@ -119,8 +120,8 @@ test('an off feature names what blocks it whatever its targets: its environment 
 
   assert.deepEqual(output, {
     results: [
-      { kind: 'evaluated', flag, environment: 'production', result: 'off', blockedBy: ['environment'], targets: [{ result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } }, everyone, bySession({ stickiness: 'sessionId' }), nobodyYet('userId')] },
-      { kind: 'evaluated', flag: child, environment, result: 'off', blockedBy: ['parent'], targets: [{ result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } }] },
+      { kind: 'evaluated', flag, environment: 'production', result: 'off', blockedBy: ['environment'], targets: [sdkOnlyUnknown, everyone, bySession({ stickiness: 'sessionId' }), nobodyYet('userId')] },
+      { kind: 'evaluated', flag: child, environment, result: 'off', blockedBy: ['parent'], targets: [sdkOnlyUnknown] },
     ],
   });
 });
