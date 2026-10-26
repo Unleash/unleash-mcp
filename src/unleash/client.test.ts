@@ -19,3 +19,9 @@ test('sends requests to the Unleash API with the configured auth headers', async
   assert.equal(requests[0]?.url, 'https://unleash.example/base/api/admin/projects');
   assert.equal(requests[0]?.headers.get('authorization'), 'user:token');
 });
+
+test('drops a trailing slash from the base URL, so links built on it get no double slash', () => {
+  const client = createUnleashClient({ baseUrl: 'https://unleash.example/base/', headers: {}, fetch });
+
+  assert.equal(client.baseUrl, 'https://unleash.example/base');
+});

@@ -162,17 +162,6 @@ test('submits the change request it opens for review', async () => {
   assert.deepEqual(requested, { kind: 'requested', changeRequest: { id: 7, state: 'In review', url: `https://unleash.example/projects/${project}/change-requests/7` } });
 });
 
-// No stub for submitting: the change request is already in review.
-test('links to the change request without a double slash when the base URL ends in one', async () => {
-  const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: changeRequests, method: 'POST' }).reply(200, { ...draft, state: 'In review' });
-
-  const requested = await requestChanges({ ...unleash, baseUrl: 'https://unleash.example/' }, route, defaultChange);
-
-  assert(requested.kind === 'requested');
-  assert.equal(requested.changeRequest.url, `https://unleash.example/projects/${project}/change-requests/7`);
-});
-
 test('fails with the Unleash error when the change request cannot be opened', async () => {
   const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: changeRequests, method: 'POST' }).reply(403, unleashError('PermissionError', 'You need the CREATE_FEATURE_STRATEGY permission'));
