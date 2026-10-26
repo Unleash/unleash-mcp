@@ -222,3 +222,8 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - It takes a list of queries, like `inspect`: each query is one flag in one environment, with one context.
 - Results carry `flag` and `environment`, so a failure reads on its own. Order is what tells apart queries that differ only in context. Rejected: echoing the context back in every result, which costs tokens.
 - Unknown is its own result next to on and off: only a target Unleash cannot evaluate on the server, such as a custom strategy, could have turned the feature on, and SDKs may still serve it. An environment that is off or an unsatisfied parent still answers off. Rejected: answering off, which tells an agent a feature is off when an SDK may still serve it.
+
+## 2026-10-26 — Change request links
+
+- Every change request result carries a `url` to the change request in the Unleash UI, so people can open it instead of looking it up by number.
+- The link is built from our `UNLEASH_BASE_URL`, the address the user configured. Rejected: Unleash's own `unleashUrl` from `ui-config`, which self-hosted instances that never set it report as `http://localhost:4242`.

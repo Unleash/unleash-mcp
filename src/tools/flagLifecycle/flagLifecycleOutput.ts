@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { type Failed, failed } from '../shared/failed.ts';
+import { type ChangeRequest, changeRequest as changeRequestShape } from '../shared/changeRequest.ts';
 
 const define = { action: z.literal('define'), project: z.string(), flag: z.string() };
 const complete = { action: z.literal('complete'), project: z.string(), flag: z.string() };
@@ -32,7 +33,7 @@ const failedOperation = z.discriminatedUnion('action', [
   z.object({ kind: z.literal('failed'), ...remove, error }),
 ]);
 
-const changeRequest = z.object({ id: z.number(), state: z.string() }).describe('The change request holding the operation, submitted for review');
+const changeRequest = changeRequestShape.describe('The change request holding the operation, submitted for review');
 
 // Only archiving waits for a change request where the project's changes need approval.
 const pendingOperation = z.object({ kind: z.literal('pending_change_request'), ...archive, changeRequest });
@@ -49,4 +50,4 @@ export type Changed = z.infer<typeof changed>;
 /** What a step answers. Only define says whether the flag was new and what it wrote. The tool adds the operation it answers. */
 export type Outcome = { kind: 'applied'; status?: 'new' | 'existing'; changed?: Changed[] } | Failed;
 /** What a step answers when the operation waits for approval: the change request holding it. */
-export type PendingChange = { kind: 'pending_change_request'; changeRequest: { id: number; state: string } };
+export type PendingChange = { kind: 'pending_change_request'; changeRequest: ChangeRequest };
