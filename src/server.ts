@@ -101,7 +101,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   server.registerTool(
     'flag_lifecycle',
     {
-      description: 'Move flags through their lifecycle: define them (create, or bring an existing one to what is listed), mark them completed, archive and revive them. Applies the operations in order and reports each one.',
+      description: 'Move flags through their lifecycle: define them (create, or bring an existing one to what is listed), mark them completed, archive, revive and delete them. Applies the operations in order and reports each one.',
       inputSchema: flagLifecycleInput,
       outputSchema: flagLifecycleOutput,
     },
