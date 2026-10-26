@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
-import type { Interceptable } from 'undici';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
+import { stubChangeRequestsIn, stubEnterprise } from '../../unleash/testChangeRequest.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { cancelChangeRequest, deleteFlag } from '../../unleash/testSetup.ts';
 import { createChangeRequestReader } from '../shared/changeRequest.ts';
@@ -32,15 +32,9 @@ test('puts the archiving of a flag in a change request where the project require
   assert.equal(output.changeRequest.state, 'In review');
 });
 
-const enterprise = { environment: 'Enterprise', versionInfo: { current: { oss: '8.2.0', enterprise: '8.2.1' } } };
-const stubNoChangeRequests = (stub: Interceptable) => {
-  stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(200, enterprise);
-  stub.intercept({ path: '/api/admin/projects/web/change-requests/config', method: 'GET' }).reply(200, []);
-};
-
 test('archives a flag directly where the project requires no change requests', async () => {
   const { unleash, stub } = createStubbedClient();
-  stubNoChangeRequests(stub);
+  stubChangeRequestsIn(stub, 'web');
   stub.intercept({ path: '/api/admin/projects/web/features/checkout', method: 'DELETE' }).reply(202, '');
 
   const output = await archiveFlag(unleash, createChangeRequestReader(unleash), { action: 'archive', project: 'web', flag: 'checkout' });
@@ -51,7 +45,7 @@ test('archives a flag directly where the project requires no change requests', a
 test('fails with the Unleash error when the flag cannot be archived', async () => {
   const { unleash, stub } = createStubbedClient();
   const message = 'There\'s no feature named "missing" in project "web".';
-  stubNoChangeRequests(stub);
+  stubChangeRequestsIn(stub, 'web');
   stub.intercept({ path: '/api/admin/projects/web/features/missing', method: 'DELETE' }).reply(404, unleashError('NotFoundError', message));
 
   const output = await archiveFlag(unleash, createChangeRequestReader(unleash), { action: 'archive', project: 'web', flag: 'missing' });
@@ -63,7 +57,7 @@ test('fails with the Unleash error when the flag cannot be archived', async () =
 test('fails with the Unleash error when the project\'s change request settings cannot be read', async () => {
   const { unleash, stub } = createStubbedClient();
   const message = 'You need the READ_PROJECT permission';
-  stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(200, enterprise);
+  stubEnterprise(stub);
   stub.intercept({ path: '/api/admin/projects/web/change-requests/config', method: 'GET' }).reply(403, unleashError('PermissionError', message));
 
   const output = await archiveFlag(unleash, createChangeRequestReader(unleash), { action: 'archive', project: 'web', flag: 'checkout' });
