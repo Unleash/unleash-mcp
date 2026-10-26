@@ -4,7 +4,7 @@ import { isDeepStrictEqual } from 'node:util';
 import type { Interceptable } from 'undici';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { deleteSegmentNamed } from '../../unleash/testSetup.ts';
+import { cancelChangeRequest, deleteSegmentNamed } from '../../unleash/testSetup.ts';
 import { createChangeRequestReader } from '../shared/changeRequest.ts';
 import { createSegment, deleteSegment, updateSegment } from './segment.ts';
 
@@ -28,11 +28,7 @@ const deleteSegments = async (): Promise<void> => {
 before(deleteSegments);
 // The change requests go first, so nothing pending refers to the segments.
 after(async () => {
-  // A submitted change request can't be deleted, only cancelled, and only by its author. The OpenAPI spec omits the body.
-  for (const id of changeRequestIds) await unleash.PUT('/api/admin/projects/{projectId}/change-requests/{id}/state', {
-    params: { path: { projectId: project, id: String(id) } },
-    body: { state: 'Cancelled' } as never,
-  });
+  for (const id of changeRequestIds) await cancelChangeRequest(unleash, project, id);
   await deleteSegments();
   await close();
 });

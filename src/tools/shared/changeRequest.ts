@@ -42,14 +42,52 @@ const readEdition = async (unleash: UnleashClient): Promise<Edition | Failed> =>
   return { kind: enterprise ? 'enterprise' : 'other' };
 };
 
+/** How a write reaches Unleash: directly, or as a change request in the environment that needs approval. */
+export type Route = { kind: 'direct' } | ChangeRequestRoute;
+
+/** Where a change request goes: the environment of the project that needs approval. */
+export type ChangeRequestRoute = { kind: 'changeRequest'; project: string; environment: string };
+
+/** Routes a change to one environment of a project, such as a release: it needs approval when that environment does. */
+export const routeToEnvironment = async (environmentsOf: ChangeRequestReader, project: string, environment: string): Promise<Route | Failed> => {
+  const read = await environmentsOf(project);
+  if (read.kind === 'failed') return read;
+  const required = read.environments.some((e) => e.environment === environment);
+  return required ? { kind: 'changeRequest', project, environment } : { kind: 'direct' };
+};
+
+/**
+ * Routes a change to the whole project, such as a project segment: Unleash refuses the write when any of the project's
+ * environments needs approval, unless the user may skip change requests. The change request goes where the Unleash UI
+ * puts it: a production environment first.
+ */
+export const routeToProject = async (environmentsOf: ChangeRequestReader, project: string): Promise<Route | Failed> => {
+  const read = await environmentsOf(project);
+  if (read.kind === 'failed') return read;
+  const found = read.environments.find((e) => e.type === 'production') ?? read.environments[0];
+  return found ? { kind: 'changeRequest', project, environment: found.environment } : { kind: 'direct' };
+};
+
+const changeRequests = '/api/admin/projects/{projectId}/environments/{environment}/change-requests';
+
+/** One change, or several approved or rejected as a whole, in Unleash's change request shape. */
+export type Changes = components['schemas']['changeRequestOneOrManyCreateSchema'];
+
 /** A change request opened and submitted for review, with the id and state the agent reports back. */
 export type Requested = { kind: 'requested'; changeRequest: { id: number; state: string } };
+
+/** Opens a change request in the environment and submits it for review. */
+export const requestChanges = async (unleash: UnleashClient, { project, environment }: ChangeRequestRoute, changes: Changes): Promise<Requested | Failed> => {
+  const created = await unleash.POST(changeRequests, { params: { path: { projectId: project, environment } }, body: changes });
+  if (!created.response.ok || !created.data) return toFailed(created);
+  return submitForReview(unleash, project, created.data);
+};
 
 /**
  * Submits a change request Unleash just opened or added to, so it waits for review rather than sitting in a draft.
  * Unleash adds changes to the user's open draft, if any, and the whole draft is submitted, other changes included.
  */
-export const submitForReview = async (unleash: UnleashClient, projectId: string, { id, state }: { id: number; state: string }): Promise<Requested | Failed> => {
+const submitForReview = async (unleash: UnleashClient, projectId: string, { id, state }: { id: number; state: string }): Promise<Requested | Failed> => {
   // Unleash refuses to submit a change request again, so one that is already past draft is left as it is.
   if (state !== 'Draft') return { kind: 'requested', changeRequest: { id, state } };
 

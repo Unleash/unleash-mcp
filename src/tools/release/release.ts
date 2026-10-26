@@ -3,7 +3,8 @@ import type { ReleaseInput } from './releaseInput.ts';
 import type { ReleaseResult } from './releaseOutput.ts';
 import { type Failed, toFailed } from '../shared/failed.ts';
 import { ensureFlag } from './flag.ts';
-import { createRouter, requestChanges } from './changeRequest.ts';
+import { requestRelease } from './changeRequest.ts';
+import { createChangeRequestReader, routeToEnvironment } from '../shared/changeRequest.ts';
 import { type EnvironmentPath, type Plan, planRelease, planTemplate } from './releasePlan.ts';
 import { type AppliedTemplate, applyTemplate } from './template.ts';
 import { rolloutOf } from '../shared/strategy.ts';
@@ -14,11 +15,11 @@ const enable = '/api/admin/projects/{projectId}/features/{featureName}/environme
 const disable = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/off';
 
 export const createRelease = (unleash: UnleashClient) => {
-  const routeOf = createRouter(unleash);
+  const environmentsOf = createChangeRequestReader(unleash);
   return async (input: ReleaseInput): Promise<ReleaseResult> => {
     const { project, environment } = input;
     // Checked before any write, so a failed check leaves Unleash untouched.
-    const route = await routeOf(project, environment);
+    const route = await routeToEnvironment(environmentsOf, project, environment);
     if (route.kind === 'failed') return route;
 
     const { name, state } = input.flag;
@@ -37,7 +38,7 @@ export const createRelease = (unleash: UnleashClient) => {
     };
 
     if (route.kind === 'changeRequest') {
-      const requested = await requestChanges(unleash, path, plan);
+      const requested = await requestRelease(unleash, path, plan);
       if (requested.kind === 'failed') return requested;
       return { kind: 'pending_change_request', ...outcome, ...(template && { template: { id: template } }), changeRequest: requested.changeRequest };
     }

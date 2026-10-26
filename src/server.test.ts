@@ -63,6 +63,19 @@ test('release tool reports a failure as text', async () => {
   await client.close();
 });
 
+test('refuses a tool call whose arguments hold more than 10,000 elements', async () => {
+  const { unleash: stubbed } = createStubbedClient();
+  const client = await connectClient(stubbed);
+
+  const result = await client.callTool({ name: 'inspect', arguments: { queries: Array(10_001).fill({ kind: 'segment', id: 7 }) } });
+
+  assert.deepEqual(result, {
+    isError: true,
+    content: [{ type: 'text', text: 'MCP error -32602: Invalid arguments for tool inspect: arguments contain more than the maximum of 10000 elements' }],
+  });
+  await client.close();
+});
+
 test('configure tool reports each change', async () => {
   const { unleash: stubbed, stub } = createStubbedClient();
   const message = 'A context field with that name already exist';
@@ -98,5 +111,17 @@ test('search tool returns its results as structured content', async () => {
 
   assert.deepEqual(result.structuredContent, { results: [{ kind: 'segments', segments: [{ id: 1, name: 'Beta', createdAt: '2026-10-22T08:00:00.000Z', usedInProjects: 2, usedInFlags: 3 }] }] });
   assert.deepEqual(result.content, []);
+  await client.close();
+});
+
+test('evaluate tool asks as the unleash-mcp app when no context is given', async () => {
+  const { unleash: stubbed, stub } = createStubbedClient();
+  const body = JSON.stringify({ environment: 'development', context: { appName: 'unleash-mcp' } });
+  stub.intercept({ path: `/api/admin/playground/features/${flag}`, method: 'POST', body }).reply(200, { feature: { isEnabled: true, strategies: { data: [] } } });
+  const client = await connectClient(stubbed);
+
+  const result = await client.callTool({ name: 'evaluate', arguments: { queries: [{ flag, environment: 'development' }] } });
+
+  assert.deepEqual(result.structuredContent, { results: [{ kind: 'evaluated', flag, environment: 'development', result: 'on' }] });
   await client.close();
 });

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
+import { deleteTag } from '../../configure/tag.ts';
 import { searchTags } from './tags.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./tags.snapshot.json', import.meta.url).pathname);
@@ -9,11 +10,11 @@ const type = 'simple';
 const value = 'mcp-searched-tag';
 
 before(async () => {
-  await admin.DELETE('/api/admin/tags/{type}/{value}', { params: { path: { type, value } } });
+  await deleteTag(admin, { kind: 'tag', action: 'delete', type, value });
   await admin.POST('/api/admin/tags', { body: { type, value } });
 });
 after(async () => {
-  await admin.DELETE('/api/admin/tags/{type}/{value}', { params: { path: { type, value } } });
+  await deleteTag(admin, { kind: 'tag', action: 'delete', type, value });
   await close();
 });
 

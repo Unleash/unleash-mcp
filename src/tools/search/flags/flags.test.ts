@@ -3,6 +3,7 @@ import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
 import { deleteFlag, deleteSegmentNamed } from '../../../unleash/testSetup.ts';
+import { createSegment } from '../../configure/segment.ts';
 import { createRelease } from '../../release/release.ts';
 import { searchFlags } from './flags.ts';
 
@@ -29,8 +30,8 @@ before(async () => {
   await admin.POST(features, { params: { path: { projectId: project } }, body: { name: second } });
   await admin.POST(features, { params: { path: { projectId: project } }, body: { name: archived } });
   await deleteSegmentNamed(admin, segment);
-  const created = await admin.POST('/api/admin/segments', { body: { name: segment, constraints: [] } });
-  segmentId = created.data?.id ?? 0;
+  const created = await createSegment(admin, { kind: 'segment', action: 'create', name: segment, constraints: [] });
+  segmentId = created.kind === 'applied' ? created.id : 0;
   await createRelease(admin)({ project, flag: { name: second, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Beta', segments: [segmentId] }] } });
   await admin.DELETE('/api/admin/projects/{projectId}/features/{featureName}', { params: { path: { projectId: project, featureName: archived } } });
 });
