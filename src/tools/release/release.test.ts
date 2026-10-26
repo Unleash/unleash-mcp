@@ -271,7 +271,7 @@ test('puts a template release in a change request where the environment requires
     flag: { status: 'existing', name: flag, state: 'on' },
     environment: 'production',
     template: { id: template },
-    changeRequest: { id: 7, state: 'In review' },
+    changeRequest: { id: 7, state: 'In review', url: `https://unleash.example/projects/${project}/change-requests/7` },
   });
 });
 

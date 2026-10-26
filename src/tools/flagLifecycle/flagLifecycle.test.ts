@@ -28,7 +28,7 @@ test('applies the operations after a failed one, naming the operation each resul
     results: [
       { kind: 'failed', action: 'complete', project: 'web', flag: 'gone', error: { status: 404, name: 'NotFoundError', reasons: [message] } },
       { kind: 'applied', action: 'define', project: 'web', flag: 'checkout', status: 'new', changed: [] },
-      { kind: 'pending_change_request', action: 'archive', project: 'web', flag: 'old-checkout', changeRequest: { id: 7, state: 'In review' } },
+      { kind: 'pending_change_request', action: 'archive', project: 'web', flag: 'old-checkout', changeRequest: { id: 7, state: 'In review', url: 'https://unleash.example/projects/web/change-requests/7' } },
     ],
   });
 });

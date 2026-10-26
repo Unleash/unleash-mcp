@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { type Failed, failed } from '../shared/failed.ts';
+import { type ChangeRequest, changeRequest as changeRequestShape } from '../shared/changeRequest.ts';
 
 const contextField = {
   resource: z.literal('context_field'),
@@ -85,7 +86,7 @@ const failedChange = z.discriminatedUnion('resource', [
   ]),
 ]);
 
-const changeRequest = z.object({ id: z.number(), state: z.string() }).describe('The change request holding the change, submitted for review');
+const changeRequest = changeRequestShape.describe('The change request holding the change, submitted for review');
 
 // Only segments in a project whose changes need approval wait for a change request.
 const pendingChange = z.discriminatedUnion('action', [
@@ -105,4 +106,4 @@ export type Target = z.infer<typeof target>;
 /** What a step answers, with the id Unleash gave a created resource that has one. The tool adds the change it answers. */
 export type Outcome = { kind: 'applied'; id?: string | number } | Failed;
 /** What a step answers when the change waits for approval: the change request holding it. */
-export type PendingChange = { kind: 'pending_change_request'; changeRequest: { id: number; state: string } };
+export type PendingChange = { kind: 'pending_change_request'; changeRequest: ChangeRequest };

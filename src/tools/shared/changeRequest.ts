@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import type { components } from '../../unleash/api.d.ts';
 import type { UnleashClient } from '../../unleash/client.ts';
 import { type Failed, toFailed } from './failed.ts';
@@ -73,8 +74,16 @@ const changeRequests = '/api/admin/projects/{projectId}/environments/{environmen
 /** One change, or several approved or rejected as a whole, in Unleash's change request shape. */
 export type Changes = components['schemas']['changeRequestOneOrManyCreateSchema'];
 
-/** A change request opened and submitted for review, with the id and state the agent reports back. */
-export type Requested = { kind: 'requested'; changeRequest: { id: number; state: string } };
+export const changeRequest = z.object({
+  id: z.number(),
+  state: z.string(),
+  url: z.string().describe('Where people review it in the Unleash UI'),
+});
+
+export type ChangeRequest = z.infer<typeof changeRequest>;
+
+/** A change request opened and submitted for review, as the agent reports it back. */
+export type Requested = { kind: 'requested'; changeRequest: ChangeRequest };
 
 /** Opens a change request in the environment and submits it for review. */
 export const requestChanges = async (unleash: UnleashClient, { project, environment }: ChangeRequestRoute, changes: Changes): Promise<Requested | Failed> => {
@@ -89,7 +98,7 @@ export const requestChanges = async (unleash: UnleashClient, { project, environm
  */
 const submitForReview = async (unleash: UnleashClient, projectId: string, { id, state }: { id: number; state: string }): Promise<Requested | Failed> => {
   // Unleash refuses to submit a change request again, so one that is already past draft is left as it is.
-  if (state !== 'Draft') return { kind: 'requested', changeRequest: { id, state } };
+  if (state !== 'Draft') return { kind: 'requested', changeRequest: { id, state, url: urlOf(unleash, projectId, id) } };
 
   const submitted = await unleash.PUT(changeRequestState, {
     params: { path: { projectId, id: String(id) } },
@@ -97,7 +106,11 @@ const submitForReview = async (unleash: UnleashClient, projectId: string, { id, 
     body: submit as never,
   });
   if (!submitted.response.ok || !submitted.data) return toFailed(submitted);
-  return { kind: 'requested', changeRequest: { id: submitted.data.id, state: submitted.data.state } };
+  return { kind: 'requested', changeRequest: { id: submitted.data.id, state: submitted.data.state, url: urlOf(unleash, projectId, submitted.data.id) } };
 };
+
+// The Unleash UI's route for a change request.
+const urlOf = ({ baseUrl }: UnleashClient, projectId: string, id: number): string =>
+  `${baseUrl.replace(/\/+$/, '')}/projects/${encodeURIComponent(projectId)}/change-requests/${id}`;
 
 const submit: components['schemas']['changeRequestStateSchema'] = { state: 'In review' };
