@@ -29,3 +29,9 @@ export const deleteSegmentNamed = async (admin: UnleashClient, name: string): Pr
     await admin.DELETE('/api/admin/segments/{id}', { params: { path: { id: segment.id } } });
   }
 };
+
+// A submitted change request can't be deleted, only cancelled, and only by its author, the user under test.
+export const cancelChangeRequest = async (author: UnleashClient, projectId: string, id: number): Promise<void> => {
+  // The OpenAPI spec omits the body.
+  await author.PUT('/api/admin/projects/{projectId}/change-requests/{id}/state', { params: { path: { projectId, id: String(id) } }, body: { state: 'Cancelled' } as never });
+};
