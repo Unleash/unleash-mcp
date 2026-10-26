@@ -117,7 +117,7 @@ test('search tool returns its results as structured content', async () => {
 test('evaluate tool asks as the unleash-mcp app when no context is given', async () => {
   const { unleash: stubbed, stub } = createStubbedClient();
   const body = JSON.stringify({ environment: 'development', context: { appName: 'unleash-mcp' } });
-  stub.intercept({ path: `/api/admin/playground/features/${flag}`, method: 'POST', body }).reply(200, { feature: { isEnabled: true } });
+  stub.intercept({ path: `/api/admin/playground/features/${flag}`, method: 'POST', body }).reply(200, { feature: { isEnabled: true, strategies: { data: [] } } });
   const client = await connectClient(stubbed);
 
   const result = await client.callTool({ name: 'evaluate', arguments: { queries: [{ flag, environment: 'development' }] } });
