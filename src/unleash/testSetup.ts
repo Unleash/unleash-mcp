@@ -14,11 +14,17 @@ export const deleteFlag = async (admin: UnleashClient, projectId: string, featur
   await admin.DELETE('/api/admin/archive/{featureName}', { params: { path: { featureName } } });
 };
 
-// A failed recording can leave the template behind, and Unleash refuses a second one with the same name.
-export const deleteReleaseTemplate = async (admin: UnleashClient, name: string): Promise<void> => {
-  const listed = await admin.GET('/api/admin/release-plan-templates');
+/**
+ * Deletes release templates by name. A failed recording can leave one behind, and Unleash refuses a second
+ * one with the same name. A project template only shows in its project's list, so pass the project to delete one.
+ */
+export const deleteReleaseTemplate = async (admin: UnleashClient, name: string, projectId?: string): Promise<void> => {
+  const listed = projectId
+    ? await admin.GET('/api/admin/projects/{projectId}/release-templates', { params: { path: { projectId } } })
+    : await admin.GET('/api/admin/release-plan-templates');
   for (const template of (listed.data ?? []).filter((t) => t.name === name)) {
-    await admin.DELETE('/api/admin/release-plan-templates/{templateId}', { params: { path: { templateId: template.id } } });
+    if (projectId) await admin.DELETE('/api/admin/projects/{projectId}/release-templates/{templateId}', { params: { path: { projectId, templateId: template.id } } });
+    else await admin.DELETE('/api/admin/release-plan-templates/{templateId}', { params: { path: { templateId: template.id } } });
   }
 };
 
