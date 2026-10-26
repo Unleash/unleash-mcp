@@ -1,10 +1,6 @@
 import { z } from 'zod';
 import { target } from '../shared/target.ts';
-
-export const flagState = z.enum(['on', 'off']);
-
-/** Whether a flag's environment serves the feature to its targets. */
-export type FlagState = z.infer<typeof flagState>;
+import { flagState } from '../shared/flagState.ts';
 
 const flag = z.object({
   name: z.string().describe('Feature flag name, as a flags search returns it. Created when missing and state is on'),

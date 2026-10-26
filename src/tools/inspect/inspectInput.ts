@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const project = z.object({ kind: z.literal('project'), project: z.string().describe('Project id, as a projects search returns it') }).describe('A project: its environments and flag naming pattern');
-const flag = z.object({ kind: z.literal('flag'), project: z.string().describe('Project id, as a projects search returns it'), flag: z.string().describe('Feature flag name, as a flags search returns it') }).describe('A feature flag: what it is, its lifecycle, who made and changed it, where SDKs last saw it, its parent and child flags, tags and links');
+const flag = z.object({ kind: z.literal('flag'), project: z.string().describe('Project id, as a projects search returns it'), flag: z.string().describe('Feature flag name, as a flags search returns it') }).describe('A feature flag: what it is, its lifecycle, who made and changed it, where SDKs last saw it, its parent and child flags, tags, links and change requests waiting with changes to it');
 
 const contextFieldInclude = z.enum(['usage']).describe('usage: the flags constraining on the field. Costs Unleash a scan of every strategy, so ask only before changing or deleting the field');
 

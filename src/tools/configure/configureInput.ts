@@ -76,7 +76,7 @@ const deleteTag = z.object({
 
 const advance = z.union([
   z.object({ afterMinutes: z.number().int().min(1).describe('Minutes since the milestone started') }),
-  z.object({ afterExposures: z.number().int().min(1).describe('Times the flag was evaluated as enabled') }),
+  z.object({ afterExposures: z.number().int().min(1).describe('Times the flag was evaluated as on') }),
 ]).describe('Moves the flag to the next milestone on its own once met');
 
 const milestone = z.object({
