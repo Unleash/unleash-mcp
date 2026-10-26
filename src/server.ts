@@ -15,6 +15,9 @@ import { createSearch } from './tools/search/search.ts';
 import { flagLifecycleInput } from './tools/flagLifecycle/flagLifecycleInput.ts';
 import { flagLifecycleOutput } from './tools/flagLifecycle/flagLifecycleOutput.ts';
 import { createFlagLifecycle } from './tools/flagLifecycle/flagLifecycle.ts';
+import { evaluateInput } from './tools/evaluate/evaluateInput.ts';
+import { evaluateOutput } from './tools/evaluate/evaluateOutput.ts';
+import { createEvaluate } from './tools/evaluate/evaluate.ts';
 import type { Failed } from './tools/shared/failed.ts';
 import type { UnleashClient } from './unleash/client.ts';
 
@@ -28,12 +31,14 @@ const toFailedToolResult = (result: Failed) => ({
 });
 
 export const createServer = (unleash: UnleashClient): McpServer => {
-  const server = new McpServer({ name: 'unleash-mcp', version: pkg.version });
+  // GHSA-46jr-4wx8-v453. A context field update resends every legal value, so this caps a field at about 3,300 described values.
+  const server = new McpServer({ name: 'unleash-mcp', version: pkg.version }, { maxToolInputElements: 10_000 });
   const release = createRelease(unleash);
   const inspect = createInspect(unleash);
   const configure = createConfigure(unleash);
   const search = createSearch(unleash);
   const flagLifecycle = createFlagLifecycle(unleash);
+  const evaluate = createEvaluate(unleash);
 
   server.registerTool(
     'release',
@@ -73,6 +78,17 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   );
 
   server.registerTool(
+    'evaluate',
+    {
+      description: 'Tell whether a feature is on, off or unknown for a context in an environment, such as whether a user gets it. Takes flag names as search returns them and environments as inspecting the project lists them. One result per query, in the order asked.',
+      inputSchema: evaluateInput,
+      outputSchema: evaluateOutput,
+      annotations: { readOnlyHint: true },
+    },
+    async (input) => toToolResult(await evaluate(input)),
+  );
+
+  server.registerTool(
     'configure',
     {
       description: 'Change Unleash configuration: context fields and their legal values, segments, tag types and tags, and release templates. Takes ids and names as search returns them; inspect an item first to replace it, since a replace drops what is left out. Applies the changes in order and reports each one.',
@@ -85,7 +101,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   server.registerTool(
     'flag_lifecycle',
     {
-      description: 'Move flags through their lifecycle: define them (create, or bring an existing one to what is listed), mark them completed. Applies the operations in order and reports each one.',
+      description: 'Move flags through their lifecycle: define them (create, or bring an existing one to what is listed), mark them completed, archive, revive and delete them. Applies the operations in order and reports each one.',
       inputSchema: flagLifecycleInput,
       outputSchema: flagLifecycleOutput,
     },

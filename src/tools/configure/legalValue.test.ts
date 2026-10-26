@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
+import { createContextField, deleteContextField } from './contextField.ts';
 import { createLegalValue, deleteLegalValue } from './legalValue.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./legalValue.snapshot.json', import.meta.url).pathname);
@@ -11,12 +12,12 @@ const project = 'mcp-server';
 const projectField = 'mcpProjectLegalValueField';
 
 const deleteFields = async (): Promise<void> => {
-  for (const contextField of [field, projectField]) await admin.DELETE('/api/admin/context/{contextField}', { params: { path: { contextField } } });
+  for (const contextField of [field, projectField]) await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: contextField });
 };
 
 before(async () => {
   await deleteFields();
-  await admin.POST('/api/admin/context', { body: { name: field } });
+  await createContextField(admin, { kind: 'context_field', action: 'create', name: field });
   await admin.POST('/api/admin/context', { body: { name: projectField, project } });
 });
 after(async () => {

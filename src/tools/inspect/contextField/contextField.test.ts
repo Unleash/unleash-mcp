@@ -4,6 +4,7 @@ import { createRecordedClient, createStubbedClient } from '../../../unleash/test
 import { unleashError } from '../../../unleash/testError.ts';
 import { inspectContextField } from './contextField.ts';
 import { createRelease } from '../../release/release.ts';
+import { createContextField, deleteContextField } from '../../configure/contextField.ts';
 import { deleteFlag } from '../../../unleash/testSetup.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./contextField.snapshot.json', import.meta.url).pathname);
@@ -15,15 +16,15 @@ const flag = 'mcp-context-field-flag';
 const gold = { field, operator: 'IN' as const, values: ['gold'] };
 
 const deleteFields = async (): Promise<void> => {
-  for (const contextField of [field, projectField]) await admin.DELETE('/api/admin/context/{contextField}', { params: { path: { contextField } } });
+  for (const contextField of [field, projectField]) await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: contextField });
 };
 
 // The flag goes first: a field in use cannot be deleted. Two strategies on the field in one environment show as one use.
 before(async () => {
   await deleteFlag(admin, project, flag);
   await deleteFields();
-  await admin.POST('/api/admin/context', { body: { name: field, description: 'Customer tier', stickiness: true, legalValues } });
-  await admin.POST('/api/admin/projects/{projectId}/context', { params: { path: { projectId: project } }, body: { name: projectField } });
+  await createContextField(admin, { kind: 'context_field', action: 'create', name: field, description: 'Customer tier', stickiness: true, legalValues });
+  await createContextField(admin, { kind: 'context_field', action: 'create', project, name: projectField });
   await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Gold', constraints: [gold] }, { name: 'Gold again', constraints: [gold] }] } });
 });
 after(async () => {

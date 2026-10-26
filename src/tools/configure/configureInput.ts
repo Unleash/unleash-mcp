@@ -130,33 +130,18 @@ export const configureInput = {
   changes: z.array(change).min(1).describe('Applied in the order given; one result per change'),
 };
 
-/** What the configure tool receives. */
 export type ConfigureInput = z.infer<z.ZodObject<typeof configureInput>>;
-/** One change to an Unleash resource, tagged by `kind` and `action`. */
 export type Change = z.infer<typeof change>;
-/** The change that creates a context field, global or in a project. */
 export type CreateContextField = z.infer<typeof createContextField>;
-/** The change that replaces a context field. */
 export type UpdateContextField = z.infer<typeof updateContextField>;
-/** The change that deletes a context field. */
 export type DeleteContextField = z.infer<typeof deleteContextField>;
-/** The change that adds a legal value to a context field, or redescribes an existing one. */
 export type CreateLegalValue = z.infer<typeof createLegalValue>;
-/** The change that removes a legal value from a context field. */
 export type DeleteLegalValue = z.infer<typeof deleteLegalValue>;
-/** The change that creates a tag type. */
 export type CreateTagType = z.infer<typeof createTagType>;
-/** The change that replaces a tag type's description. */
 export type UpdateTagType = z.infer<typeof updateTagType>;
-/** The change that deletes a tag type. */
 export type DeleteTagType = z.infer<typeof deleteTagType>;
-/** The change that deletes a tag. */
 export type DeleteTag = z.infer<typeof deleteTag>;
-/** The change that creates a release template, global or in a project. */
 export type CreateReleaseTemplate = z.infer<typeof createReleaseTemplate>;
-/** The change that creates a segment, global or in a project. */
 export type CreateSegment = z.infer<typeof createSegment>;
-/** The change that replaces a segment, keeping its description when left out. */
 export type UpdateSegment = z.infer<typeof updateSegment>;
-/** The change that deletes a segment. */
 export type DeleteSegment = z.infer<typeof deleteSegment>;
