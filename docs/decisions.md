@@ -255,3 +255,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - `search` finds release templates so an agent can get the id `release` takes. Rows are the id and the name only: templates carry a lot we don't want to disclose yet, such as the strategies underneath.
 - With a project, the search lists the templates usable there, the project's own and the global ones (the project endpoint is beta); without, the global ones only. Rejected: the global list only, which hides project templates.
 - The sandbox's release template limit was raised, so template tests are recorded. This supersedes the stubbed project template test in "Release templates in configure".
+
+## 2026-10-26 — Release plan and milestone ids in inspect
+
+- `inspect` shows the id of an environment's release plan and of each milestone. The agent needs both to start a milestone. Release plan and milestone ids are shown to the agent, the same exception as segment, change request and release template ids. Rejected: the milestone id only.
