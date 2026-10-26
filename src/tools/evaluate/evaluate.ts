@@ -39,21 +39,24 @@ const toTarget = (strategy: UnleashStrategy, context: EvaluateQuery['context']):
   const named = strategy.title ? { name: strategy.title } : {};
   if (strategy.disabled) return { ...named, result: 'disabled' };
   if (strategy.result.enabled === 'unknown') return { ...named, result: 'unknown', matchedBy: passedConditions(strategy) };
-  if (strategy.result.enabled) return { ...named, result: 'matched', matchedBy: { ...passedConditions(strategy), ...partialRollout(strategy) } };
+  const stickiness = stickinessField(strategy.parameters.stickiness || 'default', context);
+  if (strategy.result.enabled) return { ...named, result: 'matched', matchedBy: { ...passedConditions(strategy), ...rolloutConditions(strategy, stickiness) } };
   const failed = failedConditions(strategy);
-  const keptOutByRollout = !failed.segments && !failed.constraints && hasStickinessValue(strategy, context);
-  return { ...named, result: 'missed', missedBy: keptOutByRollout ? partialRollout(strategy) : failed };
+  if (failed.segments || failed.constraints) return { ...named, result: 'missed', missedBy: failed };
+  // Unleash misses a rollout whose stickiness field the context lacks before it checks the percentage.
+  const lacksStickiness = stickiness !== 'random' && !context[stickiness];
+  return { ...named, result: 'missed', missedBy: lacksStickiness ? { stickiness } : rolloutConditions(strategy, stickiness) };
 };
 
-// Unleash misses a rollout whose stickiness field the context lacks before it checks the percentage.
-const hasStickinessValue = ({ parameters }: UnleashStrategy, context: EvaluateQuery['context']) => {
-  const stickiness = parameters.stickiness ?? 'default';
-  return stickiness === 'default' || stickiness === 'random' || Boolean(context[stickiness]);
-};
-
-const partialRollout = ({ parameters }: UnleashStrategy): Conditions => {
+const rolloutConditions = ({ parameters }: UnleashStrategy, stickiness: string): Conditions => {
   const rollout = Number(parameters.rollout ?? 100);
-  return rollout < 100 ? { rollout } : {};
+  return rollout < 100 ? { rollout, stickiness } : {};
+};
+
+// Unleash's default sticks to userId, then sessionId, then a new random draw on every call.
+const stickinessField = (stickiness: string, context: EvaluateQuery['context']) => {
+  if (stickiness !== 'default') return stickiness;
+  return context.userId ? 'userId' : context.sessionId ? 'sessionId' : 'random';
 };
 
 const passedConditions = ({ segments, constraints }: UnleashStrategy): Conditions =>

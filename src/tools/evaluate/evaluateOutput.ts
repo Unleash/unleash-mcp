@@ -13,14 +13,15 @@ const conditions = z.object({
   segments: z.array(z.object({ id: z.number().int(), name: z.string() })).optional(),
   constraints: z.array(constraint).optional(),
   rollout: z.number().optional().describe('Percentage of the audience that gets the feature, only when under 100'),
+  stickiness: z.string().optional().describe('The context field the rollout groups contexts by, so the same value always lands on the same side of it. random: a new draw on every call, so the result can change. Alone in missedBy when the context lacks the field'),
 });
 
 const named = { name: z.string().optional() };
 
 const evaluatedTarget = z.discriminatedUnion('result', [
   z.object({ ...named, result: z.literal('matched'), matchedBy: conditions.describe('All of its segments and constraints, and its rollout, which let the context in. Empty when it has none') }),
-  z.object({ ...named, result: z.literal('missed'), missedBy: conditions.describe('Only the segments and constraints that kept the context out, or its rollout when they all let it in. Empty when something else did, such as a context without the field the rollout sticks to') }),
-  z.object({ ...named, result: z.literal('unknown'), matchedBy: conditions.omit({ rollout: true }).describe('All of its segments and constraints, which let the context in') })
+  z.object({ ...named, result: z.literal('missed'), missedBy: conditions.describe('Only the segments and constraints that kept the context out, or its rollout when they all let it in. Empty when something else did') }),
+  z.object({ ...named, result: z.literal('unknown'), matchedBy: conditions.omit({ rollout: true, stickiness: true }).describe('All of its segments and constraints, which let the context in') })
     .describe('What is left only SDKs can check, such as a custom strategy'),
   z.object({ ...named, result: z.literal('disabled') }).describe('SDKs never get it'),
 ]);

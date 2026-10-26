@@ -24,6 +24,8 @@ const paused = { name: 'Paused', result: 'disabled' };
 const sessionOutsideRollout = 'b';
 const everyone = { name: 'Everyone', result: 'matched', matchedBy: {} };
 const bySession = (missedBy: object) => ({ name: 'By session', result: 'missed', missedBy });
+const nobodyYet = (stickiness: string) => ({ name: 'Nobody yet', result: 'missed', missedBy: { rollout: 0, stickiness } });
+const sdkOnlyMissed = { result: 'missed', missedBy: { constraints: [userIn(users.targetedBySdkOnly)] } };
 let segmentId = 0;
 
 const addTarget = (featureName: string, env: string, body: components['schemas']['createFeatureStrategySchema']) =>
@@ -50,6 +52,7 @@ before(async () => {
   await addSdkOnlyTarget(flag, 'production');
   await addTarget(flag, 'production', { name: 'flexibleRollout', title: 'Everyone', parameters: { rollout: '100', stickiness: 'default', groupId: flag } });
   await addTarget(flag, 'production', { name: 'flexibleRollout', title: 'By session', parameters: { rollout: '50', stickiness: 'sessionId', groupId: flag } });
+  await addTarget(flag, 'production', { name: 'flexibleRollout', title: 'Nobody yet', parameters: { rollout: '0', stickiness: 'default', groupId: flag } });
   for (const name of [parent, child]) await defineFlag(admin, { action: 'define', project, flag: name });
   await addSdkOnlyTarget(child, environment);
   await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on', { params: { path: { projectId: project, featureName: child, environment } } });
@@ -70,7 +73,7 @@ test('the feature is on for a context a target matches, with the value it serves
       kind: 'evaluated', flag, environment, result: 'on',
       value: { name: 'blue', payload: { type: 'string', value: 'b' } },
       targets: [
-        { name: 'Beta', result: 'matched', matchedBy: { segments: [{ id: segmentId, name: segment }], constraints: [beta], rollout: 80 } },
+        { name: 'Beta', result: 'matched', matchedBy: { segments: [{ id: segmentId, name: segment }], constraints: [beta], rollout: 80, stickiness: 'userId' } },
         paused,
         { result: 'missed', missedBy: { constraints: [userIn(users.targetedBySdkOnly)] } },
       ],
@@ -100,12 +103,11 @@ test('the feature is off for a context no target matches, a disabled one aside, 
     { appName: 'unleash-mcp', userId: users.outsideRollout },
   );
 
-  const sdkOnlyMissed = { result: 'missed', missedBy: { constraints: [userIn(users.targetedBySdkOnly)] } };
   assert.deepEqual(output, {
     results: [
       { kind: 'evaluated', flag, environment, result: 'off', targets: [{ name: 'Beta', result: 'missed', missedBy: { constraints: [beta] } }, paused, sdkOnlyMissed] },
       { kind: 'evaluated', flag, environment, result: 'off', targets: [{ name: 'Beta', result: 'missed', missedBy: { segments: [{ id: segmentId, name: segment }] } }, paused, sdkOnlyMissed] },
-      { kind: 'evaluated', flag, environment, result: 'off', targets: [{ name: 'Beta', result: 'missed', missedBy: { rollout: 80 } }, paused, sdkOnlyMissed] },
+      { kind: 'evaluated', flag, environment, result: 'off', targets: [{ name: 'Beta', result: 'missed', missedBy: { rollout: 80, stickiness: 'userId' } }, paused, sdkOnlyMissed] },
     ],
   });
 });
@@ -117,22 +119,23 @@ test('the feature is off when its environment is off or its parent is unsatisfie
 
   assert.deepEqual(output, {
     results: [
-      { kind: 'evaluated', flag, environment: 'production', result: 'off', targets: [{ result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } }, everyone, bySession({})] },
+      { kind: 'evaluated', flag, environment: 'production', result: 'off', targets: [{ result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } }, everyone, bySession({ stickiness: 'sessionId' }), nobodyYet('userId')] },
       { kind: 'evaluated', flag: child, environment, result: 'off', targets: [{ result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } }] },
     ],
   });
 });
 
-test('a target names its rollout only when it is under 100 and the context has the field the rollout sticks to', async () => {
-  const context = { appName: 'unleash-mcp', userId: users.untargeted };
+test('a rollout under 100 names the field it groups contexts by, or that field alone when the context lacks it', async () => {
+  const contexts: Record<string, string>[] = [{ userId: users.untargeted, sessionId: sessionOutsideRollout }, { sessionId: sessionOutsideRollout }, {}];
 
-  const output = await createEvaluate(unleash)({ queries: [{ flag, environment: 'production', context }, { flag, environment: 'production', context: { ...context, sessionId: sessionOutsideRollout } }] });
+  const output = await createEvaluate(unleash)({ queries: contexts.map((context) => ({ flag, environment: 'production', context: { appName: 'unleash-mcp', ...context } })) });
 
-  const sdkOnlyMissed = { result: 'missed', missedBy: { constraints: [userIn(users.targetedBySdkOnly)] } };
+  const evaluated = (...targets: object[]) => ({ kind: 'evaluated', flag, environment: 'production', result: 'off', targets: [sdkOnlyMissed, everyone, ...targets] });
   assert.deepEqual(output, {
     results: [
-      { kind: 'evaluated', flag, environment: 'production', result: 'off', targets: [sdkOnlyMissed, everyone, bySession({})] },
-      { kind: 'evaluated', flag, environment: 'production', result: 'off', targets: [sdkOnlyMissed, everyone, bySession({ rollout: 50 })] },
+      evaluated(bySession({ rollout: 50, stickiness: 'sessionId' }), nobodyYet('userId')),
+      evaluated(bySession({ rollout: 50, stickiness: 'sessionId' }), nobodyYet('sessionId')),
+      evaluated(bySession({ stickiness: 'sessionId' }), nobodyYet('random')),
     ],
   });
 });

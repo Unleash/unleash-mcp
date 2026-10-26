@@ -264,5 +264,9 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 
 ## 2026-10-26 — A target's rollout explains it too
 
-- `matchedBy` names the rollout when it is under 100. `missedBy` names it only when every segment and constraint let the context in and the context has the field the rollout sticks to, since only then did the percentage keep it out. Without that field Unleash misses the target before it checks the percentage, so naming the rollout would send an agent to change the percentage.
+- `matchedBy` names the rollout when it is under 100. `missedBy` names it only when every segment and constraint let the context in, since only then did the rollout keep it out.
+- The rollout comes with its `stickiness`, the context field that groups people into the same side of it, so "not in the 80%" reads as "this userId falls outside the 80%". It is the field Unleash actually used: `default` means userId, then sessionId, then random, and means nothing to someone new to Unleash. Rejected: reporting `default` as is.
+- When the context lacks that field, Unleash misses the target before it checks the percentage, so `missedBy` names the field alone. Naming the percentage would send an agent to change it.
+- `random` is a new draw on every call, so the result can change. The result still reads on or off. Rejected: a new result for it.
+- No bucket number (where the context lands, such as 94 of 100): Unleash doesn't return it, so we would copy its hashing and add a dependency.
 - A rollout of 100 never shows: it lets everyone in, so it explains no match. Rejected: always showing the rollout as inspect does.
