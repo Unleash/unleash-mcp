@@ -7,7 +7,21 @@ const uiConfig = '/api/admin/ui-config';
 const config = '/api/admin/projects/{projectId}/change-requests/config';
 const changeRequestState = '/api/admin/projects/{projectId}/change-requests/{id}/state';
 
-type Edition = { kind: 'enterprise' } | { kind: 'other' };
+export type Edition = { kind: 'enterprise' } | { kind: 'other' };
+
+/** Reads the Unleash edition, to tell whether it has change requests: only Enterprise does. */
+export type EditionReader = () => Promise<Edition | Failed>;
+
+/** The edition doesn't change while the server runs: it is read once, and a failed read is tried again on the next call. */
+export const createEditionReader = (unleash: UnleashClient): EditionReader => {
+  let edition: Edition | undefined;
+  return async () => {
+    if (edition) return edition;
+    const read = await readEdition(unleash);
+    if (read.kind !== 'failed') edition = read;
+    return read;
+  };
+};
 
 /** The environments of a project where changes need approval, with their Unleash environment type. Empty outside Enterprise. */
 export type ChangeRequestEnvironments = { kind: 'environments'; environments: { environment: string; type: string }[] };
@@ -17,15 +31,13 @@ export type ChangeRequestReader = (project: string) => Promise<ChangeRequestEnvi
 
 /**
  * Builds a reader of where a project's changes need approval, so a tool knows whether to write directly or open a change request.
- * Only Enterprise has change requests, so other editions skip reading the config. The edition doesn't change while the
- * server runs: it is read once, and a failed read is tried again on the next call.
+ * Only Enterprise has change requests, so other editions skip reading the config.
  */
 export const createChangeRequestReader = (unleash: UnleashClient): ChangeRequestReader => {
-  let edition: Edition | undefined;
+  const editionOf = createEditionReader(unleash);
   return async (project) => {
-    const read = edition ?? (await readEdition(unleash));
-    if (read.kind === 'failed') return read;
-    edition = read;
+    const edition = await editionOf();
+    if (edition.kind === 'failed') return edition;
     if (edition.kind === 'other') return { kind: 'environments', environments: [] };
 
     const found = await unleash.GET(config, { params: { path: { projectId: project } } });
@@ -98,7 +110,7 @@ export const requestChanges = async (unleash: UnleashClient, { project, environm
  */
 const submitForReview = async (unleash: UnleashClient, projectId: string, { id, state }: { id: number; state: string }): Promise<Requested | Failed> => {
   // Unleash refuses to submit a change request again, so one that is already past draft is left as it is.
-  if (state !== 'Draft') return { kind: 'requested', changeRequest: { id, state, url: urlOf(unleash, projectId, id) } };
+  if (state !== 'Draft') return { kind: 'requested', changeRequest: { id, state, url: changeRequestUrl(unleash, projectId, id) } };
 
   const submitted = await unleash.PUT(changeRequestState, {
     params: { path: { projectId, id: String(id) } },
@@ -106,11 +118,11 @@ const submitForReview = async (unleash: UnleashClient, projectId: string, { id, 
     body: submit as never,
   });
   if (!submitted.response.ok || !submitted.data) return toFailed(submitted);
-  return { kind: 'requested', changeRequest: { id: submitted.data.id, state: submitted.data.state, url: urlOf(unleash, projectId, submitted.data.id) } };
+  return { kind: 'requested', changeRequest: { id: submitted.data.id, state: submitted.data.state, url: changeRequestUrl(unleash, projectId, submitted.data.id) } };
 };
 
-// The Unleash UI's route for a change request.
-const urlOf = ({ baseUrl }: UnleashClient, projectId: string, id: number): string =>
+/** The Unleash UI's route for a change request, where people review it. */
+export const changeRequestUrl = ({ baseUrl }: UnleashClient, projectId: string, id: number): string =>
   `${baseUrl}/projects/${encodeURIComponent(projectId)}/change-requests/${id}`;
 
 const submit: components['schemas']['changeRequestStateSchema'] = { state: 'In review' };

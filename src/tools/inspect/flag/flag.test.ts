@@ -5,8 +5,11 @@ import { unleashError } from '../../../unleash/testError.ts';
 import { deleteFlag, deleteReleaseTemplate } from '../../../unleash/testSetup.ts';
 import { inspectFlag } from './flag.ts';
 import { createRelease } from '../../release/release.ts';
+import { createEditionReader, type EditionReader } from '../../shared/changeRequest.ts';
+import { stubEnterprise } from '../../../unleash/testChangeRequest.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./flag.snapshot.json', import.meta.url).pathname);
+const editionOf = createEditionReader(unleash);
 const project = 'mcp-server';
 const flag = 'mcp-inspected-flag';
 const parent = 'mcp-inspected-parent';
@@ -17,6 +20,9 @@ const gradual = (rollout: string) => ({ sortOrder: 0, strategyName: 'flexibleRol
 const features = '/api/admin/projects/{projectId}/features';
 const flagPath = `/api/admin/projects/${project}/features/${flag}`;
 const tagsPath = `/api/admin/features/${flag}/tags`;
+const pendingPath = `/api/admin/projects/${project}/change-requests/pending/${flag}`;
+// Stubbed tests that are not about change requests skip reading them.
+const openSource: EditionReader = async () => ({ kind: 'other' });
 
 // The flags go before the template: a plan made from it keeps the template in use.
 const deleteFlags = async (): Promise<void> => {
@@ -65,7 +71,7 @@ const timestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 // The flag is created anew on every recording, so the timestamps are left to the partial match.
 // A kill switch has no expected lifetime.
 test('describes a flag with its lifecycle, environments, who worked on it, its parent, tags and links', async () => {
-  const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, editionOf, { kind: 'flag', project, flag });
 
   assert(!('expectedLifetimeEndsAt' in output));
   assert.partialDeepStrictEqual(output, {
@@ -87,7 +93,7 @@ test('describes a flag with its lifecycle, environments, who worked on it, its p
 
 // The parent is created without a type, so Unleash gives it the default `release` with its lifetime.
 test('names the flags that depend on a flag and the release plan rolling it out', async () => {
-  const output = await inspectFlag(unleash, { kind: 'flag', project, flag: parent });
+  const output = await inspectFlag(unleash, editionOf, { kind: 'flag', project, flag: parent });
 
   assert(output.kind === 'flag');
   assert.match(output.expectedLifetimeEndsAt ?? '', timestamp);
@@ -122,7 +128,7 @@ test('names the lifecycle stage as the Unleash UI does, with its status', async 
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release', lifecycle: { stage: 'completed', status: 'kept', enteredStageAt: '2026-10-21T09:00:00.000Z' } });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
-  const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', lifecycle: { stage: 'cleanup', status: 'kept', enteredAt: '2026-10-21T09:00:00.000Z' }, environments: [] });
 });
@@ -136,7 +142,7 @@ test('treats a transition without a type as time based', async () => {
   });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
-  const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, {
     kind: 'flag',
@@ -155,7 +161,7 @@ test('tells when an SDK last saw the flag in each environment', async () => {
   });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
-  const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, {
     kind: 'flag',
@@ -170,7 +176,7 @@ test('tells which values the parent must serve', async () => {
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release', dependencies: [{ feature: parent, enabled: true, variants: ['blue'] }] });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
-  const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', environments: [], parent: { kind: 'on', flag: parent, values: ['blue'] } });
 });
@@ -180,13 +186,13 @@ test('tells when the parent must be off', async () => {
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release', dependencies: [{ feature: parent, enabled: false, variants: [] }] });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
-  const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', environments: [], parent: { kind: 'off', flag: parent } });
 });
 
 test('fails with the Unleash error when the flag does not exist', async () => {
-  const output = await inspectFlag(unleash, { kind: 'flag', project, flag: 'mcp-unknown' });
+  const output = await inspectFlag(unleash, editionOf, { kind: 'flag', project, flag: 'mcp-unknown' });
 
   assert.deepEqual(output, { kind: 'failed', status: 404, name: 'NotFoundError', reasons: [`There's no feature named "mcp-unknown" in project "mcp-server".`] });
 });
@@ -196,7 +202,7 @@ test('fails with the Unleash error when the flag cannot be read', async () => {
   stub.intercept({ path: flagPath, method: 'GET' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
-  const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, { kind: 'failed', status: 500, name: 'UnknownError', reasons: ['connect ECONNREFUSED 10.0.0.5:5432'] });
 });
@@ -206,7 +212,48 @@ test('fails with the Unleash error when the tags cannot be read', async () => {
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release' });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
 
-  const output = await inspectFlag(unleash, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
+
+  assert.deepEqual(output, { kind: 'failed', status: 500, name: 'UnknownError', reasons: ['connect ECONNREFUSED 10.0.0.5:5432'] });
+});
+
+test('lists the change requests waiting with changes to the flag, linked to the Unleash UI', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stubEnterprise(stub);
+  stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release' });
+  stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
+  stub.intercept({ path: pendingPath, method: 'GET' }).reply(200, [{ id: 7, environment: 'production', state: 'In review' }]);
+
+  const output = await inspectFlag(unleash, createEditionReader(unleash), { kind: 'flag', project, flag });
+
+  assert.deepEqual(output, {
+    kind: 'flag',
+    name: flag,
+    type: 'release',
+    environments: [],
+    changeRequests: [{ id: 7, state: 'In review', environment: 'production', url: `https://unleash.example/projects/${project}/change-requests/7` }],
+  });
+});
+
+test('fails with the Unleash error when the change requests cannot be read', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stubEnterprise(stub);
+  stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release' });
+  stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
+  stub.intercept({ path: pendingPath, method: 'GET' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
+
+  const output = await inspectFlag(unleash, createEditionReader(unleash), { kind: 'flag', project, flag });
+
+  assert.deepEqual(output, { kind: 'failed', status: 500, name: 'UnknownError', reasons: ['connect ECONNREFUSED 10.0.0.5:5432'] });
+});
+
+test('fails with the Unleash error when the edition cannot be read', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
+  stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release' });
+  stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
+
+  const output = await inspectFlag(unleash, createEditionReader(unleash), { kind: 'flag', project, flag });
 
   assert.deepEqual(output, { kind: 'failed', status: 500, name: 'UnknownError', reasons: ['connect ECONNREFUSED 10.0.0.5:5432'] });
 });
