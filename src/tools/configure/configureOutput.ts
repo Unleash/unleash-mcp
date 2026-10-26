@@ -99,11 +99,8 @@ export const configureOutput = {
   results: z.array(result).describe('One per change, in the order given, each naming the change it answers'),
 };
 
-/** What the configure tool answers. */
 export type ConfigureOutput = z.infer<z.ZodObject<typeof configureOutput>>;
-/** The answer to one change: the change it answers, and whether it was applied. */
 export type ConfigureResult = z.infer<typeof result>;
-/** The change a result answers: its resource, action, and what it acted on. */
 export type Target = z.infer<typeof target>;
 /** What a step answers, with the id Unleash gave a created resource that has one. The tool adds the change it answers. */
 export type Outcome = { kind: 'applied'; id?: string | number } | Failed;

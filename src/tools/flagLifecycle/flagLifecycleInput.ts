@@ -51,17 +51,10 @@ export const flagLifecycleInput = {
   operations: z.array(operation).min(1).describe('Applied in the order given; one result per operation'),
 };
 
-/** What the flag lifecycle tool receives. */
 export type FlagLifecycleInput = z.infer<z.ZodObject<typeof flagLifecycleInput>>;
-/** One operation on a flag's lifecycle, tagged by `action`. */
 export type Operation = z.infer<typeof operation>;
-/** The operation that creates a flag or brings an existing one to have what is listed. */
 export type Define = z.infer<typeof define>;
-/** The operation that marks a flag completed. */
 export type Complete = z.infer<typeof complete>;
-/** The operation that archives a flag. */
 export type Archive = z.infer<typeof archive>;
-/** The operation that brings an archived flag back. */
 export type Revive = z.infer<typeof revive>;
-/** The operation that deletes an archived flag for good. */
 export type Delete = z.infer<typeof remove>;

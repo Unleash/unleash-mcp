@@ -43,11 +43,8 @@ export const flagLifecycleOutput = {
   results: z.array(result).describe('One per operation, in the order given, each naming the operation it answers'),
 };
 
-/** What the flag lifecycle tool answers. */
 export type FlagLifecycleOutput = z.infer<z.ZodObject<typeof flagLifecycleOutput>>;
-/** The answer to one operation: the operation it answers, and whether it was applied. */
 export type FlagLifecycleResult = z.infer<typeof result>;
-/** What define wrote. */
 export type Changed = z.infer<typeof changed>;
 /** What a step answers. Only define says whether the flag was new and what it wrote. The tool adds the operation it answers. */
 export type Outcome = { kind: 'applied'; status?: 'new' | 'existing'; changed?: Changed[] } | Failed;
