@@ -1,6 +1,6 @@
 import type { UnleashClient } from '../../unleash/client.ts';
-import type { Complete } from './flagLifecycleInput.ts';
-import type { Outcome } from './flagLifecycleOutput.ts';
+import type { Complete } from './manageFlagInput.ts';
+import type { Outcome } from './manageFlagOutput.ts';
 import { toFailed } from '../shared/failed.ts';
 
 /** Marks a flag completed, answering Unleash's refusal (e.g. no such flag) as `failed`. Completion is a note, so it needs no review. */

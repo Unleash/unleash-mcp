@@ -1,7 +1,7 @@
 import type { components } from '../../unleash/api.d.ts';
 import type { UnleashClient } from '../../unleash/client.ts';
-import type { Define } from './flagLifecycleInput.ts';
-import type { Changed, Outcome } from './flagLifecycleOutput.ts';
+import type { Define } from './manageFlagInput.ts';
+import type { Changed, Outcome } from './manageFlagOutput.ts';
 import { type Failed, toFailed } from '../shared/failed.ts';
 import type { FlagType } from '../shared/flagType.ts';
 import type { Link } from '../shared/link.ts';

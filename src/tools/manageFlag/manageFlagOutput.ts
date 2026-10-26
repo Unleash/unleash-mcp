@@ -40,12 +40,12 @@ const pendingOperation = z.object({ kind: z.literal('pending_change_request'), .
 
 const result = z.discriminatedUnion('kind', [applied, failedOperation, pendingOperation]);
 
-export const flagLifecycleOutput = {
+export const manageFlagOutput = {
   results: z.array(result).describe('One per operation, in the order given, each naming the operation it answers'),
 };
 
-export type FlagLifecycleOutput = z.infer<z.ZodObject<typeof flagLifecycleOutput>>;
-export type FlagLifecycleResult = z.infer<typeof result>;
+export type ManageFlagOutput = z.infer<z.ZodObject<typeof manageFlagOutput>>;
+export type ManageFlagResult = z.infer<typeof result>;
 export type Changed = z.infer<typeof changed>;
 /** What a step answers. Only define says whether the flag was new and what it wrote. The tool adds the operation it answers. */
 export type Outcome = { kind: 'applied'; status?: 'new' | 'existing'; changed?: Changed[] } | Failed;

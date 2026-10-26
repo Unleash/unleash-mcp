@@ -1,6 +1,6 @@
 import type { UnleashClient } from '../../unleash/client.ts';
-import type { Archive } from './flagLifecycleInput.ts';
-import type { Outcome, PendingChange } from './flagLifecycleOutput.ts';
+import type { Archive } from './manageFlagInput.ts';
+import type { Outcome, PendingChange } from './manageFlagOutput.ts';
 import { type ChangeRequestReader, requestChanges, routeToProject } from '../shared/changeRequest.ts';
 import { toFailed } from '../shared/failed.ts';
 
