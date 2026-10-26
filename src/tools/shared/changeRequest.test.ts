@@ -134,6 +134,16 @@ test('writes a project change directly when no environment requires change reque
   assert.deepEqual(route, { kind: 'direct' });
 });
 
+test('fails with the Unleash error when the change request config cannot be read for a project change', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stubEdition(stub, enterprise);
+  stub.intercept({ path: config, method: 'GET' }).reply(403, unleashError('PermissionError', 'You need the READ_PROJECT permission'));
+
+  const route = await routeToProject(createChangeRequestReader(unleash), project);
+
+  assert.deepEqual(route, { kind: 'failed', status: 403, name: 'PermissionError', reasons: ['You need the READ_PROJECT permission'] });
+});
+
 const route = { kind: 'changeRequest' as const, project, environment: 'production' };
 const changeRequests = `/api/admin/projects/${project}/environments/production/change-requests`;
 const defaultChange = { action: 'deleteSegment' as const, payload: { id: 42 } };

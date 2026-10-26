@@ -59,7 +59,9 @@ const inUse: Failed = {
 const routeOf = (environmentsOf: ChangeRequestReader, project: string | undefined): Promise<Route | Failed> =>
   project ? routeToProject(environmentsOf, project) : Promise.resolve({ kind: 'direct' });
 
-const requestChange = async (unleash: UnleashClient, route: ChangeRequestRoute, change: Changes): Promise<PendingChange | Failed> => {
+type SegmentChange = Extract<Changes, { action: 'updateSegment' | 'deleteSegment' }>;
+
+const requestChange = async (unleash: UnleashClient, route: ChangeRequestRoute, change: SegmentChange): Promise<PendingChange | Failed> => {
   const requested = await requestChanges(unleash, route, change);
   if (requested.kind === 'failed') return requested;
   return { kind: 'pending_change_request', changeRequest: requested.changeRequest };
