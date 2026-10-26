@@ -32,7 +32,7 @@ before(async () => {
   await deleteSegmentNamed(admin, segment);
   const created = await createSegment(admin, { kind: 'segment', action: 'create', name: segment, constraints: [] });
   segmentId = created.kind === 'applied' ? created.id : 0;
-  await createRelease(admin)({ project, flag: { name: second, state: 'on' }, environment: 'development', targets: [{ name: 'Beta', segments: [segmentId] }] });
+  await createRelease(admin)({ project, flag: { name: second, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Beta', segments: [segmentId] }] } });
   await admin.DELETE('/api/admin/projects/{projectId}/features/{featureName}', { params: { path: { projectId: project, featureName: archived } } });
 });
 // The flags go first: Unleash may refuse to delete a segment in use.

@@ -25,7 +25,7 @@ before(async () => {
   await deleteFields();
   await createContextField(admin, { kind: 'context_field', action: 'create', name: field, description: 'Customer tier', stickiness: true, legalValues });
   await createContextField(admin, { kind: 'context_field', action: 'create', project, name: projectField });
-  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Gold', constraints: [gold] }, { name: 'Gold again', constraints: [gold] }] });
+  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Gold', constraints: [gold] }, { name: 'Gold again', constraints: [gold] }] } });
 });
 after(async () => {
   await deleteFlag(admin, project, flag);

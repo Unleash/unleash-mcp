@@ -13,6 +13,7 @@ export const requestRelease = (unleash: UnleashClient, path: EnvironmentPath, pl
     ...(plan.toggle === 'off' ? [toggle] : []),
     ...plan.updates.map(({ id, strategy }) => ({ feature, action: 'updateStrategy' as const, payload: { id, ...strategy } })),
     ...plan.adds.map((strategy) => ({ feature, action: 'addStrategy' as const, payload: strategy })),
+    ...(plan.template ? [{ feature, action: 'addReleasePlan' as const, payload: { templateId: plan.template } }] : []),
     ...plan.deletes.map((id) => ({ feature, action: 'deleteStrategy' as const, payload: { id } })),
     ...(plan.toggle === 'on' ? [toggle] : []),
   ];

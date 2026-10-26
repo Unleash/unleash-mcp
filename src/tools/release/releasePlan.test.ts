@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { Target } from '../shared/target.ts';
-import { planRelease } from './releasePlan.ts';
+import { planRelease, planTemplate } from './releasePlan.ts';
 
 const variantsOf = (target: Target) => planRelease('mcp-flag', 'on', [target], { enabled: true, strategyIds: [] }).adds[0]?.variants;
 
@@ -51,4 +51,10 @@ test('leaves an environment that is already off as it is', () => {
   const plan = planRelease('mcp-flag', 'off', everyone, { enabled: false, strategyIds: ['s1'] });
 
   assert.equal(plan.toggle, undefined);
+});
+
+test('removes every audience of the environment when a template replaces them', () => {
+  const plan = planTemplate('01JB9GGTGQYEQ9D40R17T3YVW2', 'on', { enabled: true, strategyIds: ['s1', 's2'] });
+
+  assert.deepEqual(plan, { updates: [], adds: [], deletes: ['s1', 's2'], template: '01JB9GGTGQYEQ9D40R17T3YVW2' });
 });
