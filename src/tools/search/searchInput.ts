@@ -61,7 +61,13 @@ const tags = z.object({
   query: z.string().optional().describe('Case-insensitive text the value contains; leave out to list all'),
 }).describe('Tags in use by value, as type and value. Tagging a flag creates the tag; only the type must exist');
 
-const query = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, tagTypes, tags, flagCreators]);
+const releaseTemplates = z.object({
+  kind: z.literal('release_templates'),
+  project: z.string().optional().describe('Project id, as a projects search returns it; keeps the templates usable there, global or owned by it. Leave out for the global ones only'),
+  query: z.string().optional().describe('Case-insensitive text the name contains; leave out to list all'),
+}).describe('Release templates by name, with the ids release takes. Milestones and their strategies are left out');
+
+const query = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, tagTypes, tags, flagCreators, releaseTemplates]);
 
 export const searchInput = {
   queries: z.array(query).min(1).describe('Run together; one result per query, in the order asked'),
@@ -77,3 +83,5 @@ export type ContextFieldsQuery = z.infer<typeof contextFields>;
 export type TagTypesQuery = z.infer<typeof tagTypes>;
 export type TagsQuery = z.infer<typeof tags>;
 export type FlagCreatorsQuery = z.infer<typeof flagCreators>;
+/** A search for release templates, optionally usable in one project. */
+export type ReleaseTemplatesQuery = z.infer<typeof releaseTemplates>;

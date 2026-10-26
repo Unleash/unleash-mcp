@@ -241,3 +241,9 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Both sit under `audience`, a `oneOf` of `{ targets }` and `{ template }`, so agents see that exactly one is required. Rejected: top-level `targets` and `template` with a refine (enforced, but invisible in the schema), and a `oneOf` at the root (MCP needs an object root, and the SDK then advertises an empty schema).
 - The template is always applied, even when the same one is already on the flag: Unleash replaces the plan and starts it again from the first milestone. Rejected: skipping a template that is already applied.
 - `released` echoes the template id with a plan summary: the plan name and the milestone being served. Rejected: the id only. `pending_change_request` echoes the id only, since no plan exists until the change request is applied.
+
+## 2026-10-26 — Release template search
+
+- `search` finds release templates so an agent can get the id `release` takes. Rows are the id and the name only: templates carry a lot we don't want to disclose yet, such as the strategies underneath.
+- With a project, the search lists the templates usable there, the project's own and the global ones (the project endpoint is beta); without, the global ones only. Rejected: the global list only, which hides project templates.
+- The sandbox's release template limit was raised, so template tests are recorded. This supersedes the stubbed project template test in "Release templates in configure".

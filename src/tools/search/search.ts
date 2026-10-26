@@ -8,6 +8,7 @@ import { searchContextFields } from './contextFields/contextFields.ts';
 import { searchTagTypes } from './tagTypes/tagTypes.ts';
 import { searchTags } from './tags/tags.ts';
 import { searchFlagCreators } from './flagCreators/flagCreators.ts';
+import { searchReleaseTemplates } from './releaseTemplates/releaseTemplates.ts';
 
 // Queries are independent, so they run together and each one answers its HTTP failures on its own.
 export const createSearch =
@@ -23,5 +24,6 @@ const search = (unleash: UnleashClient, query: Query): Promise<SearchResult> => 
     case 'tag_types': return searchTagTypes(unleash, query);
     case 'tags': return searchTags(unleash, query);
     case 'flag_creators': return searchFlagCreators(unleash, query);
+    case 'release_templates': return searchReleaseTemplates(unleash, query);
   }
 };

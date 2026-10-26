@@ -95,7 +95,17 @@ const tags = z.object({
   tags: z.array(tag),
 });
 
-const result = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, tagTypes, tags, flagCreators, failed]);
+const releaseTemplate = z.object({
+  id: z.string(),
+  name: z.string(),
+});
+
+const releaseTemplates = z.object({
+  kind: z.literal('release_templates'),
+  templates: z.array(releaseTemplate),
+});
+
+const result = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, tagTypes, tags, flagCreators, releaseTemplates, failed]);
 
 export const searchOutput = {
   results: z.array(result).describe('One per query, in the order asked'),
@@ -110,3 +120,5 @@ export type ContextFields = z.infer<typeof contextFields>;
 export type TagTypes = z.infer<typeof tagTypes>;
 export type Tags = z.infer<typeof tags>;
 export type FlagCreators = z.infer<typeof flagCreators>;
+/** Release templates found, as the id and name release takes. */
+export type ReleaseTemplates = z.infer<typeof releaseTemplates>;
