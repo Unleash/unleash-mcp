@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createStubbedClient, createRecordedClient } from '../../unleash/testClient.ts';
+import { production, stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { cancelChangeRequest, deleteFlag, deleteSegmentNamed } from '../../unleash/testSetup.ts';
 import { createSegment } from '../configure/segment.ts';
@@ -258,8 +259,7 @@ test('releases through a release template, replacing the audiences', async () =>
 test('puts a template release in a change request where the environment requires one', async () => {
   const { unleash, stub } = createStubbedClient();
   const template = '01JB9GGTGQYEQ9D40R17T3YVW2';
-  stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(200, { environment: 'Enterprise', versionInfo: { current: { enterprise: '8.2.1' } } });
-  stub.intercept({ path: `/api/admin/projects/${project}/change-requests/config`, method: 'GET' }).reply(200, [{ environment: 'production', type: 'production', changeRequestEnabled: true }]);
+  stubChangeRequestsIn(stub, project, production);
   stub.intercept({ path: feature, method: 'GET' }).reply(200, { name: flag });
   stub.intercept({ path: `/api/admin/projects/${project}/environments/production/change-requests`, method: 'POST' }).reply(200, { id: 7, state: 'In review' });
   const release = createRelease(unleash);

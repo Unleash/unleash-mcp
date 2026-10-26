@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { isDeepStrictEqual } from 'node:util';
-import type { Interceptable } from 'undici';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
+import { production, stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { cancelChangeRequest, deleteFlag } from '../../unleash/testSetup.ts';
 import { createChangeRequestReader } from '../shared/changeRequest.ts';
@@ -38,18 +38,12 @@ test('puts the parent of a flag in a change request where the project requires o
   assert.equal(output.changeRequest.state, 'In review');
 });
 
-const enterprise = { environment: 'Enterprise', versionInfo: { current: { oss: '8.2.0', enterprise: '8.2.1' } } };
-const stubChangeRequestsIn = (stub: Interceptable, ...environments: string[]) => {
-  stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(200, enterprise);
-  stub.intercept({ path: '/api/admin/projects/web/change-requests/config', method: 'GET' })
-    .reply(200, environments.map((environment) => ({ environment, type: 'production', requiredApprovals: 1, changeRequestEnabled: true })));
-};
 const dependencies = '/api/admin/projects/web/features/checkout-v2/dependencies';
 
 // Only the exact body matches, so a parent sent in another shape fails the test.
 test('makes a flag depend on its parent serving one of the given values', async () => {
   const { unleash, stub } = createStubbedClient();
-  stubChangeRequestsIn(stub);
+  stubChangeRequestsIn(stub, 'web');
   const onWithValues = (body: string): boolean => isDeepStrictEqual(JSON.parse(body), { feature: 'checkout', enabled: true, variants: ['blue'] });
   stub.intercept({ path: dependencies, method: 'POST', body: onWithValues }).reply(200, '');
 
@@ -60,7 +54,7 @@ test('makes a flag depend on its parent serving one of the given values', async 
 
 test('makes a flag depend on its parent being off', async () => {
   const { unleash, stub } = createStubbedClient();
-  stubChangeRequestsIn(stub);
+  stubChangeRequestsIn(stub, 'web');
   const off = (body: string): boolean => isDeepStrictEqual(JSON.parse(body), { feature: 'checkout', enabled: false });
   stub.intercept({ path: dependencies, method: 'POST', body: off }).reply(200, '');
 
@@ -71,7 +65,7 @@ test('makes a flag depend on its parent being off', async () => {
 
 test('stops a flag depending on its parent', async () => {
   const { unleash, stub } = createStubbedClient();
-  stubChangeRequestsIn(stub);
+  stubChangeRequestsIn(stub, 'web');
   stub.intercept({ path: dependencies, method: 'DELETE' }).reply(200, '');
 
   const output = await setParentDependency(unleash, createChangeRequestReader(unleash), { action: 'set_parent_dependency', project: 'web', flag: 'checkout-v2', parent: { kind: 'none' } });
@@ -82,7 +76,7 @@ test('stops a flag depending on its parent', async () => {
 // Only the removal matches, so a change request with another change fails the test.
 test('puts the removal of a parent in a change request where the project requires one', async () => {
   const { unleash, stub } = createStubbedClient();
-  stubChangeRequestsIn(stub, 'production');
+  stubChangeRequestsIn(stub, 'web', production);
   const removal = (body: string): boolean => isDeepStrictEqual(JSON.parse(body), { feature: 'checkout-v2', action: 'deleteDependency' });
   stub.intercept({ path: '/api/admin/projects/web/environments/production/change-requests', method: 'POST', body: removal }).reply(200, { id: 7, state: 'In review' });
 
@@ -94,7 +88,7 @@ test('puts the removal of a parent in a change request where the project require
 test('fails with the Unleash error when the parent is refused', async () => {
   const { unleash, stub } = createStubbedClient();
   const message = 'Transitive dependency detected. Cannot add a dependency to the feature that has parent dependency.';
-  stubChangeRequestsIn(stub);
+  stubChangeRequestsIn(stub, 'web');
   stub.intercept({ path: dependencies, method: 'POST' }).reply(403, unleashError('InvalidOperationError', message));
 
   const output = await setParentDependency(unleash, createChangeRequestReader(unleash), { action: 'set_parent_dependency', project: 'web', flag: 'checkout-v2', parent: { kind: 'on', flag: 'checkout' } });
