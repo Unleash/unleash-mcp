@@ -3,7 +3,7 @@ import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { deleteFlag } from '../../unleash/testSetup.ts';
-import { defineFlag } from '../flagLifecycle/define.ts';
+import { defineFlag } from '../manageFlag/define.ts';
 import { createRelease } from '../release/release.ts';
 import { createEvaluate } from './evaluate.ts';
 

@@ -233,3 +233,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 
 - Every change request result carries a `url` to the change request in the Unleash UI, so people can open it instead of looking it up by number.
 - The link is built from our `UNLEASH_BASE_URL`, the address the user configured. Rejected: Unleash's own `unleashUrl` from `ui-config`, which self-hosted instances that never set it report as `http://localhost:4242`.
+
+## 2026-10-26 — `manage_flag` tool
+
+- `flag_lifecycle` is renamed `manage_flag`: everything about a flag itself (defining it, its parent, its lifecycle, archive, revive and delete). Who gets the feature stays in `release`. Rejected: putting the parent in `configure` or in a tool of its own.

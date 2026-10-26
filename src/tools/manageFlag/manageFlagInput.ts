@@ -47,11 +47,11 @@ const remove = z.object({
 
 const operation = z.discriminatedUnion('action', [define, complete, archive, revive, remove]);
 
-export const flagLifecycleInput = {
+export const manageFlagInput = {
   operations: z.array(operation).min(1).describe('Applied in the order given; one result per operation'),
 };
 
-export type FlagLifecycleInput = z.infer<z.ZodObject<typeof flagLifecycleInput>>;
+export type ManageFlagInput = z.infer<z.ZodObject<typeof manageFlagInput>>;
 export type Operation = z.infer<typeof operation>;
 export type Define = z.infer<typeof define>;
 export type Complete = z.infer<typeof complete>;

@@ -12,9 +12,9 @@ import { createConfigure } from './tools/configure/configure.ts';
 import { searchInput } from './tools/search/searchInput.ts';
 import { searchOutput } from './tools/search/searchOutput.ts';
 import { createSearch } from './tools/search/search.ts';
-import { flagLifecycleInput } from './tools/flagLifecycle/flagLifecycleInput.ts';
-import { flagLifecycleOutput } from './tools/flagLifecycle/flagLifecycleOutput.ts';
-import { createFlagLifecycle } from './tools/flagLifecycle/flagLifecycle.ts';
+import { manageFlagInput } from './tools/manageFlag/manageFlagInput.ts';
+import { manageFlagOutput } from './tools/manageFlag/manageFlagOutput.ts';
+import { createManageFlag } from './tools/manageFlag/manageFlag.ts';
 import { evaluateInput } from './tools/evaluate/evaluateInput.ts';
 import { evaluateOutput } from './tools/evaluate/evaluateOutput.ts';
 import { createEvaluate } from './tools/evaluate/evaluate.ts';
@@ -37,7 +37,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   const inspect = createInspect(unleash);
   const configure = createConfigure(unleash);
   const search = createSearch(unleash);
-  const flagLifecycle = createFlagLifecycle(unleash);
+  const manageFlag = createManageFlag(unleash);
   const evaluate = createEvaluate(unleash);
 
   server.registerTool(
@@ -99,13 +99,13 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   );
 
   server.registerTool(
-    'flag_lifecycle',
+    'manage_flag',
     {
-      description: 'Move flags through their lifecycle: define them (create, or bring an existing one to what is listed), mark them completed, archive, revive and delete them. Applies the operations in order and reports each one.',
-      inputSchema: flagLifecycleInput,
-      outputSchema: flagLifecycleOutput,
+      description: 'Manage flags: define them (create, or bring an existing one to what is listed), mark them completed, archive, revive and delete them. Applies the operations in order and reports each one.',
+      inputSchema: manageFlagInput,
+      outputSchema: manageFlagOutput,
     },
-    async (input) => toToolResult(await flagLifecycle(input)),
+    async (input) => toToolResult(await manageFlag(input)),
   );
 
   return server;

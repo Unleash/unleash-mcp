@@ -1,6 +1,6 @@
 import type { UnleashClient } from '../../unleash/client.ts';
-import type { Delete } from './flagLifecycleInput.ts';
-import type { Outcome } from './flagLifecycleOutput.ts';
+import type { Delete } from './manageFlagInput.ts';
+import type { Outcome } from './manageFlagOutput.ts';
 import { toFailed } from '../shared/failed.ts';
 
 export const deleteArchivedFlag = async (unleash: UnleashClient, { project, flag }: Delete): Promise<Outcome> => {
