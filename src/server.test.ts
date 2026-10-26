@@ -63,6 +63,19 @@ test('release tool reports a failure as text', async () => {
   await client.close();
 });
 
+test('refuses a tool call whose arguments hold more than 10,000 elements', async () => {
+  const { unleash: stubbed } = createStubbedClient();
+  const client = await connectClient(stubbed);
+
+  const result = await client.callTool({ name: 'inspect', arguments: { queries: Array(10_001).fill({ kind: 'segment', id: 7 }) } });
+
+  assert.deepEqual(result, {
+    isError: true,
+    content: [{ type: 'text', text: 'MCP error -32602: Invalid arguments for tool inspect: arguments contain more than the maximum of 10000 elements' }],
+  });
+  await client.close();
+});
+
 test('configure tool reports each change', async () => {
   const { unleash: stubbed, stub } = createStubbedClient();
   const message = 'A context field with that name already exist';
