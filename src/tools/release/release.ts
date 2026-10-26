@@ -26,11 +26,12 @@ export const createRelease = (unleash: UnleashClient) => {
     if (flag.kind === 'failed') return flag;
 
     const path = { projectId: project, featureName: name, environment };
-    const plan = planRelease(name, state, input.targets, flag);
+    const { targets } = input.audience;
+    const plan = planRelease(name, state, targets, flag);
     const outcome = {
       flag: { status: flag.kind, name, state },
       environment,
-      targets: input.targets.map((t) => ({ ...t, rollout: rolloutOf(t) })),
+      targets: targets.map((t) => ({ ...t, rollout: rolloutOf(t) })),
     };
 
     if (route.kind === 'changeRequest') {

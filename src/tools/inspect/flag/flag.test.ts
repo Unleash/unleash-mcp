@@ -52,7 +52,7 @@ before(async () => {
   await admin.POST('/api/admin/projects/{projectId}/features/{child}/dependencies', { params: { path: { projectId: project, child: flag } }, body: { feature: parent } });
   await admin.POST('/api/admin/features/{featureName}/tags', { params: { path: { featureName: flag } }, body: { type: 'simple', value: 'mcp-inspect' } });
   await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/link', { params: { path: { projectId: project, featureName: flag } }, body: { url: 'https://example.com/mcp-inspect', title: 'Spec' } });
-  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values }] });
+  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values }] } });
   await addReleasePlan();
 });
 after(async () => {

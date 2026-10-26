@@ -4,6 +4,7 @@ import { createStubbedClient, createRecordedClient } from '../../unleash/testCli
 import { unleashError } from '../../unleash/testError.ts';
 import { deleteFlag, deleteSegmentNamed } from '../../unleash/testSetup.ts';
 import { createRelease } from './release.ts';
+import { releaseInput } from './releaseInput.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./release.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server';
@@ -36,7 +37,7 @@ after(async () => {
 test('creates a missing flag', async () => {
   const release = createRelease(unleash);
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Everyone', rollout: 50 }] } });
 
   assert.deepEqual(output, { kind: 'released', flag: { status: 'new', name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
 });
@@ -44,7 +45,7 @@ test('creates a missing flag', async () => {
 test('releases an existing flag', async () => {
   const release = createRelease(unleash);
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Everyone', rollout: 50 }] } });
 
   assert.deepEqual(output, { kind: 'released', flag: { status: 'existing', name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
 });
@@ -54,7 +55,7 @@ test('releases to several audiences', async () => {
   const beta = { field: 'userId', operator: 'IN' as const, values: ['1', '2'] };
   const blue = { name: 'blue', payload: { type: 'string' as const, value: 'blue' } };
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }, { name: 'Beta testers', constraints: [beta], values: [blue] }] });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Everyone', rollout: 50 }, { name: 'Beta testers', constraints: [beta], values: [blue] }] } });
 
   assert.deepEqual(output, {
     kind: 'released',
@@ -68,7 +69,7 @@ test('splits an audience across values', async () => {
   const release = createRelease(unleash);
   const values = [{ name: 'control', share: 50 }, { name: 'new' }];
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Checkout test', values }] });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Checkout test', values }] } });
 
   assert.deepEqual(output, {
     kind: 'released',
@@ -81,7 +82,7 @@ test('splits an audience across values', async () => {
 test('releases to an audience defined in Unleash', async () => {
   const release = createRelease(unleash);
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Beta testers', segments: [segmentId!] }] });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Beta testers', segments: [segmentId!] }] } });
 
   assert.deepEqual(output, {
     kind: 'released',
@@ -94,7 +95,7 @@ test('releases to an audience defined in Unleash', async () => {
 test('removes the audiences a release leaves out', async () => {
   const release = createRelease(unleash);
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Beta testers' }] });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Beta testers' }] } });
 
   assert.deepEqual(output, { kind: 'released', flag: { status: 'existing', name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Beta testers', rollout: 100 }] });
 });
@@ -102,7 +103,7 @@ test('removes the audiences a release leaves out', async () => {
 test('turns a flag off', async () => {
   const release = createRelease(unleash);
 
-  const output = await release({ project, flag: { name: flag, state: 'off' }, environment: 'development', targets: [{ name: 'Beta testers' }] });
+  const output = await release({ project, flag: { name: flag, state: 'off' }, environment: 'development', audience: { targets: [{ name: 'Beta testers' }] } });
 
   assert.deepEqual(output, { kind: 'released', flag: { status: 'existing', name: flag, state: 'off' }, environment: 'development', targets: [{ name: 'Beta testers', rollout: 100 }] });
 });
@@ -110,7 +111,7 @@ test('turns a flag off', async () => {
 test('turns a flag back on', async () => {
   const release = createRelease(unleash);
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Beta testers' }] });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Beta testers' }] } });
 
   assert.deepEqual(output, { kind: 'released', flag: { status: 'existing', name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Beta testers', rollout: 100 }] });
 });
@@ -119,7 +120,7 @@ test('turns a flag back on', async () => {
 test('puts the release in a change request where the environment requires one', async () => {
   const release = createRelease(unleash);
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'production', targets: [{ name: 'Everyone', rollout: 50 }] });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'production', audience: { targets: [{ name: 'Everyone', rollout: 50 }] } });
 
   assert(output.kind === 'pending_change_request');
   changeRequestId = output.changeRequest.id;
@@ -143,7 +144,7 @@ test('fails with the Unleash error when the rollout cannot be set', async () => 
   stub.intercept({ path: feature, method: 'GET' }).reply(200, { name: flag });
   stub.intercept({ path: `${base}/strategies`, method: 'POST' }).reply(400, unleashError('BadDataError', 'You have not added the current environment to the project'));
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Everyone', rollout: 50 }] } });
 
   assert.deepEqual(output, {
     kind: 'failed',
@@ -160,7 +161,7 @@ test('fails with the Unleash error when the environment cannot be enabled', asyn
   stub.intercept({ path: `${base}/strategies`, method: 'POST' }).reply(200, {});
   stub.intercept({ path: `${base}/on`, method: 'POST' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Everyone', rollout: 50 }] } });
 
   assert.deepEqual(output, {
     kind: 'failed',
@@ -181,7 +182,7 @@ test('fails with the Unleash error when an audience cannot be changed', async ()
   stub.intercept({ path: feature, method: 'GET' }).reply(200, development('s1'));
   stub.intercept({ path: `${base}/strategies/s1`, method: 'PUT' }).reply(403, unleashError('PermissionError', 'You need the UPDATE_FEATURE_STRATEGY permission'));
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Everyone', rollout: 50 }] } });
 
   assert.deepEqual(output, { kind: 'failed', status: 403, name: 'PermissionError', reasons: ['You need the UPDATE_FEATURE_STRATEGY permission'] });
 });
@@ -193,7 +194,7 @@ test('fails with the Unleash error when a left out audience cannot be removed', 
   stub.intercept({ path: `${base}/strategies/s1`, method: 'PUT' }).reply(200, {});
   stub.intercept({ path: `${base}/strategies/s2`, method: 'DELETE' }).reply(403, unleashError('PermissionError', 'You need the DELETE_FEATURE_STRATEGY permission'));
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Everyone', rollout: 50 }] } });
 
   assert.deepEqual(output, { kind: 'failed', status: 403, name: 'PermissionError', reasons: ['You need the DELETE_FEATURE_STRATEGY permission'] });
 });
@@ -206,7 +207,7 @@ test('takes the segments away from an audience that no longer names them', async
   const clearsSegments = (body: string): boolean => JSON.parse(body).segments?.length === 0;
   stub.intercept({ path: `${base}/strategies/s1`, method: 'PUT', body: clearsSegments }).reply(200, {});
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Everyone', rollout: 50 }] } });
 
   assert.equal(output.kind, 'released');
 });
@@ -218,7 +219,7 @@ test('leaves an enabled environment as it is', async () => {
   stub.intercept({ path: feature, method: 'GET' }).reply(200, development('s1'));
   stub.intercept({ path: `${base}/strategies/s1`, method: 'PUT' }).reply(200, {});
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Everyone', rollout: 50 }] } });
 
   assert.equal(output.kind, 'released');
 });
@@ -230,9 +231,15 @@ test('stops serving the feature before changing its audiences', async () => {
   stub.intercept({ path: feature, method: 'GET' }).reply(200, development('s1'));
   stub.intercept({ path: `${base}/off`, method: 'POST' }).reply(403, unleashError('PermissionError', 'You need the UPDATE_FEATURE_ENVIRONMENT permission'));
 
-  const output = await release({ project, flag: { name: flag, state: 'off' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
+  const output = await release({ project, flag: { name: flag, state: 'off' }, environment: 'development', audience: { targets: [{ name: 'Everyone', rollout: 50 }] } });
 
   assert.deepEqual(output, { kind: 'failed', status: 403, name: 'PermissionError', reasons: ['You need the UPDATE_FEATURE_ENVIRONMENT permission'] });
+});
+
+test('refuses an audience with a key it does not know', () => {
+  const parsed = releaseInput.audience.safeParse({ targets: [{ name: 'Everyone' }], target: [{ name: 'Beta testers' }] });
+
+  assert.equal(parsed.success, false);
 });
 
 test('fails on an error reply without a body', async () => {
@@ -241,7 +248,7 @@ test('fails on an error reply without a body', async () => {
   stub.intercept({ path: feature, method: 'GET' }).reply(200, { name: flag });
   stub.intercept({ path: `${base}/strategies`, method: 'POST' }).reply(503, '', { headers: { 'content-length': '0' } });
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Everyone', rollout: 50 }] } });
 
   assert.deepEqual(output, { kind: 'failed', status: 503, name: 'UnknownError', reasons: [] });
 });
@@ -252,7 +259,7 @@ test('fails without touching the flag when the edition cannot be read', async ()
   const release = createRelease(unleash);
   stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(401, unleashError('AuthenticationRequired', 'You must log in to use Unleash'));
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Everyone', rollout: 50 }] } });
 
   assert.deepEqual(output, { kind: 'failed', status: 401, name: 'AuthenticationRequired', reasons: ['You must log in to use Unleash'] });
 });
