@@ -215,3 +215,11 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 ## 2026-10-24 — Inputs say where their values come from
 
 - Every input parameter, and every tool description, says where to get its value from: the `search` or `inspect` result that gives it. Agents then look values up before writing. Prompted by real usage of `configure`: a constraint value that was not a legal value became a change request Unleash could not apply, and a change request id was sent as a segment id.
+
+## 2026-10-26 — Release through a release template
+
+- `release` takes a release template id, `template`, to release a flag through the template's milestones instead of targets built from scratch.
+- `targets` and `template` are mutually exclusive. The template replaces the environment's audiences, as targets do, so the end state is just the plan. Rejected: a template next to targets, and a template that keeps the existing strategies.
+- Both sit under `audience`, a `oneOf` of `{ targets }` and `{ template }`, so agents see that exactly one is required. Rejected: top-level `targets` and `template` with a refine (enforced, but invisible in the schema), and a `oneOf` at the root (MCP needs an object root, and the SDK then advertises an empty schema).
+- The template is always applied, even when the same one is already on the flag: Unleash replaces the plan and starts it again from the first milestone. Rejected: skipping a template that is already applied.
+- `released` echoes the template id with a plan summary: the plan name and the milestone being served. Rejected: the id only. `pending_change_request` echoes the id only, since no plan exists until the change request is applied.
