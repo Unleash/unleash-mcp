@@ -101,7 +101,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   server.registerTool(
     'manage_flag',
     {
-      description: 'Manage flags: define them (create, or bring an existing one to what is listed), mark them completed, archive, revive and delete them. Applies the operations in order and reports each one.',
+      description: 'Manage flags: define them (create, or bring an existing one to what is listed), set their parent dependency, mark them completed, archive, revive and delete them. Applies the operations in order and reports each one.',
       inputSchema: manageFlagInput,
       outputSchema: manageFlagOutput,
     },

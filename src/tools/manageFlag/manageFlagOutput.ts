@@ -7,6 +7,7 @@ const complete = { action: z.literal('complete'), project: z.string(), flag: z.s
 const archive = { action: z.literal('archive'), project: z.string(), flag: z.string() };
 const revive = { action: z.literal('revive'), project: z.string(), flag: z.string() };
 const remove = { action: z.literal('delete'), project: z.string(), flag: z.string() };
+const setParentDependency = { action: z.literal('set_parent_dependency'), project: z.string(), flag: z.string() };
 
 const changed = z.enum(['type', 'description', 'tags', 'links']);
 
@@ -21,6 +22,7 @@ const applied = z.discriminatedUnion('action', [
   z.object({ kind: z.literal('applied'), ...archive }),
   z.object({ kind: z.literal('applied'), ...revive }),
   z.object({ kind: z.literal('applied'), ...remove }),
+  z.object({ kind: z.literal('applied'), ...setParentDependency }),
 ]);
 
 const error = failed.omit({ kind: true }).describe('What Unleash answered; the operation was not applied, or only in part where it takes several writes');
@@ -31,12 +33,16 @@ const failedOperation = z.discriminatedUnion('action', [
   z.object({ kind: z.literal('failed'), ...archive, error }),
   z.object({ kind: z.literal('failed'), ...revive, error }),
   z.object({ kind: z.literal('failed'), ...remove, error }),
+  z.object({ kind: z.literal('failed'), ...setParentDependency, error }),
 ]);
 
 const changeRequest = changeRequestShape.describe('The change request holding the operation, submitted for review');
 
-// Only archiving waits for a change request where the project's changes need approval.
-const pendingOperation = z.object({ kind: z.literal('pending_change_request'), ...archive, changeRequest });
+// Only archiving and setting a parent wait for a change request where the project's changes need approval.
+const pendingOperation = z.discriminatedUnion('action', [
+  z.object({ kind: z.literal('pending_change_request'), ...archive, changeRequest }),
+  z.object({ kind: z.literal('pending_change_request'), ...setParentDependency, changeRequest }),
+]);
 
 const result = z.discriminatedUnion('kind', [applied, failedOperation, pendingOperation]);
 

@@ -7,6 +7,7 @@ import { completeFlag } from './complete.ts';
 import { deleteArchivedFlag } from './delete.ts';
 import { defineFlag } from './define.ts';
 import { reviveFlag } from './revive.ts';
+import { setParentDependency } from './setParentDependency.ts';
 
 /** Builds the manage flag tool: applies the operations one after another, one result per operation. */
 export const createManageFlag = (unleash: UnleashClient) => {
@@ -25,12 +26,13 @@ const apply = (unleash: UnleashClient, environmentsOf: ChangeRequestReader, oper
     case 'archive': return archiveFlag(unleash, environmentsOf, operation);
     case 'revive': return reviveFlag(unleash, operation);
     case 'delete': return deleteArchivedFlag(unleash, operation);
+    case 'set_parent_dependency': return setParentDependency(unleash, environmentsOf, operation);
   }
 };
 
 const resultOf = ({ action, project, flag }: Operation, outcome: Outcome | PendingChange): ManageFlagResult => {
-  // Only define answers a status and what changed, and only archive waits for a change request, which the types
-  // can't tie to `action`.
+  // Only define answers a status and what changed, and only archive and set_parent_dependency wait for a change request, which
+  // the types can't tie to `action`.
   if (outcome.kind !== 'failed') return { ...outcome, action, project, flag } as ManageFlagResult;
   const { kind, ...error } = outcome;
   return { kind: 'failed', action, project, flag, error };
