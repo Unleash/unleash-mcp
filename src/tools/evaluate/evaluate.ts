@@ -3,7 +3,6 @@ import type { EvaluateInput, EvaluateQuery } from './evaluateInput.ts';
 import type { EvaluateOutput, EvaluateResult } from './evaluateOutput.ts';
 import { toFailed } from '../shared/failed.ts';
 
-// Queries are independent, so they run together and each one answers its HTTP failures on its own.
 export const createEvaluate =
   (unleash: UnleashClient) =>
     async ({ queries }: EvaluateInput): Promise<EvaluateOutput> => ({ results: await Promise.all(queries.map((query) => evaluate(unleash, query))) });
@@ -14,5 +13,7 @@ const evaluate = async (unleash: UnleashClient, { flag, environment, context }: 
     body: { environment, context },
   });
   if (!evaluated.response.ok || !evaluated.data) return { ...toFailed(evaluated), flag, environment };
-  return { kind: 'evaluated', flag, environment, result: evaluated.data.feature.isEnabled ? 'on' : 'off' };
+  const { isEnabled, isEnabledInCurrentEnvironment, hasUnsatisfiedDependency, strategies } = evaluated.data.feature;
+  const onlySdksCanTell = isEnabledInCurrentEnvironment && !hasUnsatisfiedDependency && strategies.result === 'unknown';
+  return { kind: 'evaluated', flag, environment, result: isEnabled ? 'on' : onlySdksCanTell ? 'unknown' : 'off' };
 };
