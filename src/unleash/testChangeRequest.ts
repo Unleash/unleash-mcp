@@ -9,6 +9,6 @@ export const production = { environment: 'production', type: 'production' };
 // Enterprise, with change requests enabled in the given environments of the project; none when none are given.
 export const stubChangeRequestsIn = (stub: Interceptable, project: string, ...environments: { environment: string; type: string }[]) => {
   stubEnterprise(stub);
-  stub.intercept({ path: `/api/admin/projects/${project}/change-requests/config`, method: 'GET' })
+  return stub.intercept({ path: `/api/admin/projects/${project}/change-requests/config`, method: 'GET' })
     .reply(200, environments.map((e) => ({ ...e, requiredApprovals: 1, changeRequestEnabled: true })));
 };
