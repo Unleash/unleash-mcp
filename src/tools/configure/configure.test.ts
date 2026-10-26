@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createStubbedClient } from '../../unleash/testClient.ts';
+import { production, stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { createConfigure } from './configure.ts';
 
@@ -73,9 +74,7 @@ test('names a deleted segment by its id', async () => {
 test('answers a change waiting for approval with its change request', async () => {
   const { unleash, stub } = createStubbedClient();
   const draft = { id: 7, state: 'In review', environment: 'production', project: 'mcp-server', minApprovals: 1, features: [], segments: [] };
-  stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(200, { environment: 'Enterprise', versionInfo: { current: { oss: '8.2.0', enterprise: '8.2.1' } } });
-  stub.intercept({ path: '/api/admin/projects/mcp-server/change-requests/config', method: 'GET' })
-    .reply(200, [{ environment: 'production', type: 'production', requiredApprovals: 1, changeRequestEnabled: true }]);
+  stubChangeRequestsIn(stub, 'mcp-server', production);
   stub.intercept({ path: '/api/admin/projects/mcp-server/environments/production/change-requests', method: 'POST' }).reply(200, draft);
   const configure = createConfigure(unleash);
 

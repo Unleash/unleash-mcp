@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createStubbedClient } from '../../unleash/testClient.ts';
+import { production, stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { createManageFlag } from './manageFlag.ts';
 
@@ -12,9 +13,7 @@ test('applies the operations after a failed one, naming the operation each resul
   stub.intercept({ path: '/api/admin/projects/web/features/gone/lifecycle/complete', method: 'POST' }).reply(404, unleashError('NotFoundError', message));
   stub.intercept({ path: '/api/admin/projects/web/features/checkout', method: 'GET' }).reply(404, unleashError('NotFoundError', 'No feature named checkout'));
   stub.intercept({ path: '/api/admin/projects/web/features', method: 'POST' }).reply(201, { name: 'checkout' });
-  stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(200, { environment: 'Enterprise', versionInfo: { current: { oss: '8.2.0', enterprise: '8.2.1' } } });
-  stub.intercept({ path: '/api/admin/projects/web/change-requests/config', method: 'GET' })
-    .reply(200, [{ environment: 'production', type: 'production', requiredApprovals: 1, changeRequestEnabled: true }]);
+  stubChangeRequestsIn(stub, 'web', production);
   stub.intercept({ path: '/api/admin/projects/web/environments/production/change-requests', method: 'POST' }).reply(200, { id: 7, state: 'In review' });
   const manageFlag = createManageFlag(unleash);
 
