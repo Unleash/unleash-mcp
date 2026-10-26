@@ -10,7 +10,7 @@ const servedValue = z.object({
 });
 
 const conditions = z.object({
-  segments: z.array(z.object({ id: z.number().int(), name: z.string() })).optional(),
+  segments: z.array(z.object({ id: z.number().int(), name: z.string() })).optional().describe('Their constraints, as a segment inspect shows them'),
   constraints: z.array(constraint).optional(),
   rollout: z.number().optional().describe('Percentage of the audience that gets the feature, only when under 100'),
   stickiness: z.string().optional().describe('The context field the rollout groups contexts by, so the same value always lands on the same side of it. random: a new draw on every call, so the result can change. Alone in missedBy when the context lacks the field'),
