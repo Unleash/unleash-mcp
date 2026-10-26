@@ -12,14 +12,18 @@ export type Edition = { kind: 'enterprise' } | { kind: 'other' };
 /** Reads the Unleash edition, to tell whether it has change requests: only Enterprise does. */
 export type EditionReader = () => Promise<Edition | Failed>;
 
-/** The edition doesn't change while the server runs: it is read once, and a failed read is tried again on the next call. */
+/**
+ * The edition doesn't change while the server runs: it is read once, and a failed read is tried again on the next call.
+ * The read under way is shared, so callers asking at the same time, such as the queries of one inspect, wait for one request.
+ */
 export const createEditionReader = (unleash: UnleashClient): EditionReader => {
-  let edition: Edition | undefined;
-  return async () => {
-    if (edition) return edition;
-    const read = await readEdition(unleash);
-    if (read.kind !== 'failed') edition = read;
-    return read;
+  let edition: Promise<Edition | Failed> | undefined;
+  return () => {
+    edition ??= readEdition(unleash).then((read) => {
+      if (read.kind === 'failed') edition = undefined;
+      return read;
+    });
+    return edition;
   };
 };
 
