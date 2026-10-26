@@ -2,17 +2,18 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
+import { deleteTagType } from '../../configure/tagType.ts';
 import { searchTagTypes } from './tagTypes.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./tagTypes.snapshot.json', import.meta.url).pathname);
 const name = 'mcp-searched-type';
 
 before(async () => {
-  await admin.DELETE('/api/admin/tag-types/{name}', { params: { path: { name } } });
+  await deleteTagType(admin, { kind: 'tag_type', action: 'delete', name });
   await admin.POST('/api/admin/tag-types', { body: { name, description: 'Created by the MCP server tests', icon: null, color: null } });
 });
 after(async () => {
-  await admin.DELETE('/api/admin/tag-types/{name}', { params: { path: { name } } });
+  await deleteTagType(admin, { kind: 'tag_type', action: 'delete', name });
   await close();
 });
 

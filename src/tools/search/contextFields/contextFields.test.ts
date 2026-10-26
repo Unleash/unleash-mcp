@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
+import { createContextField, deleteContextField } from '../../configure/contextField.ts';
 import { searchContextFields } from './contextFields.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./contextFields.snapshot.json', import.meta.url).pathname);
@@ -10,13 +11,13 @@ const global = 'mcpSearchedField';
 const projectScoped = 'mcpSearchedProjectField';
 
 const deleteFields = async (): Promise<void> => {
-  for (const contextField of [global, projectScoped]) await admin.DELETE('/api/admin/context/{contextField}', { params: { path: { contextField } } });
+  for (const contextField of [global, projectScoped]) await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: contextField });
 };
 
 before(async () => {
   await deleteFields();
-  await admin.POST('/api/admin/context', { body: { name: global, description: 'Customer tier', stickiness: true } });
-  await admin.POST('/api/admin/projects/{projectId}/context', { params: { path: { projectId: project } }, body: { name: projectScoped } });
+  await createContextField(admin, { kind: 'context_field', action: 'create', name: global, description: 'Customer tier', stickiness: true });
+  await createContextField(admin, { kind: 'context_field', action: 'create', project, name: projectScoped });
 });
 after(async () => {
   await deleteFields();
