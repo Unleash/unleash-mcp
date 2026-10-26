@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { deleteFlag } from '../../unleash/testSetup.ts';
+import { deleteFlag, deleteSegmentNamed } from '../../unleash/testSetup.ts';
+import { createSegment } from '../configure/segment.ts';
 import { defineFlag } from '../manageFlag/define.ts';
 import { createRelease } from '../release/release.ts';
 import { createEvaluate } from './evaluate.ts';
@@ -12,10 +13,13 @@ const project = 'mcp-server';
 const flag = 'mcp-evaluated-flag';
 const parent = 'mcp-evaluated-parent';
 const child = 'mcp-evaluated-child';
-const paused = 'mcp-evaluated-paused';
+const segment = 'mcp-evaluated-segment';
 const environment = 'development';
 const sdkOnlyStrategy = 'mcp-custom-strategy';
 const users = { targeted: '1', targetedBySdkOnly: '2', untargeted: '3' };
+const userIn = (userId: string) => ({ field: 'userId', operator: 'IN', values: [userId] });
+const paused = { name: 'Paused', result: 'disabled' };
+let segmentId = 0;
 
 const addSdkOnlyTarget = (featureName: string, env: string) =>
   admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies', {
@@ -23,61 +27,77 @@ const addSdkOnlyTarget = (featureName: string, env: string) =>
     body: { name: sdkOnlyStrategy, constraints: [{ contextName: 'userId', operator: 'IN', values: [users.targetedBySdkOnly], caseInsensitive: false, inverted: false }] },
   });
 
-const deleteFlagsAndStrategy = async () => {
-  for (const name of [flag, child, parent, paused]) await deleteFlag(admin, project, name);
+const deleteSetup = async () => {
+  for (const name of [flag, child, parent]) await deleteFlag(admin, project, name);
+  await deleteSegmentNamed(admin, segment);
   await admin.DELETE('/api/admin/strategies/{name}', { params: { path: { name: sdkOnlyStrategy } } });
 };
 
-// The flags go first: Unleash refuses to delete a strategy in use. A new flag is off, so the parent stays unsatisfied.
+// The flags go first: Unleash refuses to delete a strategy or segment in use. A new flag is off, so the parent stays unsatisfied.
 before(async () => {
-  await deleteFlagsAndStrategy();
+  await deleteSetup();
   await admin.POST('/api/admin/strategies', { body: { name: sdkOnlyStrategy, parameters: [] } });
-  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment, audience: { targets: [{ name: 'Beta', constraints: [{ field: 'userId', operator: 'IN', values: [users.targeted] }], values: [{ name: 'blue', payload: { type: 'string', value: 'b' } }] }] } });
+  const created = await createSegment(admin, { kind: 'segment', action: 'create', name: segment, constraints: [{ field: 'appName', operator: 'IN', values: ['unleash-mcp'] }] });
+  segmentId = created.kind === 'applied' ? created.id : 0;
+  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment, audience: { targets: [{ name: 'Beta', segments: [segmentId], constraints: [{ field: 'userId', operator: 'IN', values: [users.targeted] }], values: [{ name: 'blue', payload: { type: 'string', value: 'b' } }] }] } });
+  await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies', {
+    params: { path: { projectId: project, featureName: flag, environment } },
+    body: { name: 'flexibleRollout', title: paused.name, disabled: true },
+  });
   await addSdkOnlyTarget(flag, environment);
   await addSdkOnlyTarget(flag, 'production');
   for (const name of [parent, child]) await defineFlag(admin, { action: 'define', project, flag: name });
   await addSdkOnlyTarget(child, environment);
   await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on', { params: { path: { projectId: project, featureName: child, environment } } });
   await admin.POST('/api/admin/projects/{projectId}/features/{child}/dependencies', { params: { path: { projectId: project, child } }, body: { feature: parent } });
-  await createRelease(admin)({ project, flag: { name: paused, state: 'on' }, environment, audience: { targets: [{ name: 'Beta', constraints: [{ field: 'userId', operator: 'IN', values: [users.targeted] }] }] } });
-  await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies', {
-    params: { path: { projectId: project, featureName: paused, environment } },
-    body: { name: 'flexibleRollout', title: 'Paused', disabled: true },
-  });
-  await addSdkOnlyTarget(paused, environment);
 });
 after(async () => {
-  await deleteFlagsAndStrategy();
+  await deleteSetup();
   await close();
 });
 
-const evaluateFor = (userId: string) => createEvaluate(unleash)({ queries: [{ flag, environment, context: { appName: 'unleash-mcp', userId } }] });
+const evaluateAs = (...contexts: { appName: string; userId: string }[]) => createEvaluate(unleash)({ queries: contexts.map((context) => ({ flag, environment, context })) });
 
-test('the feature is on, with the value its target serves, for a context a target matches', async () => {
-  const output = await evaluateFor(users.targeted);
+test('the feature is on for a context a target matches, with the value it serves and all that let the context in', async () => {
+  const output = await evaluateAs({ appName: 'unleash-mcp', userId: users.targeted });
 
   assert.deepEqual(output, {
     results: [{
       kind: 'evaluated', flag, environment, result: 'on',
       value: { name: 'blue', payload: { type: 'string', value: 'b' } },
-      targets: [{ name: 'Beta', result: 'matched' }, { result: 'missed' }],
+      targets: [
+        { name: 'Beta', result: 'matched', matchedBy: { segments: [{ id: segmentId, name: segment }], constraints: [userIn(users.targeted)] } },
+        paused,
+        { result: 'missed', missedBy: { constraints: [userIn(users.targetedBySdkOnly)] } },
+      ],
     }],
   });
 });
 
-test('the feature is unknown when only a target Unleash cannot evaluate could turn it on', async () => {
-  const output = await evaluateFor(users.targetedBySdkOnly);
+test('the feature is unknown when only a target Unleash cannot evaluate could turn it on, a disabled one aside', async () => {
+  const output = await evaluateAs({ appName: 'unleash-mcp', userId: users.targetedBySdkOnly });
 
   assert.deepEqual(output, {
-    results: [{ kind: 'evaluated', flag, environment, result: 'unknown', targets: [{ name: 'Beta', result: 'missed' }, { result: 'unknown' }] }],
+    results: [{
+      kind: 'evaluated', flag, environment, result: 'unknown',
+      targets: [
+        { name: 'Beta', result: 'missed', missedBy: { constraints: [userIn(users.targeted)] } },
+        paused,
+        { result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } },
+      ],
+    }],
   });
 });
 
-test('the feature is off for a context no target matches', async () => {
-  const output = await evaluateFor(users.untargeted);
+test('the feature is off for a context no target matches, a disabled one aside, each naming only what kept the context out', async () => {
+  const output = await evaluateAs({ appName: 'unleash-mcp', userId: users.untargeted }, { appName: 'another-app', userId: users.targeted });
 
+  const sdkOnlyMissed = { result: 'missed', missedBy: { constraints: [userIn(users.targetedBySdkOnly)] } };
   assert.deepEqual(output, {
-    results: [{ kind: 'evaluated', flag, environment, result: 'off', targets: [{ name: 'Beta', result: 'missed' }, { result: 'missed' }] }],
+    results: [
+      { kind: 'evaluated', flag, environment, result: 'off', targets: [{ name: 'Beta', result: 'missed', missedBy: { constraints: [userIn(users.targeted)] } }, paused, sdkOnlyMissed] },
+      { kind: 'evaluated', flag, environment, result: 'off', targets: [{ name: 'Beta', result: 'missed', missedBy: { segments: [{ id: segmentId, name: segment }] } }, paused, sdkOnlyMissed] },
+    ],
   });
 });
 
@@ -88,23 +108,8 @@ test('the feature is off when its environment is off or its parent is unsatisfie
 
   assert.deepEqual(output, {
     results: [
-      { kind: 'evaluated', flag, environment: 'production', result: 'off', targets: [{ result: 'unknown' }] },
-      { kind: 'evaluated', flag: child, environment, result: 'off', targets: [{ result: 'unknown' }] },
-    ],
-  });
-});
-
-test('a disabled target leaves the feature off, while a target only SDKs can evaluate still makes it unknown', async () => {
-  const contextFor = (userId: string) => ({ appName: 'unleash-mcp', userId });
-
-  const output = await createEvaluate(unleash)({
-    queries: [{ flag: paused, environment, context: contextFor(users.untargeted) }, { flag: paused, environment, context: contextFor(users.targetedBySdkOnly) }],
-  });
-
-  assert.deepEqual(output, {
-    results: [
-      { kind: 'evaluated', flag: paused, environment, result: 'off', targets: [{ name: 'Beta', result: 'missed' }, { name: 'Paused', result: 'disabled' }, { result: 'missed' }] },
-      { kind: 'evaluated', flag: paused, environment, result: 'unknown', targets: [{ name: 'Beta', result: 'missed' }, { name: 'Paused', result: 'disabled' }, { result: 'unknown' }] },
+      { kind: 'evaluated', flag, environment: 'production', result: 'off', targets: [{ result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } }] },
+      { kind: 'evaluated', flag: child, environment, result: 'off', targets: [{ result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } }] },
     ],
   });
 });
