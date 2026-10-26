@@ -18,6 +18,8 @@ const conditions = z.object({
 
 const named = { name: z.string().optional() };
 
+const blocker = z.enum(['environment', 'parent']);
+
 const evaluatedTarget = z.discriminatedUnion('result', [
   z.object({ ...named, result: z.literal('matched'), matchedBy: conditions.describe('All of its segments and constraints, and its rollout, which let the context in. Empty when it has none') }),
   z.object({ ...named, result: z.literal('missed'), missedBy: conditions.describe('Only the segments and constraints that kept the context out, or its rollout when they all let it in. Empty when something else did') }),
@@ -30,6 +32,7 @@ const evaluated = z.object({
   kind: z.literal('evaluated'),
   ...query,
   result: z.enum(['on', 'off', 'unknown']).describe('unknown: only a target Unleash cannot evaluate on the server could have turned the feature on. SDKs may still serve it'),
+  blockedBy: z.array(blocker).optional().describe('What turns the feature off whatever its targets say. environment: the feature is off in this environment. parent: the flag it depends on, as a flag inspect shows it, does not resolve as required. Its targets show what happens once nothing blocks it'),
   value: servedValue.optional().describe('What the code receives, when the flag has values'),
   targets: z.array(evaluatedTarget).optional().describe('In the order Unleash checks them: the active milestone\'s first, then the environment\'s, each as inspect lists them'),
 });
@@ -48,3 +51,4 @@ export type Evaluated = z.infer<typeof evaluated>;
 export type ServedValue = z.infer<typeof servedValue>;
 export type EvaluatedTarget = z.infer<typeof evaluatedTarget>;
 export type Conditions = z.infer<typeof conditions>;
+export type Blocker = z.infer<typeof blocker>;

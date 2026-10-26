@@ -270,3 +270,9 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - `random` is a new draw on every call, so the result can change. The result still reads on or off. Rejected: a new result for it.
 - No bucket number (where the context lands, such as 94 of 100): Unleash doesn't return it, so we would copy its hashing and add a dependency.
 - A rollout of 100 never shows: it lets everyone in, so it explains no match. Rejected: always showing the rollout as inspect does.
+
+## 2026-10-26 — An off feature names what blocks it
+
+- An off result lists what turns the feature off whatever its targets say, `blockedBy: ['environment', 'parent']`, because agents couldn't explain an off feature next to a matched target. Its targets still show what happens once nothing blocks it.
+- It maps the two answers Unleash gives and copies none of its rules. If Unleash adds a blocker, we add a value.
+- `parent` doesn't name the parent flag: the playground doesn't return it, and an extra request per query isn't cheap. The agent inspects the flag instead.

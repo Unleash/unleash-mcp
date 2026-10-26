@@ -112,15 +112,15 @@ test('the feature is off for a context no target matches, a disabled one aside, 
   });
 });
 
-test('the feature is off when its environment is off or its parent is unsatisfied, whatever its targets', async () => {
+test('an off feature names what blocks it whatever its targets: its environment or its parent', async () => {
   const context = { appName: 'unleash-mcp', userId: users.targetedBySdkOnly };
 
   const output = await createEvaluate(unleash)({ queries: [{ flag, environment: 'production', context }, { flag: child, environment, context }] });
 
   assert.deepEqual(output, {
     results: [
-      { kind: 'evaluated', flag, environment: 'production', result: 'off', targets: [{ result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } }, everyone, bySession({ stickiness: 'sessionId' }), nobodyYet('userId')] },
-      { kind: 'evaluated', flag: child, environment, result: 'off', targets: [{ result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } }] },
+      { kind: 'evaluated', flag, environment: 'production', result: 'off', blockedBy: ['environment'], targets: [{ result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } }, everyone, bySession({ stickiness: 'sessionId' }), nobodyYet('userId')] },
+      { kind: 'evaluated', flag: child, environment, result: 'off', blockedBy: ['parent'], targets: [{ result: 'unknown', matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] } }] },
     ],
   });
 });
@@ -130,7 +130,7 @@ test('a rollout under 100 names the field it groups contexts by, or that field a
 
   const output = await createEvaluate(unleash)({ queries: contexts.map((context) => ({ flag, environment: 'production', context: { appName: 'unleash-mcp', ...context } })) });
 
-  const evaluated = (...targets: object[]) => ({ kind: 'evaluated', flag, environment: 'production', result: 'off', targets: [sdkOnlyMissed, everyone, ...targets] });
+  const evaluated = (...targets: object[]) => ({ kind: 'evaluated', flag, environment: 'production', result: 'off', blockedBy: ['environment'], targets: [sdkOnlyMissed, everyone, ...targets] });
   assert.deepEqual(output, {
     results: [
       evaluated(bySession({ rollout: 50, stickiness: 'sessionId' }), nobodyYet('userId')),
@@ -143,7 +143,7 @@ test('a rollout under 100 names the field it groups contexts by, or that field a
 test('answers each query in the order asked, a failure naming its flag and environment', async () => {
   const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: '/api/admin/playground/features/missing', method: 'POST' }).reply(404, unleashError('NotFoundError', 'Could not find feature flag missing'));
-  stub.intercept({ path: `/api/admin/playground/features/${flag}`, method: 'POST' }).reply(200, { feature: { isEnabled: true, strategies: { data: [] } } });
+  stub.intercept({ path: `/api/admin/playground/features/${flag}`, method: 'POST' }).reply(200, { feature: { isEnabled: true, isEnabledInCurrentEnvironment: true, strategies: { data: [] } } });
   const evaluate = createEvaluate(unleash);
 
   const output = await evaluate({

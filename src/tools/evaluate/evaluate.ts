@@ -1,7 +1,7 @@
 import type { components } from '../../unleash/api.d.ts';
 import type { UnleashClient } from '../../unleash/client.ts';
 import type { EvaluateInput, EvaluateQuery } from './evaluateInput.ts';
-import type { Conditions, EvaluateOutput, EvaluateResult, EvaluatedTarget, ServedValue } from './evaluateOutput.ts';
+import type { Blocker, Conditions, EvaluateOutput, EvaluateResult, EvaluatedTarget, ServedValue } from './evaluateOutput.ts';
 import { toConstraint } from '../shared/constraint.ts';
 import { toFailed } from '../shared/failed.ts';
 
@@ -21,13 +21,15 @@ const evaluate = async (unleash: UnleashClient, { flag, environment, context }: 
   });
   if (!evaluated.response.ok || !evaluated.data) return { ...toFailed(evaluated), flag, environment };
   const { isEnabled, isEnabledInCurrentEnvironment, hasUnsatisfiedDependency, strategies, variant } = evaluated.data.feature;
+  const blockedBy: Blocker[] = [...(isEnabledInCurrentEnvironment ? [] : ['environment' as const]), ...(hasUnsatisfiedDependency ? ['parent' as const] : [])];
   // Unleash answers unknown for a disabled target, but SDKs never get one.
-  const onlySdksCanTell = isEnabledInCurrentEnvironment && !hasUnsatisfiedDependency && strategies.data.some((s) => !s.disabled && s.result.enabled === 'unknown');
+  const onlySdksCanTell = !blockedBy.length && strategies.data.some((s) => !s.disabled && s.result.enabled === 'unknown');
   return {
     kind: 'evaluated',
     flag,
     environment,
     result: isEnabled ? 'on' : onlySdksCanTell ? 'unknown' : 'off',
+    ...(blockedBy.length ? { blockedBy } : {}),
     ...(variant?.enabled ? { value: toValue(variant) } : {}),
     ...(strategies.data.length ? { targets: strategies.data.map((strategy) => toTarget(strategy, context)) } : {}),
   };
