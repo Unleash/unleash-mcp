@@ -37,7 +37,7 @@ const revive = z.object({
   action: z.literal('revive'),
   project: z.string().describe('Project id, as a flags search returns it'),
   flag: z.string().describe('Flag name, as a flags search with the archived stage returns it'),
-}).describe('Bring an archived flag back, off in every environment. A flag that is not archived is left as it is');
+}).describe('Bring an archived flag back, off in every environment; links to parent flags removed by archiving stay removed. Unleash answers success for a flag that is missing or not archived and leaves it as it is');
 
 const operation = z.discriminatedUnion('action', [define, complete, archive, revive]);
 
