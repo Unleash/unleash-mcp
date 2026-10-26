@@ -4,6 +4,7 @@ import type { FlagsQuery, Match } from '../searchInput.ts';
 import type { Flags } from '../searchOutput.ts';
 import { type Failed, toFailed } from '../../shared/failed.ts';
 import { toLifecycleStage, toUnleashStage } from '../../shared/lifecycleStage.ts';
+import { toFlagState } from '../../shared/flagState.ts';
 
 type UnleashFlag = components['schemas']['featureSearchResponseSchema'];
 
@@ -39,5 +40,5 @@ const toFlag = ({ name, project, type, lifecycle, createdAt, createdBy, tags, en
   ...(createdAt ? { createdAt } : {}),
   ...(createdBy?.name ? { createdBy: createdBy.name } : {}),
   ...(tags?.length ? { tags: tags.map(({ type, value }) => ({ type, value })) } : {}),
-  environments: environments.map(({ name, enabled, lastSeenAt }) => ({ name, enabled, ...(lastSeenAt ? { lastSeenAt } : {}) })),
+  environments: environments.map(({ name, enabled, lastSeenAt }) => ({ name, state: toFlagState(enabled), ...(lastSeenAt ? { lastSeenAt } : {}) })),
 });

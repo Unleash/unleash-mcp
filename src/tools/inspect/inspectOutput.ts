@@ -7,6 +7,7 @@ import { failed } from '../shared/failed.ts';
 import { legalValue } from '../shared/legalValue.ts';
 import { lifecycleStage } from '../shared/lifecycleStage.ts';
 import { parent } from '../shared/parent.ts';
+import { flagState } from '../shared/flagState.ts';
 import { changeRequest } from '../shared/changeRequest.ts';
 
 const flagNaming = z.object({
@@ -48,7 +49,7 @@ const releasePlan = z.object({
 
 const environment = z.object({
   name: z.string(),
-  enabled: z.boolean(),
+  state: flagState,
   lastSeenAt: z.string().optional().describe('ISO timestamp an SDK last evaluated the flag here'),
   targets: targets.optional().describe('The audiences that get the feature, in the shape release takes'),
   releasePlan: releasePlan.optional().describe('Set when the environment is rolled out through a release plan'),

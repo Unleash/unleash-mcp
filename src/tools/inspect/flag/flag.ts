@@ -11,6 +11,7 @@ import { toConstraint, type UnleashConstraint } from '../../shared/constraint.ts
 import { type Failed, toFailed } from '../../shared/failed.ts';
 import { toLifecycleStage, type UnleashStage } from '../../shared/lifecycleStage.ts';
 import { changeRequestUrl, type EditionReader } from '../../shared/changeRequest.ts';
+import { toFlagState } from '../../shared/flagState.ts';
 
 export const inspectFlag = async (unleash: UnleashClient, editionOf: EditionReader, { project, flag }: FlagQuery): Promise<Flag | Failed> => {
   // The flag endpoint leaves the tags and the change requests out, so they take requests of their own.
@@ -72,7 +73,7 @@ type UnleashStrategy = {
 // Unleash allows one release plan per environment; its schema is an array anyway.
 const toEnvironment = ({ name, enabled, lastSeenAt, strategies, releasePlans }: UnleashEnvironment): Environment => ({
   name,
-  enabled,
+  state: toFlagState(enabled),
   ...(lastSeenAt ? { lastSeenAt } : {}),
   ...(strategies?.length ? { targets: strategies.map(toTarget) } : {}),
   ...(releasePlans?.[0] ? { releasePlan: toReleasePlan(releasePlans[0]) } : {}),

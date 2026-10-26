@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { target } from '../shared/target.ts';
 import { failed, type Failed } from '../shared/failed.ts';
 import { changeRequest } from '../shared/changeRequest.ts';
-import { flagState as state } from './releaseInput.ts';
+import { flagState as state } from '../shared/flagState.ts';
 
 const flag = z.discriminatedUnion('status', [
   z.object({ status: z.literal('new'), name: z.string(), state }),
