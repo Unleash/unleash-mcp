@@ -111,6 +111,6 @@ const submitForReview = async (unleash: UnleashClient, projectId: string, { id, 
 
 // The Unleash UI's route for a change request.
 const urlOf = ({ baseUrl }: UnleashClient, projectId: string, id: number): string =>
-  `${baseUrl.replace(/\/+$/, '')}/projects/${encodeURIComponent(projectId)}/change-requests/${id}`;
+  `${baseUrl}/projects/${encodeURIComponent(projectId)}/change-requests/${id}`;
 
 const submit: components['schemas']['changeRequestStateSchema'] = { state: 'In review' };
