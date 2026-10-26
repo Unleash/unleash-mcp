@@ -249,3 +249,8 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 ## 2026-10-26 — A disabled target reads as disabled
 
 - SDKs never get a disabled target, so it neither turns the feature on nor makes it unknown. Rejected: passing on Unleash's unknown for it, which says an SDK may still serve the feature, and leaving disabled targets out, which hides a target inspect lists.
+
+## 2026-10-26 — Change request review
+
+- People review change requests in the Unleash UI, not through the MCP: approval stays a human step, and we don't duplicate the UI.
+- `inspect` of a flag lists its pending change requests with their state, environment and link, so an agent knows a change is waiting instead of treating it as applied or requesting it again. What each one changes is hidden for now: describing it meant translating Unleash's change actions into change types the UI doesn't have.
