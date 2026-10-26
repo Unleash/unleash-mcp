@@ -7,6 +7,8 @@ import { failed } from '../shared/failed.ts';
 import { legalValue } from '../shared/legalValue.ts';
 import { lifecycleStage } from '../shared/lifecycleStage.ts';
 import { parent } from '../shared/parent.ts';
+import { flagState } from '../shared/flagState.ts';
+import { changeRequest } from '../shared/changeRequest.ts';
 
 const flagNaming = z.object({
   pattern: z.string().describe('JavaScript regular expression new flag names must match'),
@@ -49,11 +51,13 @@ const releasePlan = z.object({
 
 const environment = z.object({
   name: z.string(),
-  enabled: z.boolean(),
+  state: flagState,
   lastSeenAt: z.string().optional().describe('ISO timestamp an SDK last evaluated the flag here'),
   targets: targets.optional().describe('The audiences that get the feature, in the shape release takes'),
   releasePlan: releasePlan.optional().describe('Set when the environment is rolled out through a release plan'),
 });
+
+const pendingChangeRequest = changeRequest.extend({ environment: z.string() });
 
 const flag = z.object({
   kind: z.literal('flag'),
@@ -69,6 +73,7 @@ const flag = z.object({
   children: z.array(z.string()).optional().describe('Flags that depend on this one'),
   tags: z.array(tag).optional(),
   links: z.array(link).optional().describe('Related URLs, such as the pull request or the ticket'),
+  changeRequests: z.array(pendingChangeRequest).optional().describe('Change requests with changes to this flag not applied yet; people review them in the Unleash UI'),
 });
 
 const usage = z.object({ project: z.string(), flag: z.string(), environment: z.string() });
@@ -105,6 +110,7 @@ export type InspectOutput = z.infer<z.ZodObject<typeof inspectOutput>>;
 export type InspectResult = z.infer<typeof result>;
 export type Project = z.infer<typeof project>;
 export type Flag = z.infer<typeof flag>;
+export type PendingChangeRequest = z.infer<typeof pendingChangeRequest>;
 export type ContextField = z.infer<typeof contextField>;
 export type Usage = z.infer<typeof usage>;
 export type Segment = z.infer<typeof segment>;

@@ -224,6 +224,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Unknown is its own result next to on and off: only a target Unleash cannot evaluate on the server, such as a custom strategy, could have turned the feature on, and SDKs may still serve it. An environment that is off or an unsatisfied parent still answers off. Rejected: answering off, which tells an agent a feature is off when an SDK may still serve it.
 - A result lists every target in the order Unleash checks them, the active milestone's first and then the environment's, as inspect lists each, with its name when it has one and whether it matched, missed, is unknown or is disabled. Rejected: naming an unnamed target by its Unleash strategy type (`flexibleRollout`), which is misleading and not unique, and listing only the first match, which hides that another target would still let the user in, and an id or position per target, which no other tool takes.
 - The value is the one the code receives, once per result. Rejected: a value on every matched target, since only the first is served.
+- Every target explains itself: a matched or unknown one lists its segments and constraints, a missed one only those that kept the context out, in the target's own `segments` and `constraints` fields. Segments come with their name, which the playground gives for free, so the agent can tell people which segment it was. Rejected: segment ids only, which mean nothing to people and cost a segments search, and one list tagged by kind, which repeats the kind on every entry.
 
 ## 2026-10-26 — A target bundles who, how many and what
 
@@ -250,11 +251,31 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 
 - SDKs never get a disabled target, so it neither turns the feature on nor makes it unknown. Rejected: passing on Unleash's unknown for it, which says an SDK may still serve the feature, and leaving disabled targets out, which hides a target inspect lists.
 
+## 2026-10-26 — Change request review
+
+- People review change requests in the Unleash UI, not through the MCP: approval stays a human step, and we don't duplicate the UI.
+- `inspect` of a flag lists its pending change requests with their state, environment and link, so an agent knows a change is waiting instead of treating it as applied or requesting it again. What each one changes is hidden for now: describing it meant translating Unleash's change actions into change types the UI doesn't have.
+
 ## 2026-10-26 — Release template search
 
 - `search` finds release templates so an agent can get the id `release` takes. Rows are the id and the name only: templates carry a lot we don't want to disclose yet, such as the strategies underneath.
 - With a project, the search lists the templates usable there, the project's own and the global ones (the project endpoint is beta); without, the global ones only. Rejected: the global list only, which hides project templates.
 - The sandbox's release template limit was raised, so template tests are recorded. This supersedes the stubbed project template test in "Release templates in configure".
+
+## 2026-10-26 — A target's rollout explains it too
+
+- `matchedBy` names the rollout when it is under 100. `missedBy` names it only when every segment and constraint let the context in, since only then did the rollout keep it out.
+- The rollout comes with its `stickiness`, the context field that groups people into the same side of it, so "not in the 80%" reads as "this userId falls outside the 80%". It is the field Unleash actually used: `default` means userId, then sessionId, then random, and means nothing to someone new to Unleash. Rejected: reporting `default` as is.
+- When the context lacks that field, Unleash misses the target before it checks the percentage, so `missedBy` names the field alone. Naming the percentage would send an agent to change it.
+- `random` is a new draw on every call, so the result can change. The result still reads on or off. Rejected: a new result for it.
+- No bucket number (where the context lands, such as 94 of 100): Unleash doesn't return it, so we would copy its hashing and add a dependency.
+- A rollout of 100 never shows: it lets everyone in, so it explains no match. Rejected: always showing the rollout as inspect does.
+
+## 2026-10-26 — An off feature names what blocks it
+
+- An off result lists what turns the feature off whatever its targets say, `blockedBy: ['environment', 'parent']`, because agents couldn't explain an off feature next to a matched target. Its targets still show what happens once nothing blocks it.
+- It maps the two answers Unleash gives and copies none of its rules. If Unleash adds a blocker, we add a value.
+- `parent` doesn't name the parent flag: the playground doesn't return it, and an extra request per query isn't cheap. The agent inspects the flag instead.
 
 ## 2026-10-26 — Release plan and milestone ids in inspect
 

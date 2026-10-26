@@ -1,6 +1,6 @@
 import type { UnleashClient } from '../../unleash/client.ts';
 import { type Failed, toFailed } from '../shared/failed.ts';
-import type { FlagState } from './releaseInput.ts';
+import type { FlagState } from '../shared/flagState.ts';
 
 const features = '/api/admin/projects/{projectId}/features';
 const feature = '/api/admin/projects/{projectId}/features/{featureName}';
