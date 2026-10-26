@@ -15,6 +15,9 @@ import { createSearch } from './tools/search/search.ts';
 import { flagLifecycleInput } from './tools/flagLifecycle/flagLifecycleInput.ts';
 import { flagLifecycleOutput } from './tools/flagLifecycle/flagLifecycleOutput.ts';
 import { createFlagLifecycle } from './tools/flagLifecycle/flagLifecycle.ts';
+import { evaluateInput } from './tools/evaluate/evaluateInput.ts';
+import { evaluateOutput } from './tools/evaluate/evaluateOutput.ts';
+import { createEvaluate } from './tools/evaluate/evaluate.ts';
 import type { Failed } from './tools/shared/failed.ts';
 import type { UnleashClient } from './unleash/client.ts';
 
@@ -28,15 +31,14 @@ const toFailedToolResult = (result: Failed) => ({
 });
 
 export const createServer = (unleash: UnleashClient): McpServer => {
-  // Huge arrays or objects in one tool call can run the server out of memory (GHSA-46jr-4wx8-v453).
-  // 10,000 is the advisory's example. The largest call that can't be split is a context field update, which resends
-  // every legal value, so a field with more than about 3,300 described values can't be updated through configure.
+  // GHSA-46jr-4wx8-v453. A context field update resends every legal value, so this caps a field at about 3,300 described values.
   const server = new McpServer({ name: 'unleash-mcp', version: pkg.version }, { maxToolInputElements: 10_000 });
   const release = createRelease(unleash);
   const inspect = createInspect(unleash);
   const configure = createConfigure(unleash);
   const search = createSearch(unleash);
   const flagLifecycle = createFlagLifecycle(unleash);
+  const evaluate = createEvaluate(unleash);
 
   server.registerTool(
     'release',
@@ -73,6 +75,17 @@ export const createServer = (unleash: UnleashClient): McpServer => {
       annotations: { readOnlyHint: true },
     },
     async (input) => toToolResult(await search(input)),
+  );
+
+  server.registerTool(
+    'evaluate',
+    {
+      description: 'Tell whether a feature is on, off or unknown for a context in an environment, such as whether a user gets it. Takes flag names as search returns them and environments as inspecting the project lists them. One result per query, in the order asked.',
+      inputSchema: evaluateInput,
+      outputSchema: evaluateOutput,
+      annotations: { readOnlyHint: true },
+    },
+    async (input) => toToolResult(await evaluate(input)),
   );
 
   server.registerTool(
