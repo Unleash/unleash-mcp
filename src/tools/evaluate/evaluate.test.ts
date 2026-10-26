@@ -3,6 +3,7 @@ import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { deleteFlag } from '../../unleash/testSetup.ts';
+import { defineFlag } from '../flagLifecycle/define.ts';
 import { createRelease } from '../release/release.ts';
 import { createEvaluate } from './evaluate.ts';
 
@@ -33,7 +34,7 @@ before(async () => {
   await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment, targets: [{ name: 'Beta', constraints: [{ field: 'userId', operator: 'IN', values: [users.targeted] }], values: [{ name: 'blue', payload: { type: 'string', value: 'b' } }] }] });
   await addSdkOnlyTarget(flag, environment);
   await addSdkOnlyTarget(flag, 'production');
-  for (const name of [parent, child]) await admin.POST('/api/admin/projects/{projectId}/features', { params: { path: { projectId: project } }, body: { name } });
+  for (const name of [parent, child]) await defineFlag(admin, { action: 'define', project, flag: name });
   await addSdkOnlyTarget(child, environment);
   await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on', { params: { path: { projectId: project, featureName: child, environment } } });
   await admin.POST('/api/admin/projects/{projectId}/features/{child}/dependencies', { params: { path: { projectId: project, child } }, body: { feature: parent } });
