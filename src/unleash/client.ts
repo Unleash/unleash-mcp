@@ -10,5 +10,7 @@ export type UnleashClientOptions = {
   fetch: typeof fetch;
 };
 
-export const createUnleashClient = ({ baseUrl, headers, fetch }: UnleashClientOptions): UnleashClient =>
-  Object.assign(createClient<paths>({ baseUrl, headers, fetch }), { baseUrl });
+export const createUnleashClient = ({ baseUrl, headers, fetch }: UnleashClientOptions): UnleashClient => {
+  const base = baseUrl.replace(/\/+$/, '');
+  return Object.assign(createClient<paths>({ baseUrl: base, headers, fetch }), { baseUrl: base });
+};
