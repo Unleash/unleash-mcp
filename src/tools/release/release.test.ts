@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createStubbedClient, createRecordedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { deleteFlag, deleteSegmentNamed } from '../../unleash/testSetup.ts';
+import { cancelChangeRequest, deleteFlag, deleteSegmentNamed } from '../../unleash/testSetup.ts';
 import { createRelease } from './release.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./release.snapshot.json', import.meta.url).pathname);
@@ -23,11 +23,7 @@ before(async () => {
 // The change request goes first, and the flag before the segment:
 // Unleash may refuse to delete a segment that is in use.
 after(async () => {
-  // A submitted change request can't be deleted, only cancelled, and only by its author. The OpenAPI spec omits the body.
-  if (changeRequestId) await unleash.PUT('/api/admin/projects/{projectId}/change-requests/{id}/state', {
-    params: { path: { projectId: project, id: String(changeRequestId) } },
-    body: { state: 'Cancelled' } as never,
-  });
+  if (changeRequestId) await cancelChangeRequest(unleash, project, changeRequestId);
   await deleteFlag(admin, project, flag);
   await deleteSegmentNamed(admin, segment);
   await close();
