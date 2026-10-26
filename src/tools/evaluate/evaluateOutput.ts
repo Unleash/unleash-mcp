@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { failed } from '../shared/failed.ts';
+import { constraint } from '../shared/target.ts';
 
 const query = { flag: z.string(), environment: z.string() };
 
@@ -8,10 +9,20 @@ const servedValue = z.object({
   payload: z.object({ type: z.string(), value: z.string() }).optional(),
 });
 
-const evaluatedTarget = z.object({
-  name: z.string().optional(),
-  result: z.enum(['matched', 'missed', 'unknown', 'disabled']).describe('unknown: Unleash cannot evaluate it on the server. disabled: SDKs never get it'),
+const conditions = z.object({
+  segments: z.array(z.object({ id: z.number().int(), name: z.string() })).optional(),
+  constraints: z.array(constraint).optional(),
 });
+
+const named = { name: z.string().optional() };
+
+const evaluatedTarget = z.discriminatedUnion('result', [
+  z.object({ ...named, result: z.literal('matched'), matchedBy: conditions.describe('All of its segments and constraints, which let the context in. Empty when it has none') }),
+  z.object({ ...named, result: z.literal('missed'), missedBy: conditions.describe('Only the segments and constraints that kept the context out. Empty when something else did, such as its rollout') }),
+  z.object({ ...named, result: z.literal('unknown'), matchedBy: conditions.describe('All of its segments and constraints, which let the context in') })
+    .describe('What is left only SDKs can check, such as a custom strategy'),
+  z.object({ ...named, result: z.literal('disabled') }).describe('SDKs never get it'),
+]);
 
 const evaluated = z.object({
   kind: z.literal('evaluated'),
@@ -34,3 +45,4 @@ export type EvaluateResult = z.infer<typeof result>;
 export type Evaluated = z.infer<typeof evaluated>;
 export type ServedValue = z.infer<typeof servedValue>;
 export type EvaluatedTarget = z.infer<typeof evaluatedTarget>;
+export type Conditions = z.infer<typeof conditions>;
