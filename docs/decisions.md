@@ -215,3 +215,9 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 ## 2026-10-24 — Inputs say where their values come from
 
 - Every input parameter, and every tool description, says where to get its value from: the `search` or `inspect` result that gives it. Agents then look values up before writing. Prompted by real usage of `configure`: a constraint value that was not a legal value became a change request Unleash could not apply, and a change request id was sent as a segment id.
+
+## 2026-10-26 — Evaluate one flag per query
+
+- `evaluate` only ever hits the single-flag playground endpoint. A query names no project: flag names are unique and the endpoint resolves the project, so a project would be a second source of truth. Rejected: the project-wide advanced playground, a really heavy endpoint that is very taxing on the Unleash server.
+- It takes a list of queries, like `inspect`: each query is one flag in one environment, with one context.
+- Results carry `flag` and `environment`, so a failure reads on its own. Order is what tells apart queries that differ only in context. Rejected: echoing the context back in every result, which costs tokens.
