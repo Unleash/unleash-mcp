@@ -4,6 +4,7 @@ import type { FlagLifecycleOutput, FlagLifecycleResult, Outcome, PendingChange }
 import { type ChangeRequestReader, createChangeRequestReader } from '../shared/changeRequest.ts';
 import { archiveFlag } from './archive.ts';
 import { completeFlag } from './complete.ts';
+import { deleteArchivedFlag } from './delete.ts';
 import { defineFlag } from './define.ts';
 import { reviveFlag } from './revive.ts';
 
@@ -23,6 +24,7 @@ const apply = (unleash: UnleashClient, environmentsOf: ChangeRequestReader, oper
     case 'complete': return completeFlag(unleash, operation);
     case 'archive': return archiveFlag(unleash, environmentsOf, operation);
     case 'revive': return reviveFlag(unleash, operation);
+    case 'delete': return deleteArchivedFlag(unleash, operation);
   }
 };
 

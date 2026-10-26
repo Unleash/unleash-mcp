@@ -39,7 +39,13 @@ const revive = z.object({
   flag: z.string().describe('Flag name, as a flags search with the archived stage returns it'),
 }).describe('Bring an archived flag back, off in every environment; links to parent flags removed by archiving stay removed. Unleash answers success for a flag that is missing or not archived and leaves it as it is');
 
-const operation = z.discriminatedUnion('action', [define, complete, archive, revive]);
+const remove = z.object({
+  action: z.literal('delete'),
+  project: z.string().describe('Project id, as a flags search returns it'),
+  flag: z.string().describe('Flag name, as a flags search with the archived stage returns it'),
+}).describe('Delete an archived flag permanently; it cannot be revived. Ask the user first. Unleash answers success for a flag that is missing or not archived and leaves it as it is');
+
+const operation = z.discriminatedUnion('action', [define, complete, archive, revive, remove]);
 
 export const flagLifecycleInput = {
   operations: z.array(operation).min(1).describe('Applied in the order given; one result per operation'),
@@ -57,3 +63,5 @@ export type Complete = z.infer<typeof complete>;
 export type Archive = z.infer<typeof archive>;
 /** The operation that brings an archived flag back. */
 export type Revive = z.infer<typeof revive>;
+/** The operation that deletes an archived flag for good. */
+export type Delete = z.infer<typeof remove>;
