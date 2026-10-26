@@ -1,7 +1,8 @@
 import type { components } from '../../../unleash/api.d.ts';
 import type { UnleashClient } from '../../../unleash/client.ts';
 import type { FlagQuery } from '../inspectInput.ts';
-import type { Environment, Flag, Lifecycle, Milestone, Parent, ReleasePlan, Transition } from '../inspectOutput.ts';
+import type { Environment, Flag, Lifecycle, Milestone, ReleasePlan, Transition } from '../inspectOutput.ts';
+import type { Parent } from '../../shared/parent.ts';
 import type { Link } from '../../shared/link.ts';
 import type { FlagType } from '../../shared/flagType.ts';
 import type { Tag } from '../../shared/tag.ts';
@@ -100,11 +101,8 @@ const toLifecycle = ({ stage, status, enteredStageAt }: { stage: UnleashStage; s
 });
 
 // Unleash allows one parent per flag; its schema is an array anyway.
-const toParent = ({ feature, enabled, variants }: { feature: string; enabled?: boolean; variants?: string[] }): Parent => ({
-  flag: feature,
-  ...(enabled === false ? { enabled } : {}),
-  ...(variants?.length ? { variants } : {}),
-});
+const toParent = ({ feature, enabled, variants }: { feature: string; enabled?: boolean; variants?: string[] }): Parent =>
+  enabled === false ? { kind: 'off', flag: feature } : { kind: 'on', flag: feature, ...(variants?.length ? { values: variants } : {}) };
 
 const toTag = ({ type, value }: Tag): Tag => ({ type, value });
 

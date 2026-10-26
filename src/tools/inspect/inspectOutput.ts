@@ -6,13 +6,7 @@ import { constraint, target } from '../shared/target.ts';
 import { failed } from '../shared/failed.ts';
 import { legalValue } from '../shared/legalValue.ts';
 import { lifecycleStage } from '../shared/lifecycleStage.ts';
-
-// The types Unleash accepts on create; its read schema loosens them to a string.
-const parent = z.object({
-  flag: z.string(),
-  enabled: z.literal(false).optional().describe('Set when the parent must be disabled; absent means it must be enabled'),
-  variants: z.array(z.string()).optional().describe('Variants the parent must resolve to'),
-});
+import { parent } from '../shared/parent.ts';
 
 const flagNaming = z.object({
   pattern: z.string().describe('JavaScript regular expression new flag names must match'),
@@ -117,4 +111,3 @@ export type Environment = z.infer<typeof environment>;
 export type ReleasePlan = z.infer<typeof releasePlan>;
 export type Milestone = z.infer<typeof milestone>;
 export type Transition = z.infer<typeof transition>;
-export type Parent = z.infer<typeof parent>;

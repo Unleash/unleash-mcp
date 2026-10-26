@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { isDeepStrictEqual } from 'node:util';
-import type { Interceptable } from 'undici';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
+import { production, stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { cancelChangeRequest, deleteSegmentNamed } from '../../unleash/testSetup.ts';
 import { createChangeRequestReader } from '../shared/changeRequest.ts';
@@ -129,17 +129,11 @@ test('puts the deletion of a segment in a change request where the project requi
   assert.equal(output.changeRequest.state, 'In review');
 });
 
-const enterprise = { environment: 'Enterprise', versionInfo: { current: { oss: '8.2.0', enterprise: '8.2.1' } } };
-const config = `/api/admin/projects/${project}/change-requests/config`;
 const draft = { id: 7, state: 'Draft', environment: 'production', project, minApprovals: 1, features: [], segments: [] };
-const stubChangeRequestsIn = (stub: Interceptable, ...environments: { environment: string; type: string }[]) => {
-  stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(200, enterprise);
-  stub.intercept({ path: config, method: 'GET' }).reply(200, environments.map((e) => ({ ...e, requiredApprovals: 1, changeRequestEnabled: true })));
-};
 
 test('replaces a project segment directly where the project requires no change requests', async () => {
   const { unleash, stub } = createStubbedClient();
-  stubChangeRequestsIn(stub);
+  stubChangeRequestsIn(stub, project);
   stub.intercept({ path: '/api/admin/segments/42', method: 'PUT' }).reply(204, '');
 
   const output = await updateSegment(unleash, createChangeRequestReader(unleash), { kind: 'segment', action: 'update', id: 42, project, name, constraints: [] });
@@ -150,7 +144,7 @@ test('replaces a project segment directly where the project requires no change r
 // Only the production environment's change requests are stubbed, so opening one elsewhere fails the test.
 test('opens the change request in a production environment first, as the Unleash UI does', async () => {
   const { unleash, stub } = createStubbedClient();
-  stubChangeRequestsIn(stub, { environment: 'development', type: 'development' }, { environment: 'live', type: 'production' });
+  stubChangeRequestsIn(stub, project, { environment: 'development', type: 'development' }, { environment: 'live', type: 'production' });
   const deletes = (body: string): boolean => isDeepStrictEqual(JSON.parse(body), { action: 'deleteSegment', payload: { id: 42 } });
   stub.intercept({ path: `/api/admin/projects/${project}/environments/live/change-requests`, method: 'POST', body: deletes }).reply(200, draft);
   stub.intercept({ path: `/api/admin/projects/${project}/change-requests/7/state`, method: 'PUT' }).reply(200, { ...draft, state: 'In review' });
@@ -163,7 +157,7 @@ test('opens the change request in a production environment first, as the Unleash
 test('fails with the Unleash error when the change request cannot be opened', async () => {
   const { unleash, stub } = createStubbedClient();
   const message = 'You need the UPDATE_PROJECT_SEGMENT permission';
-  stubChangeRequestsIn(stub, { environment: 'production', type: 'production' });
+  stubChangeRequestsIn(stub, project, production);
   stub.intercept({ path: `/api/admin/projects/${project}/environments/production/change-requests`, method: 'POST' }).reply(403, unleashError('PermissionError', message));
 
   const output = await updateSegment(unleash, createChangeRequestReader(unleash), { kind: 'segment', action: 'update', id: 42, project, name, constraints: [] });

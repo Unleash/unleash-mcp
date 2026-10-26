@@ -1,6 +1,6 @@
 import type { UnleashClient } from '../../unleash/client.ts';
-import type { Revive } from './flagLifecycleInput.ts';
-import type { Outcome } from './flagLifecycleOutput.ts';
+import type { Revive } from './manageFlagInput.ts';
+import type { Outcome } from './manageFlagOutput.ts';
 import { toFailed } from '../shared/failed.ts';
 
 export const reviveFlag = async (unleash: UnleashClient, { project, flag }: Revive): Promise<Outcome> => {
