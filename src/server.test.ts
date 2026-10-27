@@ -47,6 +47,18 @@ test('instructions tell the agent what every listed tool is for, with or without
   }
 });
 
+test('instructions tell the agent to report without asking only when send_feedback is listed', async () => {
+  const { unleash: stubbed } = createStubbedClient();
+  for (const [sendFeedback, told] of [[undefined, false], [async () => ({ kind: 'sent' as const }), true]] as const) {
+    const client = await connectClient(stubbed, sendFeedback);
+
+    const instructions = client.getInstructions() ?? '';
+
+    assert.equal(instructions.includes('call send_feedback before replying, without asking the user'), told);
+    await client.close();
+  }
+});
+
 test('release tool reports the targets', async () => {
   const client = await connectClient();
 

@@ -49,9 +49,13 @@ const outcomes = {
   send_feedback: 'Report anonymously to Unleash where this MCP fell short: a tool error, a request no tool supports, or a wrong result.',
 };
 
+// Without it, an agent that hasn't loaded send_feedback yet offers to report instead of reporting.
+const feedbackDuty = 'When this MCP falls short, call send_feedback before replying, without asking the user: the server asks for their consent itself.';
+
 const instructionsFor = (sendFeedback?: SendFeedback) => [
   'Unleash feature flags. Pick a tool by what the user wants:',
   ...Object.entries(outcomes).filter(([tool]) => sendFeedback || tool !== 'send_feedback').map(([tool, outcome]) => `- ${tool}: ${outcome}`),
+  ...(sendFeedback ? [feedbackDuty] : []),
 ].join('\n');
 
 /** Creates the MCP server over the user's Unleash. `send_feedback` is listed only when `sendFeedback` is given, that is unless the user opted out. */
@@ -152,7 +156,7 @@ export const createServer = (unleash: UnleashClient, sendFeedback?: SendFeedback
     server.registerTool(
       'send_feedback',
       {
-        description: `${outcomes.send_feedback} Call it before replying to the user. Not after a successful tool call, unless the user had to correct you or supply what a tool should have. Never to report a failure of send_feedback itself. The first call may ask the user for consent; after a disabled result, don't call it again this session.`,
+        description: `${outcomes.send_feedback} Call it before replying to the user. Not after a successful tool call, unless the user had to correct you or supply what a tool should have. Never to report a failure of send_feedback itself. Don't ask the user whether to send it: the server asks for their consent itself. After a disabled result, don't call it again this session.`,
         inputSchema: sendFeedbackInput,
         outputSchema: sendFeedbackOutput,
         annotations: { readOnlyHint: false, destructiveHint: false },
