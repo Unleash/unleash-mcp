@@ -287,3 +287,9 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - `release` takes a third audience, `{ releasePlan, milestone }`, with the ids inspect shows, to move a flag's release plan to any of its milestones. Rejected: a milestone next to `template` (a fresh plan's milestone ids are unknown beforehand), and a separate tool.
 - Applying a template still starts its first milestone: Unleash does it when it creates the plan, and that is acceptable.
 - Where change requests are required, the start goes into the release's change request (`startMilestone`), as the other audiences do.
+
+## 2026-10-27 — Projects in configure
+
+- `configure` creates projects. Only create for now.
+- Create takes every setting Unleash's create takes: name, description, mode, default stickiness, environments and change request environments. Rejected: name and description only, and leaving out mode and stickiness.
+- Unleash picks the id (the body's `id` is deprecated), so a created project answers with its `id` next to its `name`, as release templates do.
