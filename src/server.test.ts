@@ -70,7 +70,6 @@ test('release tool reports the targets', async () => {
   assert.deepEqual(result.structuredContent, {
     result: { kind: 'released', flag: { status: 'new', name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] },
   });
-  assert.deepEqual(result.content, []);
   await client.close();
 });
 
@@ -118,15 +117,15 @@ test('configure tool reports each change', async () => {
   await client.close();
 });
 
-test('inspect tool returns its results as structured content', async () => {
+test('inspect tool returns its results as structured content and as text', async () => {
   const { unleash: stubbed, stub } = createStubbedClient();
   stub.intercept({ path: `/api/admin/projects/${project}/overview`, method: 'GET' }).reply(200, { environments: [{ environment: 'development' }] });
   const client = await connectClient(stubbed);
 
   const result = await client.callTool({ name: 'inspect', arguments: { queries: [{ kind: 'project', project }] } });
 
-  assert.deepEqual(result.structuredContent, { results: [{ kind: 'project', environments: ['development'] }] });
-  assert.deepEqual(result.content, []);
+  const results = { results: [{ kind: 'project', environments: ['development'] }] };
+  assert.deepEqual(result, { structuredContent: results, content: [{ type: 'text', text: JSON.stringify(results) }] });
   await client.close();
 });
 
@@ -138,7 +137,6 @@ test('search tool returns its results as structured content', async () => {
   const result = await client.callTool({ name: 'search', arguments: { queries: [{ kind: 'segments', query: 'beta' }] } });
 
   assert.deepEqual(result.structuredContent, { results: [{ kind: 'segments', segments: [{ id: 1, name: 'Beta', createdAt: '2026-10-22T08:00:00.000Z', usedInProjects: 2, usedInFlags: 3 }] }] });
-  assert.deepEqual(result.content, []);
   await client.close();
 });
 
@@ -170,7 +168,7 @@ test('send_feedback tool returns its result as structured content', async () => 
 
   const result = await client.callTool({ name: 'send_feedback', arguments: { issueType: 'unsupported_action', summary: 'The user asked to rename a project.' } });
 
-  assert.deepEqual(result, { structuredContent: { result: { kind: 'sent' } }, content: [] });
+  assert.deepEqual(result.structuredContent, { result: { kind: 'sent' } });
   await client.close();
 });
 
