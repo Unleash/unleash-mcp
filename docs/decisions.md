@@ -313,3 +313,8 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 ## 2026-10-27 — No flag deletion for now
 
 - `manage_flag` doesn't delete flags in this iteration, to prevent irreversible changes: an archived flag can be revived, a deleted one can't. The code and its tests stay for when it comes back. Supersedes delete in "`manage_flag` tool".
+
+## 2026-10-27 — send_feedback reports
+
+- A report can name the tool that fell short, from an enum of the registered tools. Rejected: v1's regex on the tool name.
+- Fields a report doesn't need are left out, not sent as `null`. Rejected: v1's `null` for left-out fields.

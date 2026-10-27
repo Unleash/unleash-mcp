@@ -14,8 +14,9 @@ export type SendFeedback = (input: SendFeedbackInput) => Promise<SendFeedbackRes
 /** Creates `send_feedback`, posting with the given `fetch` and tagging each report with the server's `mcpVersion`. */
 export const createSendFeedback =
   (fetch: typeof globalThis.fetch, mcpVersion: string): SendFeedback =>
-    async ({ issueType, summary }) => {
-      const body: ProvideFeedback = { category: 'mcp', areasForImprovement: JSON.stringify({ issueType, summary, mcpVersion }) };
+    async ({ issueType, summary, tool, error }) => {
+      const report = { issueType, summary, ...(tool ? { tool } : {}), ...(error ? { error } : {}), mcpVersion };
+      const body: ProvideFeedback = { category: 'mcp', areasForImprovement: JSON.stringify(report) };
       const response = await fetch(feedbackUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       if (!response.ok) return toFailed({ response, error: (await response.json().catch(() => undefined)) as FailedCall['error'] });
       return { kind: 'sent' };
