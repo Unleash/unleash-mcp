@@ -34,8 +34,9 @@ test('client completes the MCP handshake with the server', async () => {
 });
 
 test('instructions tell the agent what every listed tool is for, with or without the feedback opt-in', async () => {
+  const { unleash: stubbed } = createStubbedClient();
   for (const sendFeedback of [undefined, async () => ({ kind: 'sent' as const })]) {
-    const client = await connectClient(unleash, sendFeedback);
+    const client = await connectClient(stubbed, sendFeedback);
 
     const { tools } = await client.listTools();
 
