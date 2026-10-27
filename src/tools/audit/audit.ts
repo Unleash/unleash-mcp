@@ -3,6 +3,7 @@ import type { UnleashClient } from '../../unleash/client.ts';
 import type { AuditInput } from './auditInput.ts';
 import type { AuditResult, Change } from './auditOutput.ts';
 import { toFailed } from '../shared/failed.ts';
+import { diffEventData } from './diff.ts';
 
 type UnleashEvent = components['schemas']['eventSchema'];
 
@@ -11,7 +12,7 @@ const pageSize = 25;
 // Unleash pages and filters on its side; a date range always narrows the search, so it reads a bounded slice of the event log.
 export const createAudit =
   (unleash: UnleashClient, now: () => Date) =>
-    async ({ project, flag, environment, type, to, days, offset }: AuditInput): Promise<AuditResult> => {
+    async ({ project, flag, environment, type, to, days, include, offset }: AuditInput): Promise<AuditResult> => {
       const last = to ?? toUtcDate(now());
       const first = daysBefore(last, days - 1);
       const found = await unleash.GET('/api/admin/search/events', {
@@ -29,7 +30,7 @@ export const createAudit =
         },
       });
       if (!found.response.ok || !found.data) return toFailed(found);
-      return { kind: 'changes', from: first, to: last, total: found.data.total, changes: found.data.events.map(toChange) };
+      return { kind: 'changes', from: first, to: last, total: found.data.total, changes: found.data.events.map(toChange(include?.includes('diff') ?? false)) };
     };
 
 // Days are YYYY-MM-DD in UTC, as Unleash's from and to take them.
@@ -41,7 +42,7 @@ const daysBefore = (day: string, days: number): string => {
   return toUtcDate(date);
 };
 
-const toChange = ({ id, groupId, createdAt, type, createdBy, ip, project, featureName, environment }: UnleashEvent): Change => ({
+const toChange = (withDiff: boolean) => ({ id, groupId, createdAt, type, createdBy, ip, project, featureName, environment, preData, data }: UnleashEvent): Change => ({
   id,
   ...(groupId ? { groupId } : {}),
   changedAt: createdAt,
@@ -51,4 +52,5 @@ const toChange = ({ id, groupId, createdAt, type, createdBy, ip, project, featur
   ...(project ? { project } : {}),
   ...(featureName ? { flag: featureName } : {}),
   ...(environment ? { environment } : {}),
+  ...(withDiff ? { diff: diffEventData(preData, data) } : {}),
 });

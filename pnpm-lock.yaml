@@ -11,6 +11,9 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: ^1.32.1
         version: 1.32.1(supports-color@10.2.2)(zod@4.6.7)
+      microdiff:
+        specifier: ^1.6.0
+        version: 1.6.0
       openapi-fetch:
         specifier: ^0.17.0
         version: 0.17.0
@@ -322,6 +325,9 @@ packages:
   merge-descriptors@2.0.0:
     resolution: {integrity: sha512-Snk314V5ayFLhp3fkUREub6WtjBfPdCPY1Ln8/8munuLuiYhsABgBVWsozAG+MWMbVEvcdcpbi9R7ww22l9Q3g==}
     engines: {node: '>=18'}
+
+  microdiff@1.6.0:
+    resolution: {integrity: sha512-w7JWt8Bno6I8h0rEqlxr4lNG4UbT1FVtWo42wWosIiaJ+rP3pXh7shCYDnyqBrYx36LJ1CZ64p8A62aVp0sJpQ==}
 
   mime-db@1.54.0:
     resolution: {integrity: sha512-aU5EJuIN2WDemCcAp2vFBfp/m4EAhWJnUNSSw0ixs7/kXbd6Pg64EmwJkNdFhB8aWt1sH2CTXrLxo/iAGV3oPQ==}
@@ -841,6 +847,8 @@ snapshots:
   media-typer@1.1.1: {}
 
   merge-descriptors@2.0.0: {}
+
+  microdiff@1.6.0: {}
 
   mime-db@1.54.0: {}
 

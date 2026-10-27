@@ -43,6 +43,7 @@ test('lists the changes to a flag since yesterday, most recent first, with who m
   // Turning the environment on and adding its default target were one request, so one group.
   assert(output.changes[0]?.groupId);
   assert.equal(output.changes[0].groupId, output.changes[1]?.groupId);
+  assert(!('diff' in output.changes[0]));
 });
 
 test('keeps the changes made in any of the environments asked of a project over the days asked', async () => {
@@ -61,6 +62,14 @@ test('keeps the changes of the event types asked, whatever their case', async ()
   assert(output.kind === 'changes');
   assert(output.changes.length > 0);
   assert(output.changes.every((change) => change.type === 'feature-strategy-add'));
+});
+
+test('shows the values a change edited when the diff is included', async () => {
+  const output = await createAudit(unleash, () => recordedAt)(input.parse({ flag: [flag], type: ['feature-strategy-add'], include: ['diff'] }));
+
+  // One field shows the diff reads from before to after; diff.test.ts covers the rest.
+  assert(output.kind === 'changes');
+  assert.deepEqual(output.changes[0]?.diff?.find((field) => field.path === 'name'), { path: 'name', after: 'flexibleRollout' });
 });
 
 test('refuses more than 31 days', () => {

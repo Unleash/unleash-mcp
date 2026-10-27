@@ -8,6 +8,7 @@ export const auditInput = {
   type: z.array(z.string().toLowerCase()).min(1).optional().describe('Event types, as an event types search returns them; changes of any of them. An unknown type finds nothing'),
   to: z.iso.date().optional().describe('Last day, YYYY-MM-DD in UTC, included; leave out for today'),
   days: z.number().int().min(1).max(31).default(2).describe('Days up to and including the last day, at most 31. The default, yesterday and today, covers at least the last 24 hours in any time zone'),
+  include: z.array(z.enum(['diff']).describe('diff: the values each change edited, before and after. Costs tokens, not requests')).optional().describe('Parts left out unless named'),
   offset: z.number().int().min(0).default(0).describe('Changes to skip, in pages of 25; narrow the filters rather than paging far'),
 };
 
