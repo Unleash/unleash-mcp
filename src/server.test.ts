@@ -4,6 +4,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { createServer } from './server.ts';
 import type { SendFeedback } from './tools/sendFeedback/sendFeedback.ts';
+import { reportableTools } from './tools/sendFeedback/sendFeedbackInput.ts';
 import type { UnleashClient } from './unleash/client.ts';
 import { createRecordedClient, createStubbedClient } from './unleash/testClient.ts';
 import { deleteFlag } from './unleash/testSetup.ts';
@@ -144,5 +145,15 @@ test('send_feedback tool returns its result as structured content once the user 
   const result = await client.callTool({ name: 'send_feedback', arguments: { issueType: 'unsupported_action', summary: 'The user asked to rename a project.' } });
 
   assert.deepEqual(result, { structuredContent: { result: { kind: 'sent' } }, content: [] });
+  await client.close();
+});
+
+test('send_feedback can name every other tool the server lists', async () => {
+  const { unleash: stubbed } = createStubbedClient();
+  const client = await connectClient(stubbed, async () => ({ kind: 'sent' }));
+
+  const { tools } = await client.listTools();
+
+  assert.deepEqual(tools.map((tool) => tool.name).filter((name) => name !== 'send_feedback').sort(), [...reportableTools].sort());
   await client.close();
 });
