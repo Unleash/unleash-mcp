@@ -28,7 +28,11 @@ import { sendFeedbackOutput } from './tools/sendFeedback/sendFeedbackOutput.ts';
 import type { Failed } from './tools/shared/failed.ts';
 import type { UnleashClient } from './unleash/client.ts';
 
-const toToolResult = (structuredContent: Record<string, unknown>) => ({ structuredContent, content: [] });
+// Antigravity, Devin and Cursor show the model only text blocks, so a success carries a text copy too.
+const toToolResult = (structuredContent: Record<string, unknown>) => ({
+  structuredContent,
+  content: [{ type: 'text' as const, text: JSON.stringify(structuredContent) }],
+});
 
 // At the time of this writing,
 // Claude Code shows the model only the text blocks of an error result, so failures are text.
