@@ -34,6 +34,12 @@ const releaseTemplate = {
   name: z.string(),
 };
 
+const project = {
+  resource: z.literal('project'),
+  action: z.enum(['create']),
+  name: z.string(),
+};
+
 // A segment has no id until it is created, so the target differs by action.
 const createdSegment = {
   resource: z.literal('segment'),
@@ -56,7 +62,7 @@ const deletedSegment = {
 
 const segment = z.discriminatedUnion('action', [z.object(createdSegment), z.object(updatedSegment), z.object(deletedSegment)]);
 
-const target = z.discriminatedUnion('resource', [z.object(contextField), z.object(legalValue), z.object(tagType), z.object(tag), z.object(releaseTemplate), segment]);
+const target = z.discriminatedUnion('resource', [z.object(contextField), z.object(legalValue), z.object(tagType), z.object(tag), z.object(releaseTemplate), segment, z.object(project)]);
 
 const error = failed.omit({ kind: true }).describe('What Unleash answered; the change was not applied');
 
@@ -71,6 +77,7 @@ const applied = z.discriminatedUnion('resource', [
     z.object({ kind: z.literal('applied'), ...updatedSegment }),
     z.object({ kind: z.literal('applied'), ...deletedSegment }),
   ]),
+  z.object({ kind: z.literal('applied'), ...project, id: z.string().describe('Project id, as other changes and tools take it') }),
 ]);
 
 const failedChange = z.discriminatedUnion('resource', [
@@ -84,6 +91,7 @@ const failedChange = z.discriminatedUnion('resource', [
     z.object({ kind: z.literal('failed'), ...updatedSegment, error }),
     z.object({ kind: z.literal('failed'), ...deletedSegment, error }),
   ]),
+  z.object({ kind: z.literal('failed'), ...project, error }),
 ]);
 
 const changeRequest = changeRequestShape.describe('The change request holding the change, submitted for review');

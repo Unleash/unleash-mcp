@@ -4,6 +4,7 @@ import type { ConfigureOutput, ConfigureResult, Outcome, PendingChange, Target }
 import { type ChangeRequestReader, createChangeRequestReader } from '../shared/changeRequest.ts';
 import { createContextField, deleteContextField, updateContextField } from './contextField.ts';
 import { createLegalValue, deleteLegalValue } from './legalValue.ts';
+import { createProject } from './project.ts';
 import { createReleaseTemplate } from './releaseTemplate.ts';
 import { createSegment, deleteSegment, updateSegment } from './segment.ts';
 import { createTagType, deleteTagType, updateTagType } from './tagType.ts';
@@ -46,6 +47,7 @@ const apply = (unleash: UnleashClient, environmentsOf: ChangeRequestReader, chan
         case 'update': return updateSegment(unleash, environmentsOf, change);
         case 'delete': return deleteSegment(unleash, environmentsOf, change);
       }
+    case 'project': return createProject(unleash, change);
   }
 };
 
@@ -71,5 +73,6 @@ const targetOf = (change: Change): Target => {
         case 'update': return { resource: 'segment', action: change.action, id: change.id, name: change.name };
         case 'delete': return { resource: 'segment', action: change.action, id: change.id };
       }
+    case 'project': return { resource: 'project', action: change.action, name: change.name };
   }
 };

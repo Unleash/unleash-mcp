@@ -124,7 +124,24 @@ const deleteSegment = z.object({
   project: z.string().optional().describe('Project id of a project segment, as a segments search returns it; leave out for a global segment'),
 }).describe('Delete a segment. Unleash refuses while a flag targets it; inspect the segment with usage to find those flags. In a project whose changes need approval, it goes into a change request');
 
-const change = z.union([createContextField, updateContextField, deleteContextField, createLegalValue, deleteLegalValue, createTagType, updateTagType, deleteTagType, deleteTag, createReleaseTemplate, createSegment, updateSegment, deleteSegment]);
+const createProject = z.object({
+  kind: z.literal('project'),
+  action: z.literal('create'),
+  name: z.string().describe('e.g. Pet shop'),
+  description: z.string().optional().describe('What the project holds'),
+  mode: z.enum(['open', 'protected', 'private']).optional()
+    .describe('open (default): anyone can see it and submit change requests. protected: only members submit change requests. private: only members see it'),
+  defaultStickiness: z.string().optional()
+    .describe('What gradual rollouts in the project stick on by default: default, userId, sessionId, random, or a field with stickiness from a context fields search'),
+  environments: z.array(z.string()).optional()
+    .describe('Environment names to enable, as a project inspect lists them. Left out enables every one; empty enables none'),
+  changeRequestEnvironments: z.array(z.object({
+    name: z.string().describe('Environment name, as a project inspect lists it'),
+    requiredApprovals: z.number().int().min(1).max(10).optional().describe('Approvals a change request needs; 1 when left out'),
+  })).optional().describe('Environments whose changes need an approved change request'),
+}).describe('Create a project. Unleash picks its id, which the result answers');
+
+const change = z.union([createContextField, updateContextField, deleteContextField, createLegalValue, deleteLegalValue, createTagType, updateTagType, deleteTagType, deleteTag, createReleaseTemplate, createSegment, updateSegment, deleteSegment, createProject]);
 
 export const configureInput = {
   changes: z.array(change).min(1).describe('Applied in the order given; one result per change'),
@@ -145,3 +162,4 @@ export type CreateReleaseTemplate = z.infer<typeof createReleaseTemplate>;
 export type CreateSegment = z.infer<typeof createSegment>;
 export type UpdateSegment = z.infer<typeof updateSegment>;
 export type DeleteSegment = z.infer<typeof deleteSegment>;
+export type CreateProject = z.infer<typeof createProject>;
