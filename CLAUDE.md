@@ -6,6 +6,7 @@ Unleash MCP Server v2: an interface to Unleash that can replace the UI, built fo
 
 - Work in small increments (1–200 LOC).
 - Self-check each increment with the `unleash-internal:code-review` skill.
+- Before handing over an increment, run `pnpm lint:fix`, `pnpm typecheck` and `pnpm test`.
 - Leave increments uncommitted; the driver reviews and commits. You may suggest a commit message.
 - When a task is done, run the `record-decision` skill.
 
