@@ -55,6 +55,24 @@ test('names the tool that failed and how in the report', async () => {
   });
 });
 
+test('names the client the agent runs in, cleaned to a short, plain value', async () => {
+  const { fetch, stub } = createStubbedFetch();
+  const posted = acceptReport(stub);
+
+  await createSendFeedback(fetch, '2.0.0')({ issueType: 'tool_error', summary: 'Release failed.' }, { name: ' claude-code (cli);\n', version: `2.0.0${'0'.repeat(70)}` });
+
+  assert.partialDeepStrictEqual(JSON.parse(posted()?.body.areasForImprovement ?? ''), { client: 'claude-code cli', clientVersion: `2.0.0${'0'.repeat(59)}` });
+});
+
+test('leaves the client out when its name or version is empty once cleaned', async () => {
+  const { fetch, stub } = createStubbedFetch();
+  const posted = acceptReport(stub);
+
+  await createSendFeedback(fetch, '2.0.0')({ issueType: 'tool_error', summary: 'Release failed.' }, { name: 'claude-code', version: '();' });
+
+  assert.deepEqual(JSON.parse(posted()?.body.areasForImprovement ?? ''), { issueType: 'tool_error', summary: 'Release failed.', mcpVersion: '2.0.0' });
+});
+
 test('refuses an error message in place of the error name, so it never reaches the report', () => {
   const input = z.object(sendFeedbackInput);
 

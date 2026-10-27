@@ -318,3 +318,4 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 
 - A report can name the tool that fell short, from an enum of the registered tools. Rejected: v1's regex on the tool name.
 - Fields a report doesn't need are left out, not sent as `null`. Rejected: v1's `null` for left-out fields.
+- A report names the client the agent runs in, as it named itself when it connected. No switch to turn that off: users already opt in to feedback as a whole. Rejected: v1's `UNLEASH_MCP_CLIENT_ATTRIBUTION`.

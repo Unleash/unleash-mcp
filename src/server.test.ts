@@ -157,3 +157,17 @@ test('send_feedback can name every other tool the server lists', async () => {
   assert.deepEqual(tools.map((tool) => tool.name).filter((name) => name !== 'send_feedback').sort(), [...reportableTools].sort());
   await client.close();
 });
+
+test('send_feedback names the client the agent connected with', async () => {
+  const { unleash: stubbed } = createStubbedClient();
+  let reportedClient: unknown;
+  const client = await connectClient(stubbed, async (_input, connected) => {
+    reportedClient = connected;
+    return { kind: 'sent' };
+  });
+
+  await client.callTool({ name: 'send_feedback', arguments: { issueType: 'unsupported_action', summary: 'The user asked to rename a project.' } });
+
+  assert.deepEqual(reportedClient, { name: 'test-client', version: '0.0.0' });
+  await client.close();
+});
