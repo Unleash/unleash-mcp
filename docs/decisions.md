@@ -300,3 +300,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - `configure` creates projects. Only create for now.
 - Create takes every setting Unleash's create takes: name, description, mode, default stickiness, environments and change request environments. Rejected: name and description only, and leaving out mode and stickiness.
 - Unleash picks the id (the body's `id` is deprecated), so a created project answers with its `id` next to its `name`, as release templates do.
+
+## 2026-10-27 — send_feedback consent
+
+- `send_feedback` is listed only when the user opts in with `UNLEASH_MCP_SEND_FEEDBACK=true`: safe by default, since reports go to Unleash's production instance. No consent file and no prompt for now. Rejected: always listed with no consent, and an agent round trip (bigger than a walking skeleton).

@@ -3,6 +3,7 @@ import { after, before, test } from 'node:test';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { createServer } from './server.ts';
+import type { SendFeedback } from './tools/sendFeedback/sendFeedback.ts';
 import type { UnleashClient } from './unleash/client.ts';
 import { createRecordedClient, createStubbedClient } from './unleash/testClient.ts';
 import { deleteFlag } from './unleash/testSetup.ts';
@@ -16,9 +17,9 @@ const flag = 'mcp-server-flag';
 before(() => deleteFlag(admin, project, flag));
 after(close);
 
-const connectClient = async (server: UnleashClient = unleash): Promise<Client> => {
+const connectClient = async (server: UnleashClient = unleash, sendFeedback?: SendFeedback): Promise<Client> => {
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
-  await createServer(server).connect(serverTransport);
+  await createServer(server, sendFeedback).connect(serverTransport);
   const client = new Client({ name: 'test-client', version: '0.0.0' });
   await client.connect(clientTransport);
   return client;
@@ -123,5 +124,25 @@ test('evaluate tool asks as the unleash-mcp app when no context is given', async
   const result = await client.callTool({ name: 'evaluate', arguments: { queries: [{ flag, environment: 'development' }] } });
 
   assert.deepEqual(result.structuredContent, { results: [{ kind: 'evaluated', flag, environment: 'development', result: 'on' }] });
+  await client.close();
+});
+
+test('send_feedback is not listed unless the user opted in', async () => {
+  const { unleash: stubbed } = createStubbedClient();
+  const client = await connectClient(stubbed);
+
+  const { tools } = await client.listTools();
+
+  assert.equal(tools.some((tool) => tool.name === 'send_feedback'), false);
+  await client.close();
+});
+
+test('send_feedback tool returns its result as structured content once the user opted in', async () => {
+  const { unleash: stubbed } = createStubbedClient();
+  const client = await connectClient(stubbed, async () => ({ kind: 'sent' }));
+
+  const result = await client.callTool({ name: 'send_feedback', arguments: { issueType: 'unsupported_action', summary: 'The user asked to rename a project.' } });
+
+  assert.deepEqual(result, { structuredContent: { result: { kind: 'sent' } }, content: [] });
   await client.close();
 });
