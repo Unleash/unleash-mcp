@@ -15,7 +15,10 @@ export const ensureFlag = async (unleash: UnleashClient, project: string, input:
   const found = await unleash.GET(feature, { params: { path: { projectId: project, featureName: input.flag } } });
   if (found.response.ok) {
     const environment = found.data?.environments?.find((e) => e.name === input.environment);
-    const strategyIds = environment?.strategies?.flatMap((s) => (s.id ? [s.id] : [])) ?? [];
+    const strategies = environment?.strategies ?? [];
+    const notGradual = strategies.filter((s) => !gradual.includes(s.name)).map((s) => s.title || s.name);
+    if (notGradual.length) return notGradualIn(input.environment, notGradual);
+    const strategyIds = strategies.flatMap((s) => (s.id ? [s.id] : []));
     return { kind: 'existing', enabled: environment?.enabled ?? false, strategyIds };
   }
   const missing = found.response.status === 404;
@@ -26,3 +29,14 @@ export const ensureFlag = async (unleash: UnleashClient, project: string, input:
   if (!created.response.ok) return toFailed(created);
   return { kind: 'new', enabled: false, strategyIds: [] };
 };
+
+// Unleash's legacy `default` serves everyone, as a 100% gradual rollout does, so rewriting it as one changes nothing.
+const gradual = ['flexibleRollout', 'default'];
+
+// Release only writes gradual rollouts, so it would turn a target such as IPs into a gradual rollout for everyone, or drop it.
+const notGradualIn = (environment: string, targets: string[]): Failed => ({
+  kind: 'failed',
+  status: 409,
+  name: 'ConflictError',
+  reasons: [`${environment} has targets that are not gradual rollouts (${targets.join(', ')}); change them in the Unleash UI first`],
+});
