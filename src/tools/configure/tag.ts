@@ -1,7 +1,7 @@
 import type { UnleashClient } from '../../unleash/client.ts';
+import { toFailed } from '../shared/failed.ts';
 import type { DeleteTag } from './configureInput.ts';
 import type { Outcome } from './configureOutput.ts';
-import { toFailed } from '../shared/failed.ts';
 
 /** Deletes a tag and takes it off every flag, as the UI does. */
 export const deleteTag = async (unleash: UnleashClient, { type, value }: DeleteTag): Promise<Outcome> => {

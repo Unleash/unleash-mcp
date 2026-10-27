@@ -1,7 +1,7 @@
 import type { UnleashClient } from '../../../unleash/client.ts';
+import { type Failed, toFailed } from '../../shared/failed.ts';
 import type { SegmentsQuery } from '../searchInput.ts';
 import type { Segments } from '../searchOutput.ts';
-import { type Failed, toFailed } from '../../shared/failed.ts';
 
 // Unleash lists segments without a filter, so the project and the query are applied here; the rows carry
 // what else the list knows, so the agent can filter on scope, author, date or usage itself.

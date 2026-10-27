@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
-import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { stubChangeRequestsIn, stubEnterprise } from '../../unleash/testChangeRequest.ts';
+import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { cancelChangeRequest, deleteFlag } from '../../unleash/testSetup.ts';
 import { createChangeRequestReader } from '../shared/changeRequest.ts';

@@ -1,7 +1,7 @@
 import type { UnleashClient } from '../../unleash/client.ts';
+import { toFailed } from '../shared/failed.ts';
 import type { CreateContextField, DeleteContextField, UpdateContextField } from './configureInput.ts';
 import type { Outcome } from './configureOutput.ts';
-import { toFailed } from '../shared/failed.ts';
 
 /** Creates a context field, global or in a project, answering Unleash's refusal (e.g. the name is taken) as `failed`. */
 export const createContextField = async (unleash: UnleashClient, { project, name, description, stickiness, legalValues }: CreateContextField): Promise<Outcome> => {

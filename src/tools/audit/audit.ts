@@ -1,8 +1,8 @@
 import type { components } from '../../unleash/api.d.ts';
 import type { UnleashClient } from '../../unleash/client.ts';
+import { toFailed } from '../shared/failed.ts';
 import type { AuditInput } from './auditInput.ts';
 import type { AuditResult, Change } from './auditOutput.ts';
-import { toFailed } from '../shared/failed.ts';
 import { diffEventData } from './diff.ts';
 
 type UnleashEvent = components['schemas']['eventSchema'];

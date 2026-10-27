@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
-import { createStubbedClient, createRecordedClient } from '../../unleash/testClient.ts';
 import { production, stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
+import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { cancelChangeRequest, deleteFlag, deleteReleaseTemplate, deleteSegmentNamed } from '../../unleash/testSetup.ts';
 import { createSegment } from '../configure/segment.ts';
@@ -14,8 +14,8 @@ const flag = 'mcp-flag';
 
 const segment = 'mcp-beta';
 const template = 'mcp-release-plan';
-let segmentId: number | undefined;
-let templateId: string | undefined;
+let segmentId: number;
+let templateId: string;
 let changeRequestId: number | undefined;
 
 // The flag is gone before the tests, so the first release creates it.
@@ -24,7 +24,8 @@ before(async () => {
   await deleteSegmentNamed(admin, segment);
   await deleteReleaseTemplate(admin, template);
   const created = await createSegment(admin, { kind: 'segment', action: 'create', name: segment, constraints: [] });
-  segmentId = created.kind === 'applied' ? created.id : undefined;
+  assert(created.kind === 'applied');
+  segmentId = created.id;
   // The OpenAPI spec omits the body (it is `createReleasePlanTemplateSchema`).
   const plan = await admin.POST('/api/admin/release-plan-templates', {
     body: {
@@ -35,7 +36,8 @@ before(async () => {
       ],
     } as never,
   });
-  templateId = plan.data?.id;
+  assert(plan.data);
+  templateId = plan.data.id;
 });
 // The change request goes first, and the flag before the segment and the template:
 // Unleash may refuse to delete a segment or a template that is in use.
@@ -95,13 +97,13 @@ test('splits an audience across values', async () => {
 test('releases to an audience defined in Unleash', async () => {
   const release = createRelease(unleash);
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Beta testers', segments: [segmentId!] }] } });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Beta testers', segments: [segmentId] }] } });
 
   assert.deepEqual(output, {
     kind: 'released',
     flag: { status: 'existing', name: flag, state: 'on' },
     environment: 'development',
-    targets: [{ name: 'Beta testers', rollout: 100, segments: [segmentId!] }],
+    targets: [{ name: 'Beta testers', rollout: 100, segments: [segmentId] }],
   });
 });
 
@@ -132,10 +134,11 @@ test('turns a flag back on', async () => {
 test('moves the release plan to another milestone, replacing the audiences', async () => {
   const release = createRelease(unleash);
   const path = { project, featureName: flag, environment: 'development' };
-  const plan = await admin.POST('/api/admin/projects/{project}/features/{featureName}/environments/{environment}/release-plans', { params: { path }, body: { templateId: templateId! } });
-  const releasePlan = plan.data!.id;
+  const plan = await admin.POST('/api/admin/projects/{project}/features/{featureName}/environments/{environment}/release-plans', { params: { path }, body: { templateId } });
+  assert(plan.data?.milestones[1]);
+  const releasePlan = plan.data.id;
 
-  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { releasePlan, milestone: plan.data!.milestones[1]!.id } });
+  const output = await release({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { releasePlan, milestone: plan.data.milestones[1].id } });
 
   assert.deepEqual(output, {
     kind: 'released',

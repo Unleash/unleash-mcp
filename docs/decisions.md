@@ -338,3 +338,8 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 - Each sentence also opens the tool's description, from one record, so the two never drift.
 - A sentence only claims what the tool can do and stays general, never shaped after one eval task, to avoid overfitting.
 - Rejected: telling the agent to load a tool only when the next step needs it. On Haiku it loaded no fewer tools and used more tokens.
+
+## 2026-10-27 — Linter
+
+- Biome, with the same rules as `main`. Imports are sorted.
+- The formatter is off for now: turning it on reformats nearly every file, so it waits for a moment with no other v2 work in flight.

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { failed, type Failed } from '../shared/failed.ts';
+import { type Failed, failed } from '../shared/failed.ts';
 
 const fieldChange = z.object({
   path: z.string().describe('Where the value is, such as constraints[0].values[1]'),

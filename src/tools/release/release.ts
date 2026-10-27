@@ -1,14 +1,14 @@
 import type { UnleashClient } from '../../unleash/client.ts';
+import { createChangeRequestReader, routeToEnvironment } from '../shared/changeRequest.ts';
+import { type Failed, toFailed } from '../shared/failed.ts';
+import { rolloutOf } from '../shared/strategy.ts';
+import { requestRelease } from './changeRequest.ts';
+import { ensureFlag } from './flag.ts';
+import { type StartedMilestone, startMilestone } from './milestone.ts';
 import type { ReleaseInput } from './releaseInput.ts';
 import type { ReleaseResult } from './releaseOutput.ts';
-import { type Failed, toFailed } from '../shared/failed.ts';
-import { ensureFlag } from './flag.ts';
-import { requestRelease } from './changeRequest.ts';
-import { createChangeRequestReader, routeToEnvironment } from '../shared/changeRequest.ts';
 import { type EnvironmentPath, type Plan, planAudience } from './releasePlan.ts';
 import { type AppliedTemplate, applyTemplate } from './template.ts';
-import { type StartedMilestone, startMilestone } from './milestone.ts';
-import { rolloutOf } from '../shared/strategy.ts';
 
 const strategies = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies';
 const strategy = '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies/{strategyId}';

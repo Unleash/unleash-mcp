@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { failed, type Failed } from '../shared/failed.ts';
+import { type Failed, failed } from '../shared/failed.ts';
 
 const sent = z.object({ kind: z.literal('sent') });
 

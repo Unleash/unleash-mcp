@@ -1,10 +1,10 @@
 import type { UnleashClient } from '../../unleash/client.ts';
-import type { ManageFlagInput, Operation } from './manageFlagInput.ts';
-import type { ManageFlagOutput, ManageFlagResult, Outcome, PendingChange } from './manageFlagOutput.ts';
 import { type ChangeRequestReader, createChangeRequestReader } from '../shared/changeRequest.ts';
 import { archiveFlag } from './archive.ts';
 import { completeFlag } from './complete.ts';
 import { defineFlag } from './define.ts';
+import type { ManageFlagInput, Operation } from './manageFlagInput.ts';
+import type { ManageFlagOutput, ManageFlagResult, Outcome, PendingChange } from './manageFlagOutput.ts';
 import { reviveFlag } from './revive.ts';
 import { setParentDependency } from './setParentDependency.ts';
 

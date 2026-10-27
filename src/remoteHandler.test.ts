@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { once } from 'node:events';
 import { createServer } from 'node:http';
-import { json } from 'node:stream/consumers';
 import type { AddressInfo } from 'node:net';
+import { json } from 'node:stream/consumers';
 import { test } from 'node:test';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';

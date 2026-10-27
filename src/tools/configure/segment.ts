@@ -1,9 +1,9 @@
 import type { UnleashClient } from '../../unleash/client.ts';
-import type { CreateSegment, DeleteSegment, UpdateSegment } from './configureInput.ts';
-import type { Outcome, PendingChange } from './configureOutput.ts';
-import { type ChangeRequestReader, type ChangeRequestRoute, type Changes, requestChanges, type Route, routeToProject } from '../shared/changeRequest.ts';
+import { type ChangeRequestReader, type ChangeRequestRoute, type Changes, type Route, requestChanges, routeToProject } from '../shared/changeRequest.ts';
 import { type Failed, toFailed } from '../shared/failed.ts';
 import { toUnleashConstraint } from '../shared/strategy.ts';
+import type { CreateSegment, DeleteSegment, UpdateSegment } from './configureInput.ts';
+import type { Outcome, PendingChange } from './configureOutput.ts';
 
 /** Creates a segment, global or in a project, answering with its id so release targets can refer to it. */
 export const createSegment = async (unleash: UnleashClient, { project, name, description, constraints }: CreateSegment): Promise<{ kind: 'applied'; id: number } | Failed> => {

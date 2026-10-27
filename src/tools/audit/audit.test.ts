@@ -21,7 +21,8 @@ const dayBefore = (date: Date): string => dayOf(new Date(date.getTime() - 24 * 6
 before(async () => {
   await deleteFlag(admin, project, flag);
   const created = await admin.POST('/api/admin/projects/{projectId}/features', { params: { path: { projectId: project } }, body: { name: flag } });
-  recordedAt = new Date(created.data!.createdAt!);
+  assert(created.data?.createdAt);
+  recordedAt = new Date(created.data.createdAt);
   await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on', { params: { path: { projectId: project, featureName: flag, environment: 'development' } } });
 });
 after(async () => {

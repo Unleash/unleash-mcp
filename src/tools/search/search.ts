@@ -1,16 +1,16 @@
 import type { UnleashClient } from '../../unleash/client.ts';
+import { searchContextFields } from './contextFields/contextFields.ts';
+import { searchEnvironments } from './environments/environments.ts';
+import { searchEventTypes } from './eventTypes/eventTypes.ts';
+import { searchFlagCreators } from './flagCreators/flagCreators.ts';
+import { searchFlags } from './flags/flags.ts';
+import { searchProjects } from './projects/projects.ts';
+import { searchReleaseTemplates } from './releaseTemplates/releaseTemplates.ts';
 import type { Query, SearchInput } from './searchInput.ts';
 import type { SearchOutput, SearchResult } from './searchOutput.ts';
-import { searchProjects } from './projects/projects.ts';
-import { searchFlags } from './flags/flags.ts';
 import { searchSegments } from './segments/segments.ts';
-import { searchContextFields } from './contextFields/contextFields.ts';
-import { searchTagTypes } from './tagTypes/tagTypes.ts';
 import { searchTags } from './tags/tags.ts';
-import { searchFlagCreators } from './flagCreators/flagCreators.ts';
-import { searchReleaseTemplates } from './releaseTemplates/releaseTemplates.ts';
-import { searchEventTypes } from './eventTypes/eventTypes.ts';
-import { searchEnvironments } from './environments/environments.ts';
+import { searchTagTypes } from './tagTypes/tagTypes.ts';
 
 // Queries are independent, so they run together and each one answers its HTTP failures on its own.
 export const createSearch =

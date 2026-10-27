@@ -1,9 +1,9 @@
 import type { UnleashClient } from '../../unleash/client.ts';
-import type { SetParentDependency } from './manageFlagInput.ts';
-import type { Outcome, PendingChange } from './manageFlagOutput.ts';
 import { type ChangeRequestReader, requestChanges, routeToProject } from '../shared/changeRequest.ts';
 import { toFailed } from '../shared/failed.ts';
 import type { Parent } from '../shared/parent.ts';
+import type { SetParentDependency } from './manageFlagInput.ts';
+import type { Outcome, PendingChange } from './manageFlagOutput.ts';
 
 const dependencies = '/api/admin/projects/{projectId}/features/{child}/dependencies';
 

@@ -3,8 +3,8 @@ import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
 import { deleteFlag, deleteSegmentNamed } from '../../../unleash/testSetup.ts';
-import { inspectSegment } from './segment.ts';
 import { createRelease } from '../../release/release.ts';
+import { inspectSegment } from './segment.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./segment.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server';

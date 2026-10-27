@@ -1,7 +1,7 @@
 import type { components } from '../../unleash/api.d.ts';
+import { type Failed, type FailedCall, toFailed } from '../shared/failed.ts';
 import type { SendFeedbackInput } from './sendFeedbackInput.ts';
 import type { SendFeedbackResult } from './sendFeedbackOutput.ts';
-import { toFailed, type Failed, type FailedCall } from '../shared/failed.ts';
 
 type ProvideFeedback = components['schemas']['provideFeedbackSchema'];
 

@@ -1,7 +1,7 @@
 import type { UnleashClient } from '../../../unleash/client.ts';
+import { type Failed, toFailed } from '../../shared/failed.ts';
 import type { TagTypesQuery } from '../searchInput.ts';
 import type { TagTypes } from '../searchOutput.ts';
-import { type Failed, toFailed } from '../../shared/failed.ts';
 
 // Unleash lists tag types without a filter, so the query is applied here. Icon and colour are left out: an agent doesn't act on them.
 export const searchTagTypes = async (unleash: UnleashClient, { query }: TagTypesQuery): Promise<TagTypes | Failed> => {

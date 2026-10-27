@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { type Failed, failed } from '../shared/failed.ts';
 import { type ChangeRequest, changeRequest as changeRequestShape } from '../shared/changeRequest.ts';
+import { type Failed, failed } from '../shared/failed.ts';
 
 const contextField = {
   resource: z.literal('context_field'),

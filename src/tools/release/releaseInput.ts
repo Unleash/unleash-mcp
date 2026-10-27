@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { target } from '../shared/target.ts';
 import { flagState } from '../shared/flagState.ts';
+import { target } from '../shared/target.ts';
 
 const flag = z.object({
   name: z.string().describe('Feature flag name, as a flags search returns it. Created when missing and state is on'),

@@ -1,10 +1,10 @@
 import type { components } from '../../../unleash/api.d.ts';
 import type { UnleashClient } from '../../../unleash/client.ts';
+import { type Failed, toFailed } from '../../shared/failed.ts';
+import { toFlagState } from '../../shared/flagState.ts';
+import { toLifecycleStage, toUnleashStage } from '../../shared/lifecycleStage.ts';
 import type { FlagsQuery, Match } from '../searchInput.ts';
 import type { Flags } from '../searchOutput.ts';
-import { type Failed, toFailed } from '../../shared/failed.ts';
-import { toLifecycleStage, toUnleashStage } from '../../shared/lifecycleStage.ts';
-import { toFlagState } from '../../shared/flagState.ts';
 
 type UnleashFlag = components['schemas']['featureSearchResponseSchema'];
 

@@ -1,7 +1,7 @@
 import type { UnleashClient } from '../../unleash/client.ts';
+import { toFailed } from '../shared/failed.ts';
 import type { CreateTagType, DeleteTagType, UpdateTagType } from './configureInput.ts';
 import type { Outcome } from './configureOutput.ts';
-import { toFailed } from '../shared/failed.ts';
 
 export const createTagType = async (unleash: UnleashClient, { name, description }: CreateTagType): Promise<Outcome> => {
   const created = await unleash.POST('/api/admin/tag-types', { body: { name, description } });

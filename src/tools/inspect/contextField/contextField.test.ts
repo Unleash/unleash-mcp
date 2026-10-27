@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { inspectContextField } from './contextField.ts';
-import { createRelease } from '../../release/release.ts';
-import { createContextField, deleteContextField } from '../../configure/contextField.ts';
 import { deleteFlag } from '../../../unleash/testSetup.ts';
+import { createContextField, deleteContextField } from '../../configure/contextField.ts';
+import { createRelease } from '../../release/release.ts';
+import { inspectContextField } from './contextField.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./contextField.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server';

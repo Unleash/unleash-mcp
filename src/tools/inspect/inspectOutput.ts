@@ -1,14 +1,14 @@
 import { z } from 'zod';
-import { flagType } from '../shared/flagType.ts';
-import { tag } from '../shared/tag.ts';
-import { link } from '../shared/link.ts';
-import { constraint, target } from '../shared/target.ts';
+import { changeRequest } from '../shared/changeRequest.ts';
 import { failed } from '../shared/failed.ts';
+import { flagState } from '../shared/flagState.ts';
+import { flagType } from '../shared/flagType.ts';
 import { legalValue } from '../shared/legalValue.ts';
 import { lifecycleStage } from '../shared/lifecycleStage.ts';
+import { link } from '../shared/link.ts';
 import { parent } from '../shared/parent.ts';
-import { flagState } from '../shared/flagState.ts';
-import { changeRequest } from '../shared/changeRequest.ts';
+import { tag } from '../shared/tag.ts';
+import { constraint, target } from '../shared/target.ts';
 
 const flagNaming = z.object({
   pattern: z.string().describe('JavaScript regular expression new flag names must match'),

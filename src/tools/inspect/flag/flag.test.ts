@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
+import { stubEnterprise } from '../../../unleash/testChangeRequest.ts';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
 import { deleteFlag, deleteReleaseTemplate } from '../../../unleash/testSetup.ts';
-import { inspectFlag } from './flag.ts';
 import { createRelease } from '../../release/release.ts';
 import { createEditionReader, type EditionReader } from '../../shared/changeRequest.ts';
-import { stubEnterprise } from '../../../unleash/testChangeRequest.ts';
+import { inspectFlag } from './flag.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./flag.snapshot.json', import.meta.url).pathname);
 const editionOf = createEditionReader(unleash);
@@ -44,10 +44,12 @@ const addReleasePlan = async (): Promise<void> => {
       ],
     } as never,
   });
+  assert(created.data);
   const path = { project, featureName: parent, environment: 'development' };
-  const plan = await admin.POST('/api/admin/projects/{project}/features/{featureName}/environments/{environment}/release-plans', { params: { path }, body: { templateId: created.data!.id } });
+  const plan = await admin.POST('/api/admin/projects/{project}/features/{featureName}/environments/{environment}/release-plans', { params: { path }, body: { templateId: created.data.id } });
+  assert(plan.data?.milestones[0]);
   await admin.POST('/api/admin/projects/{project}/features/{featureName}/environments/{environment}/release-plans/{planId}/milestones/{milestoneId}/start', {
-    params: { path: { ...path, planId: plan.data!.id, milestoneId: plan.data!.milestones[0]!.id } },
+    params: { path: { ...path, planId: plan.data.id, milestoneId: plan.data.milestones[0].id } },
   });
 };
 
