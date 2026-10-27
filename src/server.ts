@@ -140,7 +140,7 @@ export const createServer = (unleash: UnleashClient, sendFeedback?: SendFeedback
         annotations: { readOnlyHint: false, destructiveHint: false },
       },
       async (input) => {
-        const result = await sendFeedback(input);
+        const result = await sendFeedback(input, server.server.getClientVersion());
         return result.kind === 'failed' ? toFailedToolResult(result) : toToolResult({ result });
       },
     );
