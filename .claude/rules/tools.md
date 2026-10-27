@@ -10,9 +10,9 @@ paths:
 - Keep output token efficient by returning minimal fields, shaped by hand on top of the generated Unleash types.
 - Every union tags its success case with a `kind`; never a bare string next to result objects.
 - A step (e.g. `flag.ts`) lives in its own file with its tests, owns the agent-facing results it can produce and returns only those (`Flags | Failed`, never the tool's whole result union), and reuses the shared ones (`failed.ts`; `target.ts`, the audience shape release takes and inspect returns). The tool function only composes steps. A tool that answers queries by kind (`inspect`, `search`) keeps each kind in its own directory (`src/tools/inspect/segment/`) with its test and snapshot; mappers shared across kinds sit in the tool's `shared/` (`src/tools/inspect/shared/usage.ts`).
-- A read returns everything it gets cheaply. A part that costs Unleash real work (a scan, such as the usage of a context field) is named in an `include` enum list on the query and left out unless named (`include: ['usage']`).
+- A read returns everything it gets cheaply. A part that costs Unleash real work (a scan, such as the usage of a context field) or many tokens (such as the diff of every change in an audit) is named in an `include` enum list on the query and left out unless named (`include: ['usage']`).
 - Take a list of operations when the agent can name each part and each change is one Unleash call. Take an end state and diff it when parts have no agent-facing identity or rules span them.
 - `search` and `inspect` rows are the dropdowns for agents: a filter or a command takes what those rows give (an id, a name) and never resolves it itself. A step never calls another step to look a reference up; the agent runs the lookup query first.
 - Every input parameter's description says where to get its value from (e.g. `as a segments search returns it`, `as a context field inspect lists them`).
 
-Why: `docs/decisions.md` (Tool structure, Unleash HTTP client, Tool layering, End state or operations, Opt-in parts of a read, Search prepares the options, Inputs say where their values come from).
+Why: `docs/decisions.md` (Tool structure, Unleash HTTP client, Tool layering, End state or operations, Opt-in parts of a read, Audit diff, Search prepares the options, Inputs say where their values come from).
