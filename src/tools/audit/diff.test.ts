@@ -33,3 +33,7 @@ test('leaves out empty values added or removed, which say nothing was set', () =
     { path: 'name', after: 'flexibleRollout' },
   ]);
 });
+
+test('diffs data that is not an object as a whole value', () => {
+  assert.deepEqual(diffEventData('Beta', 'Beta testers'), [{ path: 'value', before: 'Beta', after: 'Beta testers' }]);
+});

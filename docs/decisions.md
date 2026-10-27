@@ -181,7 +181,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 
 ## 2026-10-23 — pnpm
 
-- pnpm instead of npm, the same as v1: a 7-day `minimumReleaseAge` cooldown, and dependency install scripts are blocked by default. The shared npm release workflow installs with pnpm too.
+- pnpm instead of npm: a 7-day `minimumReleaseAge` cooldown, and dependency install scripts are blocked by default. The shared npm release workflow installs with pnpm too.
 - Three versions npm locked this week are exempt from the cooldown until 2026-10-27, so the lockfile stays the one the tests passed on. Rejected: resolving again, which moves every version.
 
 ## 2026-10-23 — Release turns a flag on or off
@@ -300,3 +300,8 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - `configure` creates projects. Only create for now.
 - Create takes every setting Unleash's create takes: name, description, mode, default stickiness, environments and change request environments. Rejected: name and description only, and leaving out mode and stickiness.
 - Unleash picks the id (the body's `id` is deprecated), so a created project answers with its `id` next to its `name`, as release templates do.
+
+## 2026-10-27 — Audit diff
+
+- `microdiff` computes the diff. Rejected: our own.
+- The diff leaves out empty values and ids, unlike the UI's, which shows everything: agents read fewer tokens and don't take an empty value for a cleared one. Rejected: matching the UI.
