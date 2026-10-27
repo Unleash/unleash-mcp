@@ -111,7 +111,18 @@ const eventTypes = z.object({
   eventTypes: z.array(z.string()),
 });
 
-const result = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, tagTypes, tags, flagCreators, releaseTemplates, eventTypes, failed]);
+const environment = z.object({
+  name: z.string(),
+  type: z.string().describe('Such as development or production'),
+  deprecated: z.literal(true).optional().describe('Set when the environment is deprecated: its history stays'),
+});
+
+const environments = z.object({
+  kind: z.literal('environments'),
+  environments: z.array(environment),
+});
+
+const result = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, tagTypes, tags, flagCreators, releaseTemplates, eventTypes, environments, failed]);
 
 export const searchOutput = {
   results: z.array(result).describe('One per query, in the order asked'),
@@ -129,3 +140,4 @@ export type FlagCreators = z.infer<typeof flagCreators>;
 /** Release templates found, as the id and name release takes. */
 export type ReleaseTemplates = z.infer<typeof releaseTemplates>;
 export type EventTypes = z.infer<typeof eventTypes>;
+export type Environments = z.infer<typeof environments>;
