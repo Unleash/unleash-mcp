@@ -7,3 +7,4 @@ node_modules/
 src/unleash/openapi.json
 *.local.md
 tsconfig.tsbuildinfo
+dist/
