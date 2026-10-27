@@ -1,6 +1,6 @@
 {
   "name": "@unleash/mcp",
-  "version": "2.0.0-alpha.0",
+  "version": "1.0.0-alpha.0",
   "description": "MCP server for Unleash: an AI-agent-friendly interface to Unleash",
   "type": "module",
   "packageManager": "pnpm@11.21.0",
@@ -21,7 +21,7 @@
     "typecheck": "tsc",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "prepack": "pnpm build",
-    "test": "tsc && node --env-file=.env --test",
+    "test": "node --env-file=.env --test",
     "test:record": "UNLEASH_SNAPSHOT_MODE=record node --env-file=.env --test",
     "spec:update": "curl -sSf https://sandbox.getunleash.io/enterprise/docs/openapi.json -o src/unleash/openapi.json && pnpm spec:generate",
     "spec:generate": "openapi-typescript src/unleash/openapi.json -o src/unleash/api.d.ts"

@@ -14,7 +14,7 @@ Unleash MCP Server v2: an interface to Unleash that can replace the UI, built fo
 ```bash
 pnpm install
 pnpm start              # stdio server from source
-pnpm test               # typecheck + tests, replaying recorded snapshots
+pnpm test               # tests, replaying recorded snapshots
 pnpm typecheck
 pnpm build              # dist/ for the published package; runs on pack
 pnpm test:record        # see the record-snapshots skill
