@@ -351,3 +351,9 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 - We only support the flexible (gradual) rollout. If the environment has any other kind of target, such as user ids or IPs, a change to its targets is refused, with whichever audience, and the user changes it in the Unleash UI. Release writes only gradual rollouts, so inspecting then releasing turned `userWithId` alice,bob into everyone and still said `released`. Rejected: leaving those targets untouched.
 - Unleash's legacy `default` strategy is accepted: it serves everyone, as a 100% gradual rollout does, so rewriting it as one changes nothing.
 - Supersedes "overwriting non gradual rollout strategies" in the 2026-10-20 out-of-scope list.
+
+## 2026-10-27 — Successes as structured content and text
+
+- A success returns `structuredContent` and the same JSON as a text block, as the spec says it SHOULD. Antigravity, Devin and Cursor show the model only text blocks, so a success with `structuredContent` only reached their models empty. Codex and Copilot then show the model both copies, Claude Code only the structured one.
+- Failures stay text only. Every client we measured shows the model the text of a failure carrying both, so structured failures would only help code calling the MCP directly, and we know of no such users. Rejected: failures carrying both.
+- Supersedes, in the 2026-10-21 Failures as text entry, "Rejected: a text block on every result" for successes.
