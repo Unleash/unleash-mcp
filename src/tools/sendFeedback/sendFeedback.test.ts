@@ -89,3 +89,21 @@ test('fails with what Unleash said when it refuses the report', async () => {
 
   assert.deepEqual(output, { kind: 'failed', status: 400, name: 'ValidationError', reasons: ['category is required'] });
 });
+
+test('fails as a network error when Unleash cannot be reached', async () => {
+  const { fetch, stub } = createStubbedFetch();
+  stub.intercept({ path: '/hosted/feedback', method: 'POST' }).replyWithError(new Error('getaddrinfo ENOTFOUND eu.app.unleash-hosted.com'));
+
+  const output = await createSendFeedback(fetch, '2.0.0')({ issueType: 'tool_error', summary: 'Release failed.' });
+
+  assert.deepEqual(output, { kind: 'failed', status: 0, name: 'NetworkError', reasons: ['fetch failed', 'getaddrinfo ENOTFOUND eu.app.unleash-hosted.com'] });
+});
+
+test('fails as a network error when Unleash does not answer in time', async () => {
+  // Rejects as fetch does once the timeout fires, so the test needn't wait for it.
+  const fetch: typeof globalThis.fetch = () => Promise.reject(new DOMException('The operation was aborted due to timeout', 'TimeoutError'));
+
+  const output = await createSendFeedback(fetch, '2.0.0')({ issueType: 'tool_error', summary: 'Release failed.' });
+
+  assert.deepEqual(output, { kind: 'failed', status: 0, name: 'NetworkError', reasons: ['The operation was aborted due to timeout'] });
+});

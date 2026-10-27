@@ -1,7 +1,7 @@
 import type { components } from '../../unleash/api.d.ts';
 import type { SendFeedbackInput } from './sendFeedbackInput.ts';
 import type { SendFeedbackResult } from './sendFeedbackOutput.ts';
-import { toFailed, type FailedCall } from '../shared/failed.ts';
+import { toFailed, type Failed, type FailedCall } from '../shared/failed.ts';
 
 type ProvideFeedback = components['schemas']['provideFeedbackSchema'];
 
@@ -20,10 +20,26 @@ export const createSendFeedback =
     async ({ issueType, summary, tool, error }, client) => {
       const report = { issueType, summary, ...(tool ? { tool } : {}), ...(error ? { error } : {}), mcpVersion, ...toClient(client) };
       const body: ProvideFeedback = { category: 'mcp', areasForImprovement: JSON.stringify(report) };
-      const response = await fetch(feedbackUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const response = await fetch(feedbackUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(timeoutMs),
+      }).catch(toUnreachable);
+      if (!(response instanceof Response)) return response;
       if (!response.ok) return toFailed({ response, error: (await response.json().catch(() => undefined)) as FailedCall['error'] });
       return { kind: 'sent' };
     };
+
+// A hanging connection would block the agent, so it fails the same way as no connection.
+const timeoutMs = 10_000;
+
+// fetch rejects only when no reply came: no connection (a TypeError whose cause says why) or the timeout fired.
+// No reply means no HTTP status, hence 0.
+const toUnreachable = (error: Error): Failed => {
+  const cause = error.cause instanceof Error ? [error.cause.message] : [];
+  return { kind: 'failed', status: 0, name: 'NetworkError', reasons: [error.message, ...cause] };
+};
 
 // The client picks its own name and version, so each is cut to a short, plain value.
 const clean = (value: string): string => value.replace(/[\p{Cc}();]/gu, '').trim().slice(0, 64);
