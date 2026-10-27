@@ -67,7 +67,12 @@ const releaseTemplates = z.object({
   query: z.string().optional().describe('Case-insensitive text the name contains; leave out to list all'),
 }).describe('Release templates by name, with the ids release takes. Milestones and their strategies are left out');
 
-const query = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, tagTypes, tags, flagCreators, releaseTemplates]);
+const eventTypes = z.object({
+  kind: z.literal('event_types'),
+  query: z.string().optional().describe('Case-insensitive text the type contains, such as environment or strategy; leave out to list all'),
+}).describe('Unleash event types, the kinds of change audit filters by and returns');
+
+const query = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, tagTypes, tags, flagCreators, releaseTemplates, eventTypes]);
 
 export const searchInput = {
   queries: z.array(query).min(1).describe('Run together; one result per query, in the order asked'),
@@ -85,3 +90,4 @@ export type TagsQuery = z.infer<typeof tags>;
 export type FlagCreatorsQuery = z.infer<typeof flagCreators>;
 /** A search for release templates, optionally usable in one project. */
 export type ReleaseTemplatesQuery = z.infer<typeof releaseTemplates>;
+export type EventTypesQuery = z.infer<typeof eventTypes>;

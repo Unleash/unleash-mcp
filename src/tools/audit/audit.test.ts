@@ -55,6 +55,14 @@ test('keeps the changes made in any of the environments asked of a project over 
   assert(output.changes.every((change) => change.project === project && ['development', 'production'].includes(change.environment ?? '')));
 });
 
+test('keeps the changes of the event types asked, whatever their case', async () => {
+  const output = await createAudit(unleash, () => recordedAt)(input.parse({ flag: [flag], type: ['Feature-Strategy-Add'] }));
+
+  assert(output.kind === 'changes');
+  assert(output.changes.length > 0);
+  assert(output.changes.every((change) => change.type === 'feature-strategy-add'));
+});
+
 test('refuses more than 31 days', () => {
   assert.throws(() => input.parse({ days: 32 }), /expected number to be <=31/);
 });

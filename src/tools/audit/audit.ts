@@ -11,7 +11,7 @@ const pageSize = 25;
 // Unleash pages and filters on its side; a date range always narrows the search, so it reads a bounded slice of the event log.
 export const createAudit =
   (unleash: UnleashClient, now: () => Date) =>
-    async ({ project, flag, environment, to, days, offset }: AuditInput): Promise<AuditResult> => {
+    async ({ project, flag, environment, type, to, days, offset }: AuditInput): Promise<AuditResult> => {
       const last = to ?? toUtcDate(now());
       const first = daysBefore(last, days - 1);
       const found = await unleash.GET('/api/admin/search/events', {
@@ -20,6 +20,7 @@ export const createAudit =
             ...(project ? { project: `IS_ANY_OF:${project.join(',')}` } : {}),
             ...(flag ? { feature: `IS_ANY_OF:${flag.join(',')}` } : {}),
             ...(environment ? { environment: `IS_ANY_OF:${environment.join(',')}` } : {}),
+            ...(type ? { type: `IS_ANY_OF:${type.join(',')}` } : {}),
             from: `IS:${first}`,
             to: `IS:${last}`,
             offset: String(offset),
