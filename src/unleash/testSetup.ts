@@ -41,3 +41,11 @@ export const cancelChangeRequest = async (author: UnleashClient, projectId: stri
   // The OpenAPI spec omits the body.
   await author.PUT('/api/admin/projects/{projectId}/change-requests/{id}/state', { params: { path: { projectId, id: String(id) } }, body: { state: 'Cancelled' } as never });
 };
+
+/** Deletes projects by name. Unleash picks a created project's id, so a failed recording leaves one only its name tells apart. */
+export const deleteProjectNamed = async (admin: UnleashClient, name: string): Promise<void> => {
+  const listed = await admin.GET('/api/admin/projects', { params: { query: { view: 'core' } } });
+  for (const project of (listed.data?.projects ?? []).filter((p) => p.name === name)) {
+    await admin.DELETE('/api/admin/projects/{projectId}', { params: { path: { projectId: project.id } } });
+  }
+};

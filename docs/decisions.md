@@ -294,3 +294,9 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Pages are a fixed 25 changes; agents narrow the filters rather than page far.
 - No free-text search and no group id filter: Unleash scans the whole event log for both.
 - No `createdBy` filter yet: the only lookup that lists everyone who made changes, Unleash's event creators, scans the whole event log too.
+
+## 2026-10-27 — Projects in configure
+
+- `configure` creates projects. Only create for now.
+- Create takes every setting Unleash's create takes: name, description, mode, default stickiness, environments and change request environments. Rejected: name and description only, and leaving out mode and stickiness.
+- Unleash picks the id (the body's `id` is deprecated), so a created project answers with its `id` next to its `name`, as release templates do.
