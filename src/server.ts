@@ -115,7 +115,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   server.registerTool(
     'audit',
     {
-      description: 'Read what changed in Unleash, who changed it and when, most recent first, over at most 31 days; narrow it to projects, flags, environments or event types. Takes project ids, flag names and event types as search returns them.',
+      description: 'Read what changed in Unleash, who changed it and when, most recent first, over at most 31 days; narrow it to projects, flags, environments or event types. Takes project ids, flag names, environments and event types as search returns them.',
       inputSchema: auditInput,
       outputSchema: auditOutput,
       annotations: { readOnlyHint: true },
