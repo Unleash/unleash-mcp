@@ -5,19 +5,21 @@ import type { SendFeedbackResult } from './sendFeedbackOutput.ts';
 
 type ProvideFeedback = components['schemas']['provideFeedbackSchema'];
 
-// Unleash's own hosted instance, not the user's: the user's Unleash client and PAT never reach it.
-const feedbackUrl = 'https://eu.app.unleash-hosted.com/hosted/feedback';
-
 /** The MCP client the agent runs in, as it named itself when it connected. */
 export type ClientInfo = { name: string; version: string };
 
 /** The `send_feedback` tool: posts one anonymous report to Unleash, naming the client when it is known. Only create it once the user has opted in. */
 export type SendFeedback = (input: SendFeedbackInput, client?: ClientInfo) => Promise<SendFeedbackResult>;
 
-/** Creates `send_feedback`, posting with the given `fetch` and tagging each report with the server's `mcpVersion`. */
+/**
+ * Creates `send_feedback`, posting with the given `fetch` to the Unleash instance at `feedbackBaseUrl` and tagging each report
+ * with the server's `mcpVersion`. Without `feedbackBaseUrl` every report fails: there is no default instance to send to.
+ */
 export const createSendFeedback =
-  (fetch: typeof globalThis.fetch, mcpVersion: string): SendFeedback =>
-    async ({ issueType, summary, tool, error }, client) => {
+  (fetch: typeof globalThis.fetch, mcpVersion: string, feedbackBaseUrl: string | undefined): SendFeedback => {
+    if (!feedbackBaseUrl) return async () => notConfigured;
+    const feedbackUrl = `${feedbackBaseUrl.replace(/\/+$/, '')}/feedback`;
+    return async ({ issueType, summary, tool, error }, client) => {
       const report = { issueType, summary, ...(tool ? { tool } : {}), ...(error ? { error } : {}), mcpVersion, ...toClient(client) };
       const body: ProvideFeedback = { category: 'mcp', areasForImprovement: JSON.stringify(report) };
       const response = await fetch(feedbackUrl, {
@@ -30,6 +32,10 @@ export const createSendFeedback =
       if (!response.ok) return toFailed({ response, error: (await response.json().catch(() => undefined)) as FailedCall['error'] });
       return { kind: 'sent' };
     };
+  };
+
+// Nothing was called, so there is no HTTP status, hence 0.
+const notConfigured: Failed = { kind: 'failed', status: 0, name: 'NotConfigured', reasons: ['No feedback instance is configured: set UNLEASH_FEEDBACK_URL'] };
 
 // A hanging connection would block the agent, so it fails the same way as no connection.
 const timeoutMs = 10_000;

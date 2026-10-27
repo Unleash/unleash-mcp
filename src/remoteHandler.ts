@@ -5,8 +5,8 @@ import { createServer } from './server.ts';
 import { createSendFeedback } from './tools/sendFeedback/sendFeedback.ts';
 import { createUnleashClient } from './unleash/client.ts';
 
-/** What the host decides: where Unleash is, and whether its admin agreed to send feedback. */
-export type RemoteHandlerOptions = { baseUrl: string; feedbackConsent: 'granted' | 'denied' };
+/** What the host decides: where Unleash is, whether its admin agreed to send feedback, and the Unleash instance that receives it. */
+export type RemoteHandlerOptions = { baseUrl: string; feedbackConsent: 'granted' | 'denied'; feedbackUrl?: string };
 
 /** Serves one MCP request. The host forwards the caller's auth to Unleash, and the body when it has parsed it already. */
 export type McpRequestHandler = (
@@ -21,10 +21,10 @@ export type McpRequestHandler = (
  */
 export const createRemoteHandler =
   (fetch: typeof globalThis.fetch) =>
-    ({ baseUrl, feedbackConsent }: RemoteHandlerOptions): McpRequestHandler =>
+    ({ baseUrl, feedbackConsent, feedbackUrl }: RemoteHandlerOptions): McpRequestHandler =>
       async (req, res, { authHeaders, parsedBody }) => {
         const unleash = createUnleashClient({ baseUrl, headers: authHeaders, fetch });
-        const sendFeedback = feedbackConsent === 'granted' ? createSendFeedback(fetch, pkg.version) : undefined;
+        const sendFeedback = feedbackConsent === 'granted' ? createSendFeedback(fetch, pkg.version, feedbackUrl) : undefined;
         const server = createServer(unleash, sendFeedback);
         const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
         res.on('close', () => {

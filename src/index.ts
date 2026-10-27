@@ -14,6 +14,6 @@ const unleash = createUnleashClient({
   fetch: globalThis.fetch,
 });
 
-const sendFeedback = config.UNLEASH_MCP_SEND_FEEDBACK ? createSendFeedback(globalThis.fetch, pkg.version) : undefined;
+const sendFeedback = config.UNLEASH_MCP_SEND_FEEDBACK ? createSendFeedback(globalThis.fetch, pkg.version, config.UNLEASH_FEEDBACK_URL) : undefined;
 
 await createServer(unleash, sendFeedback).connect(new StdioServerTransport());
