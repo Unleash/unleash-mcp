@@ -345,3 +345,9 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 
 - Biome, with the same rules as `main`. Imports are sorted.
 - The formatter is off for now: turning it on reformats nearly every file, so it waits for a moment with no other v2 work in flight.
+
+## 2026-10-27 — Release refuses targets that are not gradual rollouts
+
+- We only support the flexible (gradual) rollout. If the environment has any other kind of target, such as user ids or IPs, a change to its targets is refused, with whichever audience, and the user changes it in the Unleash UI. Release writes only gradual rollouts, so inspecting then releasing turned `userWithId` alice,bob into everyone and still said `released`. Rejected: leaving those targets untouched.
+- Unleash's legacy `default` strategy is accepted: it serves everyone, as a 100% gradual rollout does, so rewriting it as one changes nothing.
+- Supersedes "overwriting non gradual rollout strategies" in the 2026-10-20 out-of-scope list.

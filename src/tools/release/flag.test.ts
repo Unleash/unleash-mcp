@@ -37,3 +37,29 @@ test('fails without creating the flag when a missing flag is turned off', async 
 
   assert.deepEqual(output, { kind: 'failed', status: 404, name: 'NotFoundError', reasons: [`Could not find feature flag ${flag}`] });
 });
+
+// No stub for any write: a release that changes the environment would fail the test differently.
+test('refuses to replace targets that are not gradual rollouts', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const strategies = [{ id: 's1', name: 'remoteAddress', title: 'Office IPs' }, { id: 's2', name: 'userWithId' }];
+  stub.intercept({ path: feature, method: 'GET' }).reply(200, { name: flag, environments: [{ name: 'development', enabled: true, strategies }] });
+
+  const output = await ensureFlag(unleash, project, { flag, state: 'on', environment: 'development' });
+
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 409,
+    name: 'ConflictError',
+    reasons: ['development has targets that are not gradual rollouts (Office IPs, userWithId); change them in the Unleash UI first'],
+  });
+});
+
+test('replaces the legacy target that serves everyone', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const strategies = [{ id: 's1', name: 'default' }];
+  stub.intercept({ path: feature, method: 'GET' }).reply(200, { name: flag, environments: [{ name: 'development', enabled: true, strategies }] });
+
+  const output = await ensureFlag(unleash, project, { flag, state: 'on', environment: 'development' });
+
+  assert.deepEqual(output, { kind: 'existing', enabled: true, strategyIds: ['s1'] });
+});
