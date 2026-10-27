@@ -6,7 +6,6 @@ const define = { action: z.literal('define'), project: z.string(), flag: z.strin
 const complete = { action: z.literal('complete'), project: z.string(), flag: z.string() };
 const archive = { action: z.literal('archive'), project: z.string(), flag: z.string() };
 const revive = { action: z.literal('revive'), project: z.string(), flag: z.string() };
-const remove = { action: z.literal('delete'), project: z.string(), flag: z.string() };
 const setParentDependency = { action: z.literal('set_parent_dependency'), project: z.string(), flag: z.string() };
 
 const changed = z.enum(['type', 'description', 'tags', 'links']);
@@ -21,7 +20,6 @@ const applied = z.discriminatedUnion('action', [
   z.object({ kind: z.literal('applied'), ...complete }),
   z.object({ kind: z.literal('applied'), ...archive }),
   z.object({ kind: z.literal('applied'), ...revive }),
-  z.object({ kind: z.literal('applied'), ...remove }),
   z.object({ kind: z.literal('applied'), ...setParentDependency }),
 ]);
 
@@ -32,7 +30,6 @@ const failedOperation = z.discriminatedUnion('action', [
   z.object({ kind: z.literal('failed'), ...complete, error }),
   z.object({ kind: z.literal('failed'), ...archive, error }),
   z.object({ kind: z.literal('failed'), ...revive, error }),
-  z.object({ kind: z.literal('failed'), ...remove, error }),
   z.object({ kind: z.literal('failed'), ...setParentDependency, error }),
 ]);
 

@@ -18,7 +18,6 @@ test('applies the operations after a failed one, naming the operation each resul
   stubChangeRequestsIn(stub, 'web', production).times(2);
   stub.intercept({ path: '/api/admin/projects/web/environments/production/change-requests', method: 'POST' }).reply(200, { id: 7, state: 'In review' }).times(2);
   stub.intercept({ path: '/api/admin/projects/web/revive', method: 'POST' }).reply(200, '');
-  stub.intercept({ path: '/api/admin/projects/web/delete', method: 'POST' }).reply(200, '');
   const manageFlag = createManageFlag(unleash);
 
   const output = await manageFlag({ operations: [
@@ -27,11 +26,10 @@ test('applies the operations after a failed one, naming the operation each resul
     { action: 'archive', project: 'web', flag: 'old-checkout' },
     { action: 'set_parent_dependency', project: 'web', flag: 'checkout-v2', parent: { kind: 'on', flag: 'checkout' } },
     { action: 'revive', project: 'web', flag: 'older-checkout' },
-    { action: 'delete', project: 'web', flag: 'oldest-checkout' },
   ] });
 
   assert.equal(z.object(manageFlagOutput).safeParse(output).error, undefined);
-  assert.equal(output.results.length, 6);
+  assert.equal(output.results.length, 5);
   assert.partialDeepStrictEqual(output, {
     results: [
       { kind: 'failed', action: 'complete', project: 'web', flag: 'gone', error: { status: 404, name: 'NotFoundError', reasons: [message] } },
@@ -39,7 +37,6 @@ test('applies the operations after a failed one, naming the operation each resul
       { kind: 'pending_change_request', action: 'archive', project: 'web', flag: 'old-checkout', changeRequest: { id: 7 } },
       { kind: 'pending_change_request', action: 'set_parent_dependency', project: 'web', flag: 'checkout-v2', changeRequest: { id: 7 } },
       { kind: 'applied', action: 'revive', project: 'web', flag: 'older-checkout' },
-      { kind: 'applied', action: 'delete', project: 'web', flag: 'oldest-checkout' },
     ],
   });
 });

@@ -40,6 +40,7 @@ const revive = z.object({
   flag: z.string().describe('Flag name, as a flags search with the archived stage returns it'),
 }).describe('Bring an archived flag back, off in every environment; links to parent flags removed by archiving stay removed. Unleash answers success for a flag that is missing or not archived and leaves it as it is');
 
+// Not offered for now: deleting can't be undone, while an archived flag can be revived. Kept for when it is.
 const remove = z.object({
   action: z.literal('delete'),
   project: z.string().describe('Project id, as a flags search returns it'),
@@ -56,7 +57,7 @@ const setParentDependency = z.object({
     .describe('The parent, as a flags search returns it, in the same project, and how it must be; an inspect of a flag returns its parent in this shape. Inspect both flags first: the parent must have no parent and this flag no children'),
 }).describe('Make a flag depend on a parent flag in every environment, or stop it depending on one. A flag has at most one parent; setting one replaces the old. In a project whose changes need approval, it goes into a change request');
 
-const operation = z.discriminatedUnion('action', [define, complete, archive, revive, remove, setParentDependency]);
+const operation = z.discriminatedUnion('action', [define, complete, archive, revive, setParentDependency]);
 
 export const manageFlagInput = {
   operations: z.array(operation).min(1).describe('Applied in the order given; one result per operation'),
