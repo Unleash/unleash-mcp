@@ -18,6 +18,9 @@ import { createManageFlag } from './tools/manageFlag/manageFlag.ts';
 import { evaluateInput } from './tools/evaluate/evaluateInput.ts';
 import { evaluateOutput } from './tools/evaluate/evaluateOutput.ts';
 import { createEvaluate } from './tools/evaluate/evaluate.ts';
+import { auditInput } from './tools/audit/auditInput.ts';
+import { auditOutput } from './tools/audit/auditOutput.ts';
+import { createAudit } from './tools/audit/audit.ts';
 import type { Failed } from './tools/shared/failed.ts';
 import type { UnleashClient } from './unleash/client.ts';
 
@@ -39,6 +42,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   const search = createSearch(unleash);
   const manageFlag = createManageFlag(unleash);
   const evaluate = createEvaluate(unleash);
+  const audit = createAudit(unleash);
 
   server.registerTool(
     'release',
@@ -106,6 +110,20 @@ export const createServer = (unleash: UnleashClient): McpServer => {
       outputSchema: manageFlagOutput,
     },
     async (input) => toToolResult(await manageFlag(input)),
+  );
+
+  server.registerTool(
+    'audit',
+    {
+      description: 'Read what changed on a flag, who changed it and when, most recent first. Takes a flag name as search returns it.',
+      inputSchema: auditInput,
+      outputSchema: auditOutput,
+      annotations: { readOnlyHint: true },
+    },
+    async (input) => {
+      const result = await audit(input);
+      return result.kind === 'failed' ? toFailedToolResult(result) : toToolResult({ result });
+    },
   );
 
   return server;

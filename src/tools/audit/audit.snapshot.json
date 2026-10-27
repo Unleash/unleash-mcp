@@ -1,0 +1,272 @@
+[
+  {
+    "hash": "-oPH8aMCOrdJ2icl7Wzq2HEJSWOOEY4by2MUGjHM910",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-audited-flag",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "208",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3AtYXVkaXRlZC1mbGFnXCIgaW4gcHJvamVjdCBcIm1jcC1zZXJ2ZXJcIi4iLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiVGhlcmUncyBubyBmZWF0dXJlIG5hbWVkIFwibWNwLWF1ZGl0ZWQtZmxhZ1wiIGluIHByb2plY3QgXCJtY3Atc2VydmVyXCIuIn1dfQ==",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G/YEAMSvpa+nq+elnPj5qDRSel3DSmGMysDKXUOXE3sAeNKxlk58XLOi05ZYwA/S0CyQQArsCyjjdOruxdPFlELhhKngBXZeSzA/LzDRyDAYW/59I08ChUBJPjJP9wVmWkNQGGZwjoORuLLCGScYrTDNa4+cLUCfTnOUt9FxhMkVkkQSHjybxjPgjQ9zCPMqUPjoQZU8R/+3wlR2YqcmSABzgRdpvf65g8Folx2tzgu7XR9ogELEPcMg0xoKSbw98hOn5PNsT2sQbAqJh5Cs/2b+QK3gHQx09rr63n78+u1j1n5/2rws8hf6w/tnz969hoJ4CRwpXIsbYXoKibffCpEDU+J3gSYrGep5WCk6J41NBQRv2zjCz5MMCH6vqwlUd2hTK8NgetBv1RViPL0ITrVUDB6REFXencfALK5h3uAtLxh2KnE85igSQAESn4d/N7v7AoNc5/Uu07u8+aRbU3amKG8Udf4DjyYPzmAuJDOyhvmvvCbhNZ0fvISCH2ngzzHA4L/Iksx+P0Q6JqH4OwjQ26fdc+uKvHG2L7O2rdkelnXdNc5SVbiiy4gKorJsD5uc6oI659qizZ0tcmuzusrs3XS7zK+725Elztfj7QGbgpzJg8Xch0J3U03PRfl0YSvsXvmexY/8eHLJe/h8p2uiTUuwouLVjkq8TPA92zMbGOYCSWhgGJy4sA2FA6FPx+6j0MCBni2b5gc2heCnI0PAHNrakEJU1lSR/+inBPbvbQM=",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "fWiCiq38JJ7Z72ESnUasw3YM20DYRI_yTvwjj2_j0To",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-audited-flag",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "106",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBmZWF0dXJlIGZsYWcgZm91bmQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiTm8gZmVhdHVyZSBmbGFnIGZvdW5kIn1dfQ==",
+          "trailers": {}
+        },
+        {
+          "statusCode": 202,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "NAfRAYeLfo38rfR4KOjNgzG1_02gtEK4v6tcQeLcrG0",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/archive/mcp-audited-flag",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "QzPZQKVgK9y-n6DfmBp2bYWGOMRF0zDdX7H6-xTyuvs",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "27",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"name\":\"mcp-audited-flag\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "headers": {
+            "content-length": "179",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoibWNwLWF1ZGl0ZWQtZmxhZyIsImRlc2NyaXB0aW9uIjpudWxsLCJ0eXBlIjoicmVsZWFzZSIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTI3VDA4OjQ5OjM0LjM2MloiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "A2SVnWl6Ex_ZiLCOp0NveMw0w83Y0pQg9z_AWe6tz54",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-audited-flag/environments/development/on",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "0",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "rx0s2H8OQ--4AfENwS8P-ApUb3AwHnhfHbqfS68Psmk",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/events?feature=IS%3Amcp-audited-flag&offset=0&limit=2",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G0AGAMT/ZquitOtFtxRt9qMVNW6hdayAEZv/m7mnuoYtoO3pmtSLfjo5LJGxNJNAwg945Gd4AHS25hxauu6aEArhcROju2uomRpZA/pYo5WgPIzynMMuJwqEpQJpVyzPzWKgSnAkKIei5P4ShKGwampWu7Wy09FACdN4ouWDs2dBiIIoc8PAjfLHoKCkpDjx0iR4PyHvL5+M0mcSFOYcUlgBGk0HA46JVockuxW1AX18cTVvXIuhAmH4N3HFVLZWSbcaiBocyylwhnGj9ExpcAwLACFJO0qROT7HlXs0g7tUQjJXO9H7sWcShCC8St+Kh5fHw+I1fDw9ONx/jM8f0te9c3C0ExDCMvXCovTiyIuiABxVGo6AcDwQtWPKx810OBR6CQJjTWJMotZh7GOYL379a6ydGPJ9I0by/3jh+aHajv19fi0T3Rrlm6Ng/IP3bYjRPc8e3mHMqca6DsoiY0ZCVSIxkXaKpETNTGiIXQnqNrDDGLYcl8jZP2KsFlbVS1dIQGKBQgLg6OtDWLyd5BdxdB7c352e3l6BYyTgSMxlc/fjwWA8teCwrR0oUBNROgWqxMAojuIeBdFGJPDFMdWAoDX6fJ2lgEO/5wAhDAJwGNv+9e1IGYNveyWmA4stx4YG5H3FjLW90VJpUMBhVD1U/d/GNugIzPTjCCljD+V3iZcx5tkfFGOOHTuRCXxx/IYFExTGWw==",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  }
+]
