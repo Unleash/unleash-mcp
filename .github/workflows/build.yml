@@ -1,0 +1,31 @@
+name: Build and test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+      - name: Setup node
+        uses: actions/setup-node@v6
+        with:
+          # Snapshots replay only on the Node major they were recorded on.
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Test
+        # Replays need the sandbox URL the snapshots were recorded against, not a real PAT.
+        run: cp .env.example .env && pnpm test
+      - name: Build
+        run: pnpm build

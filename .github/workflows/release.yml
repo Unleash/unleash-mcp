@@ -1,0 +1,74 @@
+name: "🚀 Release"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "New version (semver)"
+        required: true
+        type: string
+      tag:
+        description: "Optional npm dist-tag"
+        required: false
+        type: string
+        default: latest
+permissions:
+  contents: write
+  id-token: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Keep prereleases off latest
+        # npx @unleash/mcp installs latest: an alpha or beta there would reach every user.
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+          TAG: ${{ github.event.inputs.tag }}
+        run: |
+          if [[ "$VERSION" == *-* && "$TAG" == latest ]]; then
+            echo "::error::$VERSION is a prerelease: publish it with a tag other than latest, such as next"
+            exit 1
+          fi
+
+  release:
+    needs: check
+    uses: Unleash/.github/.github/workflows/npm-release.yml@v4.0.2
+    with:
+      version: ${{ github.event.inputs.version }}
+      tag: ${{ github.event.inputs.tag }}
+    secrets:
+      UNLEASH_BOT_APP_ID: ${{ secrets.UNLEASH_BOT_APP_ID }}
+      UNLEASH_BOT_PRIVATE_KEY: ${{ secrets.UNLEASH_BOT_PRIVATE_KEY }}
+
+  mcp-registry-publish:
+    # official guide here: https://github.com/modelcontextprotocol/registry/blob/main/docs/guides/publishing/github-actions.md
+    # the steps below are simplified because we are already publishing to npm
+    runs-on: ubuntu-latest
+    needs: release # publish to npm first
+    # Only a `latest` release reaches the MCP Registry, so prereleases stay off it.
+    if: ${{ github.event.inputs.tag == 'latest' }}
+    steps:
+      - name: Checkout recently pushed tag v${{ github.event.inputs.version }}
+        uses: actions/checkout@v6
+        with:
+          ref: refs/tags/v${{ github.event.inputs.version }}
+      - name: Install MCP Publisher
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+      - name: Align server.json version
+        run: |
+          PKG_VERSION=$(jq -r '.version' package.json)
+          TMP_FILE=$(mktemp)
+          jq --arg v "$PKG_VERSION" '.version=$v | .packages = (.packages | map(.version=$v))' server.json > "$TMP_FILE"
+          mv "$TMP_FILE" server.json
+      - name: Wait for npm to finish processing the release
+        # npm publishes asynchronously; the registry rejects versions it cannot yet see on npm
+        run: timeout 15m sh -c 'until npm view "@unleash/mcp@$(jq -r .version package.json)" version; do sleep 15; done'
+      # the guide suggests using --private-key-file but that isn't supported, so I'm using --private-key
+      # official publishing guide: https://github.com/modelcontextprotocol/registry/blob/main/docs/guides/publishing/publish-server.md
+      - name: Login to MCP Registry
+        run: |
+          echo "${{ secrets.MCP_PRIVATE_KEY }}" > key.pem
+          ./mcp-publisher login dns --domain getunleash.io --private-key $(openssl pkey -in key.pem -noout -text | grep -A3 "priv:" | tail -n +2 | tr -d ' :\n')
+      - name: Publish to MCP Registry
+        run: ./mcp-publisher publish
