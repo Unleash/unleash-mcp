@@ -50,11 +50,16 @@ const adminHeaders = (record: boolean): Record<string, string> =>
 
 // Error cases are not recorded: tests declare on `stub` what Unleash would reply. Never reaches the network.
 export const createStubbedClient = (): { unleash: UnleashClient; stub: Interceptable } => {
+  const { baseUrl, fetch, stub } = createStubbedFetch();
+  return { unleash: createUnleashClient({ baseUrl, headers: {}, fetch }), stub };
+};
+
+// For code that builds its own Unleash client from a fetch, such as the remote handler.
+export const createStubbedFetch = (): { baseUrl: string; fetch: typeof globalThis.fetch; stub: Interceptable } => {
   const baseUrl = 'https://unleash.example';
   const agent = new MockAgent();
   agent.disableNetConnect();
-  const unleash = createUnleashClient({ baseUrl, headers: {}, fetch: createFetch(agent) });
-  return { unleash, stub: agent.get(baseUrl) };
+  return { baseUrl, fetch: createFetch(agent), stub: agent.get(baseUrl) };
 };
 
 const createFetch =

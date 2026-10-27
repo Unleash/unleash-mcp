@@ -1,0 +1,15 @@
+{
+  // Emits the JavaScript and types the published package runs: Node won't strip types inside node_modules.
+  // The root is the repo, not src, so the package.json the server reads its version from lands next to it.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "incremental": false,
+    "declaration": true,
+    "rewriteRelativeImportExtensions": true,
+    "rootDir": ".",
+    "outDir": "dist"
+  },
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts", "src/unleash/test*.ts"]
+}
