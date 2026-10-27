@@ -38,10 +38,10 @@ const toFailedToolResult = (result: Failed) => ({
 
 // Clients that defer tools show the agent only tool names and these instructions until it loads a tool.
 const outcomes = {
-  release: 'Turn a feature on or off in an environment: for everyone, a percentage, chosen audiences or segments, split across variants, or through a release template or release plan milestone; turning on creates a missing flag.',
-  inspect: 'See a project, flag, context field or segment in full, such as the environments of a project, who gets a flag in each environment and when SDKs last saw it there.',
-  search: 'Find projects, environments, flags, segments, context fields, tags, release templates and event types, filter flags by tag, segment, lifecycle stage, creator or creation date, and get the ids and names the other tools take.',
-  evaluate: 'Tell whether a user or context gets a feature in an environment, and what blocks it when it is off.',
+  release: 'Turn a feature on or off in an environment: for everyone, a percentage, chosen audiences or segments, split across values, or through a release template or release plan milestone; turning on creates a missing flag.',
+  inspect: 'See a project, flag, context field or segment in full, such as the environments of a project, who gets a flag in each environment and when SDKs last saw it there, or which flags use a context field or segment.',
+  search: 'Find projects, environments, flags, segments, context fields, tag types, tags, release templates and event types, filter flags by tag, segment, lifecycle stage, creator or creation date, and get the ids and names the other tools take.',
+  evaluate: 'Tell whether a user or context gets a feature in an environment and which value, and what blocks it when it is off.',
   configure: 'Set up what flags share: create projects and release templates, create, change or delete context fields and their legal values, segments (saved audiences) and tag types, and delete tags; the tags of a single flag belong to manage_flag, its targeting to release.',
   manage_flag: 'Create a flag or change its type, description, tags and links, set its parent flag, mark it completed, or archive or revive it.',
   audit: 'Read what changed in Unleash, who changed it and when, most recent first, over at most 31 days; narrow it to projects, flags, environments or event types.',
