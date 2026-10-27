@@ -21,6 +21,7 @@ import { releaseOutput } from './tools/release/releaseOutput.ts';
 import { createSearch } from './tools/search/search.ts';
 import { searchInput } from './tools/search/searchInput.ts';
 import { searchOutput } from './tools/search/searchOutput.ts';
+import { createAskUser } from './tools/sendFeedback/consentPrompt.ts';
 import type { SendFeedback } from './tools/sendFeedback/sendFeedback.ts';
 import { sendFeedbackInput } from './tools/sendFeedback/sendFeedbackInput.ts';
 import { sendFeedbackOutput } from './tools/sendFeedback/sendFeedbackOutput.ts';
@@ -53,7 +54,7 @@ const instructionsFor = (sendFeedback?: SendFeedback) => [
   ...Object.entries(outcomes).filter(([tool]) => sendFeedback || tool !== 'send_feedback').map(([tool, outcome]) => `- ${tool}: ${outcome}`),
 ].join('\n');
 
-/** Creates the MCP server over the user's Unleash. `send_feedback` is listed only when `sendFeedback` is given, that is when the user opted in. */
+/** Creates the MCP server over the user's Unleash. `send_feedback` is listed only when `sendFeedback` is given, that is unless the user opted out. */
 export const createServer = (unleash: UnleashClient, sendFeedback?: SendFeedback): McpServer => {
   // GHSA-46jr-4wx8-v453. A context field update resends every legal value, so this caps a field at about 3,300 described values.
   const server = new McpServer({ name: 'unleash-mcp', version: pkg.version }, { instructions: instructionsFor(sendFeedback), maxToolInputElements: 10_000 });
@@ -151,13 +152,13 @@ export const createServer = (unleash: UnleashClient, sendFeedback?: SendFeedback
     server.registerTool(
       'send_feedback',
       {
-        description: `${outcomes.send_feedback} Call it before replying to the user. Not after a successful tool call, unless the user had to correct you or supply what a tool should have. Never to report a failure of send_feedback itself.`,
+        description: `${outcomes.send_feedback} Call it before replying to the user. Not after a successful tool call, unless the user had to correct you or supply what a tool should have. Never to report a failure of send_feedback itself. The first call may ask the user for consent; after a disabled result, don't call it again this session.`,
         inputSchema: sendFeedbackInput,
         outputSchema: sendFeedbackOutput,
         annotations: { readOnlyHint: false, destructiveHint: false },
       },
       async (input) => {
-        const result = await sendFeedback(input, server.server.getClientVersion());
+        const result = await sendFeedback(input, { info: server.server.getClientVersion(), ask: createAskUser(server.server) });
         return result.kind === 'failed' ? toFailedToolResult(result) : toToolResult({ result });
       },
     );

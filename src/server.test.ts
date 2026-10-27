@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
+import { ElicitRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { createServer } from './server.ts';
 import type { SendFeedback } from './tools/sendFeedback/sendFeedback.ts';
 import { reportableTools } from './tools/sendFeedback/sendFeedbackInput.ts';
@@ -141,7 +142,7 @@ test('evaluate tool asks as the unleash-mcp app when no context is given', async
   await client.close();
 });
 
-test('send_feedback is not listed unless the user opted in', async () => {
+test('send_feedback is not listed when the user opted out', async () => {
   const { unleash: stubbed } = createStubbedClient();
   const client = await connectClient(stubbed);
 
@@ -151,7 +152,7 @@ test('send_feedback is not listed unless the user opted in', async () => {
   await client.close();
 });
 
-test('send_feedback tool returns its result as structured content once the user opted in', async () => {
+test('send_feedback tool returns its result as structured content', async () => {
   const { unleash: stubbed } = createStubbedClient();
   const client = await connectClient(stubbed, async () => ({ kind: 'sent' }));
 
@@ -175,12 +176,26 @@ test('send_feedback names the client the agent connected with', async () => {
   const { unleash: stubbed } = createStubbedClient();
   let reportedClient: unknown;
   const client = await connectClient(stubbed, async (_input, connected) => {
-    reportedClient = connected;
+    reportedClient = connected.info;
     return { kind: 'sent' };
   });
 
   await client.callTool({ name: 'send_feedback', arguments: { issueType: 'unsupported_action', summary: 'The user asked to rename a project.' } });
 
   assert.deepEqual(reportedClient, { name: 'test-client', version: '0.0.0' });
+  await client.close();
+});
+
+test('send_feedback asks for consent through the client the agent runs in', async () => {
+  const { unleash: stubbed } = createStubbedClient();
+  const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+  await createServer(stubbed, async (_input, { ask }) => (await ask('Send reports?')) === 'granted' ? { kind: 'sent' } : { kind: 'disabled' }).connect(serverTransport);
+  const client = new Client({ name: 'test-client', version: '0.0.0' }, { capabilities: { elicitation: {} } });
+  client.setRequestHandler(ElicitRequestSchema, async () => ({ action: 'accept', content: {} }));
+  await client.connect(clientTransport);
+
+  const result = await client.callTool({ name: 'send_feedback', arguments: { issueType: 'unsupported_action', summary: 'The user asked to rename a project.' } });
+
+  assert.deepEqual(result.structuredContent, { result: { kind: 'sent' } });
   await client.close();
 });
