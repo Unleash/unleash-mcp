@@ -33,6 +33,18 @@ test('client completes the MCP handshake with the server', async () => {
   await client.close();
 });
 
+test('instructions tell the agent what every listed tool is for, with or without the feedback opt-in', async () => {
+  for (const sendFeedback of [undefined, async () => ({ kind: 'sent' as const })]) {
+    const client = await connectClient(unleash, sendFeedback);
+
+    const { tools } = await client.listTools();
+
+    const listed = [...(client.getInstructions() ?? '').matchAll(/^- (\w+): /gm)].map(([, name]) => name);
+    assert.deepEqual(listed.sort(), tools.map(({ name }) => name).sort());
+    await client.close();
+  }
+});
+
 test('release tool reports the targets', async () => {
   const client = await connectClient();
 
