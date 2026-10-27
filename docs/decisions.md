@@ -331,3 +331,10 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 - The remote server is a handler Unleash mounts (`@unleash/mcp/remote`), not a standalone server. Unleash already authenticates the user, so the handler acts as the caller with the auth Unleash forwards.
 - Stateless: every request gets its own server, so nothing is shared between users.
 - Unleash decides the feedback consent, from its admin settings, and must always pass it.
+
+## 2026-10-27 — Server instructions pick the tool
+
+- The server sends instructions: guidance on how to pick each tool, a single sentence per tool, in terms of outcomes and not operations. Clients that defer tools show the agent only tool names and these instructions, and in evals the agent loaded every v2 tool because it wasn't sure which it needed, while v1 was better at picking.
+- Each sentence also opens the tool's description, from one record, so the two never drift.
+- A sentence only claims what the tool can do and stays general, never shaped after one eval task, to avoid overfitting.
+- Rejected: telling the agent to load a tool only when the next step needs it. On Haiku it loaded no fewer tools and used more tokens.
