@@ -42,7 +42,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   const search = createSearch(unleash);
   const manageFlag = createManageFlag(unleash);
   const evaluate = createEvaluate(unleash);
-  const audit = createAudit(unleash);
+  const audit = createAudit(unleash, () => new Date());
 
   server.registerTool(
     'release',
@@ -73,7 +73,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   server.registerTool(
     'search',
     {
-      description: 'Find Unleash items by name and get the ids inspect, release and configure take. One result per query, in the order asked.',
+      description: 'Find Unleash items by name and get the ids and names inspect, release, configure and audit take. One result per query, in the order asked.',
       inputSchema: searchInput,
       outputSchema: searchOutput,
       annotations: { readOnlyHint: true },
@@ -115,7 +115,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   server.registerTool(
     'audit',
     {
-      description: 'Read what changed on a flag, who changed it and when, most recent first. Takes a flag name as search returns it.',
+      description: 'Read what changed in Unleash, who changed it and when, most recent first, over at most 31 days; narrow it to projects, flags, environments or event types. Takes project ids, flag names, environments and event types as search returns them.',
       inputSchema: auditInput,
       outputSchema: auditOutput,
       annotations: { readOnlyHint: true },
