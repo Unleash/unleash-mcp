@@ -5,8 +5,8 @@ import { createServer } from './server.ts';
 import { createSendFeedback } from './tools/sendFeedback/sendFeedback.ts';
 import { createUnleashClient } from './unleash/client.ts';
 
-/** What the host decides: where Unleash is, and whether its admin agreed to send feedback, which stays off unless granted. */
-export type RemoteHandlerOptions = { baseUrl: string; feedbackConsent?: 'granted' | 'denied' };
+/** What the host decides: where Unleash is, and whether its admin agreed to send feedback. */
+export type RemoteHandlerOptions = { baseUrl: string; feedbackConsent: 'granted' | 'denied' };
 
 /** Serves one MCP request. The host forwards the caller's auth to Unleash, and the body when it has parsed it already. */
 export type McpRequestHandler = (
