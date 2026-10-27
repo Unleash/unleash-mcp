@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const failed = z.object({
   kind: z.literal('failed'),
-  status: z.number().describe('HTTP status from Unleash'),
+  status: z.number().describe('HTTP status from Unleash, 0 when Unleash could not be reached'),
   name: z.string().describe('Unleash error type, e.g. NotFoundError, PermissionError'),
   reasons: z.array(z.string()).describe('What Unleash said'),
 });
