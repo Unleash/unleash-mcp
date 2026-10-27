@@ -309,6 +309,8 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 ## 2026-10-27 — send_feedback consent
 
 - `send_feedback` is listed only when the user opts in with `UNLEASH_MCP_SEND_FEEDBACK=true`: safe by default, since reports go to Unleash's production instance. No consent file and no prompt for now. Rejected: always listed with no consent, and an agent round trip (bigger than a walking skeleton).
+- Supersedes the above: `send_feedback` asks for consent through v1's elicitation prompt and keeps the answer in v1's consent file, so the user is asked once. `UNLEASH_MCP_SEND_FEEDBACK` still decides without asking: `true` grants, `false` leaves the tool out. `UNLEASH_MCP_CONFIG_DIR` locates the file, as in v1.
+- Reports go to the instance in `UNLEASH_FEEDBACK_URL`, with no default: Unleash's feedback instance is internal and private. Unset, `send_feedback` fails.
 
 ## 2026-10-27 — No flag deletion for now
 
