@@ -15,6 +15,8 @@ const change = z.object({
 
 const changes = z.object({
   kind: z.literal('changes'),
+  from: z.string().describe('First day searched, YYYY-MM-DD in UTC'),
+  to: z.string().describe('Last day searched, YYYY-MM-DD in UTC, included'),
   total: z.number().int().describe('Changes in all pages'),
   changes: z.array(change).describe('Most recent first'),
 });

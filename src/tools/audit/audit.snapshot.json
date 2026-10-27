@@ -47,7 +47,7 @@
             "x-permitted-cross-domain-policies": "none",
             "transfer-encoding": "chunked"
           },
-          "body": "G/YEAMSvpa+nq+elnPj5qDRSel3DSmGMysDKXUOXE3sAeNKxlk58XLOi05ZYwA/S0CyQQArsCyjjdOruxdPFlELhhKngBXZeSzA/LzDRyDAYW/59I08ChUBJPjJP9wVmWkNQGGZwjoORuLLCGScYrTDNa4+cLUCfTnOUt9FxhMkVkkQSHjybxjPgjQ9zCPMqUPjoQZU8R/+3wlR2YqcmSABzgRdpvf65g8Folx2tzgu7XR9ogELEPcMg0xoKSbw98hOn5PNsT2sQbAqJh5Cs/2b+QK3gHQx09rr63n78+u1j1n5/2rws8hf6w/tnz969hoJ4CRwpXIsbYXoKibffCpEDU+J3gSYrGep5WCk6J41NBQRv2zjCz5MMCH6vqwlUd2hTK8NgetBv1RViPL0ITrVUDB6REFXencfALK5h3uAtLxh2KnE85igSQAESn4d/N7v7AoNc5/Uu07u8+aRbU3amKG8Udf4DjyYPzmAuJDOyhvmvvCbhNZ0fvISCH2ngzzHA4L/Iksx+P0Q6JqH4OwjQ26fdc+uKvHG2L7O2rdkelnXdNc5SVbiiy4gKorJsD5uc6oI659qizZ0tcmuzusrs3XS7zK+725Elztfj7QGbgpzJg8Xch0J3U03PRfl0YSvsXvmexY/8eHLJe/h8p2uiTUuwouLVjkq8TPA92zMbGOYCSWhgGJy4sA2FA6FPx+6j0MCBni2b5gc2heCnI0PAHNrakEJU1lSR/+inBPbvbQM=",
+          "body": "G/YEAMSvpa+nq+elnPj5qDRSel3DSmGMysDKXUOXE3sAeNKxlk58XLOi05ZYwA/S0CyQQArsCyjjdOruxdPFlELhhKngBXZeSzA/LzDRyDAYW/59I08ChUBJPjJP9wVmWkNQGGZwjoORuLLCGScYrTDNa4+cLUCfTnOUt9FxhMkVkkQSHjybxjPgjQ9zCPMqUPjoQZU8R/+3wlR2YqcmSABzgRdpvf65g8Folx2tzgu7XR9ogELEPcMg0xoKSbw98hOn5PNsT2sQbAqJh5Cs/2b+QK3gHQx09rr6/uDpu8fvHj0pPn3osuL+uw/6vX74EAriJXCkcC1uhOkpJN5+K0QOTInfBZqsZKjnYaXonDQ2FRC8beMIP08yIPi9riZQ3aFNrQyD6UG/VVeI8fQiONVSMXhEQlR5dx4Ds7iGeYO3vGDYqcTxmKNIAAVIfB7+3ezuCwxynde7TO/y5pPuTFGbqr1RlvUPPJo8OIO5kMzIGua/8pqE13R+8BIKfqSBP8cAg/8iSzL7/RDpmITi7yBAb592z60r8sbZvszatmZ7WNZ11zhLVeGKLiMqiMqyPWxyqgvqnGuLNne2yK3N6iqzd9PtMr/ubkeWOF+PtwdsCnImDxZzHwrdTTU9F+XTha2we+V7Fj/y48kl7+Hzna6JNi3BiopXOyrxMsH3bM9sYJgLJKGBYXDiwjYUDoQ+HbuPQgMHerbN6h/YFIKfjgwBc2hrQwpRWVNF/qOfEti/tw0=",
           "trailers": {}
         }
       ],
@@ -188,7 +188,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLWF1ZGl0ZWQtZmxhZyIsImRlc2NyaXB0aW9uIjpudWxsLCJ0eXBlIjoicmVsZWFzZSIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTI3VDA4OjQ5OjM0LjM2MloiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
+          "body": "eyJuYW1lIjoibWNwLWF1ZGl0ZWQtZmxhZyIsImRlc2NyaXB0aW9uIjpudWxsLCJ0eXBlIjoicmVsZWFzZSIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTI3VDA5OjM2OjU4LjQ0NloiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
           "trailers": {}
         }
       ],
@@ -232,11 +232,11 @@
     }
   },
   {
-    "hash": "rx0s2H8OQ--4AfENwS8P-ApUb3AwHnhfHbqfS68Psmk",
+    "hash": "qCn3l6-cWI4BxfRJuUXX25E4wHbyWG0huebT1SC8oUk",
     "snapshot": {
       "request": {
         "method": "GET",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/events?feature=IS%3Amcp-audited-flag&offset=0&limit=2",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/events?feature=IS_ANY_OF%3Amcp-audited-flag&from=IS%3A2026-10-26&to=IS%3A2026-10-27&offset=0&limit=25",
         "headers": {
           "accept": "*/*",
           "accept-language": "*",
@@ -262,7 +262,45 @@
             "x-permitted-cross-domain-policies": "none",
             "transfer-encoding": "chunked"
           },
-          "body": "G0AGAMT/ZquitOtFtxRt9qMVNW6hdayAEZv/m7mnuoYtoO3pmtSLfjo5LJGxNJNAwg945Gd4AHS25hxauu6aEArhcROju2uomRpZA/pYo5WgPIzynMMuJwqEpQJpVyzPzWKgSnAkKIei5P4ShKGwampWu7Wy09FACdN4ouWDs2dBiIIoc8PAjfLHoKCkpDjx0iR4PyHvL5+M0mcSFOYcUlgBGk0HA46JVockuxW1AX18cTVvXIuhAmH4N3HFVLZWSbcaiBocyylwhnGj9ExpcAwLACFJO0qROT7HlXs0g7tUQjJXO9H7sWcShCC8St+Kh5fHw+I1fDw9ONx/jM8f0te9c3C0ExDCMvXCovTiyIuiABxVGo6AcDwQtWPKx810OBR6CQJjTWJMotZh7GOYL379a6ydGPJ9I0by/3jh+aHajv19fi0T3Rrlm6Ng/IP3bYjRPc8e3mHMqca6DsoiY0ZCVSIxkXaKpETNTGiIXQnqNrDDGLYcl8jZP2KsFlbVS1dIQGKBQgLg6OtDWLyd5BdxdB7c352e3l6BYyTgSMxlc/fjwWA8teCwrR0oUBNROgWqxMAojuIeBdFGJPDFMdWAoDX6fJ2lgEO/5wAhDAJwGNv+9e1IGYNveyWmA4stx4YG5H3FjLW90VJpUMBhVD1U/d/GNugIzPTjCCljD+V3iZcx5tkfFGOOHTuRCXxx/IYFExTGWw==",
+          "body": "G2FGEdWkHgA0UhbO389/p74/rdaZfhC2Me5MKbXxw31FrgKc9Ns0qKpdtvzC+Iyj6YzxQTE8BqOBra6p7/8ukyRIi2kWwAAuzZ8/6dSAukdv92ql1Iali5SmZxKQ0L4DjODOps2lzju7s2gwsbgloDMq0VXa05ODZLBQsT+gd+q9g3r4wdJAlYmsJYf/GgkKswrEhr+WKFyKwZABxwLKS0Jm/QsKnfY0ue/VOfmpb0m7RaSXP1eaNQ8FKWQRJiKU5aWoVVqovIqKMru/L/H615Uju2egkpLDaK+h+qltOUZLm1/y9XruoB6eeDCLONYdQaF7G0M9maUnE85aPQfH7BT0Bw53ZN/JgiNaE6CwkHbylQGOzXHtukwG+64SsmW143dv7Z6BgkiO8rv1ndP6YO00q69v7tbOz9azs/3TY3AsRygkdR4lVR2lMpJSgGMvDQ+Bwnar50FSXrubuk7bLygwhn7GfmPJgLGHaN7g07+F96NTcex0b/4Pn1E+TF4O8Xp+x4126ShOjhwXn7vjNISv+/3tzVcYC2aD3Q/KXMYSiQSJcSI22ElKkswYQniMYtg2WWEMf5yXxslfxHmrPc2/Qm0ICUJhBLjo1unmdnp5Xifp2um5OBMbG+DoNR2xLDvufGjbYfLg8EvfEqlRpUdBzXTriGPnHnv1UpETnjiKmolQP+wLmFmD4LD/5wIKiRDgcH751ix7co7fvjM9tR5/HCs0YC9XcYP1J9aQhRIcjuYdff+l8Sc65MzaBNoY7ZGft/16IcZy9seMscAPgTKNBS3z3SDKlmVZQSUXTBk9ZsUvnWPxjVSGEO+mpZa0oxpig/O6JXmmb4Nqq3qhuqLixjkXUe3u1heINlNzWTkAuX0tirP6/jg7OEvvtrL7FLYMD7seoylZToG5v46qv6rX3VBLajBHlkrIqC5KKKtZWylkcQRWQgDK0ygH1IWNy6v0dqJgLxQiv//V0H52BVUu7xUbXFRl/ScaZ7B2t7N7fiPzM3lT3n/42VDTKy1svAi74Ud/Y8ofv37lIx/UNtaMCdn/89icGuBLfLPAAbg7pA3hvOG0fXrLE+xJGHbbHwXELQ+MyV7luKNLCEVdtXPUlIiK6znYGXqJczbmCDhonxkhJNYKESEkBIoRQCNjllHuqQ4qPXwqRStP0RId69fdE7icGhHHW5Wh1hA8u39QPdjU1naGcoZ6Cj+w9pJ7ZWaDoBK/SlilXDQhTIJVikUDI9GroYTSlCL5s+5WZ8sP7DuvB40MEFWAEGAOFapBHfwXm0qT/IkaOE8YRLmZS1e5+6kMOAglKjcI03rIM1KQ+MmPlMgwfJMAkRkiQUgoLBkBNDRK+eohH2srtuxzm98pSqJjo/nuC1xQgF+rMnRRhtjydf3J79WLTUmdp+4l6OEQnkOciXfBISSNIfxP1Ks0q8CFKQ4Idp1cRGiO0augAKYG0W3s49S7iJ94KB/jDiFDTBpDiESpsQaFq0l0G2RrdOF2kpDvKl6HhfDkSIlqRwmIius56PY+ux7sSW7fHpEbDpshLnmECAnDzhgBNDJGY3pGKoJnuK+UznqKluhYv+6ewIUkYA2RnmgI8zvBaKCgenCXUE2t21t7p+nuTY9Lum48AORUHHvH2IpyUQNHIOv5d3MYW1EsSAqiVzslgalBVB3dGmWiD5XKOG7TE4ekioESoMJyaUoTVcfRMMPbtLt3lF+0bYJR2RUAKPHpxUJsCEFUWqiOQtX3y8hpz20LNcycRBpzfIfuEkqMBhEhJAiFFQwaGSLmdkxkTvrB0jOynmA0WqK7b+gSyokaIEraqkz5Pwux5ev2LqF/UD3Y1NSqvt3s57m9x2VGG3GwS0FaJKypZAtNScWztVbCYsy3VLJFcQYVSDKuU0RgbjrY4tZuCXlR4euVbEGCCiJJtV3D7PzQ/dr39JSKCf/+/DxOi2M/V67/Bw==",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "QZQKDOn9t7ehelBiBdcTsajiopDNxfDiqh9DkpCQuMI",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/events?project=IS_ANY_OF%3Amcp-server&environment=IS_ANY_OF%3Adevelopment%2Cproduction&from=IS%3A2026-10-25&to=IS%3A2026-10-27&offset=0&limit=25",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "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",
           "trailers": {}
         }
       ],
