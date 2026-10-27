@@ -51,6 +51,17 @@ test('answers a created segment with its id', async () => {
   assert.deepEqual(output, { results: [{ kind: 'applied', resource: 'segment', action: 'create', name: 'Beta testers', id: 42 }] });
 });
 
+test('answers a created project with its id', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: '/api/admin/projects', method: 'POST' })
+    .reply(201, { id: 'pet-shop', name: 'Pet shop' }, { headers: { 'content-type': 'application/json' } });
+  const configure = createConfigure(unleash);
+
+  const output = await configure({ changes: [{ kind: 'project', action: 'create', name: 'Pet shop' }] });
+
+  assert.deepEqual(output, { results: [{ kind: 'applied', resource: 'project', action: 'create', name: 'Pet shop', id: 'pet-shop' }] });
+});
+
 test('names an updated segment by its id', async () => {
   const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: '/api/admin/segments/42', method: 'PUT' }).reply(204, '');
