@@ -14,5 +14,6 @@ paths:
 - Take a list of operations when the agent can name each part and each change is one Unleash call. Take an end state and diff it when parts have no agent-facing identity or rules span them.
 - `search` and `inspect` rows are the dropdowns for agents: a filter or a command takes what those rows give (an id, a name) and never resolves it itself. A step never calls another step to look a reference up; the agent runs the lookup query first.
 - Every input parameter's description says where to get its value from (e.g. `as a segments search returns it`, `as a context field inspect lists them`).
+- A new tool gets a one-sentence outcome in `outcomes` (`src/server.ts`): what the user achieves with it, true to its schema.
 
-Why: `docs/decisions.md` (Tool structure, Unleash HTTP client, Tool layering, End state or operations, Opt-in parts of a read, Audit diff, Search prepares the options, Inputs say where their values come from).
+Why: `docs/decisions.md` (Tool structure, Unleash HTTP client, Tool layering, End state or operations, Opt-in parts of a read, Audit diff, Search prepares the options, Inputs say where their values come from, Server instructions pick the tool).
