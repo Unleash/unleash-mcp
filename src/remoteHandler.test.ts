@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { once } from 'node:events';
 import { createServer } from 'node:http';
+import { json } from 'node:stream/consumers';
 import type { AddressInfo } from 'node:net';
 import { test } from 'node:test';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
@@ -10,12 +11,16 @@ import { createStubbedFetch } from './unleash/testClient.ts';
 
 const serve = async (fetch: typeof globalThis.fetch, baseUrl: string, options: Omit<RemoteHandlerOptions, 'baseUrl'>) => {
   const handle = createRemoteHandler(fetch)({ baseUrl, ...options });
-  const server = createServer((req, res) => void handle(req, res, { authHeaders: { Authorization: 'user-session' } }));
+  // Parses the body first, as Unleash's Express does, so the stream is already read when the handler gets it.
+  const server = createServer(async (req, res) => {
+    const parsedBody = req.method === 'POST' ? await json(req) : undefined;
+    await handle(req, res, { authHeaders: { Authorization: 'user-session' }, parsedBody });
+  });
   await once(server.listen(0), 'listening');
   return server;
 };
 
-const connect = async (options: Omit<RemoteHandlerOptions, 'baseUrl'> = {}) => {
+const connect = async (options: Omit<RemoteHandlerOptions, 'baseUrl'>) => {
   const { baseUrl, fetch, stub } = createStubbedFetch();
   const server = await serve(fetch, baseUrl, options);
   const client = new Client({ name: 'test-client', version: '0.0.0' });
@@ -37,8 +42,8 @@ const toolNames = async (options: Omit<RemoteHandlerOptions, 'baseUrl'>) => {
 };
 
 // Stubbed although it is a happy path: snapshots ignore the authorization header, so only a stub can check it is forwarded.
-test('calls Unleash as the caller, with the auth the host forwards', async () => {
-  const { client, stub, close } = await connect();
+test('acts in Unleash as the caller, with the auth the host forwards', async () => {
+  const { client, stub, close } = await connect({ feedbackConsent: 'denied' });
   stub.intercept({ path: '/api/admin/projects', query: { view: 'core' }, method: 'GET', headers: { authorization: 'user-session' } })
     .reply(200, { version: 1, projects: [{ id: 'web', name: 'Web' }] });
   try {

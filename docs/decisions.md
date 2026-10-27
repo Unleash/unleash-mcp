@@ -325,3 +325,9 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 ## 2026-10-27 — Published package is built
 
 The published package ships JavaScript built by `tsc`: Node won't strip types inside `node_modules`. Development and tests still run the `.ts`. Supersedes "no build step" in "Toolchain". Rejected: consumers compiling our source.
+
+## 2026-10-27 — Remote server
+
+- The remote server is a handler Unleash mounts (`@unleash/mcp/remote`), not a standalone server. Unleash already authenticates the user, so the handler acts as the caller with the auth Unleash forwards.
+- Stateless: every request gets its own server, so nothing is shared between users.
+- Unleash decides the feedback consent, from its admin settings, and must always pass it.
