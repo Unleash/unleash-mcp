@@ -42,7 +42,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   const search = createSearch(unleash);
   const manageFlag = createManageFlag(unleash);
   const evaluate = createEvaluate(unleash);
-  const audit = createAudit(unleash);
+  const audit = createAudit(unleash, () => new Date());
 
   server.registerTool(
     'release',
@@ -115,7 +115,7 @@ export const createServer = (unleash: UnleashClient): McpServer => {
   server.registerTool(
     'audit',
     {
-      description: 'Read what changed on a flag, who changed it and when, most recent first. Takes a flag name as search returns it.',
+      description: 'Read what changed in Unleash, who changed it and when, most recent first, over at most 31 days; narrow it to projects, flags or environments. Takes project ids and flag names as search returns them.',
       inputSchema: auditInput,
       outputSchema: auditOutput,
       annotations: { readOnlyHint: true },
