@@ -9,6 +9,8 @@ import { searchTagTypes } from './tagTypes/tagTypes.ts';
 import { searchTags } from './tags/tags.ts';
 import { searchFlagCreators } from './flagCreators/flagCreators.ts';
 import { searchReleaseTemplates } from './releaseTemplates/releaseTemplates.ts';
+import { searchEventTypes } from './eventTypes/eventTypes.ts';
+import { searchEnvironments } from './environments/environments.ts';
 
 // Queries are independent, so they run together and each one answers its HTTP failures on its own.
 export const createSearch =
@@ -25,5 +27,7 @@ const search = (unleash: UnleashClient, query: Query): Promise<SearchResult> => 
     case 'tags': return searchTags(unleash, query);
     case 'flag_creators': return searchFlagCreators(unleash, query);
     case 'release_templates': return searchReleaseTemplates(unleash, query);
+    case 'event_types': return Promise.resolve(searchEventTypes(query));
+    case 'environments': return searchEnvironments(unleash, query);
   }
 };

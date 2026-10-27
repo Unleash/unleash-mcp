@@ -47,7 +47,7 @@
             "x-permitted-cross-domain-policies": "none",
             "transfer-encoding": "chunked"
           },
-          "body": "G/YEAMSvpa+nq+elnPj5qDRSel3DSmGMysDKXUOXE3sAeNKxlk58XLOi05ZYwA/S0CyQQArsCyjjdOruxdPFlELhhKngBXZeSzA/LzDRyDAYW/59I08ChUBJPjJP9wVmWkNQGGZwjoORuLLCGScYrTDNa4+cLUCfTnOUt9FxhMkVkkQSHjybxjPgjQ9zCPMqUPjoQZU8R/+3wlR2YqcmSABzgRdpvf65g8Folx2tzgu7XR9ogELEPcMg0xoKSbw98hOn5PNsT2sQbAqJh5Cs/2b+QK3gHQx09rr63n78+u1j1n5/2rws8hf6w/tnz969hoJ4CRwpXIsbYXoKibffCpEDU+J3gSYrGep5WCk6J41NBQRv2zjCz5MMCH6vqwlUd2hTK8NgetBv1RViPL0ITrVUDB6REFXencfALK5h3uAtLxh2KnE85igSQAESn4d/N7v7AoNc5/Uu07u8+aRbU3amKG8Udf4DjyYPzmAuJDOyhvmvvCbhNZ0fvISCH2ngzzHA4L/Iksx+P0Q6JqH4OwjQ26fdc+uKvHG2L7O2rdkelnXdNc5SVbiiy4gKorJsD5uc6oI659qizZ0tcmuzusrs3XS7zK+725Elztfj7QGbgpzJg8Xch0J3U03PRfl0YSvsXvmexY/8eHLJe/h8p2uiTUuwouLVjkq8TPA92zMbGOYCSWhgGJy4sA2FA6FPx+6j0MCBni2b5gc2heCnI0PAHNrakEJU1lSR/+inBPbvbQM=",
+          "body": "G/YEAMSvpa+na+alnPj+qDRSel3DSmGMysDKXUOXE3sAeNKxlk58HLNNpy2xgMMxNQskkAL7Aso4nbp78XQxpVA4YSp4gZ3XEszPC0w0MgzGln/fyJNAIVCSj8zTfYGZ1hAUhhmc42AkrqxwxglGK0zzWiJnC9Cn0xzlbXQcYXKFJJGEB8+m8Qx448McwrwKFD56UCXP0f+tMJWd2KkJEsBc4EVar3/uYDDaZUer88Ju1wcaoBBxzzDItIZCEm+P/MQp+by1pzUINoXEQ0imfzN/oFbwDgY6e119f/DhzZvswYcfdfuwffT9R96+/PTiKxTES+BI4VrcCNNTSLz9VogcmBK/CzRZyVDPw0rROWlsKiB428Yafp5kQPAHuppAdYdmtTIMTQ/6rbpCjKcXwamWisEjEqLKu/MYmMU1zBu85QXDTiWOxxxFAihA4vPw72Z3X2CQ67zeZXqXN590Z8rMZN1BWzU/8Gjy4AzmQjIja5j/ymsSXtP5lZdQ8CMN/DkGGPwXWZLZ74dIxyQUfwcBevu0e25dkTfO9mXWtjXbw7Kuu8ZZqgpXdBlRQVSW7WGTU11Q51xbtLmzRW5tVleZvZtul/kNdzuyxPlGvD1gU5AzebCY+1Dobqrp2SufLmyF3Svfs/iRH08ueQ+f73RNtGkJVlS82lGJ+wm+Z3tmA8NcIAkNDIMTF+ahcCD0Jth9FBo40LtyfaBr/QObQvDTkSFgDm1tSCEqa6rIf/RTAvv3tgE=",
           "trailers": {}
         }
       ],
@@ -188,7 +188,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLWF1ZGl0ZWQtZmxhZyIsImRlc2NyaXB0aW9uIjpudWxsLCJ0eXBlIjoicmVsZWFzZSIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTI3VDA4OjQ5OjM0LjM2MloiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
+          "body": "eyJuYW1lIjoibWNwLWF1ZGl0ZWQtZmxhZyIsImRlc2NyaXB0aW9uIjpudWxsLCJ0eXBlIjoicmVsZWFzZSIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTI3VDA5OjQxOjE5Ljg1N1oiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
           "trailers": {}
         }
       ],
@@ -232,11 +232,11 @@
     }
   },
   {
-    "hash": "rx0s2H8OQ--4AfENwS8P-ApUb3AwHnhfHbqfS68Psmk",
+    "hash": "qCn3l6-cWI4BxfRJuUXX25E4wHbyWG0huebT1SC8oUk",
     "snapshot": {
       "request": {
         "method": "GET",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/events?feature=IS%3Amcp-audited-flag&offset=0&limit=2",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/events?feature=IS_ANY_OF%3Amcp-audited-flag&from=IS%3A2026-10-26&to=IS%3A2026-10-27&offset=0&limit=25",
         "headers": {
           "accept": "*/*",
           "accept-language": "*",
@@ -262,7 +262,83 @@
             "x-permitted-cross-domain-policies": "none",
             "transfer-encoding": "chunked"
           },
-          "body": "G0AGAMT/ZquitOtFtxRt9qMVNW6hdayAEZv/m7mnuoYtoO3pmtSLfjo5LJGxNJNAwg945Gd4AHS25hxauu6aEArhcROju2uomRpZA/pYo5WgPIzynMMuJwqEpQJpVyzPzWKgSnAkKIei5P4ShKGwampWu7Wy09FACdN4ouWDs2dBiIIoc8PAjfLHoKCkpDjx0iR4PyHvL5+M0mcSFOYcUlgBGk0HA46JVockuxW1AX18cTVvXIuhAmH4N3HFVLZWSbcaiBocyylwhnGj9ExpcAwLACFJO0qROT7HlXs0g7tUQjJXO9H7sWcShCC8St+Kh5fHw+I1fDw9ONx/jM8f0te9c3C0ExDCMvXCovTiyIuiABxVGo6AcDwQtWPKx810OBR6CQJjTWJMotZh7GOYL379a6ydGPJ9I0by/3jh+aHajv19fi0T3Rrlm6Ng/IP3bYjRPc8e3mHMqca6DsoiY0ZCVSIxkXaKpETNTGiIXQnqNrDDGLYcl8jZP2KsFlbVS1dIQGKBQgLg6OtDWLyd5BdxdB7c352e3l6BYyTgSMxlc/fjwWA8teCwrR0oUBNROgWqxMAojuIeBdFGJPDFMdWAoDX6fJ2lgEO/5wAhDAJwGNv+9e1IGYNveyWmA4stx4YG5H3FjLW90VJpUMBhVD1U/d/GNugIzPTjCCljD+V3iZcx5tkfFGOOHTuRCXxx/IYFExTGWw==",
+          "body": "G2FGEdWkHgA0UhbO389/p2LTar3pgnBrTCm1ceG7qAtw0m/TwGktHb9wvqfZzKOiGIwGP+g09v8uk+SQFjBNAxQ8mj//p1MD6h693ii1YekipemZBCS07wAjuLNpc6nzjnIrGju3BHRWY+/8AHuiX9WDJkh9K/cH9E6jNRAPP2gVRB7GQchhv2aCwKECie5oqdyzGIwqcJygvCKk1r8gMEhLi/lerckuY0/SNJ5sh6vMmoVAFESZGwZulF8GpUhCEQVeEKf3XxVe/7oypPcURJhzKGklxLj0PcesabOTr5W1gXh44maWcSwHgsDwNrtyUa0l5Va9rMFxOAUf4GRD+p00OKI1DQInaWddhjlux7X3MhkCnyohnasd+z7YPQWBIDxK79bPj3eT8mIzPNi+ScKd5PjibDcFRztDICxTLyxKL468KArA8SwNT4DAdi9rJynv3CzDIPUXBBjDEGNjrOow9hDNe3z611g7G+H7Ro7q//TpLYeZ7eRf53fKrFtDfnIUGP/R56chdA+a9s4rjDnVpJ8HZSFjicRMIk4kOk+SkiUzWgg/cbRthxXG8Md5aRz8RYzV0lL95UpFSBAKEeC6x+H6+X1WbBSbd/dRcXC5fwOOUdIR87Kzzqe+nxYLDtvankiNKj0NopK9IY4n9zggW0VOe+LIaqZD/LAv5MIaAYeezzUEwiAAh7HtW9eOZAy/fSu59BZ/HBc0oP/bmEnbE61IQwQchuqB+r83/kSHnNkcRyqlPTZ8wOilGFuyv2KMOXZylNl0VJY8z4+7KDssLL0izbnkwimjX134pWfOvpHKYPFBaupJGiohthkre5Jn9trUgKIXiisubjxyEdVubX2BaHNVy8oErO9fbu3kO/fB6enR+fnG0XmBgAUedTnGU7KaHCeAGoyTdlfUk3fiTKSll+Qh5NVUV4pYHKGVEILyPMohdRHA5Q1ZvZDZOxZekmT3o0YWvXXEUXyv2PCiqu4/0ZiCnbNo5+5o/0PKveUnkZqfDBHAi6grfnyMWX/8+rUcxaC2MSMm5P/PTxtSoaCT0CwwA7m11SLNSOjnFR+3yAhMwqjr/iggYXlgTAOLHGs0CSHfqHeJnBLx8a4aXNbRZK5bn6a8B39DfvCDqSaICSHBKCKAC407X5Z9RRNmcoEXzjPESXTUrnsq8HICklitMtISQmQfbKodOy21y9Q2kK9eD48vmzdfDGoqjUaS4g500xIBZi8EQDgY1jmVoE4PYqbzpVPx0o5rGZt85waKKgVOgFwCt4XPNvUkZrqzWH8IyAWyafM21Af1FQLyDRtYQxCXGqqpMNO26Oas5ESgoO5AcIPFI7pJqLCSiAkhIbMkArjImHHEMuWDsdklvTM8xEt0tJnvicCrqQRAlLxWGbmLsOZr9SZhsKk27PTWZtqYbcrsHiK1GFoi+oCkHA0l7JxvCgW8BDtnmwLCouegKLjTioRlziJzDR9cF00PjgCQlYFx22mlkE5rEhZLllIvLIuFnP6NpaEKKFhWV7uBOVcPYTq0XCy+ULIA464cIDNBLAgJ686IAC40Ylzp4Z8xSdRwhzpXiJPoqF33VOAlBQTVKiMXZYQbQiwfgky1Y6elDlO1aNU4BXwPy542RiElbiH8T1Q71zsTG5EUYLaHbywyj9GroQBOD6LquEZWF3OLfRieUawNkBO3ECJRHFYL5vUkqg40yZ22nBwFvaR7HwPp0SMl6l1wQFxqqKZC1f5dapDPn9fxsVDFMLnDI7pJKC9uIYwRIUEoRAAXGaMSNR1GRgOU1/ucdhiNl+ieGpqEUuIWQhRldqwiLG4IZaoNOz21qj21hvMshxovP5u+AaCmpDg8QnbBN7lyBEguvvcOIbtgm0AJ0XNOjrCFUA8i02hGS+1umzCOp+jmKZSUBESAGkt50ErINJ4qAvSqznIJvpypO4xO+/fn5+u0OPlzZ+w/",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "QZQKDOn9t7ehelBiBdcTsajiopDNxfDiqh9DkpCQuMI",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/events?project=IS_ANY_OF%3Amcp-server&environment=IS_ANY_OF%3Adevelopment%2Cproduction&from=IS%3A2026-10-25&to=IS%3A2026-10-27&offset=0&limit=25",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "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",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "SZ113F1_pFXJRkqiTevW_pcYngS8fVGjsSVRM2SiI2s",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/events?feature=IS_ANY_OF%3Amcp-audited-flag&type=IS_ANY_OF%3Afeature-strategy-add&from=IS%3A2026-10-26&to=IS%3A2026-10-27&offset=0&limit=25",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "Gy8ZAOTPpvmnq+edEo2MVSk6uQILAy7gAin/K0HrMK4D2tIMOhXUgnNZNNGkLe9pY4sVBxYnrWEYLgZrGHwsMBz8u7UXBBVdTWnbNzpp7dMPMM/mantQPz6gbUB5lBOCwb7dDSgYKnB02NtOW3N8G+qmAQwzk4dimukbKLhoa5769/HR2Kfr2ej+n6PbeuFMLChghLlDSobMK0mgBFWMOITL+jhp+rbtTffQgKIehkZbDcqo54HQTFbTTZ7T6aZ2/Zk/r2rmp2WyBwxXfbH1w7N5bf+czeZ2Pt+eLGCwrT0bUNen8xlDRFaBetTn3mBIpNDWrfczvzDI6oH6gN9xPf+hAQWXv/ehfmpaa5rh41kfAUN3n8sUUEIAQ2/bv6f2avoeFPRL9wvD5PHKfkZ/6+yya0wHimDozfES+rxfXxjunZm7LZrsWH1sKWlg5p7WM0geKyJVWN6b7tl0gEFmwbDEsznf7iUmdtAsNa7MA1GZiF6+2vUQ91+ORVDMaRruBY1EXqxjCRjaOyiggXSoHzicOYwRwJCCYgkoCM/6OOgz2wa6aUwDGPqny0V3DEdosxGqX9F8EELKrovQwN4GCP0Q5ou/vv2z9t6r0ajX1+bP7dXpkPPtbfSl46R71/ZmFLOefrRao0CL5VWCL/6O0ODx1mWC2YtQJGcRGkS5c5AmpqCFbKF4ttG2lO8IwRd+Mv+YBRS6cVdJ33E9AWlEq8VqHvJyE1A+WW3ImsxmQDPRKkgnKxHs9tVks56KdbLKIdh3oRfzFGEOkz6WManCKj2km8rNvXQX1m4cTQQYzaQKd2lUVQWdeYQRf5FQTxJlCvWIEsIhHNJIqjSts1yUk0kmi2SRFFUNNJNUkRcKWYvac3lCDotCEKLrvS+DylciUFw4UhCwDL/YHwrqV5GXcpaQzTqOVxnYjF/sy7l/oGU8m09LnhTyMEkgVgYEla8oVZI7HuVgGW524FFS5JWkM7E40Lg8JD7YjJvt60Qyb54U0zALqyTm8Q6ypVgoJ6hDZYBsRGW2DsM5cUkaTQ7+PiEVSEq09nmdb7wsXK3jakOyImTjLwz2ZvUZlPcF",
           "trailers": {}
         }
       ],

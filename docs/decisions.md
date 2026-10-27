@@ -288,6 +288,13 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Applying a template still starts its first milestone: Unleash does it when it creates the plan, and that is acceptable.
 - Where change requests are required, the start goes into the release's change request (`startMilestone`), as the other audiences do.
 
+## 2026-10-27 — Audit tool load on Unleash
+
+- Every `audit` search has a date window of at most 31 days, so reading the event log stays cheap. It defaults to yesterday and today in UTC, which covers the last 24 hours in any time zone.
+- Pages are a fixed 25 changes; agents narrow the filters rather than page far.
+- No free-text search and no group id filter: Unleash scans the whole event log for both.
+- No `createdBy` filter yet: the only lookup that lists everyone who made changes, Unleash's event creators, scans the whole event log too.
+
 ## 2026-10-27 — Projects in configure
 
 - `configure` creates projects. Only create for now.
