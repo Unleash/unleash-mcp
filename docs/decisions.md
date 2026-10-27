@@ -287,3 +287,10 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - `release` takes a third audience, `{ releasePlan, milestone }`, with the ids inspect shows, to move a flag's release plan to any of its milestones. Rejected: a milestone next to `template` (a fresh plan's milestone ids are unknown beforehand), and a separate tool.
 - Applying a template still starts its first milestone: Unleash does it when it creates the plan, and that is acceptable.
 - Where change requests are required, the start goes into the release's change request (`startMilestone`), as the other audiences do.
+
+## 2026-10-27 — Audit tool load on Unleash
+
+- `audit` reads the event log, which Unleash counts on every page and which agents read more than people do. Every search therefore has a date window: at most 31 days, by default yesterday and today in UTC, which covers at least the last 24 hours in any time zone. The result names the days searched.
+- Pages are a fixed 25 changes; agents narrow the filters rather than page far.
+- No free-text search and no group id filter: Unleash scans the whole event log for both.
+- No `createdBy` filter yet: the only lookup that lists everyone who made changes, Unleash's event creators, scans the whole event log too.
