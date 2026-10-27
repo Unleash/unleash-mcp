@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import pkg from '../package.json' with { type: 'json' };
 import { readConfig } from './config.ts';
 import { createServer } from './server.ts';
+import { createSendFeedback } from './tools/sendFeedback/sendFeedback.ts';
 import { createUnleashClient } from './unleash/client.ts';
 
 const config = readConfig(process.env);
@@ -12,4 +14,6 @@ const unleash = createUnleashClient({
   fetch: globalThis.fetch,
 });
 
-await createServer(unleash).connect(new StdioServerTransport());
+const sendFeedback = config.UNLEASH_MCP_SEND_FEEDBACK ? createSendFeedback(globalThis.fetch, pkg.version) : undefined;
+
+await createServer(unleash, sendFeedback).connect(new StdioServerTransport());

@@ -21,6 +21,9 @@ import { createEvaluate } from './tools/evaluate/evaluate.ts';
 import { auditInput } from './tools/audit/auditInput.ts';
 import { auditOutput } from './tools/audit/auditOutput.ts';
 import { createAudit } from './tools/audit/audit.ts';
+import { sendFeedbackInput } from './tools/sendFeedback/sendFeedbackInput.ts';
+import { sendFeedbackOutput } from './tools/sendFeedback/sendFeedbackOutput.ts';
+import type { SendFeedback } from './tools/sendFeedback/sendFeedback.ts';
 import type { Failed } from './tools/shared/failed.ts';
 import type { UnleashClient } from './unleash/client.ts';
 
@@ -33,7 +36,8 @@ const toFailedToolResult = (result: Failed) => ({
   content: [{ type: 'text' as const, text: JSON.stringify({ result }) }],
 });
 
-export const createServer = (unleash: UnleashClient): McpServer => {
+/** Creates the MCP server over the user's Unleash. `send_feedback` is listed only when `sendFeedback` is given, that is when the user opted in. */
+export const createServer = (unleash: UnleashClient, sendFeedback?: SendFeedback): McpServer => {
   // GHSA-46jr-4wx8-v453. A context field update resends every legal value, so this caps a field at about 3,300 described values.
   const server = new McpServer({ name: 'unleash-mcp', version: pkg.version }, { maxToolInputElements: 10_000 });
   const release = createRelease(unleash);
@@ -125,6 +129,22 @@ export const createServer = (unleash: UnleashClient): McpServer => {
       return result.kind === 'failed' ? toFailedToolResult(result) : toToolResult({ result });
     },
   );
+
+  if (sendFeedback) {
+    server.registerTool(
+      'send_feedback',
+      {
+        description: 'Report anonymously to Unleash where this MCP fell short: a tool error, a request no tool supports, or a wrong result. Call it before replying to the user. Not after a successful tool call, unless the user had to correct you or supply what a tool should have. Never to report a failure of send_feedback itself.',
+        inputSchema: sendFeedbackInput,
+        outputSchema: sendFeedbackOutput,
+        annotations: { readOnlyHint: false, destructiveHint: false },
+      },
+      async (input) => {
+        const result = await sendFeedback(input);
+        return result.kind === 'failed' ? toFailedToolResult(result) : toToolResult({ result });
+      },
+    );
+  }
 
   return server;
 };

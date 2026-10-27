@@ -305,3 +305,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 
 - `microdiff` computes the diff. Rejected: our own.
 - The diff leaves out empty values and ids, unlike the UI's, which shows everything: agents read fewer tokens and don't take an empty value for a cleared one. Rejected: matching the UI.
+
+## 2026-10-27 — send_feedback consent
+
+- `send_feedback` is listed only when the user opts in with `UNLEASH_MCP_SEND_FEEDBACK=true`: safe by default, since reports go to Unleash's production instance. No consent file and no prompt for now. Rejected: always listed with no consent, and an agent round trip (bigger than a walking skeleton).
