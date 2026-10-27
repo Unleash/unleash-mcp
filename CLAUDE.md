@@ -16,6 +16,7 @@ pnpm install
 pnpm start              # stdio server from source
 pnpm test               # tests, replaying recorded snapshots
 pnpm typecheck
+pnpm lint               # biome; lint:fix applies the safe fixes
 pnpm build              # dist/ for the published package; runs on pack
 pnpm test:record        # see the record-snapshots skill
 pnpm spec:update        # see the update-openapi-spec skill

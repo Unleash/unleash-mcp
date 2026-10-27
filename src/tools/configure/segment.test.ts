@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { isDeepStrictEqual } from 'node:util';
-import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { production, stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
+import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { cancelChangeRequest, deleteSegmentNamed } from '../../unleash/testSetup.ts';
 import { createChangeRequestReader } from '../shared/changeRequest.ts';

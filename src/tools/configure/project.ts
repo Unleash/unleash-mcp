@@ -1,7 +1,7 @@
 import type { UnleashClient } from '../../unleash/client.ts';
+import { toFailed } from '../shared/failed.ts';
 import type { CreateProject } from './configureInput.ts';
 import type { Outcome } from './configureOutput.ts';
-import { toFailed } from '../shared/failed.ts';
 
 /** Creates a project, answering with the id Unleash picks for it so later changes can refer to it. */
 export const createProject = async (

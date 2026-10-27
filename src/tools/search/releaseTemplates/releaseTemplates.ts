@@ -1,7 +1,7 @@
 import type { UnleashClient } from '../../../unleash/client.ts';
+import { type Failed, toFailed } from '../../shared/failed.ts';
 import type { ReleaseTemplatesQuery } from '../searchInput.ts';
 import type { ReleaseTemplates } from '../searchOutput.ts';
-import { type Failed, toFailed } from '../../shared/failed.ts';
 
 /**
  * Lists release templates by name, with the ids release takes; milestones and their strategies stay off.

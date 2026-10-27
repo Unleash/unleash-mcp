@@ -1,6 +1,6 @@
 import type { UnleashClient } from '../../unleash/client.ts';
-import type { Failed } from '../shared/failed.ts';
 import { type Requested, requestChanges } from '../shared/changeRequest.ts';
+import type { Failed } from '../shared/failed.ts';
 import type { EnvironmentPath, Plan } from './releasePlan.ts';
 
 // All of a release goes into one change request, so it is approved or rejected as a whole. Unleash adds it to the

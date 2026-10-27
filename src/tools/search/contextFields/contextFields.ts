@@ -1,7 +1,7 @@
 import type { UnleashClient } from '../../../unleash/client.ts';
+import { type Failed, toFailed } from '../../shared/failed.ts';
 import type { ContextFieldsQuery } from '../searchInput.ts';
 import type { ContextFields } from '../searchOutput.ts';
-import { type Failed, toFailed } from '../../shared/failed.ts';
 
 // Unleash scopes the list itself, as its UI asks: a project's list with the global fields included is what
 // a flag there can use; the global list with project fields included is everything. The name match is applied here.

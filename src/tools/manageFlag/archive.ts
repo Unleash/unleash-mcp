@@ -1,8 +1,8 @@
 import type { UnleashClient } from '../../unleash/client.ts';
-import type { Archive } from './manageFlagInput.ts';
-import type { Outcome, PendingChange } from './manageFlagOutput.ts';
 import { type ChangeRequestReader, requestChanges, routeToProject } from '../shared/changeRequest.ts';
 import { toFailed } from '../shared/failed.ts';
+import type { Archive } from './manageFlagInput.ts';
+import type { Outcome, PendingChange } from './manageFlagOutput.ts';
 
 /**
  * Archives a flag, answering Unleash's refusal (e.g. no such flag) as `failed`. Unleash refuses to archive a flag

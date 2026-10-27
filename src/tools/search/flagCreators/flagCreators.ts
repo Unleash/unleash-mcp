@@ -1,7 +1,7 @@
 import type { UnleashClient } from '../../../unleash/client.ts';
+import { type Failed, toFailed } from '../../shared/failed.ts';
 import type { FlagCreatorsQuery } from '../searchInput.ts';
 import type { FlagCreators } from '../searchOutput.ts';
-import { type Failed, toFailed } from '../../shared/failed.ts';
 
 // Unleash matches and pages the creators itself: an instance can have tens of thousands of users.
 export const searchFlagCreators = async (unleash: UnleashClient, { query, offset, limit }: FlagCreatorsQuery): Promise<FlagCreators | Failed> => {

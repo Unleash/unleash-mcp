@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { flagType } from '../shared/flagType.ts';
-import { tag } from '../shared/tag.ts';
 import { link } from '../shared/link.ts';
 import { parent } from '../shared/parent.ts';
+import { tag } from '../shared/tag.ts';
 
 const define = z.object({
   action: z.literal('define'),

@@ -19,6 +19,8 @@
   "scripts": {
     "start": "node src/index.ts",
     "typecheck": "tsc",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "prepack": "pnpm build",
     "test": "node --env-file=.env --test",
@@ -37,6 +39,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.4.15",
     "@types/node": "^26.6.5",
     "openapi-typescript": "^7.13.0",
     "typescript": "^5.9.3",

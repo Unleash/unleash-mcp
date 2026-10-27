@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { type Failed, failed } from '../shared/failed.ts';
 import { type ChangeRequest, changeRequest as changeRequestShape } from '../shared/changeRequest.ts';
+import { type Failed, failed } from '../shared/failed.ts';
 
 const define = { action: z.literal('define'), project: z.string(), flag: z.string() };
 const complete = { action: z.literal('complete'), project: z.string(), flag: z.string() };

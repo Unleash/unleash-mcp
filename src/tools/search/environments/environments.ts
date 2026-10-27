@@ -1,7 +1,7 @@
 import type { UnleashClient } from '../../../unleash/client.ts';
+import { type Failed, toFailed } from '../../shared/failed.ts';
 import type { EnvironmentsQuery } from '../searchInput.ts';
 import type { Environments } from '../searchOutput.ts';
-import { type Failed, toFailed } from '../../shared/failed.ts';
 
 // Unleash lists environments without a filter, so the query is applied here. Every environment of the instance, as the UI's
 // event log offers them: deprecated ones keep their history.

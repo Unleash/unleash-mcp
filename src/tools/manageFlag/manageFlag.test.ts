@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { z } from 'zod';
-import { createStubbedClient } from '../../unleash/testClient.ts';
 import { production, stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
+import { createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { createManageFlag } from './manageFlag.ts';
 import { manageFlagOutput } from './manageFlagOutput.ts';

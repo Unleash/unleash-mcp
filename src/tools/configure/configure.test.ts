@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createStubbedClient } from '../../unleash/testClient.ts';
 import { production, stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
+import { createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { createConfigure } from './configure.ts';
 

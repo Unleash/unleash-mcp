@@ -1,17 +1,17 @@
 import type { components } from '../../../unleash/api.d.ts';
 import type { UnleashClient } from '../../../unleash/client.ts';
-import type { FlagQuery } from '../inspectInput.ts';
-import type { Environment, Flag, Lifecycle, Milestone, PendingChangeRequest, ReleasePlan, Transition } from '../inspectOutput.ts';
-import type { Parent } from '../../shared/parent.ts';
-import type { Link } from '../../shared/link.ts';
-import type { FlagType } from '../../shared/flagType.ts';
-import type { Tag } from '../../shared/tag.ts';
-import type { Target, Value } from '../../shared/target.ts';
+import { changeRequestUrl, type EditionReader } from '../../shared/changeRequest.ts';
 import { toConstraint, type UnleashConstraint } from '../../shared/constraint.ts';
 import { type Failed, toFailed } from '../../shared/failed.ts';
-import { toLifecycleStage, type UnleashStage } from '../../shared/lifecycleStage.ts';
-import { changeRequestUrl, type EditionReader } from '../../shared/changeRequest.ts';
 import { toFlagState } from '../../shared/flagState.ts';
+import type { FlagType } from '../../shared/flagType.ts';
+import { toLifecycleStage, type UnleashStage } from '../../shared/lifecycleStage.ts';
+import type { Link } from '../../shared/link.ts';
+import type { Parent } from '../../shared/parent.ts';
+import type { Tag } from '../../shared/tag.ts';
+import type { Target, Value } from '../../shared/target.ts';
+import type { FlagQuery } from '../inspectInput.ts';
+import type { Environment, Flag, Lifecycle, Milestone, PendingChangeRequest, ReleasePlan, Transition } from '../inspectOutput.ts';
 
 export const inspectFlag = async (unleash: UnleashClient, editionOf: EditionReader, { project, flag }: FlagQuery): Promise<Flag | Failed> => {
   // The flag endpoint leaves the tags and the change requests out, so they take requests of their own.

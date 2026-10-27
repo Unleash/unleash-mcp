@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { failed } from '../shared/failed.ts';
+import { flagState } from '../shared/flagState.ts';
 import { lifecycleStage } from '../shared/lifecycleStage.ts';
 import { tag } from '../shared/tag.ts';
-import { flagState } from '../shared/flagState.ts';
 
 const project = z.object({
   id: z.string(),

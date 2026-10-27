@@ -1,7 +1,7 @@
 import type { UnleashClient } from '../../../unleash/client.ts';
+import { type Failed, toFailed } from '../../shared/failed.ts';
 import type { ProjectQuery } from '../inspectInput.ts';
 import type { Project } from '../inspectOutput.ts';
-import { type Failed, toFailed } from '../../shared/failed.ts';
 
 // The project overview is what the Unleash UI reads for a project's environments. The environments-by-project
 // endpoint instead lists every environment of the instance and answers an unknown project with an empty list.

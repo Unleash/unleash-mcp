@@ -1,9 +1,9 @@
 import type { components } from '../../unleash/api.d.ts';
 import type { UnleashClient } from '../../unleash/client.ts';
-import type { CreateReleaseTemplate } from './configureInput.ts';
-import type { Outcome } from './configureOutput.ts';
 import { toFailed } from '../shared/failed.ts';
 import { toStrategy } from '../shared/strategy.ts';
+import type { CreateReleaseTemplate } from './configureInput.ts';
+import type { Outcome } from './configureOutput.ts';
 
 type Milestone = CreateReleaseTemplate['milestones'][number];
 

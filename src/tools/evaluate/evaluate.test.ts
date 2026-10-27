@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import type { components } from '../../unleash/api.d.ts';
 import { after, before, test } from 'node:test';
+import type { components } from '../../unleash/api.d.ts';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { deleteFlag, deleteSegmentNamed } from '../../unleash/testSetup.ts';
