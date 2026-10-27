@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import pkg from '../package.json' with { type: 'json' };
 import { createServer } from './server.ts';
+import { granted } from './tools/sendFeedback/consent.ts';
 import { createSendFeedback } from './tools/sendFeedback/sendFeedback.ts';
 import { createUnleashClient } from './unleash/client.ts';
 
@@ -24,7 +25,7 @@ export const createRemoteHandler =
     ({ baseUrl, feedbackConsent, feedbackUrl }: RemoteHandlerOptions): McpRequestHandler =>
       async (req, res, { authHeaders, parsedBody }) => {
         const unleash = createUnleashClient({ baseUrl, headers: authHeaders, fetch });
-        const sendFeedback = feedbackConsent === 'granted' ? createSendFeedback(fetch, pkg.version, feedbackUrl) : undefined;
+        const sendFeedback = feedbackConsent === 'granted' ? createSendFeedback(fetch, pkg.version, feedbackUrl, granted) : undefined;
         const server = createServer(unleash, sendFeedback);
         const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
         res.on('close', () => {

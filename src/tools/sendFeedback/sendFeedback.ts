@@ -1,5 +1,6 @@
 import type { components } from '../../unleash/api.d.ts';
 import { type Failed, type FailedCall, toFailed } from '../shared/failed.ts';
+import type { AskUser, Consent } from './consent.ts';
 import type { SendFeedbackInput } from './sendFeedbackInput.ts';
 import type { SendFeedbackResult } from './sendFeedbackOutput.ts';
 
@@ -8,19 +9,24 @@ type ProvideFeedback = components['schemas']['provideFeedbackSchema'];
 /** The MCP client the agent runs in, as it named itself when it connected. */
 export type ClientInfo = { name: string; version: string };
 
-/** The `send_feedback` tool: posts one anonymous report to Unleash, naming the client when it is known. Only create it once the user has opted in. */
-export type SendFeedback = (input: SendFeedbackInput, client?: ClientInfo) => Promise<SendFeedbackResult>;
+/** The client the agent runs in: its name and version when known, and how to ask its user. */
+export type ConnectedClient = { info?: ClientInfo; ask: AskUser };
+
+/** The `send_feedback` tool: posts one anonymous report to Unleash, naming the client when it is known, once the user consents. */
+export type SendFeedback = (input: SendFeedbackInput, client: ConnectedClient) => Promise<SendFeedbackResult>;
 
 /**
  * Creates `send_feedback`, posting with the given `fetch` to the Unleash instance at `feedbackBaseUrl` and tagging each report
- * with the server's `mcpVersion`. Without `feedbackBaseUrl` every report fails: there is no default instance to send to.
+ * with the server's `mcpVersion`. Each report waits for `consent`. Without `feedbackBaseUrl` every report fails, before the
+ * user is asked: there is no default instance to send to.
  */
 export const createSendFeedback =
-  (fetch: typeof globalThis.fetch, mcpVersion: string, feedbackBaseUrl: string | undefined): SendFeedback => {
+  (fetch: typeof globalThis.fetch, mcpVersion: string, feedbackBaseUrl: string | undefined, consent: Consent): SendFeedback => {
     if (!feedbackBaseUrl) return async () => notConfigured;
     const feedbackUrl = `${feedbackBaseUrl.replace(/\/+$/, '')}/feedback`;
-    return async ({ issueType, summary, tool, error }, client) => {
-      const report = { issueType, summary, ...(tool ? { tool } : {}), ...(error ? { error } : {}), mcpVersion, ...toClient(client) };
+    return async ({ issueType, summary, tool, error }, { info, ask }) => {
+      if (await consent({ name: info?.name, ask }) === 'denied') return { kind: 'disabled' };
+      const report = { issueType, summary, ...(tool ? { tool } : {}), ...(error ? { error } : {}), mcpVersion, ...toClient(info) };
       const body: ProvideFeedback = { category: 'mcp', areasForImprovement: JSON.stringify(report) };
       const response = await fetch(feedbackUrl, {
         method: 'POST',
