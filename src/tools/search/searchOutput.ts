@@ -122,7 +122,19 @@ const environments = z.object({
   environments: z.array(environment),
 });
 
-const result = z.discriminatedUnion('kind', [projects, flags, segments, contextFields, tagTypes, tags, flagCreators, releaseTemplates, eventTypes, environments, failed]);
+const result = z.discriminatedUnion('kind', [
+  projects,
+  flags,
+  segments,
+  contextFields,
+  tagTypes,
+  tags,
+  flagCreators,
+  releaseTemplates,
+  eventTypes,
+  environments,
+  failed,
+]);
 
 export const searchOutput = {
   results: z.array(result).describe('One per query, in the order asked'),

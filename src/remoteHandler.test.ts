@@ -9,7 +9,11 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 import { createRemoteHandler, type RemoteHandlerOptions } from './remoteHandler.ts';
 import { createStubbedFetch } from './unleash/testClient.ts';
 
-const serve = async (fetch: typeof globalThis.fetch, baseUrl: string, options: Omit<RemoteHandlerOptions, 'baseUrl'>) => {
+const serve = async (
+  fetch: typeof globalThis.fetch,
+  baseUrl: string,
+  options: Omit<RemoteHandlerOptions, 'baseUrl'>,
+) => {
   const handle = createRemoteHandler(fetch)({ baseUrl, ...options });
   // Parses the body first, as Unleash's Express does, so the stream is already read when the handler gets it.
   const server = createServer(async (req, res) => {
@@ -24,7 +28,9 @@ const connect = async (options: Omit<RemoteHandlerOptions, 'baseUrl'>) => {
   const { baseUrl, fetch, stub } = createStubbedFetch();
   const server = await serve(fetch, baseUrl, options);
   const client = new Client({ name: 'test-client', version: '0.0.0' });
-  await client.connect(new StreamableHTTPClientTransport(new URL(`http://localhost:${(server.address() as AddressInfo).port}`)));
+  await client.connect(
+    new StreamableHTTPClientTransport(new URL(`http://localhost:${(server.address() as AddressInfo).port}`)),
+  );
   const close = async () => {
     await client.close();
     server.close();
@@ -44,12 +50,20 @@ const toolNames = async (options: Omit<RemoteHandlerOptions, 'baseUrl'>) => {
 // Stubbed although it is a happy path: snapshots ignore the authorization header, so only a stub can check it is forwarded.
 test('acts in Unleash as the caller, with the auth the host forwards', async () => {
   const { client, stub, close } = await connect({ feedbackConsent: 'denied' });
-  stub.intercept({ path: '/api/admin/projects', query: { view: 'core' }, method: 'GET', headers: { authorization: 'user-session' } })
+  stub
+    .intercept({
+      path: '/api/admin/projects',
+      query: { view: 'core' },
+      method: 'GET',
+      headers: { authorization: 'user-session' },
+    })
     .reply(200, { version: 1, projects: [{ id: 'web', name: 'Web' }] });
   try {
     const result = await client.callTool({ name: 'search', arguments: { queries: [{ kind: 'projects' }] } });
 
-    assert.deepEqual(result.structuredContent, { results: [{ kind: 'projects', projects: [{ id: 'web', name: 'Web' }] }] });
+    assert.deepEqual(result.structuredContent, {
+      results: [{ kind: 'projects', projects: [{ id: 'web', name: 'Web' }] }],
+    });
   } finally {
     await close();
   }

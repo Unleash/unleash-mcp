@@ -11,12 +11,20 @@ export const requestPlan = (unleash: UnleashClient, path: EnvironmentPath, plan:
   const toggle = { feature, action: 'updateEnabled' as const, payload: { enabled: plan.toggle === 'on' } };
   const changes = [
     ...(plan.toggle === 'off' ? [toggle] : []),
-    ...plan.updates.map(({ id, strategy }) => ({ feature, action: 'updateStrategy' as const, payload: { id, ...strategy } })),
+    ...plan.updates.map(({ id, strategy }) => ({
+      feature,
+      action: 'updateStrategy' as const,
+      payload: { id, ...strategy },
+    })),
     ...plan.adds.map((strategy) => ({ feature, action: 'addStrategy' as const, payload: strategy })),
     ...(plan.template ? [{ feature, action: 'addReleasePlan' as const, payload: { templateId: plan.template } }] : []),
     ...(plan.milestone ? [{ feature, action: 'startMilestone' as const, payload: plan.milestone }] : []),
     ...plan.deletes.map((id) => ({ feature, action: 'deleteStrategy' as const, payload: { id } })),
     ...(plan.toggle === 'on' ? [toggle] : []),
   ];
-  return requestChanges(unleash, { kind: 'changeRequest', project: path.projectId, environment: path.environment }, changes);
+  return requestChanges(
+    unleash,
+    { kind: 'changeRequest', project: path.projectId, environment: path.environment },
+    changes,
+  );
 };

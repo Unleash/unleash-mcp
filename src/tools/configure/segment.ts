@@ -1,12 +1,22 @@
 import type { UnleashClient } from '../../unleash/client.ts';
-import { type ChangeRequestReader, type ChangeRequestRoute, type Changes, type Route, requestChanges, routeToProject } from '../shared/changeRequest.ts';
+import {
+  type ChangeRequestReader,
+  type ChangeRequestRoute,
+  type Changes,
+  type Route,
+  requestChanges,
+  routeToProject,
+} from '../shared/changeRequest.ts';
 import { type Failed, toFailed } from '../shared/failed.ts';
 import { toUnleashConstraint } from '../shared/strategy.ts';
 import type { CreateSegment, DeleteSegment, UpdateSegment } from './configureInput.ts';
 import type { Outcome, PendingChange } from './configureOutput.ts';
 
 /** Creates a segment, global or in a project, answering with its id so release targets can refer to it. */
-export const createSegment = async (unleash: UnleashClient, { project, name, description, constraints }: CreateSegment): Promise<{ kind: 'applied'; id: number } | Failed> => {
+export const createSegment = async (
+  unleash: UnleashClient,
+  { project, name, description, constraints }: CreateSegment,
+): Promise<{ kind: 'applied'; id: number } | Failed> => {
   const body = { name, description, project, constraints: constraints.map(toUnleashConstraint) };
   const created = await unleash.POST('/api/admin/segments', { body });
   if (!created.response.ok || !created.data) return toFailed(created);
@@ -37,10 +47,15 @@ export const updateSegment = async (
  * Deletes a segment, answering Unleash's refusal (e.g. a flag still targets it) as `failed`. Unleash answers success for a segment that is not there.
  * A segment in a project whose changes need approval waits in a change request; without its project, Unleash's refusal comes back as `failed`.
  */
-export const deleteSegment = async (unleash: UnleashClient, environmentsOf: ChangeRequestReader, { id, project }: DeleteSegment): Promise<Outcome | PendingChange> => {
+export const deleteSegment = async (
+  unleash: UnleashClient,
+  environmentsOf: ChangeRequestReader,
+  { id, project }: DeleteSegment,
+): Promise<Outcome | PendingChange> => {
   const route = await routeOf(environmentsOf, project);
   if (route.kind === 'failed') return route;
-  if (route.kind === 'changeRequest') return requestChange(unleash, route, { action: 'deleteSegment', payload: { id } });
+  if (route.kind === 'changeRequest')
+    return requestChange(unleash, route, { action: 'deleteSegment', payload: { id } });
   const deleted = await unleash.DELETE('/api/admin/segments/{id}', { params: { path: { id } } });
   if (deleted.response.status === 409) return inUse;
   if (!deleted.response.ok) return toFailed(deleted);
@@ -61,7 +76,11 @@ const routeOf = (environmentsOf: ChangeRequestReader, project: string | undefine
 
 type SegmentChange = Extract<Changes, { action: 'updateSegment' | 'deleteSegment' }>;
 
-const requestChange = async (unleash: UnleashClient, route: ChangeRequestRoute, change: SegmentChange): Promise<PendingChange | Failed> => {
+const requestChange = async (
+  unleash: UnleashClient,
+  route: ChangeRequestRoute,
+  change: SegmentChange,
+): Promise<PendingChange | Failed> => {
   const requested = await requestChanges(unleash, route, change);
   if (requested.kind === 'failed') return requested;
   return { kind: 'pending_change_request', changeRequest: requested.changeRequest };

@@ -13,22 +13,42 @@ const json = { headers: { 'content-type': 'application/json' } };
 test('answers with the plan and the milestone it started', async () => {
   const { unleash, stub } = createStubbedClient();
   const plan = {
-    id: '01JB9GGTGQYEQ9D40R17T3YVW3', discriminator: 'plan', name: 'Gradual rollout', featureName: 'mcp-flag', environment: 'development',
-    createdByUserId: 1, createdAt: '2026-10-26T10:00:00.000Z', releasePlanTemplateId: templateId, activeMilestoneId: 'm1',
-    milestones: [{ id: 'm1', name: 'Internal', sortOrder: 0, strategies: [] }, { id: 'm2', name: 'Everyone', sortOrder: 1, strategies: [] }],
+    id: '01JB9GGTGQYEQ9D40R17T3YVW3',
+    discriminator: 'plan',
+    name: 'Gradual rollout',
+    featureName: 'mcp-flag',
+    environment: 'development',
+    createdByUserId: 1,
+    createdAt: '2026-10-26T10:00:00.000Z',
+    releasePlanTemplateId: templateId,
+    activeMilestoneId: 'm1',
+    milestones: [
+      { id: 'm1', name: 'Internal', sortOrder: 0, strategies: [] },
+      { id: 'm2', name: 'Everyone', sortOrder: 1, strategies: [] },
+    ],
   };
   stub.intercept({ path: releasePlans, method: 'POST', body: JSON.stringify({ templateId }) }).reply(200, plan, json);
 
   const applied = await applyTemplate(unleash, path, templateId);
 
-  assert.deepEqual(applied, { kind: 'applied', template: { id: templateId, plan: 'Gradual rollout', milestone: 'Internal' } });
+  assert.deepEqual(applied, {
+    kind: 'applied',
+    template: { id: templateId, plan: 'Gradual rollout', milestone: 'Internal' },
+  });
 });
 
 test('fails with the Unleash error when the template cannot be applied', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: releasePlans, method: 'POST' }).reply(404, unleashError('NotFoundError', 'Could not find release plan template'), json);
+  stub
+    .intercept({ path: releasePlans, method: 'POST' })
+    .reply(404, unleashError('NotFoundError', 'Could not find release plan template'), json);
 
   const applied = await applyTemplate(unleash, path, templateId);
 
-  assert.deepEqual(applied, { kind: 'failed', status: 404, name: 'NotFoundError', reasons: ['Could not find release plan template'] });
+  assert.deepEqual(applied, {
+    kind: 'failed',
+    status: 404,
+    name: 'NotFoundError',
+    reasons: ['Could not find release plan template'],
+  });
 });

@@ -18,9 +18,33 @@ let id = 0;
 before(async () => {
   await deleteFlag(admin, project, flag);
   await deleteSegmentNamed(admin, segment);
-  const created = await admin.POST('/api/admin/segments', { body: { name: segment, description: 'Beta testers', constraints: [{ contextName: beta.field, operator: beta.operator, values: beta.values, caseInsensitive: false, inverted: false }] } });
+  const created = await admin.POST('/api/admin/segments', {
+    body: {
+      name: segment,
+      description: 'Beta testers',
+      constraints: [
+        {
+          contextName: beta.field,
+          operator: beta.operator,
+          values: beta.values,
+          caseInsensitive: false,
+          inverted: false,
+        },
+      ],
+    },
+  });
   id = created.data?.id ?? 0;
-  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Beta', segments: [id] }, { name: 'Beta again', segments: [id] }] } });
+  await createRelease(admin)({
+    project,
+    flag: { name: flag, state: 'on' },
+    environment: 'development',
+    audience: {
+      targets: [
+        { name: 'Beta', segments: [id] },
+        { name: 'Beta again', segments: [id] },
+      ],
+    },
+  });
 });
 after(async () => {
   await deleteFlag(admin, project, flag);
@@ -52,25 +76,48 @@ test('lists each flag environment targeting the segment when usage is included',
 
 test('names the project of a project segment', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: '/api/admin/segments/7', method: 'GET' }).reply(200, { id: 7, name: 'Beta', project, constraints: [], createdAt: '2026-10-22T08:00:00.000Z' });
+  stub
+    .intercept({ path: '/api/admin/segments/7', method: 'GET' })
+    .reply(200, { id: 7, name: 'Beta', project, constraints: [], createdAt: '2026-10-22T08:00:00.000Z' });
 
   const output = await inspectSegment(unleash, { kind: 'segment', id: 7 });
 
-  assert.deepEqual(output, { kind: 'segment', id: 7, name: 'Beta', project, constraints: [], createdAt: '2026-10-22T08:00:00.000Z' });
+  assert.deepEqual(output, {
+    kind: 'segment',
+    id: 7,
+    name: 'Beta',
+    project,
+    constraints: [],
+    createdAt: '2026-10-22T08:00:00.000Z',
+  });
 });
 
 test('fails with the Unleash error when the segment does not exist', async () => {
   const output = await inspectSegment(unleash, { kind: 'segment', id: 0 });
 
-  assert.deepEqual(output, { kind: 'failed', status: 404, name: 'NotFoundError', reasons: ['No segment exists with ID "0"'] });
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 404,
+    name: 'NotFoundError',
+    reasons: ['No segment exists with ID "0"'],
+  });
 });
 
 test('fails with the Unleash error when the usage cannot be read', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: '/api/admin/segments/7', method: 'GET' }).reply(200, { id: 7, name: 'Beta', constraints: [], createdAt: '2026-10-22T08:00:00.000Z' });
-  stub.intercept({ path: '/api/admin/segments/7/strategies', method: 'GET' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
+  stub
+    .intercept({ path: '/api/admin/segments/7', method: 'GET' })
+    .reply(200, { id: 7, name: 'Beta', constraints: [], createdAt: '2026-10-22T08:00:00.000Z' });
+  stub
+    .intercept({ path: '/api/admin/segments/7/strategies', method: 'GET' })
+    .reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
 
   const output = await inspectSegment(unleash, { kind: 'segment', id: 7, include: ['usage'] });
 
-  assert.deepEqual(output, { kind: 'failed', status: 500, name: 'UnknownError', reasons: ['connect ECONNREFUSED 10.0.0.5:5432'] });
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 500,
+    name: 'UnknownError',
+    reasons: ['connect ECONNREFUSED 10.0.0.5:5432'],
+  });
 });

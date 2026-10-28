@@ -3,7 +3,12 @@ import type { Failed } from '../shared/failed.ts';
 import { createFlag, currentIn, type EnsuredFlag, readFlag } from '../shared/rollout/flag.ts';
 
 /** The switch as it is found in the environment, created as a kill switch when missing, in either state. */
-export const ensureSwitch = async (unleash: UnleashClient, project: string, flag: string, environment: string): Promise<EnsuredFlag | Failed> => {
+export const ensureSwitch = async (
+  unleash: UnleashClient,
+  project: string,
+  flag: string,
+  environment: string,
+): Promise<EnsuredFlag | Failed> => {
   const found = await readFlag(unleash, project, flag);
   if (found.kind === 'failed') return found;
   if (found.kind === 'found') {

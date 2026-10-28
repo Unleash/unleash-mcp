@@ -7,7 +7,9 @@ import { createContextField, deleteContextField } from '../../configure/contextF
 import { createRelease } from '../../release/release.ts';
 import { inspectContextField } from './contextField.ts';
 
-const { unleash, admin, close } = createRecordedClient(new URL('./contextField.snapshot.json', import.meta.url).pathname);
+const { unleash, admin, close } = createRecordedClient(
+  new URL('./contextField.snapshot.json', import.meta.url).pathname,
+);
 const project = 'mcp-server';
 const field = 'mcpInspectedField';
 const projectField = 'mcpInspectedProjectField';
@@ -16,16 +18,34 @@ const flag = 'mcp-context-field-flag';
 const gold = { field, operator: 'IN' as const, values: ['gold'] };
 
 const deleteFields = async (): Promise<void> => {
-  for (const contextField of [field, projectField]) await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: contextField });
+  for (const contextField of [field, projectField])
+    await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: contextField });
 };
 
 // The flag goes first: a field in use cannot be deleted. Two strategies on the field in one environment show as one use.
 before(async () => {
   await deleteFlag(admin, project, flag);
   await deleteFields();
-  await createContextField(admin, { kind: 'context_field', action: 'create', name: field, description: 'Customer tier', stickiness: true, legalValues });
+  await createContextField(admin, {
+    kind: 'context_field',
+    action: 'create',
+    name: field,
+    description: 'Customer tier',
+    stickiness: true,
+    legalValues,
+  });
   await createContextField(admin, { kind: 'context_field', action: 'create', project, name: projectField });
-  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Gold', constraints: [gold] }, { name: 'Gold again', constraints: [gold] }] } });
+  await createRelease(admin)({
+    project,
+    flag: { name: flag, state: 'on' },
+    environment: 'development',
+    audience: {
+      targets: [
+        { name: 'Gold', constraints: [gold] },
+        { name: 'Gold again', constraints: [gold] },
+      ],
+    },
+  });
 });
 after(async () => {
   await deleteFlag(admin, project, flag);
@@ -67,24 +87,43 @@ test('lists each flag environment constraining on the field when usage is includ
 test('fails with the Unleash error when the usage cannot be read', async () => {
   const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: `/api/admin/context/${field}`, method: 'GET' }).reply(200, { name: field });
-  stub.intercept({ path: `/api/admin/context/${field}/strategies`, method: 'GET' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
+  stub
+    .intercept({ path: `/api/admin/context/${field}/strategies`, method: 'GET' })
+    .reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
 
   const output = await inspectContextField(unleash, { kind: 'context_field', name: field, include: ['usage'] });
 
-  assert.deepEqual(output, { kind: 'failed', status: 500, name: 'UnknownError', reasons: ['connect ECONNREFUSED 10.0.0.5:5432'] });
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 500,
+    name: 'UnknownError',
+    reasons: ['connect ECONNREFUSED 10.0.0.5:5432'],
+  });
 });
 
 test('fails with the Unleash error when the context field does not exist', async () => {
   const output = await inspectContextField(unleash, { kind: 'context_field', name: 'unknown' });
 
-  assert.deepEqual(output, { kind: 'failed', status: 404, name: 'NotFoundError', reasons: ['Could not find context field'] });
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 404,
+    name: 'NotFoundError',
+    reasons: ['Could not find context field'],
+  });
 });
 
 test('fails with the Unleash error when the context field cannot be read', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: `/api/admin/context/${field}`, method: 'GET' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
+  stub
+    .intercept({ path: `/api/admin/context/${field}`, method: 'GET' })
+    .reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
 
   const output = await inspectContextField(unleash, { kind: 'context_field', name: field });
 
-  assert.deepEqual(output, { kind: 'failed', status: 500, name: 'UnknownError', reasons: ['connect ECONNREFUSED 10.0.0.5:5432'] });
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 500,
+    name: 'UnknownError',
+    reasons: ['connect ECONNREFUSED 10.0.0.5:5432'],
+  });
 });

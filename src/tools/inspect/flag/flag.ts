@@ -11,19 +11,45 @@ import type { Parent } from '../../shared/parent.ts';
 import type { Tag } from '../../shared/tag.ts';
 import type { Target, Value } from '../../shared/target.ts';
 import type { FlagQuery } from '../inspectInput.ts';
-import type { Environment, Flag, Lifecycle, Milestone, PendingChangeRequest, ReleasePlan, Transition } from '../inspectOutput.ts';
+import type {
+  Environment,
+  Flag,
+  Lifecycle,
+  Milestone,
+  PendingChangeRequest,
+  ReleasePlan,
+  Transition,
+} from '../inspectOutput.ts';
 
-export const inspectFlag = async (unleash: UnleashClient, editionOf: EditionReader, { project, flag }: FlagQuery): Promise<Flag | Failed> => {
+export const inspectFlag = async (
+  unleash: UnleashClient,
+  editionOf: EditionReader,
+  { project, flag }: FlagQuery,
+): Promise<Flag | Failed> => {
   // The flag endpoint leaves the tags and the change requests out, so they take requests of their own.
   const [found, tagged, pending] = await Promise.all([
-    unleash.GET('/api/admin/projects/{projectId}/features/{featureName}', { params: { path: { projectId: project, featureName: flag } } }),
+    unleash.GET('/api/admin/projects/{projectId}/features/{featureName}', {
+      params: { path: { projectId: project, featureName: flag } },
+    }),
     unleash.GET('/api/admin/features/{featureName}/tags', { params: { path: { featureName: flag } } }),
     readPendingChangeRequests(unleash, editionOf, project, flag),
   ]);
   if (!found.response.ok || !found.data) return toFailed(found);
   if (!tagged.response.ok || !tagged.data) return toFailed(tagged);
   if (pending.kind === 'failed') return pending;
-  const { name, type, createdAt, createdBy, lifecycle, expectedLifetimeEndsAt, environments, collaborators, dependencies, children, links } = found.data;
+  const {
+    name,
+    type,
+    createdAt,
+    createdBy,
+    lifecycle,
+    expectedLifetimeEndsAt,
+    environments,
+    collaborators,
+    dependencies,
+    children,
+    links,
+  } = found.data;
   const tags = tagged.data.tags;
   const collaboratorNames = collaborators?.users.map((user) => user.name) ?? [];
   return {
@@ -46,14 +72,26 @@ export const inspectFlag = async (unleash: UnleashClient, editionOf: EditionRead
 };
 
 // Only Enterprise has change requests, so other editions skip the read.
-const readPendingChangeRequests = async (unleash: UnleashClient, editionOf: EditionReader, project: string, flag: string): Promise<{ kind: 'changeRequests'; changeRequests: PendingChangeRequest[] } | Failed> => {
+const readPendingChangeRequests = async (
+  unleash: UnleashClient,
+  editionOf: EditionReader,
+  project: string,
+  flag: string,
+): Promise<{ kind: 'changeRequests'; changeRequests: PendingChangeRequest[] } | Failed> => {
   const edition = await editionOf();
   if (edition.kind === 'failed') return edition;
   if (edition.kind === 'other') return { kind: 'changeRequests', changeRequests: [] };
 
-  const found = await unleash.GET('/api/admin/projects/{projectId}/change-requests/pending/{featureName}', { params: { path: { projectId: project, featureName: flag } } });
+  const found = await unleash.GET('/api/admin/projects/{projectId}/change-requests/pending/{featureName}', {
+    params: { path: { projectId: project, featureName: flag } },
+  });
   if (!found.response.ok || !found.data) return toFailed(found);
-  const changeRequests = found.data.map(({ id, state, environment }) => ({ id, state, environment, url: changeRequestUrl(unleash, project, id) }));
+  const changeRequests = found.data.map(({ id, state, environment }) => ({
+    id,
+    state,
+    environment,
+    url: changeRequestUrl(unleash, project, id),
+  }));
   return { kind: 'changeRequests', changeRequests };
 };
 
@@ -82,19 +120,23 @@ const toEnvironment = ({ name, enabled, lastSeenAt, strategies, releasePlans }: 
 const toReleasePlan = ({ id: planId, name, milestones, activeMilestoneId }: UnleashReleasePlan): ReleasePlan => ({
   id: planId,
   name,
-  milestones: milestones.map(({ id, name, transitionCondition, strategies }): Milestone => ({
-    id,
-    name,
-    ...(id === activeMilestoneId ? { active: true } : {}),
-    ...(transitionCondition ? { transition: toTransition(transitionCondition) } : {}),
-    ...(strategies?.length ? { targets: strategies.map(toTarget) } : {}),
-  })),
+  milestones: milestones.map(
+    ({ id, name, transitionCondition, strategies }): Milestone => ({
+      id,
+      name,
+      ...(id === activeMilestoneId ? { active: true } : {}),
+      ...(transitionCondition ? { transition: toTransition(transitionCondition) } : {}),
+      ...(strategies?.length ? { targets: strategies.map(toTarget) } : {}),
+    }),
+  ),
 });
 
 // TODO: take `transitionConditionSchema` directly once the spec uses it on a plan milestone instead of an empty object.
 const toTransition = (condition: object): Transition => {
   const c = condition as components['schemas']['transitionConditionSchema'];
-  return c.type === 'exposure' ? { type: 'exposure', minimumExposures: c.minimumExposures } : { type: 'time', intervalMinutes: c.intervalMinutes };
+  return c.type === 'exposure'
+    ? { type: 'exposure', minimumExposures: c.minimumExposures }
+    : { type: 'time', intervalMinutes: c.intervalMinutes };
 };
 
 // The reverse of the release plan's toStrategy, so a target can be edited and released again.
@@ -113,15 +155,33 @@ const toValue = ({ name, payload, weight, weightType }: UnleashVariant): Value =
   ...(weightType === 'fix' ? { share: weight / 10 } : {}),
 });
 
-const toLifecycle = ({ stage, status, enteredStageAt }: { stage: UnleashStage; status?: string | null; enteredStageAt: string }): Lifecycle => ({
+const toLifecycle = ({
+  stage,
+  status,
+  enteredStageAt,
+}: {
+  stage: UnleashStage;
+  status?: string | null;
+  enteredStageAt: string;
+}): Lifecycle => ({
   stage: toLifecycleStage(stage),
   ...(status ? { status } : {}),
   enteredAt: enteredStageAt,
 });
 
 // Unleash allows one parent per flag; its schema is an array anyway.
-const toParent = ({ feature, enabled, variants }: { feature: string; enabled?: boolean; variants?: string[] }): Parent =>
-  enabled === false ? { kind: 'off', flag: feature } : { kind: 'on', flag: feature, ...(variants?.length ? { values: variants } : {}) };
+const toParent = ({
+  feature,
+  enabled,
+  variants,
+}: {
+  feature: string;
+  enabled?: boolean;
+  variants?: string[];
+}): Parent =>
+  enabled === false
+    ? { kind: 'off', flag: feature }
+    : { kind: 'on', flag: feature, ...(variants?.length ? { values: variants } : {}) };
 
 const toTag = ({ type, value }: Tag): Tag => ({ type, value });
 

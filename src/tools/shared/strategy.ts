@@ -18,7 +18,12 @@ export type Strategy = ReturnType<typeof toStrategy>;
 
 const toVariant = ({ share, ...value }: Value, i: number, all: Value[]) => {
   const fixed = share !== undefined && (i < all.length - 1 || all.some((v) => v.share === undefined));
-  return { ...value, weight: (share ?? 0) * 10, weightType: fixed ? ('fix' as const) : ('variable' as const), stickiness: 'default' };
+  return {
+    ...value,
+    weight: (share ?? 0) * 10,
+    weightType: fixed ? ('fix' as const) : ('variable' as const),
+    stickiness: 'default',
+  };
 };
 
 /** Turns an agent-facing constraint into the shape Unleash stores on strategies and segments. */

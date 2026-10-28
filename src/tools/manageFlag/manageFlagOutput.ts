@@ -15,7 +15,9 @@ const applied = z.discriminatedUnion('action', [
     kind: z.literal('applied'),
     ...define,
     status: z.enum(['new', 'existing']).describe('new: the flag was created; existing: it was there already'),
-    changed: z.array(changed).describe('What was written after the flag was read or created; empty when an existing flag already matched'),
+    changed: z
+      .array(changed)
+      .describe('What was written after the flag was read or created; empty when an existing flag already matched'),
   }),
   z.object({ kind: z.literal('applied'), ...complete }),
   z.object({ kind: z.literal('applied'), ...archive }),
@@ -23,7 +25,9 @@ const applied = z.discriminatedUnion('action', [
   z.object({ kind: z.literal('applied'), ...setParentDependency }),
 ]);
 
-const error = failed.omit({ kind: true }).describe('What Unleash answered; the operation was not applied, or only in part where it takes several writes');
+const error = failed
+  .omit({ kind: true })
+  .describe('What Unleash answered; the operation was not applied, or only in part where it takes several writes');
 
 const failedOperation = z.discriminatedUnion('action', [
   z.object({ kind: z.literal('failed'), ...define, error }),

@@ -5,18 +5,27 @@ import { unleashError } from '../../../unleash/testError.ts';
 import { createContextField, deleteContextField } from '../../configure/contextField.ts';
 import { searchContextFields } from './contextFields.ts';
 
-const { unleash, admin, close } = createRecordedClient(new URL('./contextFields.snapshot.json', import.meta.url).pathname);
+const { unleash, admin, close } = createRecordedClient(
+  new URL('./contextFields.snapshot.json', import.meta.url).pathname,
+);
 const project = 'mcp-server';
 const global = 'mcpSearchedField';
 const projectScoped = 'mcpSearchedProjectField';
 
 const deleteFields = async (): Promise<void> => {
-  for (const contextField of [global, projectScoped]) await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: contextField });
+  for (const contextField of [global, projectScoped])
+    await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: contextField });
 };
 
 before(async () => {
   await deleteFields();
-  await createContextField(admin, { kind: 'context_field', action: 'create', name: global, description: 'Customer tier', stickiness: true });
+  await createContextField(admin, {
+    kind: 'context_field',
+    action: 'create',
+    name: global,
+    description: 'Customer tier',
+    stickiness: true,
+  });
   await createContextField(admin, { kind: 'context_field', action: 'create', project, name: projectScoped });
 });
 after(async () => {
@@ -41,14 +50,24 @@ test('finds context fields by a part of their name, case insensitive, with what 
 test('asks Unleash for the fields usable in a project: global or owned by it', async () => {
   const output = await searchContextFields(unleash, { kind: 'context_fields', project, query: 'mcpsearched' });
 
-  assert.partialDeepStrictEqual(output, { kind: 'context_fields', fields: [{ name: global }, { name: projectScoped, project }] });
+  assert.partialDeepStrictEqual(output, {
+    kind: 'context_fields',
+    fields: [{ name: global }, { name: projectScoped, project }],
+  });
 });
 
 test('fails with the Unleash error when the context fields cannot be listed', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: '/api/admin/context', query: { include: 'project' }, method: 'GET' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
+  stub
+    .intercept({ path: '/api/admin/context', query: { include: 'project' }, method: 'GET' })
+    .reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
 
   const output = await searchContextFields(unleash, { kind: 'context_fields' });
 
-  assert.deepEqual(output, { kind: 'failed', status: 500, name: 'UnknownError', reasons: ['connect ECONNREFUSED 10.0.0.5:5432'] });
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 500,
+    name: 'UnknownError',
+    reasons: ['connect ECONNREFUSED 10.0.0.5:5432'],
+  });
 });

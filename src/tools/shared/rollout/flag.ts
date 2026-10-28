@@ -31,8 +31,16 @@ export const readFlag = async (unleash: UnleashClient, project: string, flag: st
   return { kind: 'found', environments: found.data?.environments ?? [] };
 };
 
-export const createFlag = async (unleash: UnleashClient, project: string, flag: string, type?: FlagType): Promise<{ kind: 'created' } | Failed> => {
-  const created = await unleash.POST(features, { params: { path: { projectId: project } }, body: { name: flag, ...(type && { type }) } });
+export const createFlag = async (
+  unleash: UnleashClient,
+  project: string,
+  flag: string,
+  type?: FlagType,
+): Promise<{ kind: 'created' } | Failed> => {
+  const created = await unleash.POST(features, {
+    params: { path: { projectId: project } },
+    body: { name: flag, ...(type && { type }) },
+  });
   if (!created.response.ok) return toFailed(created);
   return { kind: 'created' };
 };
@@ -53,5 +61,7 @@ const notGradualIn = (environment: string, targets: string[]): Failed => ({
   kind: 'failed',
   status: 409,
   name: 'ConflictError',
-  reasons: [`${environment} has targets that are not gradual rollouts (${targets.join(', ')}); change them in the Unleash UI first`],
+  reasons: [
+    `${environment} has targets that are not gradual rollouts (${targets.join(', ')}); change them in the Unleash UI first`,
+  ],
 });

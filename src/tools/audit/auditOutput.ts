@@ -9,7 +9,10 @@ const fieldChange = z.object({
 
 const change = z.object({
   id: z.number().int().describe('Unleash event id'),
-  groupId: z.string().optional().describe('Shared by the changes made together, such as those of one applied change request'),
+  groupId: z
+    .string()
+    .optional()
+    .describe('Shared by the changes made together, such as those of one applied change request'),
   changedAt: z.string().describe('ISO timestamp'),
   type: z.string().describe('What happened: the Unleash event type, such as feature-environment-enabled'),
   changedBy: z.string().describe('Who made the change: a user, or the name of the API token'),
@@ -17,7 +20,12 @@ const change = z.object({
   project: z.string().optional(),
   flag: z.string().optional(),
   environment: z.string().optional().describe('Set when the change was made in one environment'),
-  diff: z.array(fieldChange).optional().describe('Set when diff is included: the values the change edited. A new item lists only what was set; empty values are left out'),
+  diff: z
+    .array(fieldChange)
+    .optional()
+    .describe(
+      'Set when diff is included: the values the change edited. A new item lists only what was set; empty values are left out',
+    ),
 });
 
 const changes = z.object({

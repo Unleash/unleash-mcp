@@ -8,8 +8,15 @@ const releasePlans = '/api/admin/projects/{project}/features/{featureName}/envir
 export type AppliedTemplate = { kind: 'applied'; template: { id: string; plan: string; milestone: string } };
 
 /** Applies a release template, which replaces any release plan the environment had and starts its first milestone. */
-export const applyTemplate = async (unleash: UnleashClient, { projectId, featureName, environment }: EnvironmentPath, templateId: string): Promise<AppliedTemplate | Failed> => {
-  const applied = await unleash.POST(releasePlans, { params: { path: { project: projectId, featureName, environment } }, body: { templateId } });
+export const applyTemplate = async (
+  unleash: UnleashClient,
+  { projectId, featureName, environment }: EnvironmentPath,
+  templateId: string,
+): Promise<AppliedTemplate | Failed> => {
+  const applied = await unleash.POST(releasePlans, {
+    params: { path: { project: projectId, featureName, environment } },
+    body: { templateId },
+  });
   if (!applied.response.ok || !applied.data) return toFailed(applied);
   const { name, milestones, activeMilestoneId } = applied.data;
   const milestone = milestones.find((m) => m.id === activeMilestoneId)?.name ?? '';

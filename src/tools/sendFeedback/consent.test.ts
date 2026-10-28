@@ -19,10 +19,13 @@ const createMemoryStore = (stored?: Decision): ConsentStore & { stored?: Decisio
 // Answers every question the same way and keeps the questions asked.
 const answering = (answer: Decision | undefined): AskUser & { questions: string[] } => {
   const questions: string[] = [];
-  return Object.assign(async (question: string) => {
-    questions.push(question);
-    return answer;
-  }, { questions });
+  return Object.assign(
+    async (question: string) => {
+      questions.push(question);
+      return answer;
+    },
+    { questions },
+  );
 };
 
 const name = 'claude-code';
@@ -82,7 +85,11 @@ test('denies for this session only when the question cannot be asked', async () 
 test('denies, ignoring a stored grant, in clients that never show the user the question', async () => {
   const ask = answering('granted');
 
-  const decisions = await Promise.all(['opencode', 'Gemini CLI', 'antigravity', 'cli', undefined].map((name) => createConsent(createMemoryStore('granted'))({ name, ask })));
+  const decisions = await Promise.all(
+    ['opencode', 'Gemini CLI', 'antigravity', 'cli', undefined].map((name) =>
+      createConsent(createMemoryStore('granted'))({ name, ask }),
+    ),
+  );
 
   assert.deepEqual(decisions, ['denied', 'denied', 'denied', 'denied', 'denied']);
   assert.deepEqual(ask.questions, []);

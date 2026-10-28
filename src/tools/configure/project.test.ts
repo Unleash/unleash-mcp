@@ -32,18 +32,25 @@ test('creates a project with every setting, answering with the id Unleash picks'
 });
 
 // Only Unleash's defaults match, so a left out setting missing from the request fails the test.
-test('sends left out settings as Unleash\'s defaults', async () => {
+test("sends left out settings as Unleash's defaults", async () => {
   const { unleash, stub } = createStubbedClient();
-  const defaulted = (body: string): boolean => isDeepStrictEqual(JSON.parse(body), {
-    name,
-    mode: 'open',
-    defaultStickiness: 'default',
-    changeRequestEnvironments: [{ name: 'production', requiredApprovals: 1 }],
-  });
-  stub.intercept({ path: '/api/admin/projects', method: 'POST', body: defaulted })
+  const defaulted = (body: string): boolean =>
+    isDeepStrictEqual(JSON.parse(body), {
+      name,
+      mode: 'open',
+      defaultStickiness: 'default',
+      changeRequestEnvironments: [{ name: 'production', requiredApprovals: 1 }],
+    });
+  stub
+    .intercept({ path: '/api/admin/projects', method: 'POST', body: defaulted })
     .reply(201, { id: 'mcp-project', name }, { headers: { 'content-type': 'application/json' } });
 
-  const output = await createProject(unleash, { kind: 'project', action: 'create', name, changeRequestEnvironments: [{ name: 'production' }] });
+  const output = await createProject(unleash, {
+    kind: 'project',
+    action: 'create',
+    name,
+    changeRequestEnvironments: [{ name: 'production' }],
+  });
 
   assert.deepEqual(output, { kind: 'applied', id: 'mcp-project' });
 });

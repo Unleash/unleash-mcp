@@ -3,8 +3,14 @@ import { flagState } from '../shared/flagState.ts';
 import { target } from '../shared/target.ts';
 
 const flag = z.strictObject({
-  name: z.string().describe('Kill switch name, as a flags search returns it, or a new one, created as a permanent kill switch. Name it after what it turns off, e.g. disable-payments'),
-  state: flagState.describe('on: the app turns off what the switch is named after, e.g. payments for disable-payments; off: the app works as usual'),
+  name: z
+    .string()
+    .describe(
+      'Kill switch name, as a flags search returns it, or a new one, created as a permanent kill switch. Name it after what it turns off, e.g. disable-payments',
+    ),
+  state: flagState.describe(
+    'on: the app turns off what the switch is named after, e.g. payments for disable-payments; off: the app works as usual',
+  ),
 });
 
 export const killSwitchInput = z.strictObject({

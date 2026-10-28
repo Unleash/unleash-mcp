@@ -4,7 +4,9 @@ import { createRecordedClient, createStubbedClient } from '../../unleash/testCli
 import { unleashError } from '../../unleash/testError.ts';
 import { createContextField, deleteContextField, updateContextField } from './contextField.ts';
 
-const { unleash, admin, close } = createRecordedClient(new URL('./contextField.snapshot.json', import.meta.url).pathname);
+const { unleash, admin, close } = createRecordedClient(
+  new URL('./contextField.snapshot.json', import.meta.url).pathname,
+);
 const name = 'mcpContextField';
 // Each test that needs an existing field gets its own, so tests don't depend on running in order.
 const updatable = 'mcpUpdatableContextField';
@@ -15,7 +17,8 @@ const updatableProjectField = 'mcpUpdatableProjectContextField';
 const deletableProjectField = 'mcpDeletableProjectContextField';
 
 const deleteFields = async (): Promise<void> => {
-  for (const contextField of [name, updatable, deletable, projectField, updatableProjectField, deletableProjectField]) await admin.DELETE('/api/admin/context/{contextField}', { params: { path: { contextField } } });
+  for (const contextField of [name, updatable, deletable, projectField, updatableProjectField, deletableProjectField])
+    await admin.DELETE('/api/admin/context/{contextField}', { params: { path: { contextField } } });
 };
 
 before(deleteFields);
@@ -48,7 +51,9 @@ test('fails with the Unleash error when the context field exists', async () => {
 });
 
 test('replaces a context field', async () => {
-  await admin.POST('/api/admin/context', { body: { name: updatable, stickiness: true, legalValues: [{ value: 'gold' }] } });
+  await admin.POST('/api/admin/context', {
+    body: { name: updatable, stickiness: true, legalValues: [{ value: 'gold' }] },
+  });
 
   const output = await updateContextField(unleash, {
     kind: 'context_field',
@@ -64,7 +69,9 @@ test('replaces a context field', async () => {
 test('fails with the Unleash error when the context field to update does not exist', async () => {
   const { unleash, stub } = createStubbedClient();
   const message = `Could not find context field with name ${name}`;
-  stub.intercept({ path: `/api/admin/context/${name}`, method: 'PUT' }).reply(404, unleashError('NotFoundError', message));
+  stub
+    .intercept({ path: `/api/admin/context/${name}`, method: 'PUT' })
+    .reply(404, unleashError('NotFoundError', message));
 
   const output = await updateContextField(unleash, { kind: 'context_field', action: 'update', name });
 
@@ -81,8 +88,11 @@ test('deletes a context field', async () => {
 
 test('fails with the Unleash error when a flag still uses the context field', async () => {
   const { unleash, stub } = createStubbedClient();
-  const message = 'This context field is in use by existing flags. To delete it, first remove its usage from all flags.';
-  stub.intercept({ path: `/api/admin/context/${name}`, method: 'DELETE' }).reply(409, unleashError('ConflictError', message));
+  const message =
+    'This context field is in use by existing flags. To delete it, first remove its usage from all flags.';
+  stub
+    .intercept({ path: `/api/admin/context/${name}`, method: 'DELETE' })
+    .reply(409, unleashError('ConflictError', message));
 
   const output = await deleteContextField(unleash, { kind: 'context_field', action: 'delete', name });
 
@@ -90,7 +100,12 @@ test('fails with the Unleash error when a flag still uses the context field', as
 });
 
 test('creates a context field in a project', async () => {
-  const output = await createContextField(unleash, { kind: 'context_field', action: 'create', project, name: projectField });
+  const output = await createContextField(unleash, {
+    kind: 'context_field',
+    action: 'create',
+    project,
+    name: projectField,
+  });
 
   assert.deepEqual(output, { kind: 'applied' });
 });
@@ -98,7 +113,13 @@ test('creates a context field in a project', async () => {
 test('replaces a context field in a project', async () => {
   await admin.POST('/api/admin/context', { body: { name: updatableProjectField, project } });
 
-  const output = await updateContextField(unleash, { kind: 'context_field', action: 'update', project, name: updatableProjectField, stickiness: true });
+  const output = await updateContextField(unleash, {
+    kind: 'context_field',
+    action: 'update',
+    project,
+    name: updatableProjectField,
+    stickiness: true,
+  });
 
   assert.deepEqual(output, { kind: 'applied' });
 });
@@ -106,7 +127,12 @@ test('replaces a context field in a project', async () => {
 test('deletes a context field in a project', async () => {
   await admin.POST('/api/admin/context', { body: { name: deletableProjectField, project } });
 
-  const output = await deleteContextField(unleash, { kind: 'context_field', action: 'delete', project, name: deletableProjectField });
+  const output = await deleteContextField(unleash, {
+    kind: 'context_field',
+    action: 'delete',
+    project,
+    name: deletableProjectField,
+  });
 
   assert.deepEqual(output, { kind: 'applied' });
 });

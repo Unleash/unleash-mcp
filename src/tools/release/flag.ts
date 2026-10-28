@@ -6,7 +6,11 @@ import { createFlag, currentIn, type EnsuredFlag, readFlag } from '../shared/rol
 type FlagInput = { flag: string; state: FlagState; environment: string };
 
 // Only turning on creates a missing flag: turning off one that doesn't exist answers Unleash's 404.
-export const ensureFlag = async (unleash: UnleashClient, project: string, input: FlagInput): Promise<EnsuredFlag | Failed> => {
+export const ensureFlag = async (
+  unleash: UnleashClient,
+  project: string,
+  input: FlagInput,
+): Promise<EnsuredFlag | Failed> => {
   const found = await readFlag(unleash, project, input.flag);
   if (found.kind === 'failed') return found;
   if (found.kind === 'found') {

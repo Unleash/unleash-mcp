@@ -10,7 +10,10 @@ export const createTagType = async (unleash: UnleashClient, { name, description 
 };
 
 export const updateTagType = async (unleash: UnleashClient, { name, description }: UpdateTagType): Promise<Outcome> => {
-  const updated = await unleash.PUT('/api/admin/tag-types/{name}', { params: { path: { name } }, body: { description: description ?? '' } });
+  const updated = await unleash.PUT('/api/admin/tag-types/{name}', {
+    params: { path: { name } },
+    body: { description: description ?? '' },
+  });
   if (!updated.response.ok) return toFailed(updated);
   return { kind: 'applied' };
 };

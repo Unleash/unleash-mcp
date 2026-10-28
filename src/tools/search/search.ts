@@ -15,19 +15,31 @@ import { searchTagTypes } from './tagTypes/tagTypes.ts';
 // Queries are independent, so they run together and each one answers its HTTP failures on its own.
 export const createSearch =
   (unleash: UnleashClient) =>
-    async ({ queries }: SearchInput): Promise<SearchOutput> => ({ results: await Promise.all(queries.map((query) => search(unleash, query))) });
+  async ({ queries }: SearchInput): Promise<SearchOutput> => ({
+    results: await Promise.all(queries.map((query) => search(unleash, query))),
+  });
 
 const search = (unleash: UnleashClient, query: Query): Promise<SearchResult> => {
   switch (query.kind) {
-    case 'projects': return searchProjects(unleash, query);
-    case 'flags': return searchFlags(unleash, query);
-    case 'segments': return searchSegments(unleash, query);
-    case 'context_fields': return searchContextFields(unleash, query);
-    case 'tag_types': return searchTagTypes(unleash, query);
-    case 'tags': return searchTags(unleash, query);
-    case 'flag_creators': return searchFlagCreators(unleash, query);
-    case 'release_templates': return searchReleaseTemplates(unleash, query);
-    case 'event_types': return Promise.resolve(searchEventTypes(query));
-    case 'environments': return searchEnvironments(unleash, query);
+    case 'projects':
+      return searchProjects(unleash, query);
+    case 'flags':
+      return searchFlags(unleash, query);
+    case 'segments':
+      return searchSegments(unleash, query);
+    case 'context_fields':
+      return searchContextFields(unleash, query);
+    case 'tag_types':
+      return searchTagTypes(unleash, query);
+    case 'tags':
+      return searchTags(unleash, query);
+    case 'flag_creators':
+      return searchFlagCreators(unleash, query);
+    case 'release_templates':
+      return searchReleaseTemplates(unleash, query);
+    case 'event_types':
+      return Promise.resolve(searchEventTypes(query));
+    case 'environments':
+      return searchEnvironments(unleash, query);
   }
 };

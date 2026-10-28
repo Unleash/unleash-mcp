@@ -11,7 +11,12 @@ const everyone: Target[] = [{ name: 'Everyone' }];
 
 export const createKillSwitch = (unleash: UnleashClient) => {
   const rollout = createRollout(unleash);
-  return async ({ project, flag: { name, state }, environment, targets = everyone }: KillSwitchInput): Promise<KillSwitchResult> => {
+  return async ({
+    project,
+    flag: { name, state },
+    environment,
+    targets = everyone,
+  }: KillSwitchInput): Promise<KillSwitchResult> => {
     const rolledOut = await rollout({
       project,
       name,
@@ -21,8 +26,13 @@ export const createKillSwitch = (unleash: UnleashClient) => {
     });
     if (rolledOut.kind === 'failed') return rolledOut;
 
-    const outcome = { flag: { status: rolledOut.flag.kind, name, state }, environment, targets: targets.map((t) => ({ ...t, rollout: rolloutOf(t) })) };
-    if (rolledOut.kind === 'requested') return { kind: 'pending_change_request', ...outcome, changeRequest: rolledOut.changeRequest };
+    const outcome = {
+      flag: { status: rolledOut.flag.kind, name, state },
+      environment,
+      targets: targets.map((t) => ({ ...t, rollout: rolloutOf(t) })),
+    };
+    if (rolledOut.kind === 'requested')
+      return { kind: 'pending_change_request', ...outcome, changeRequest: rolledOut.changeRequest };
     return { kind: 'switched', ...outcome };
   };
 };

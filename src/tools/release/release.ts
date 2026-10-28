@@ -36,6 +36,11 @@ export const createRelease = (unleash: UnleashClient) => {
     }
 
     const { applied } = rolledOut;
-    return { kind: 'released', ...outcome, ...(applied.template && { template: applied.template }), ...(applied.releasePlan && { releasePlan: applied.releasePlan }) };
+    return {
+      kind: 'released',
+      ...outcome,
+      ...(applied.template && { template: applied.template }),
+      ...(applied.releasePlan && { releasePlan: applied.releasePlan }),
+    };
   };
 };

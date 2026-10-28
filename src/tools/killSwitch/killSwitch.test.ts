@@ -27,21 +27,38 @@ after(async () => {
 
 // The recording pins the create as a kill switch and the target for everyone.
 test('creates a missing switch and turns it on for everyone', async () => {
-  const output = await createKillSwitch(unleash)({ project, flag: { name: flag, state: 'on' }, environment: 'development' });
+  const output = await createKillSwitch(unleash)({
+    project,
+    flag: { name: flag, state: 'on' },
+    environment: 'development',
+  });
 
-  assert.deepEqual(output, { kind: 'switched', flag: { status: 'new', name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 100 }] });
+  assert.deepEqual(output, {
+    kind: 'switched',
+    flag: { status: 'new', name: flag, state: 'on' },
+    environment: 'development',
+    targets: [{ name: 'Everyone', rollout: 100 }],
+  });
   assert.equal(describedByOutputSchema(output), undefined);
 });
 
 test('turns an existing switch off', async () => {
-  const output = await createKillSwitch(unleash)({ project, flag: { name: flag, state: 'off' }, environment: 'development' });
+  const output = await createKillSwitch(unleash)({
+    project,
+    flag: { name: flag, state: 'off' },
+    environment: 'development',
+  });
 
   assert.partialDeepStrictEqual(output, { kind: 'switched', flag: { status: 'existing', state: 'off' } });
 });
 
 // `mcp-server` requires change requests in production.
 test('puts the switch in a change request where the environment requires one', async () => {
-  const output = await createKillSwitch(unleash)({ project, flag: { name: flag, state: 'on' }, environment: 'production' });
+  const output = await createKillSwitch(unleash)({
+    project,
+    flag: { name: flag, state: 'on' },
+    environment: 'production',
+  });
 
   assert(output.kind === 'pending_change_request');
   changeRequestId = output.changeRequest.id;
@@ -53,16 +70,32 @@ test('fails with the Unleash error when the switch cannot be created', async () 
   const { unleash, stub } = createStubbedClient();
   const message = 'You need the CREATE_FEATURE permission';
   stubChangeRequestsIn(stub, 'web');
-  stub.intercept({ path: '/api/admin/projects/web/features/disable-payments', method: 'GET' }).reply(404, unleashError('NotFoundError', 'Could not find feature flag disable-payments'));
-  stub.intercept({ path: '/api/admin/projects/web/features', method: 'POST' }).reply(403, unleashError('PermissionError', message));
+  stub
+    .intercept({ path: '/api/admin/projects/web/features/disable-payments', method: 'GET' })
+    .reply(404, unleashError('NotFoundError', 'Could not find feature flag disable-payments'));
+  stub
+    .intercept({ path: '/api/admin/projects/web/features', method: 'POST' })
+    .reply(403, unleashError('PermissionError', message));
 
-  const output = await createKillSwitch(unleash)({ project: 'web', flag: { name: 'disable-payments', state: 'on' }, environment: 'development' });
+  const output = await createKillSwitch(unleash)({
+    project: 'web',
+    flag: { name: 'disable-payments', state: 'on' },
+    environment: 'development',
+  });
 
   assert.deepEqual(output, { kind: 'failed', status: 403, name: 'PermissionError', reasons: [message] });
 });
 
-test('refuses release\'s audience, which it would drop and turn the switch on for everyone', () => {
-  const parsed = killSwitchInput.safeParse({ project: 'web', flag: { name: 'disable-payments', state: 'on' }, environment: 'production', audience: { targets: [{ name: 'Beta' }] } });
+test("refuses release's audience, which it would drop and turn the switch on for everyone", () => {
+  const parsed = killSwitchInput.safeParse({
+    project: 'web',
+    flag: { name: 'disable-payments', state: 'on' },
+    environment: 'production',
+    audience: { targets: [{ name: 'Beta' }] },
+  });
 
-  assert.deepEqual(parsed.error?.issues.map((i) => i.code), ['unrecognized_keys']);
+  assert.deepEqual(
+    parsed.error?.issues.map((i) => i.code),
+    ['unrecognized_keys'],
+  );
 });
