@@ -173,6 +173,23 @@ test('tells when an SDK last saw the flag in each environment', async () => {
   });
 });
 
+// Unleash keeps whatever keys a payload was written with; the strict output schema would refuse an extra one.
+test('returns only the type and value of a value\'s payload', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const variant = { name: 'blue', weight: 1000, weightType: 'variable', stickiness: 'default', payload: { type: 'string', value: '#00f', note: 'from another client' } };
+  stub.intercept({ path: flagPath, method: 'GET' }).reply(200, {
+    name: flag,
+    type: 'release',
+    environments: [{ name: 'development', enabled: true, strategies: [{ name: 'flexibleRollout', title: 'Everyone', parameters: { rollout: '100' }, variants: [variant] }] }],
+  });
+  stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
+
+  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
+
+  assert(output.kind === 'flag');
+  assert.deepEqual(output.environments[0]?.targets?.[0]?.values, [{ name: 'blue', payload: { type: 'string', value: '#00f' } }]);
+});
+
 test('tells which values the parent must serve', async () => {
   const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release', dependencies: [{ feature: parent, enabled: true, variants: ['blue'] }] });

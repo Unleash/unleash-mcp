@@ -109,7 +109,7 @@ const toTarget = (s: UnleashStrategy): Target & { rollout: number } => ({
 // A variable weight is what Unleash resolved, not what was asked for, so only a fixed one comes back as a share.
 const toValue = ({ name, payload, weight, weightType }: UnleashVariant): Value => ({
   name,
-  ...(payload ? { payload } : {}),
+  ...(payload ? { payload: { type: payload.type, value: payload.value } } : {}),
   ...(weightType === 'fix' ? { share: weight / 10 } : {}),
 });
 
