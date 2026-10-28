@@ -1,0 +1,61 @@
+import assert from 'node:assert/strict';
+import { after, before, test } from 'node:test';
+import { z } from 'zod';
+import { stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
+import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
+import { unleashError } from '../../unleash/testError.ts';
+import { cancelChangeRequest, deleteFlag } from '../../unleash/testSetup.ts';
+import { createKillSwitch } from './killSwitch.ts';
+import { killSwitchOutput } from './killSwitchOutput.ts';
+
+const { unleash, admin, close } = createRecordedClient(new URL('./killSwitch.snapshot.json', import.meta.url).pathname);
+const project = 'mcp-server';
+const flag = 'mcp-disable-payments';
+let changeRequestId: number | undefined;
+// The MCP SDK checks every result against the output schema, so a result it doesn't describe never reaches the agent.
+const describedByOutputSchema = (result: unknown) => z.object(killSwitchOutput).safeParse({ result }).error;
+
+// The switch is gone before the tests, so the first one creates it.
+before(() => deleteFlag(admin, project, flag));
+// The change request goes first, so nothing pending refers to the switch.
+after(async () => {
+  if (changeRequestId) await cancelChangeRequest(unleash, project, changeRequestId);
+  await deleteFlag(admin, project, flag);
+  await close();
+});
+
+// The recording pins the create as a kill switch and the target for everyone.
+test('creates a missing switch and turns it on for everyone', async () => {
+  const output = await createKillSwitch(unleash)({ project, flag: { name: flag, state: 'on' }, environment: 'development' });
+
+  assert.deepEqual(output, { kind: 'switched', flag: { status: 'new', name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 100 }] });
+  assert.equal(describedByOutputSchema(output), undefined);
+});
+
+test('turns an existing switch off', async () => {
+  const output = await createKillSwitch(unleash)({ project, flag: { name: flag, state: 'off' }, environment: 'development' });
+
+  assert.partialDeepStrictEqual(output, { kind: 'switched', flag: { status: 'existing', state: 'off' } });
+});
+
+// `mcp-server` requires change requests in production.
+test('puts the switch in a change request where the environment requires one', async () => {
+  const output = await createKillSwitch(unleash)({ project, flag: { name: flag, state: 'on' }, environment: 'production' });
+
+  assert(output.kind === 'pending_change_request');
+  changeRequestId = output.changeRequest.id;
+  assert.equal(output.changeRequest.state, 'In review');
+  assert.equal(describedByOutputSchema(output), undefined);
+});
+
+test('fails with the Unleash error when the switch cannot be created', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const message = 'You need the CREATE_FEATURE permission';
+  stubChangeRequestsIn(stub, 'web');
+  stub.intercept({ path: '/api/admin/projects/web/features/disable-payments', method: 'GET' }).reply(404, unleashError('NotFoundError', 'Could not find feature flag disable-payments'));
+  stub.intercept({ path: '/api/admin/projects/web/features', method: 'POST' }).reply(403, unleashError('PermissionError', message));
+
+  const output = await createKillSwitch(unleash)({ project: 'web', flag: { name: 'disable-payments', state: 'on' }, environment: 'development' });
+
+  assert.deepEqual(output, { kind: 'failed', status: 403, name: 'PermissionError', reasons: [message] });
+});
