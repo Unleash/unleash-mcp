@@ -11,6 +11,9 @@ type UnleashEnvironment = components['schemas']['featureEnvironmentSchema'];
 /** A flag as a rollout finds it: each of its environments, or missing, with Unleash's answer saying so. */
 export type FoundFlag = { kind: 'found'; environments: UnleashEnvironment[] } | { kind: 'missing'; notFound: Failed };
 
+/** The flag as a rollout finds it in the environment, created on the way when it was missing. */
+export type EnsuredFlag = Current & { kind: 'new' | 'existing' };
+
 export const readFlag = async (unleash: UnleashClient, project: string, flag: string): Promise<FoundFlag | Failed> => {
   const found = await unleash.GET(feature, { params: { path: { projectId: project, featureName: flag } } });
   if (found.response.status === 404) return { kind: 'missing', notFound: toFailed(found) };
