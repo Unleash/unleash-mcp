@@ -362,3 +362,10 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 
 - Releasing software, kill switching and A/B test splits are separate enough use cases to justify separate top-level tools, despite all of them using similar, if not identical, setup under the hood. For experiments Unleash only does the split, not checking the results.
 - So the rollout engine is shared code, not part of `release`: planning an environment's end state, the direct writes, the change request for an environment, applying a template and starting a milestone live in `src/tools/shared/rollout/`, and each tool keeps only its own input, output and planning of its audience.
+- Release plans stay in the shared engine, though kill switches don't use them. Rejected: moving them into `release`, which scattered the order of the shared writes.
+
+## 2026-10-28 — Kill switch tool
+
+- A missing switch is created as a permanent `kill-switch` flag. A negated name, such as `disable-payments`, is encouraged, not enforced.
+- Like release: one environment per call, same change requests. Targets default to everyone, to prevent overspecifying.
+- Retyping an existing flag, e.g. a release turned into a kill switch, is skipped for now.

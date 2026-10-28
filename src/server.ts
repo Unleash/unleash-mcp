@@ -12,6 +12,9 @@ import { evaluateOutput } from './tools/evaluate/evaluateOutput.ts';
 import { createInspect } from './tools/inspect/inspect.ts';
 import { inspectInput } from './tools/inspect/inspectInput.ts';
 import { inspectOutput } from './tools/inspect/inspectOutput.ts';
+import { createKillSwitch } from './tools/killSwitch/killSwitch.ts';
+import { killSwitchInput } from './tools/killSwitch/killSwitchInput.ts';
+import { killSwitchOutput } from './tools/killSwitch/killSwitchOutput.ts';
 import { createManageFlag } from './tools/manageFlag/manageFlag.ts';
 import { manageFlagInput } from './tools/manageFlag/manageFlagInput.ts';
 import { manageFlagOutput } from './tools/manageFlag/manageFlagOutput.ts';
@@ -43,7 +46,8 @@ const toFailedToolResult = (result: Failed) => ({
 
 // Clients that defer tools show the agent only tool names and these instructions until it loads a tool.
 const outcomes = {
-  release: 'Turn a feature on or off in an environment: for everyone, a percentage, chosen audiences or segments, split across values, or through a release template or release plan milestone; turning on creates a missing flag.',
+  release: 'Turn a feature on or off in an environment: for everyone, a percentage, chosen audiences or segments, split across values, or through a release template or release plan milestone; turning on creates a missing flag. For a permanent kill switch, use kill_switch.',
+  kill_switch: 'Add a permanent kill switch, named after what it turns off, or flip one on or off in an environment, for everyone or chosen audiences; flipping creates a missing switch.',
   inspect: 'See a project, flag, context field or segment in full, such as the environments of a project, who gets a flag in each environment and when SDKs last saw it there, or which flags use a context field or segment.',
   search: 'Find projects, environments, flags, segments, context fields, tag types, tags, release templates and event types, filter flags by tag, segment, lifecycle stage, creator or creation date, and get the ids and names the other tools take.',
   evaluate: 'Tell whether a user or context gets a feature in an environment and which value, and what blocks it when it is off.',
@@ -67,6 +71,7 @@ export const createServer = (unleash: UnleashClient, sendFeedback?: SendFeedback
   // GHSA-46jr-4wx8-v453. A context field update resends every legal value, so this caps a field at about 3,300 described values.
   const server = new McpServer({ name: 'unleash-mcp', version: pkg.version }, { instructions: instructionsFor(sendFeedback), maxToolInputElements: 10_000 });
   const release = createRelease(unleash);
+  const killSwitch = createKillSwitch(unleash);
   const inspect = createInspect(unleash);
   const configure = createConfigure(unleash);
   const search = createSearch(unleash);
@@ -83,6 +88,19 @@ export const createServer = (unleash: UnleashClient, sendFeedback?: SendFeedback
     },
     async (input) => {
       const result = await release(input);
+      return result.kind === 'failed' ? toFailedToolResult(result) : toToolResult({ result });
+    },
+  );
+
+  server.registerTool(
+    'kill_switch',
+    {
+      description: `${outcomes.kill_switch} Where the environment requires change requests, the switch goes into a change request submitted for review instead of being applied.`,
+      inputSchema: killSwitchInput,
+      outputSchema: killSwitchOutput,
+    },
+    async (input) => {
+      const result = await killSwitch(input);
       return result.kind === 'failed' ? toFailedToolResult(result) : toToolResult({ result });
     },
   );
