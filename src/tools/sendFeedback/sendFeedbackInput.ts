@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 /** The tools a report can name. Keep in sync with the tools `createServer` registers, `send_feedback` aside. */
-export const reportableTools = ['release', 'inspect', 'search', 'evaluate', 'configure', 'manage_flag', 'audit'] as const;
+export const reportableTools = ['release', 'kill_switch', 'inspect', 'search', 'evaluate', 'configure', 'manage_flag', 'audit'] as const;
 
 /** What the agent reports when the MCP fell short; anonymous, so it never carries the user's data. */
 export const sendFeedbackInput = {

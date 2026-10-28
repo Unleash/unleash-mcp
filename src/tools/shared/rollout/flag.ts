@@ -1,11 +1,14 @@
+import { z } from 'zod';
 import type { components } from '../../../unleash/api.d.ts';
 import type { UnleashClient } from '../../../unleash/client.ts';
 import { type Failed, toFailed } from '../failed.ts';
+import { flagState } from '../flagState.ts';
 import type { Current } from './plan.ts';
 
 const features = '/api/admin/projects/{projectId}/features';
 const feature = '/api/admin/projects/{projectId}/features/{featureName}';
 
+type FlagType = NonNullable<components['schemas']['createFeatureSchema']['type']>;
 type UnleashEnvironment = components['schemas']['featureEnvironmentSchema'];
 
 /** A flag as a rollout finds it: each of its environments, or missing, with Unleash's answer saying so. */
@@ -14,6 +17,13 @@ export type FoundFlag = { kind: 'found'; environments: UnleashEnvironment[] } | 
 /** The flag as a rollout finds it in the environment, created on the way when it was missing. */
 export type EnsuredFlag = Current & { kind: 'new' | 'existing' };
 
+/** The flag a rollout reports back. */
+export const rolledOutFlag = z.object({
+  status: z.enum(['new', 'existing']).describe('new: the flag was created; existing: it was there already'),
+  name: z.string(),
+  state: flagState,
+});
+
 export const readFlag = async (unleash: UnleashClient, project: string, flag: string): Promise<FoundFlag | Failed> => {
   const found = await unleash.GET(feature, { params: { path: { projectId: project, featureName: flag } } });
   if (found.response.status === 404) return { kind: 'missing', notFound: toFailed(found) };
@@ -21,8 +31,8 @@ export const readFlag = async (unleash: UnleashClient, project: string, flag: st
   return { kind: 'found', environments: found.data?.environments ?? [] };
 };
 
-export const createFlag = async (unleash: UnleashClient, project: string, flag: string): Promise<{ kind: 'created' } | Failed> => {
-  const created = await unleash.POST(features, { params: { path: { projectId: project } }, body: { name: flag } });
+export const createFlag = async (unleash: UnleashClient, project: string, flag: string, type?: FlagType): Promise<{ kind: 'created' } | Failed> => {
+  const created = await unleash.POST(features, { params: { path: { projectId: project } }, body: { name: flag, ...(type && { type }) } });
   if (!created.response.ok) return toFailed(created);
   return { kind: 'created' };
 };

@@ -1,13 +1,8 @@
 import { z } from 'zod';
 import { changeRequest } from '../shared/changeRequest.ts';
 import { type Failed, failed } from '../shared/failed.ts';
-import { flagState as state } from '../shared/flagState.ts';
+import { rolledOutFlag as flag } from '../shared/rollout/flag.ts';
 import { target } from '../shared/target.ts';
-
-const flag = z.discriminatedUnion('status', [
-  z.object({ status: z.literal('new'), name: z.string(), state }),
-  z.object({ status: z.literal('existing'), name: z.string(), state }),
-]);
 
 const released = z.object({
   kind: z.literal('released'),
