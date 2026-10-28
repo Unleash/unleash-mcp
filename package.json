@@ -1,6 +1,6 @@
 {
   "name": "@unleash/mcp",
-  "version": "1.0.0-alpha.1",
+  "version": "0.5.0",
   "description": "MCP server for Unleash: an AI-agent-friendly interface to Unleash",
   "repository": {
     "type": "git",
