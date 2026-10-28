@@ -7,8 +7,6 @@ const flag = z.strictObject({
   state: flagState.describe('Whether the environment serves the feature to the targets'),
 });
 
-// The audience replaces what the environment had, so a key dropped in silence would release something other than
-// what the agent asked for and still report success.
 const targets = z.strictObject({
   targets: z.array(target).min(1).describe('The audiences that get the feature while it is on, ORed'),
 });

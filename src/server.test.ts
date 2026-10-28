@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
-import { ElicitRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import { ElicitRequestSchema, type Tool } from '@modelcontextprotocol/sdk/types.js';
 import { createServer } from './server.ts';
 import type { SendFeedback } from './tools/sendFeedback/sendFeedback.ts';
 import { reportableTools } from './tools/sendFeedback/sendFeedbackInput.ts';
@@ -181,6 +181,32 @@ test('send_feedback can name every other tool the server lists', async () => {
   assert.deepEqual(tools.map((tool) => tool.name).filter((name) => name !== 'send_feedback').sort(), [...reportableTools].sort());
   await client.close();
 });
+
+// Checks the schemas the agent sees; any tool not marked read-only counts as writing, so new ones are covered.
+// Feedback is on, so send_feedback is listed too.
+test('tools that write list inputs that refuse unknown keys at every level', async () => {
+  const { unleash: stubbed } = createStubbedClient();
+  const client = await connectClient(stubbed, async () => ({ kind: 'sent' }));
+
+  const { tools } = await client.listTools();
+  const lenient = tools.filter(writes).flatMap(lenientObjects);
+
+  assert.deepEqual(lenient, []);
+  await client.close();
+});
+
+const writes = ({ annotations }: Tool): boolean => !annotations?.readOnlyHint;
+
+// The paths of the objects in a tool's input that accept keys they don't list.
+const lenientObjects = ({ name, inputSchema }: Tool): string[] => {
+  const walk = (schema: unknown, path: string): string[] => {
+    if (typeof schema !== 'object' || schema === null) return [];
+    const { type, additionalProperties } = schema as { type?: unknown; additionalProperties?: unknown };
+    const here = type === 'object' && additionalProperties !== false ? [path] : [];
+    return [...here, ...Object.entries(schema).flatMap(([key, value]) => walk(value, `${path}/${key}`))];
+  };
+  return walk(inputSchema, name);
+};
 
 test('send_feedback names the client the agent connected with', async () => {
   const { unleash: stubbed } = createStubbedClient();

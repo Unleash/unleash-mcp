@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Strict, so values sent with a parent that must be off are refused instead of dropped.
 const on = z.strictObject({
   kind: z.literal('on'),
   flag: z.string(),

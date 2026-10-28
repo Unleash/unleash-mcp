@@ -337,18 +337,6 @@ test('takes one of targets, a release template or a milestone', () => {
   assert.equal(releaseInput.shape.audience.safeParse(templateAndMilestone).success, false);
 });
 
-test('refuses a flag with a key it does not take, such as a type it would not set', () => {
-  const parsed = releaseInput.safeParse({ project, flag: { name: flag, state: 'on', type: 'kill-switch' }, environment: 'development', audience: { targets: [{ name: 'Everyone' }] } });
-
-  assert.deepEqual(parsed.error?.issues.map((i) => i.code), ['unrecognized_keys']);
-});
-
-test('refuses a target with a key it does not take, such as a percentage for its rollout', () => {
-  const parsed = releaseInput.shape.audience.safeParse({ targets: [{ name: 'Beta testers', percentage: 50 }] });
-
-  assert.equal(parsed.success, false);
-});
-
 test('refuses an audience with a key it does not know', () => {
   const parsed = releaseInput.shape.audience.safeParse({ targets: [{ name: 'Everyone' }], target: [{ name: 'Beta testers' }] });
 

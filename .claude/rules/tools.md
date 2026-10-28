@@ -13,7 +13,7 @@ paths:
 - A read returns everything it gets cheaply. A part that costs Unleash real work (a scan, such as the usage of a context field) or many tokens (such as the diff of every change in an audit) is named in an `include` enum list on the query and left out unless named (`include: ['usage']`).
 - Take a list of operations when the agent can name each part and each change is one Unleash call. Take an end state and diff it when parts have no agent-facing identity or rules span them.
 - `search` and `inspect` rows are the dropdowns for agents: a filter or a command takes what those rows give (an id, a name) and never resolves it itself. A step never calls another step to look a reference up; the agent runs the lookup query first.
-- A tool that writes takes a strict input: every object is `z.strictObject`, including the shared shapes in `src/tools/shared/`.
+- A tool that writes (any tool not marked `readOnlyHint: true`) takes a strict input: every object is `z.strictObject`, including the shared shapes in `src/tools/shared/`. Outputs that use those shapes build them from Unleash data key by key, never passing an Unleash object through.
 - Every input parameter's description says where to get its value from (e.g. `as a segments search returns it`, `as a context field inspect lists them`).
 - A new tool gets a one-sentence outcome in `outcomes` (`src/server.ts`): what the user achieves with it, true to its schema.
 

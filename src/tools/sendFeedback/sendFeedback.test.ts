@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { type Interceptable, MockAgent } from 'undici';
-import { z } from 'zod';
 import { unleashError } from '../../unleash/testError.ts';
 import { type AskUser, type Consent, granted } from './consent.ts';
 import { createSendFeedback } from './sendFeedback.ts';
@@ -111,9 +110,7 @@ test('leaves the client out when its name or version is empty once cleaned', asy
 });
 
 test('refuses an error message in place of the error name, so it never reaches the report', () => {
-  const input = z.object(sendFeedbackInput);
-
-  const parsed = input.safeParse({ issueType: 'tool_error', summary: 'Release failed.', error: { status: 403, name: 'You need the "UPDATE_FEATURE" permission.' } });
+  const parsed = sendFeedbackInput.safeParse({ issueType: 'tool_error', summary: 'Release failed.', error: { status: 403, name: 'You need the "UPDATE_FEATURE" permission.' } });
 
   assert.equal(parsed.success, false);
 });
