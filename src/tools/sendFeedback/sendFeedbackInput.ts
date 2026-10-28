@@ -4,7 +4,7 @@ import { z } from 'zod';
 export const reportableTools = ['release', 'kill_switch', 'inspect', 'search', 'evaluate', 'configure', 'manage_flag', 'audit'] as const;
 
 /** What the agent reports when the MCP fell short; anonymous, so it never carries the user's data. */
-export const sendFeedbackInput = {
+export const sendFeedbackInput = z.strictObject({
   issueType: z
     .enum(['tool_error', 'unsupported_action', 'unexpected_result'])
     .describe('tool_error: a tool result came back as an error, except authentication errors (401, 403). unsupported_action: the user asked for something no tool does. unexpected_result: a tool succeeded but the result was wrong'),
@@ -12,12 +12,12 @@ export const sendFeedbackInput = {
   tool: z.enum(reportableTools).optional().describe('The tool you called that fell short; leave out for unsupported_action'),
   // The pattern keeps anything but an error type name, such as a message, out of the report.
   error: z
-    .object({
+    .strictObject({
       status: z.number().int().describe('status of the failed result'),
       name: z.string().max(64).regex(/^[A-Z][A-Za-z]*$/).describe('name of the failed result, e.g. PermissionError'),
     })
     .optional()
     .describe('From the failed result of a tool_error, as the tool returned it; leave out otherwise'),
-};
+});
 
-export type SendFeedbackInput = z.infer<z.ZodObject<typeof sendFeedbackInput>>;
+export type SendFeedbackInput = z.infer<typeof sendFeedbackInput>;

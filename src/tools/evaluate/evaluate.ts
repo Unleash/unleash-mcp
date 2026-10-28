@@ -35,7 +35,7 @@ const evaluate = async (unleash: UnleashClient, { flag, environment, context }: 
   };
 };
 
-const toValue = ({ name, payload }: UnleashVariant): ServedValue => ({ name, ...(payload ? { payload } : {}) });
+const toValue = ({ name, payload }: UnleashVariant): ServedValue => ({ name, ...(payload ? { payload: { type: payload.type, value: payload.value } } : {}) });
 
 const toTarget = (strategy: UnleashStrategy, context: EvaluateQuery['context']): EvaluatedTarget => {
   const named = strategy.title ? { name: strategy.title } : {};

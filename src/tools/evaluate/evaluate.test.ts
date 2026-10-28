@@ -141,6 +141,17 @@ test('a rollout under 100 names the field it groups contexts by, or that field a
   });
 });
 
+test('returns only the type and value of the payload served', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const variant = { name: 'blue', enabled: true, payload: { type: 'string', value: 'b', note: 'from another client' } };
+  stub.intercept({ path: `/api/admin/playground/features/${flag}`, method: 'POST' }).reply(200, { feature: { isEnabled: true, isEnabledInCurrentEnvironment: true, variant, strategies: { data: [] } } });
+  const evaluate = createEvaluate(unleash);
+
+  const output = await evaluate({ queries: [{ flag, environment, context: { appName: 'unleash-mcp' } }] });
+
+  assert.deepEqual(output, { results: [{ kind: 'evaluated', flag, environment, result: 'on', value: { name: 'blue', payload: { type: 'string', value: 'b' } } }] });
+});
+
 test('answers each query in the order asked, a failure naming its flag and environment', async () => {
   const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: '/api/admin/playground/features/missing', method: 'POST' }).reply(404, unleashError('NotFoundError', 'Could not find feature flag missing'));
