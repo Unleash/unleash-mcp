@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const project = z
   .object({ kind: z.literal('project'), project: z.string().describe('Project id, as a projects search returns it') })
-  .describe('A project: its environments and flag naming pattern');
+  .describe('A project: its environments, default stickiness and flag naming pattern');
 const flag = z
   .object({
     kind: z.literal('flag'),

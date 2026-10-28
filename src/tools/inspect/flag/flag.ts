@@ -140,9 +140,10 @@ const toTransition = (condition: object): Transition => {
 };
 
 // The reverse of the release plan's toStrategy, so a target can be edited and released again.
-const toTarget = (s: UnleashStrategy): Target & { rollout: number } => ({
+const toTarget = (s: UnleashStrategy): Target & { rollout: number; stickiness: string } => ({
   name: s.title || s.name,
   rollout: Number(s.parameters?.rollout ?? 100),
+  stickiness: s.parameters?.stickiness ?? 'default',
   ...(s.constraints?.length ? { constraints: s.constraints.map(toConstraint) } : {}),
   ...(s.segments?.length ? { segments: s.segments } : {}),
   ...(s.variants?.length ? { values: s.variants.map(toValue) } : {}),

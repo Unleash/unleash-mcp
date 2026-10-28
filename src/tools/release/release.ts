@@ -1,6 +1,6 @@
 import type { UnleashClient } from '../../unleash/client.ts';
 import { createRollout } from '../shared/rollout/rollout.ts';
-import { rolloutOf } from '../shared/strategy.ts';
+import { rolloutOf, stickinessOf } from '../shared/strategy.ts';
 import { ensureFlag } from './flag.ts';
 import type { ReleaseInput } from './releaseInput.ts';
 import type { ReleaseResult } from './releaseOutput.ts';
@@ -21,7 +21,9 @@ export const createRelease = (unleash: UnleashClient) => {
     const outcome = {
       flag: { status: rolledOut.flag.kind, name, state },
       environment,
-      ...('targets' in audience && { targets: audience.targets.map((t) => ({ ...t, rollout: rolloutOf(t) })) }),
+      ...('targets' in audience && {
+        targets: audience.targets.map((t) => ({ ...t, rollout: rolloutOf(t), stickiness: stickinessOf(t) })),
+      }),
     };
 
     if (rolledOut.kind === 'requested') {

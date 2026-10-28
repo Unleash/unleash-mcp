@@ -78,6 +78,12 @@ export const target = z.strictObject({
     .optional()
     .describe('Ids of audiences already defined in Unleash, as a segments search returns them'),
   values: values.optional().describe('Values the audience gets, split by share'),
+  stickiness: z
+    .string()
+    .optional()
+    .describe(
+      'What keeps a user in the rollout and in their value: default, userId, sessionId, random, or a field with stickiness from a context fields search. default when left out; the default of the project is on its inspect. Changing it moves users',
+    ),
 });
 
 export type Target = z.infer<typeof target>;
