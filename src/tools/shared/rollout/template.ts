@@ -1,6 +1,6 @@
-import type { UnleashClient } from '../../unleash/client.ts';
-import { type Failed, toFailed } from '../shared/failed.ts';
-import type { EnvironmentPath } from './releasePlan.ts';
+import type { UnleashClient } from '../../../unleash/client.ts';
+import { type Failed, toFailed } from '../failed.ts';
+import type { EnvironmentPath } from './plan.ts';
 
 const releasePlans = '/api/admin/projects/{project}/features/{featureName}/environments/{environment}/release-plans';
 

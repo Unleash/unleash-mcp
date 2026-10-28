@@ -357,3 +357,8 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 - A success returns `structuredContent` and the same JSON as a text block, as the spec says it SHOULD. Antigravity, Devin and Cursor show the model only text blocks, so a success with `structuredContent` only reached their models empty. Codex and Copilot then show the model both copies, Claude Code only the structured one.
 - Failures stay text only. Every client we measured shows the model the text of a failure carrying both, so structured failures would only help code calling the MCP directly, and we know of no such users. Rejected: failures carrying both.
 - Supersedes, in the 2026-10-21 Failures as text entry, "Rejected: a text block on every result" for successes.
+
+## 2026-10-28 — Rollout engine shared by the use case tools
+
+- Releasing software, kill switching and A/B test splits are separate enough use cases to justify separate top-level tools, despite all of them using similar, if not identical, setup under the hood. For experiments Unleash only does the split, not checking the results.
+- So the rollout engine is shared code, not part of `release`: planning an environment's end state, the direct writes, the change request for an environment, applying a template and starting a milestone live in `src/tools/shared/rollout/`, and each tool keeps only its own input, output and planning of its audience.

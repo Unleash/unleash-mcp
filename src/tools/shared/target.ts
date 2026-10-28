@@ -25,7 +25,7 @@ const value = z.object({
   share: z.number().int().min(0).max(100).optional().describe('Percentage of the audience that gets this value. Values without one split what is left evenly'),
 });
 
-// The plan turns the last of a fully shared list into the one taking what is left (see releasePlan.ts),
+// The plan turns the last of a fully shared list into the one taking what is left (see rollout/plan.ts),
 // which only keeps its share when the shares add up to 100. Shares over 100 are left to Unleash to reject.
 const values = z.array(value).min(1).refine(
   (vs) => vs.some((v) => v.share === undefined) || vs.reduce((sum, v) => sum + (v.share ?? 0), 0) === 100,

@@ -5,7 +5,7 @@ paths:
 
 # MCP tools
 
-- Each tool has its own directory (`src/tools/release/`), split into input schema, logic and output schema. Files and exports carry the tool name (`releaseInput.ts`, not `input.ts`). Shapes shared across tools (`failed.ts`, `target.ts`, `legalValue.ts`) sit in `src/tools/shared/`.
+- Each tool has its own directory (`src/tools/release/`), split into input schema, logic and output schema. Files and exports carry the tool name (`releaseInput.ts`, not `input.ts`). Shapes shared across tools (`failed.ts`, `target.ts`, `legalValue.ts`) sit in `src/tools/shared/`. A tool that sets who gets a flag in an environment (`release`, and the kill switch and experiment tools to come) plans and writes it through `src/tools/shared/rollout/`, keeping only its own input, output and audience planning.
 - A success returns `structuredContent` and the same JSON as a text block; a failure returns a text block only.
 - Keep output token efficient by returning minimal fields, shaped by hand on top of the generated Unleash types.
 - Every union tags its success case with a `kind`; never a bare string next to result objects.
@@ -16,4 +16,4 @@ paths:
 - Every input parameter's description says where to get its value from (e.g. `as a segments search returns it`, `as a context field inspect lists them`).
 - A new tool gets a one-sentence outcome in `outcomes` (`src/server.ts`): what the user achieves with it, true to its schema.
 
-Why: `docs/decisions.md` (Tool structure, Unleash HTTP client, Tool layering, End state or operations, Opt-in parts of a read, Audit diff, Search prepares the options, Inputs say where their values come from, Server instructions pick the tool).
+Why: `docs/decisions.md` (Tool structure, Rollout engine shared by the use case tools, Unleash HTTP client, Tool layering, End state or operations, Opt-in parts of a read, Audit diff, Search prepares the options, Inputs say where their values come from, Server instructions pick the tool).
