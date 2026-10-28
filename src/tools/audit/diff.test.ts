@@ -11,7 +11,12 @@ test('writes the path to a changed value as a person would, with the value befor
 
 test('ignores fields that change without anyone editing them, and ids', () => {
   const before = { enabled: true, lastSeenAt: '2026-01-01T00:00:00Z', createdAt: '2025-01-01' };
-  const after = { id: '01M5YES4QANN36N0SV5RKHT236', enabled: true, lastSeenAt: '2026-10-15T00:00:00Z', createdAt: '2025-06-01' };
+  const after = {
+    id: '01M5YES4QANN36N0SV5RKHT236',
+    enabled: true,
+    lastSeenAt: '2026-10-15T00:00:00Z',
+    createdAt: '2025-06-01',
+  };
 
   assert.deepEqual(diffEventData(before, after), []);
 });

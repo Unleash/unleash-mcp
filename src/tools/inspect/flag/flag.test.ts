@@ -16,7 +16,12 @@ const parent = 'mcp-inspected-parent';
 const beta = { field: 'userId', operator: 'IN' as const, values: ['1', '2'] };
 const values = [{ name: 'blue', payload: { type: 'string' as const, value: '#00f' }, share: 30 }, { name: 'green' }];
 const template = 'mcp-inspect-plan';
-const gradual = (rollout: string) => ({ sortOrder: 0, strategyName: 'flexibleRollout', title: 'Everyone', parameters: { rollout, stickiness: 'default', groupId: parent } });
+const gradual = (rollout: string) => ({
+  sortOrder: 0,
+  strategyName: 'flexibleRollout',
+  title: 'Everyone',
+  parameters: { rollout, stickiness: 'default', groupId: parent },
+});
 const features = '/api/admin/projects/{projectId}/features';
 const flagPath = `/api/admin/projects/${project}/features/${flag}`;
 const tagsPath = `/api/admin/features/${flag}/tags`;
@@ -38,29 +43,59 @@ const addReleasePlan = async (): Promise<void> => {
     body: {
       name: template,
       milestones: [
-        { name: 'Canary', sortOrder: 0, strategies: [gradual('10')], transitionCondition: { type: 'time', intervalMinutes: 60 } },
-        { name: 'Half', sortOrder: 1, strategies: [gradual('50')], transitionCondition: { type: 'exposure', minimumExposures: 5 } },
+        {
+          name: 'Canary',
+          sortOrder: 0,
+          strategies: [gradual('10')],
+          transitionCondition: { type: 'time', intervalMinutes: 60 },
+        },
+        {
+          name: 'Half',
+          sortOrder: 1,
+          strategies: [gradual('50')],
+          transitionCondition: { type: 'exposure', minimumExposures: 5 },
+        },
         { name: 'Everyone', sortOrder: 2, strategies: [gradual('100')] },
       ],
     } as never,
   });
   assert(created.data);
   const path = { project, featureName: parent, environment: 'development' };
-  const plan = await admin.POST('/api/admin/projects/{project}/features/{featureName}/environments/{environment}/release-plans', { params: { path }, body: { templateId: created.data.id } });
+  const plan = await admin.POST(
+    '/api/admin/projects/{project}/features/{featureName}/environments/{environment}/release-plans',
+    { params: { path }, body: { templateId: created.data.id } },
+  );
   assert(plan.data?.milestones[0]);
-  await admin.POST('/api/admin/projects/{project}/features/{featureName}/environments/{environment}/release-plans/{planId}/milestones/{milestoneId}/start', {
-    params: { path: { ...path, planId: plan.data.id, milestoneId: plan.data.milestones[0].id } },
-  });
+  await admin.POST(
+    '/api/admin/projects/{project}/features/{featureName}/environments/{environment}/release-plans/{planId}/milestones/{milestoneId}/start',
+    {
+      params: { path: { ...path, planId: plan.data.id, milestoneId: plan.data.milestones[0].id } },
+    },
+  );
 };
 
 before(async () => {
   await deleteFlags();
   await admin.POST(features, { params: { path: { projectId: project } }, body: { name: parent } });
   await admin.POST(features, { params: { path: { projectId: project } }, body: { name: flag, type: 'kill-switch' } });
-  await admin.POST('/api/admin/projects/{projectId}/features/{child}/dependencies', { params: { path: { projectId: project, child: flag } }, body: { feature: parent } });
-  await admin.POST('/api/admin/features/{featureName}/tags', { params: { path: { featureName: flag } }, body: { type: 'simple', value: 'mcp-inspect' } });
-  await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/link', { params: { path: { projectId: project, featureName: flag } }, body: { url: 'https://example.com/mcp-inspect', title: 'Spec' } });
-  await createRelease(admin)({ project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values }] } });
+  await admin.POST('/api/admin/projects/{projectId}/features/{child}/dependencies', {
+    params: { path: { projectId: project, child: flag } },
+    body: { feature: parent },
+  });
+  await admin.POST('/api/admin/features/{featureName}/tags', {
+    params: { path: { featureName: flag } },
+    body: { type: 'simple', value: 'mcp-inspect' },
+  });
+  await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/link', {
+    params: { path: { projectId: project, featureName: flag } },
+    body: { url: 'https://example.com/mcp-inspect', title: 'Spec' },
+  });
+  await createRelease(admin)({
+    project,
+    flag: { name: flag, state: 'on' },
+    environment: 'development',
+    audience: { targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values }] },
+  });
   await addReleasePlan();
 });
 after(async () => {
@@ -82,7 +117,11 @@ test('describes a flag with its lifecycle, environments, who worked on it, its p
     type: 'kill-switch',
     lifecycle: { stage: 'define' },
     environments: [
-      { name: 'development', state: 'on', targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values }] },
+      {
+        name: 'development',
+        state: 'on',
+        targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values }],
+      },
       { name: 'production', state: 'off' },
     ],
     createdBy: 'Mateusz K',
@@ -111,8 +150,17 @@ test('names the flags that depend on a flag and the release plan rolling it out'
         releasePlan: {
           name: template,
           milestones: [
-            { name: 'Canary', active: true, transition: { type: 'time', intervalMinutes: 60 }, targets: [{ name: 'Everyone', rollout: 10 }] },
-            { name: 'Half', transition: { type: 'exposure', minimumExposures: 5 }, targets: [{ name: 'Everyone', rollout: 50 }] },
+            {
+              name: 'Canary',
+              active: true,
+              transition: { type: 'time', intervalMinutes: 60 },
+              targets: [{ name: 'Everyone', rollout: 10 }],
+            },
+            {
+              name: 'Half',
+              transition: { type: 'exposure', minimumExposures: 5 },
+              targets: [{ name: 'Everyone', rollout: 50 }],
+            },
             { name: 'Everyone', targets: [{ name: 'Everyone', rollout: 100 }] },
           ],
         },
@@ -127,20 +175,10 @@ test('names the flags that depend on a flag and the release plan rolling it out'
 
 test('names the lifecycle stage as the Unleash UI does, with its status', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release', lifecycle: { stage: 'completed', status: 'kept', enteredStageAt: '2026-10-21T09:00:00.000Z' } });
-  stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
-
-  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
-
-  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', lifecycle: { stage: 'cleanup', status: 'kept', enteredAt: '2026-10-21T09:00:00.000Z' }, environments: [] });
-});
-
-test('treats a transition without a type as time based', async () => {
-  const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, {
     name: flag,
     type: 'release',
-    environments: [{ name: 'development', enabled: true, releasePlans: [{ id: 'p1', name: 'Plan', milestones: [{ id: 'm1', name: 'Canary', transitionCondition: { intervalMinutes: 15 } }] }] }],
+    lifecycle: { stage: 'completed', status: 'kept', enteredStageAt: '2026-10-21T09:00:00.000Z' },
   });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
@@ -150,7 +188,49 @@ test('treats a transition without a type as time based', async () => {
     kind: 'flag',
     name: flag,
     type: 'release',
-    environments: [{ name: 'development', state: 'on', releasePlan: { id: 'p1', name: 'Plan', milestones: [{ id: 'm1', name: 'Canary', transition: { type: 'time', intervalMinutes: 15 } }] } }],
+    lifecycle: { stage: 'cleanup', status: 'kept', enteredAt: '2026-10-21T09:00:00.000Z' },
+    environments: [],
+  });
+});
+
+test('treats a transition without a type as time based', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: flagPath, method: 'GET' }).reply(200, {
+    name: flag,
+    type: 'release',
+    environments: [
+      {
+        name: 'development',
+        enabled: true,
+        releasePlans: [
+          {
+            id: 'p1',
+            name: 'Plan',
+            milestones: [{ id: 'm1', name: 'Canary', transitionCondition: { intervalMinutes: 15 } }],
+          },
+        ],
+      },
+    ],
+  });
+  stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
+
+  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
+
+  assert.deepEqual(output, {
+    kind: 'flag',
+    name: flag,
+    type: 'release',
+    environments: [
+      {
+        name: 'development',
+        state: 'on',
+        releasePlan: {
+          id: 'p1',
+          name: 'Plan',
+          milestones: [{ id: 'm1', name: 'Canary', transition: { type: 'time', intervalMinutes: 15 } }],
+        },
+      },
+    ],
   });
 });
 
@@ -159,7 +239,10 @@ test('tells when an SDK last saw the flag in each environment', async () => {
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, {
     name: flag,
     type: 'release',
-    environments: [{ name: 'development', enabled: true, lastSeenAt: '2026-10-21T09:00:00.000Z' }, { name: 'production', enabled: false, lastSeenAt: null }],
+    environments: [
+      { name: 'development', enabled: true, lastSeenAt: '2026-10-21T09:00:00.000Z' },
+      { name: 'production', enabled: false, lastSeenAt: null },
+    ],
   });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
@@ -169,71 +252,127 @@ test('tells when an SDK last saw the flag in each environment', async () => {
     kind: 'flag',
     name: flag,
     type: 'release',
-    environments: [{ name: 'development', state: 'on', lastSeenAt: '2026-10-21T09:00:00.000Z' }, { name: 'production', state: 'off' }],
+    environments: [
+      { name: 'development', state: 'on', lastSeenAt: '2026-10-21T09:00:00.000Z' },
+      { name: 'production', state: 'off' },
+    ],
   });
 });
 
 // Unleash keeps whatever keys a payload was written with; the strict output schema would refuse an extra one.
-test('returns only the type and value of a value\'s payload', async () => {
+test("returns only the type and value of a value's payload", async () => {
   const { unleash, stub } = createStubbedClient();
-  const variant = { name: 'blue', weight: 1000, weightType: 'variable', stickiness: 'default', payload: { type: 'string', value: '#00f', note: 'from another client' } };
+  const variant = {
+    name: 'blue',
+    weight: 1000,
+    weightType: 'variable',
+    stickiness: 'default',
+    payload: { type: 'string', value: '#00f', note: 'from another client' },
+  };
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, {
     name: flag,
     type: 'release',
-    environments: [{ name: 'development', enabled: true, strategies: [{ name: 'flexibleRollout', title: 'Everyone', parameters: { rollout: '100' }, variants: [variant] }] }],
+    environments: [
+      {
+        name: 'development',
+        enabled: true,
+        strategies: [
+          { name: 'flexibleRollout', title: 'Everyone', parameters: { rollout: '100' }, variants: [variant] },
+        ],
+      },
+    ],
   });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
   const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
 
   assert(output.kind === 'flag');
-  assert.deepEqual(output.environments[0]?.targets?.[0]?.values, [{ name: 'blue', payload: { type: 'string', value: '#00f' } }]);
+  assert.deepEqual(output.environments[0]?.targets?.[0]?.values, [
+    { name: 'blue', payload: { type: 'string', value: '#00f' } },
+  ]);
 });
 
 test('tells which values the parent must serve', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release', dependencies: [{ feature: parent, enabled: true, variants: ['blue'] }] });
+  stub.intercept({ path: flagPath, method: 'GET' }).reply(200, {
+    name: flag,
+    type: 'release',
+    dependencies: [{ feature: parent, enabled: true, variants: ['blue'] }],
+  });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
   const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
 
-  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', environments: [], parent: { kind: 'on', flag: parent, values: ['blue'] } });
+  assert.deepEqual(output, {
+    kind: 'flag',
+    name: flag,
+    type: 'release',
+    environments: [],
+    parent: { kind: 'on', flag: parent, values: ['blue'] },
+  });
 });
 
 test('tells when the parent must be off', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release', dependencies: [{ feature: parent, enabled: false, variants: [] }] });
+  stub
+    .intercept({ path: flagPath, method: 'GET' })
+    .reply(200, { name: flag, type: 'release', dependencies: [{ feature: parent, enabled: false, variants: [] }] });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
   const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
 
-  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', environments: [], parent: { kind: 'off', flag: parent } });
+  assert.deepEqual(output, {
+    kind: 'flag',
+    name: flag,
+    type: 'release',
+    environments: [],
+    parent: { kind: 'off', flag: parent },
+  });
 });
 
 test('fails with the Unleash error when the flag does not exist', async () => {
   const output = await inspectFlag(unleash, editionOf, { kind: 'flag', project, flag: 'mcp-unknown' });
 
-  assert.deepEqual(output, { kind: 'failed', status: 404, name: 'NotFoundError', reasons: [`There's no feature named "mcp-unknown" in project "mcp-server".`] });
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 404,
+    name: 'NotFoundError',
+    reasons: [`There's no feature named "mcp-unknown" in project "mcp-server".`],
+  });
 });
 
 test('fails with the Unleash error when the flag cannot be read', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: flagPath, method: 'GET' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
+  stub
+    .intercept({ path: flagPath, method: 'GET' })
+    .reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
   const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
 
-  assert.deepEqual(output, { kind: 'failed', status: 500, name: 'UnknownError', reasons: ['connect ECONNREFUSED 10.0.0.5:5432'] });
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 500,
+    name: 'UnknownError',
+    reasons: ['connect ECONNREFUSED 10.0.0.5:5432'],
+  });
 });
 
 test('fails with the Unleash error when the tags cannot be read', async () => {
   const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release' });
-  stub.intercept({ path: tagsPath, method: 'GET' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
+  stub
+    .intercept({ path: tagsPath, method: 'GET' })
+    .reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
 
   const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
 
-  assert.deepEqual(output, { kind: 'failed', status: 500, name: 'UnknownError', reasons: ['connect ECONNREFUSED 10.0.0.5:5432'] });
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 500,
+    name: 'UnknownError',
+    reasons: ['connect ECONNREFUSED 10.0.0.5:5432'],
+  });
 });
 
 test('lists the change requests waiting with changes to the flag, linked to the Unleash UI', async () => {
@@ -241,7 +380,9 @@ test('lists the change requests waiting with changes to the flag, linked to the 
   stubEnterprise(stub);
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release' });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
-  stub.intercept({ path: pendingPath, method: 'GET' }).reply(200, [{ id: 7, environment: 'production', state: 'In review' }]);
+  stub
+    .intercept({ path: pendingPath, method: 'GET' })
+    .reply(200, [{ id: 7, environment: 'production', state: 'In review' }]);
 
   const output = await inspectFlag(unleash, createEditionReader(unleash), { kind: 'flag', project, flag });
 
@@ -250,7 +391,14 @@ test('lists the change requests waiting with changes to the flag, linked to the 
     name: flag,
     type: 'release',
     environments: [],
-    changeRequests: [{ id: 7, state: 'In review', environment: 'production', url: `https://unleash.example/projects/${project}/change-requests/7` }],
+    changeRequests: [
+      {
+        id: 7,
+        state: 'In review',
+        environment: 'production',
+        url: `https://unleash.example/projects/${project}/change-requests/7`,
+      },
+    ],
   });
 });
 
@@ -259,20 +407,34 @@ test('fails with the Unleash error when the change requests cannot be read', asy
   stubEnterprise(stub);
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release' });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
-  stub.intercept({ path: pendingPath, method: 'GET' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
+  stub
+    .intercept({ path: pendingPath, method: 'GET' })
+    .reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
 
   const output = await inspectFlag(unleash, createEditionReader(unleash), { kind: 'flag', project, flag });
 
-  assert.deepEqual(output, { kind: 'failed', status: 500, name: 'UnknownError', reasons: ['connect ECONNREFUSED 10.0.0.5:5432'] });
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 500,
+    name: 'UnknownError',
+    reasons: ['connect ECONNREFUSED 10.0.0.5:5432'],
+  });
 });
 
 test('fails with the Unleash error when the edition cannot be read', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
+  stub
+    .intercept({ path: '/api/admin/ui-config', method: 'GET' })
+    .reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release' });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
   const output = await inspectFlag(unleash, createEditionReader(unleash), { kind: 'flag', project, flag });
 
-  assert.deepEqual(output, { kind: 'failed', status: 500, name: 'UnknownError', reasons: ['connect ECONNREFUSED 10.0.0.5:5432'] });
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 500,
+    name: 'UnknownError',
+    reasons: ['connect ECONNREFUSED 10.0.0.5:5432'],
+  });
 });

@@ -16,7 +16,10 @@ export const createProject = async (
       mode: mode ?? 'open',
       defaultStickiness: defaultStickiness ?? 'default',
       environments,
-      changeRequestEnvironments: changeRequestEnvironments?.map((e) => ({ name: e.name, requiredApprovals: e.requiredApprovals ?? 1 })),
+      changeRequestEnvironments: changeRequestEnvironments?.map((e) => ({
+        name: e.name,
+        requiredApprovals: e.requiredApprovals ?? 1,
+      })),
     },
   });
   if (!created.response.ok || !created.data) return toFailed(created);

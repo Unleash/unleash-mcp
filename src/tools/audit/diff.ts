@@ -13,7 +13,10 @@ export const diffEventData = (before: unknown, after: unknown): FieldChange[] =>
   diff(asObject(before), asObject(after))
     .filter((change) => !change.path.some((key) => typeof key === 'string' && noise.has(key)))
     // An empty value added or removed, such as a creation's title: null, says nothing was set.
-    .filter((change) => !(change.type === 'CREATE' && isEmpty(change.value)) && !(change.type === 'REMOVE' && isEmpty(change.oldValue)))
+    .filter(
+      (change) =>
+        !(change.type === 'CREATE' && isEmpty(change.value)) && !(change.type === 'REMOVE' && isEmpty(change.oldValue)),
+    )
     .map((change) => ({
       path: toPath(change.path),
       ...('oldValue' in change ? { before: change.oldValue } : {}),
@@ -25,7 +28,8 @@ const asObject = (value: unknown): object =>
   value === undefined || value === null ? {} : typeof value === 'object' ? value : { value };
 
 const isEmpty = (value: unknown): boolean =>
-  value === null || (Array.isArray(value) ? value.length === 0 : typeof value === 'object' && Object.keys(value).length === 0);
+  value === null ||
+  (Array.isArray(value) ? value.length === 0 : typeof value === 'object' && Object.keys(value).length === 0);
 
 // As a person writes it: constraints[0].values[1].
 const toPath = (keys: (string | number)[]): string =>

@@ -46,7 +46,9 @@ export const createChangeRequestReader = (unleash: UnleashClient): ChangeRequest
 
     const found = await unleash.GET(config, { params: { path: { projectId: project } } });
     if (!found.response.ok) return toFailed(found);
-    const environments = (found.data ?? []).filter((c) => c.changeRequestEnabled).map(({ environment, type }) => ({ environment, type }));
+    const environments = (found.data ?? [])
+      .filter((c) => c.changeRequestEnabled)
+      .map(({ environment, type }) => ({ environment, type }));
     return { kind: 'environments', environments };
   };
 };
@@ -55,7 +57,8 @@ export const createChangeRequestReader = (unleash: UnleashClient): ChangeRequest
 const readEdition = async (unleash: UnleashClient): Promise<Edition | Failed> => {
   const found = await unleash.GET(uiConfig);
   if (!found.response.ok) return toFailed(found);
-  const enterprise = Boolean(found.data?.versionInfo.current.enterprise) && found.data?.environment?.toLowerCase() !== 'pro';
+  const enterprise =
+    Boolean(found.data?.versionInfo.current.enterprise) && found.data?.environment?.toLowerCase() !== 'pro';
   return { kind: enterprise ? 'enterprise' : 'other' };
 };
 
@@ -66,7 +69,11 @@ export type Route = { kind: 'direct' } | ChangeRequestRoute;
 export type ChangeRequestRoute = { kind: 'changeRequest'; project: string; environment: string };
 
 /** Routes a change to one environment of a project, such as a release: it needs approval when that environment does. */
-export const routeToEnvironment = async (environmentsOf: ChangeRequestReader, project: string, environment: string): Promise<Route | Failed> => {
+export const routeToEnvironment = async (
+  environmentsOf: ChangeRequestReader,
+  project: string,
+  environment: string,
+): Promise<Route | Failed> => {
   const read = await environmentsOf(project);
   if (read.kind === 'failed') return read;
   const required = read.environments.some((e) => e.environment === environment);
@@ -102,8 +109,15 @@ export type ChangeRequest = z.infer<typeof changeRequest>;
 export type Requested = { kind: 'requested'; changeRequest: ChangeRequest };
 
 /** Opens a change request in the environment and submits it for review. */
-export const requestChanges = async (unleash: UnleashClient, { project, environment }: ChangeRequestRoute, changes: Changes): Promise<Requested | Failed> => {
-  const created = await unleash.POST(changeRequests, { params: { path: { projectId: project, environment } }, body: changes });
+export const requestChanges = async (
+  unleash: UnleashClient,
+  { project, environment }: ChangeRequestRoute,
+  changes: Changes,
+): Promise<Requested | Failed> => {
+  const created = await unleash.POST(changeRequests, {
+    params: { path: { projectId: project, environment } },
+    body: changes,
+  });
   if (!created.response.ok || !created.data) return toFailed(created);
   return submitForReview(unleash, project, created.data);
 };
@@ -112,9 +126,14 @@ export const requestChanges = async (unleash: UnleashClient, { project, environm
  * Submits a change request Unleash just opened or added to, so it waits for review rather than sitting in a draft.
  * Unleash adds changes to the user's open draft, if any, and the whole draft is submitted, other changes included.
  */
-const submitForReview = async (unleash: UnleashClient, projectId: string, { id, state }: { id: number; state: string }): Promise<Requested | Failed> => {
+const submitForReview = async (
+  unleash: UnleashClient,
+  projectId: string,
+  { id, state }: { id: number; state: string },
+): Promise<Requested | Failed> => {
   // Unleash refuses to submit a change request again, so one that is already past draft is left as it is.
-  if (state !== 'Draft') return { kind: 'requested', changeRequest: { id, state, url: changeRequestUrl(unleash, projectId, id) } };
+  if (state !== 'Draft')
+    return { kind: 'requested', changeRequest: { id, state, url: changeRequestUrl(unleash, projectId, id) } };
 
   const submitted = await unleash.PUT(changeRequestState, {
     params: { path: { projectId, id: String(id) } },
@@ -122,7 +141,14 @@ const submitForReview = async (unleash: UnleashClient, projectId: string, { id, 
     body: submit as never,
   });
   if (!submitted.response.ok || !submitted.data) return toFailed(submitted);
-  return { kind: 'requested', changeRequest: { id: submitted.data.id, state: submitted.data.state, url: changeRequestUrl(unleash, projectId, submitted.data.id) } };
+  return {
+    kind: 'requested',
+    changeRequest: {
+      id: submitted.data.id,
+      state: submitted.data.state,
+      url: changeRequestUrl(unleash, projectId, submitted.data.id),
+    },
+  };
 };
 
 /** The Unleash UI's route for a change request, where people review it. */

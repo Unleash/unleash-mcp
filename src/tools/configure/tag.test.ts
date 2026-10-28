@@ -27,7 +27,9 @@ test('deletes a tag', async () => {
 test('fails with the Unleash error when the tag cannot be deleted', async () => {
   const { unleash, stub } = createStubbedClient();
   const message = 'No tag with type team and value payments exists';
-  stub.intercept({ path: '/api/admin/tags/team/payments', method: 'DELETE' }).reply(404, unleashError('NotFoundError', message));
+  stub
+    .intercept({ path: '/api/admin/tags/team/payments', method: 'DELETE' })
+    .reply(404, unleashError('NotFoundError', message));
 
   const outcome = await deleteTag(unleash, { kind: 'tag', action: 'delete', type: 'team', value: 'payments' });
 

@@ -28,5 +28,8 @@ test('asks the user for feedback consent unless the environment grants or refuse
 
 test('keeps the consent in the platform config directory unless the user picks another', () => {
   assert.equal(readConfig({ ...required, UNLEASH_MCP_CONFIG_DIR: ' ' }).UNLEASH_MCP_CONFIG_DIR, undefined);
-  assert.equal(readConfig({ ...required, UNLEASH_MCP_CONFIG_DIR: '/custom/config' }).UNLEASH_MCP_CONFIG_DIR, '/custom/config');
+  assert.equal(
+    readConfig({ ...required, UNLEASH_MCP_CONFIG_DIR: '/custom/config' }).UNLEASH_MCP_CONFIG_DIR,
+    '/custom/config',
+  );
 });

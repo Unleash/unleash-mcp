@@ -11,8 +11,13 @@ const flag = 'mcp-deleted-flag';
 
 before(async () => {
   await deleteFlag(admin, project, flag);
-  await admin.POST('/api/admin/projects/{projectId}/features', { params: { path: { projectId: project } }, body: { name: flag } });
-  await admin.DELETE('/api/admin/projects/{projectId}/features/{featureName}', { params: { path: { projectId: project, featureName: flag } } });
+  await admin.POST('/api/admin/projects/{projectId}/features', {
+    params: { path: { projectId: project } },
+    body: { name: flag },
+  });
+  await admin.DELETE('/api/admin/projects/{projectId}/features/{featureName}', {
+    params: { path: { projectId: project, featureName: flag } },
+  });
 });
 // Cleans up only after a failed recording: a deleted flag is gone already.
 after(async () => {
@@ -28,8 +33,11 @@ test('deletes an archived flag for good', async () => {
 
 test('fails with the Unleash error when the flag is in another project', async () => {
   const { unleash, stub } = createStubbedClient();
-  const message = 'The operation could not be completed. The features exist, but the provided project ids ("mobile") does not match the project provided in request URL ("web").';
-  stub.intercept({ path: '/api/admin/projects/web/delete', method: 'POST' }).reply(403, unleashError('InvalidOperationError', message));
+  const message =
+    'The operation could not be completed. The features exist, but the provided project ids ("mobile") does not match the project provided in request URL ("web").';
+  stub
+    .intercept({ path: '/api/admin/projects/web/delete', method: 'POST' })
+    .reply(403, unleashError('InvalidOperationError', message));
 
   const output = await deleteArchivedFlag(unleash, { action: 'delete', project: 'web', flag: 'checkout' });
 

@@ -60,9 +60,21 @@ const deletedSegment = {
   id: z.number().int(),
 };
 
-const segment = z.discriminatedUnion('action', [z.object(createdSegment), z.object(updatedSegment), z.object(deletedSegment)]);
+const segment = z.discriminatedUnion('action', [
+  z.object(createdSegment),
+  z.object(updatedSegment),
+  z.object(deletedSegment),
+]);
 
-const target = z.discriminatedUnion('resource', [z.object(contextField), z.object(legalValue), z.object(tagType), z.object(tag), z.object(releaseTemplate), segment, z.object(project)]);
+const target = z.discriminatedUnion('resource', [
+  z.object(contextField),
+  z.object(legalValue),
+  z.object(tagType),
+  z.object(tag),
+  z.object(releaseTemplate),
+  segment,
+  z.object(project),
+]);
 
 const error = failed.omit({ kind: true }).describe('What Unleash answered; the change was not applied');
 
@@ -73,11 +85,19 @@ const applied = z.discriminatedUnion('resource', [
   z.object({ kind: z.literal('applied'), ...tag }),
   z.object({ kind: z.literal('applied'), ...releaseTemplate, id: z.string().describe('Release template id') }),
   z.discriminatedUnion('action', [
-    z.object({ kind: z.literal('applied'), ...createdSegment, id: z.number().int().describe('Segment id, as release targets take it') }),
+    z.object({
+      kind: z.literal('applied'),
+      ...createdSegment,
+      id: z.number().int().describe('Segment id, as release targets take it'),
+    }),
     z.object({ kind: z.literal('applied'), ...updatedSegment }),
     z.object({ kind: z.literal('applied'), ...deletedSegment }),
   ]),
-  z.object({ kind: z.literal('applied'), ...project, id: z.string().describe('Project id, as other changes and tools take it') }),
+  z.object({
+    kind: z.literal('applied'),
+    ...project,
+    id: z.string().describe('Project id, as other changes and tools take it'),
+  }),
 ]);
 
 const failedChange = z.discriminatedUnion('resource', [

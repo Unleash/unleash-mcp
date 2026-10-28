@@ -5,9 +5,14 @@ import type { ContextFields } from '../searchOutput.ts';
 
 // Unleash scopes the list itself, as its UI asks: a project's list with the global fields included is what
 // a flag there can use; the global list with project fields included is everything. The name match is applied here.
-export const searchContextFields = async (unleash: UnleashClient, { project, query }: ContextFieldsQuery): Promise<ContextFields | Failed> => {
+export const searchContextFields = async (
+  unleash: UnleashClient,
+  { project, query }: ContextFieldsQuery,
+): Promise<ContextFields | Failed> => {
   const listed = project
-    ? await unleash.GET('/api/admin/projects/{projectId}/context', { params: { path: { projectId: project }, query: { include: 'root' } } })
+    ? await unleash.GET('/api/admin/projects/{projectId}/context', {
+        params: { path: { projectId: project }, query: { include: 'root' } },
+      })
     : await unleash.GET('/api/admin/context', { params: { query: { include: 'project' } } });
   if (!listed.response.ok || !listed.data) return toFailed(listed);
   const fields = listed.data

@@ -8,9 +8,14 @@ import type { ReleaseTemplates } from '../searchOutput.ts';
  * Unleash lists templates without a name filter, so the query is applied here, and it leaves archived ones out.
  * In a project, Unleash adds the global templates to the project's own when asked to include root.
  */
-export const searchReleaseTemplates = async (unleash: UnleashClient, { project, query }: ReleaseTemplatesQuery): Promise<ReleaseTemplates | Failed> => {
+export const searchReleaseTemplates = async (
+  unleash: UnleashClient,
+  { project, query }: ReleaseTemplatesQuery,
+): Promise<ReleaseTemplates | Failed> => {
   const listed = project
-    ? await unleash.GET('/api/admin/projects/{projectId}/release-templates', { params: { path: { projectId: project }, query: { include: 'root' } } })
+    ? await unleash.GET('/api/admin/projects/{projectId}/release-templates', {
+        params: { path: { projectId: project }, query: { include: 'root' } },
+      })
     : await unleash.GET('/api/admin/release-plan-templates');
   if (!listed.response.ok || !listed.data) return toFailed(listed);
   const text = query?.toLowerCase();

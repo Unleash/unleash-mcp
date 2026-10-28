@@ -13,18 +13,28 @@ export const createManageFlag = (unleash: UnleashClient) => {
   const environmentsOf = createChangeRequestReader(unleash);
   return async ({ operations }: ManageFlagInput): Promise<ManageFlagOutput> => {
     const results: ManageFlagResult[] = [];
-    for (const operation of operations) results.push(resultOf(operation, await apply(unleash, environmentsOf, operation)));
+    for (const operation of operations)
+      results.push(resultOf(operation, await apply(unleash, environmentsOf, operation)));
     return { results };
   };
 };
 
-const apply = (unleash: UnleashClient, environmentsOf: ChangeRequestReader, operation: Operation): Promise<Outcome | PendingChange> => {
+const apply = (
+  unleash: UnleashClient,
+  environmentsOf: ChangeRequestReader,
+  operation: Operation,
+): Promise<Outcome | PendingChange> => {
   switch (operation.action) {
-    case 'define': return defineFlag(unleash, operation);
-    case 'complete': return completeFlag(unleash, operation);
-    case 'archive': return archiveFlag(unleash, environmentsOf, operation);
-    case 'revive': return reviveFlag(unleash, operation);
-    case 'set_parent_dependency': return setParentDependency(unleash, environmentsOf, operation);
+    case 'define':
+      return defineFlag(unleash, operation);
+    case 'complete':
+      return completeFlag(unleash, operation);
+    case 'archive':
+      return archiveFlag(unleash, environmentsOf, operation);
+    case 'revive':
+      return reviveFlag(unleash, operation);
+    case 'set_parent_dependency':
+      return setParentDependency(unleash, environmentsOf, operation);
   }
 };
 

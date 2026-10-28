@@ -28,8 +28,15 @@ export const defineFlag = async (unleash: UnleashClient, { project, flag, ...lis
   return defineExisting(unleash, path, found.data, listed);
 };
 
-const defineNew = async (unleash: UnleashClient, path: Path, { type, description, tags, links }: Listed): Promise<Outcome> => {
-  const created = await unleash.POST(features, { params: { path: { projectId: path.projectId } }, body: { name: path.featureName, type, description } });
+const defineNew = async (
+  unleash: UnleashClient,
+  path: Path,
+  { type, description, tags, links }: Listed,
+): Promise<Outcome> => {
+  const created = await unleash.POST(features, {
+    params: { path: { projectId: path.projectId } },
+    body: { name: path.featureName, type, description },
+  });
   if (!created.response.ok) return toFailed(created);
   const syncedTags = await syncTags(unleash, path, [], tags);
   if (syncedTags.kind === 'failed') return syncedTags;
@@ -39,7 +46,12 @@ const defineNew = async (unleash: UnleashClient, path: Path, { type, description
 };
 
 // The flag read leaves the tags out, so they are read when some are listed.
-const defineExisting = async (unleash: UnleashClient, path: Path, current: UnleashFlag, { type, description, tags, links }: Listed): Promise<Outcome> => {
+const defineExisting = async (
+  unleash: UnleashClient,
+  path: Path,
+  current: UnleashFlag,
+  { type, description, tags, links }: Listed,
+): Promise<Outcome> => {
   const syncedDetails = await syncDetails(unleash, path, current, { type, description });
   if (syncedDetails.kind === 'failed') return syncedDetails;
   const has = tags ? await readTags(unleash, path) : { kind: 'read' as const, tags: [] };
@@ -48,11 +60,20 @@ const defineExisting = async (unleash: UnleashClient, path: Path, current: Unlea
   if (syncedTags.kind === 'failed') return syncedTags;
   const syncedLinks = await syncLinks(unleash, path, current.links ?? [], links);
   if (syncedLinks.kind === 'failed') return syncedLinks;
-  return { kind: 'applied', status: 'existing', changed: [...syncedDetails.changed, ...syncedTags.changed, ...syncedLinks.changed] };
+  return {
+    kind: 'applied',
+    status: 'existing',
+    changed: [...syncedDetails.changed, ...syncedTags.changed, ...syncedLinks.changed],
+  };
 };
 
 // Unleash's update replaces the whole flag, so the current values go back with it.
-const syncDetails = async (unleash: UnleashClient, path: Path, current: UnleashFlag, { type, description }: Pick<Listed, 'type' | 'description'>): Promise<Synced> => {
+const syncDetails = async (
+  unleash: UnleashClient,
+  path: Path,
+  current: UnleashFlag,
+  { type, description }: Pick<Listed, 'type' | 'description'>,
+): Promise<Synced> => {
   const changed: Changed[] = [
     ...(type !== undefined && type !== current.type ? ['type' as const] : []),
     ...(description !== undefined && description !== (current.description ?? '') ? ['description' as const] : []),
@@ -60,7 +81,12 @@ const syncDetails = async (unleash: UnleashClient, path: Path, current: UnleashF
   if (!changed.length) return { kind: 'synced', changed };
   const updated = await unleash.PUT(feature, {
     params: { path },
-    body: { type: type ?? (current.type as FlagType), description: description ?? current.description ?? undefined, stale: current.stale, impressionData: current.impressionData },
+    body: {
+      type: type ?? (current.type as FlagType),
+      description: description ?? current.description ?? undefined,
+      stale: current.stale,
+      impressionData: current.impressionData,
+    },
   });
   if (!updated.response.ok) return toFailed(updated);
   return { kind: 'synced', changed };
@@ -79,14 +105,22 @@ const syncTags = async (unleash: UnleashClient, path: Path, has: Tag[], listed?:
   const addedTags = listed.filter((t) => !has.some((h) => sameTag(h, t)));
   const removedTags = has.filter((h) => !listed.some((t) => sameTag(h, t)));
   if (!addedTags.length && !removedTags.length) return { kind: 'synced', changed: [] };
-  const retagged = await unleash.PUT(tagsOf, { params: { path: { featureName: path.featureName } }, body: { addedTags, removedTags } });
+  const retagged = await unleash.PUT(tagsOf, {
+    params: { path: { featureName: path.featureName } },
+    body: { addedTags, removedTags },
+  });
   if (!retagged.response.ok) return toFailed(retagged);
   return { kind: 'synced', changed: ['tags'] };
 };
 
 // Links are told apart by URL. Unleash adds a link again on a second post, so only the missing go in, and the
 // unlisted go out by id, one request each.
-const syncLinks = async (unleash: UnleashClient, path: Path, has: { id: string; url: string }[], listed?: Link[]): Promise<Synced> => {
+const syncLinks = async (
+  unleash: UnleashClient,
+  path: Path,
+  has: { id: string; url: string }[],
+  listed?: Link[],
+): Promise<Synced> => {
   if (!listed) return { kind: 'synced', changed: [] };
   const missing = listed.filter((l) => !has.some((h) => h.url === l.url));
   const unlisted = has.filter((h) => !listed.some((l) => l.url === h.url));

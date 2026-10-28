@@ -15,9 +15,20 @@ let projectScopedId = 0;
 
 before(async () => {
   for (const name of [global, projectScoped]) await deleteSegmentNamed(admin, name);
-  const createdGlobal = await createSegment(admin, { kind: 'segment', action: 'create', name: global, constraints: [] });
+  const createdGlobal = await createSegment(admin, {
+    kind: 'segment',
+    action: 'create',
+    name: global,
+    constraints: [],
+  });
   globalId = createdGlobal.kind === 'applied' ? createdGlobal.id : 0;
-  const createdProjectScoped = await createSegment(admin, { kind: 'segment', action: 'create', project, name: projectScoped, constraints: [] });
+  const createdProjectScoped = await createSegment(admin, {
+    kind: 'segment',
+    action: 'create',
+    project,
+    name: projectScoped,
+    constraints: [],
+  });
   projectScopedId = createdProjectScoped.kind === 'applied' ? createdProjectScoped.id : 0;
 });
 after(async () => {
@@ -43,7 +54,10 @@ test('finds segments by a part of their name, case insensitive, with what the ag
 test('keeps the segments usable in a project: global or owned by it', async () => {
   const output = await searchSegments(unleash, { kind: 'segments', project, query: 'mcp-searched' });
 
-  assert.partialDeepStrictEqual(output, { kind: 'segments', segments: [{ name: projectScoped, project }, { name: global }] });
+  assert.partialDeepStrictEqual(output, {
+    kind: 'segments',
+    segments: [{ name: projectScoped, project }, { name: global }],
+  });
 });
 
 test('leaves out the segments owned by another project', async () => {
@@ -56,9 +70,16 @@ test('leaves out the segments owned by another project', async () => {
 
 test('fails with the Unleash error when the segments cannot be listed', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: '/api/admin/segments', method: 'GET' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
+  stub
+    .intercept({ path: '/api/admin/segments', method: 'GET' })
+    .reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
 
   const output = await searchSegments(unleash, { kind: 'segments' });
 
-  assert.deepEqual(output, { kind: 'failed', status: 500, name: 'UnknownError', reasons: ['connect ECONNREFUSED 10.0.0.5:5432'] });
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 500,
+    name: 'UnknownError',
+    reasons: ['connect ECONNREFUSED 10.0.0.5:5432'],
+  });
 });

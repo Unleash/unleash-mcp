@@ -36,8 +36,9 @@ const decide = async (store: ConsentStore, ask: AskUser): Promise<Decision> => {
   return answer;
 };
 
-const questionFor = (location: string): string => [
-  'Send anonymous reports to Unleash to help improve this MCP?',
-  'Reports never include flag names, project IDs, code, URLs, or tokens.',
-  `Your choice takes effect immediately and is stored in ${location} for future sessions.`,
-].join('\n');
+const questionFor = (location: string): string =>
+  [
+    'Send anonymous reports to Unleash to help improve this MCP?',
+    'Reports never include flag names, project IDs, code, URLs, or tokens.',
+    `Your choice takes effect immediately and is stored in ${location} for future sessions.`,
+  ].join('\n');

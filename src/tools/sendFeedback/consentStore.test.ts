@@ -20,7 +20,11 @@ test('remembers the decision for the next session', async (t) => {
   await createConsentStore(location, () => decidedAt).write('granted');
 
   assert.equal(await createConsentStore(location, () => decidedAt).read(), 'granted');
-  assert.deepEqual(JSON.parse(await readFile(location, 'utf8')), { consent: 'granted', decidedAt: '2026-10-27T10:00:00.000Z', consentVersion: 1 });
+  assert.deepEqual(JSON.parse(await readFile(location, 'utf8')), {
+    consent: 'granted',
+    decidedAt: '2026-10-27T10:00:00.000Z',
+    consentVersion: 1,
+  });
 });
 
 test('has no decision before the user is asked', async (t) => {
@@ -33,7 +37,10 @@ test('has no decision when the file holds something else', async (t) => {
   const location = join(await tempDir(t), 'feedback_consent.json');
   const store = createConsentStore(location, () => decidedAt);
 
-  for (const contents of ['not json', JSON.stringify({ consent: 'granted', decidedAt: '2026-10-27T10:00:00.000Z', consentVersion: 2 })]) {
+  for (const contents of [
+    'not json',
+    JSON.stringify({ consent: 'granted', decidedAt: '2026-10-27T10:00:00.000Z', consentVersion: 2 }),
+  ]) {
     await writeFile(location, contents);
     assert.equal(await store.read(), undefined);
   }
@@ -50,7 +57,10 @@ test('keeps no decision, without failing, when the directory cannot be created',
 });
 
 test('keeps its files in the platform config directory', () => {
-  assert.equal(platformConfigDir({}, 'darwin', '/home/u'), join('/home/u', 'Library', 'Application Support', 'unleash-mcp'));
+  assert.equal(
+    platformConfigDir({}, 'darwin', '/home/u'),
+    join('/home/u', 'Library', 'Application Support', 'unleash-mcp'),
+  );
   assert.equal(platformConfigDir({}, 'linux', '/home/u'), join('/home/u', '.config', 'unleash-mcp'));
   assert.equal(platformConfigDir({ APPDATA: '/appdata' }, 'win32', '/home/u'), join('/appdata', 'unleash-mcp'));
   assert.equal(platformConfigDir({}, 'win32', '/home/u'), join('/home/u', 'AppData', 'Roaming', 'unleash-mcp'));

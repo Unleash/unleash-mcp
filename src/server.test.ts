@@ -49,7 +49,10 @@ test('instructions tell the agent what every listed tool is for, with or without
 
 test('instructions tell the agent to report without asking only when send_feedback is listed', async () => {
   const { unleash: stubbed } = createStubbedClient();
-  for (const [sendFeedback, told] of [[undefined, false], [async () => ({ kind: 'sent' as const }), true]] as const) {
+  for (const [sendFeedback, told] of [
+    [undefined, false],
+    [async () => ({ kind: 'sent' as const }), true],
+  ] as const) {
     const client = await connectClient(stubbed, sendFeedback);
 
     const instructions = client.getInstructions() ?? '';
@@ -64,11 +67,21 @@ test('release tool reports the targets', async () => {
 
   const result = await client.callTool({
     name: 'release',
-    arguments: { project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Everyone', rollout: 50 }] } },
+    arguments: {
+      project,
+      flag: { name: flag, state: 'on' },
+      environment: 'development',
+      audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
+    },
   });
 
   assert.deepEqual(result.structuredContent, {
-    result: { kind: 'released', flag: { status: 'new', name: flag, state: 'on' }, environment: 'development', targets: [{ name: 'Everyone', rollout: 50 }] },
+    result: {
+      kind: 'released',
+      flag: { status: 'new', name: flag, state: 'on' },
+      environment: 'development',
+      targets: [{ name: 'Everyone', rollout: 50 }],
+    },
   });
   await client.close();
 });
@@ -76,13 +89,22 @@ test('release tool reports the targets', async () => {
 test('release tool reports a failure as text', async () => {
   const { unleash: stubbed, stub } = createStubbedClient();
   const message = 'You need the "SKIP_CHANGE_REQUEST" permission.';
-  stub.intercept({ path: '/api/admin/ui-config', method: 'GET' }).reply(200, { versionInfo: { current: { enterprise: '' } } });
-  stub.intercept({ path: `/api/admin/projects/${project}/features/${flag}`, method: 'GET' }).reply(403, { name: 'PermissionError', message, details: [{ message }] });
+  stub
+    .intercept({ path: '/api/admin/ui-config', method: 'GET' })
+    .reply(200, { versionInfo: { current: { enterprise: '' } } });
+  stub
+    .intercept({ path: `/api/admin/projects/${project}/features/${flag}`, method: 'GET' })
+    .reply(403, { name: 'PermissionError', message, details: [{ message }] });
   const client = await connectClient(stubbed);
 
   const result = await client.callTool({
     name: 'release',
-    arguments: { project, flag: { name: flag, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Everyone', rollout: 50 }] } },
+    arguments: {
+      project,
+      flag: { name: flag, state: 'on' },
+      environment: 'development',
+      audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
+    },
   });
 
   const failed = { result: { kind: 'failed', status: 403, name: 'PermissionError', reasons: [message] } };
@@ -94,11 +116,19 @@ test('refuses a tool call whose arguments hold more than 10,000 elements', async
   const { unleash: stubbed } = createStubbedClient();
   const client = await connectClient(stubbed);
 
-  const result = await client.callTool({ name: 'inspect', arguments: { queries: Array(10_001).fill({ kind: 'segment', id: 7 }) } });
+  const result = await client.callTool({
+    name: 'inspect',
+    arguments: { queries: Array(10_001).fill({ kind: 'segment', id: 7 }) },
+  });
 
   assert.deepEqual(result, {
     isError: true,
-    content: [{ type: 'text', text: 'MCP error -32602: Invalid arguments for tool inspect: arguments contain more than the maximum of 10000 elements' }],
+    content: [
+      {
+        type: 'text',
+        text: 'MCP error -32602: Invalid arguments for tool inspect: arguments contain more than the maximum of 10000 elements',
+      },
+    ],
   });
   await client.close();
 });
@@ -106,20 +136,35 @@ test('refuses a tool call whose arguments hold more than 10,000 elements', async
 test('configure tool reports each change', async () => {
   const { unleash: stubbed, stub } = createStubbedClient();
   const message = 'A context field with that name already exist';
-  stub.intercept({ path: '/api/admin/context', method: 'POST' }).reply(409, { name: 'NameExistsError', message, details: [{ message }] });
+  stub
+    .intercept({ path: '/api/admin/context', method: 'POST' })
+    .reply(409, { name: 'NameExistsError', message, details: [{ message }] });
   const client = await connectClient(stubbed);
 
-  const result = await client.callTool({ name: 'configure', arguments: { changes: [{ kind: 'context_field', action: 'create', name: 'tier' }] } });
+  const result = await client.callTool({
+    name: 'configure',
+    arguments: { changes: [{ kind: 'context_field', action: 'create', name: 'tier' }] },
+  });
 
   assert.deepEqual(result.structuredContent, {
-    results: [{ kind: 'failed', resource: 'context_field', action: 'create', name: 'tier', error: { status: 409, name: 'NameExistsError', reasons: [message] } }],
+    results: [
+      {
+        kind: 'failed',
+        resource: 'context_field',
+        action: 'create',
+        name: 'tier',
+        error: { status: 409, name: 'NameExistsError', reasons: [message] },
+      },
+    ],
   });
   await client.close();
 });
 
 test('inspect tool returns its results as structured content and as text', async () => {
   const { unleash: stubbed, stub } = createStubbedClient();
-  stub.intercept({ path: `/api/admin/projects/${project}/overview`, method: 'GET' }).reply(200, { environments: [{ environment: 'development' }] });
+  stub
+    .intercept({ path: `/api/admin/projects/${project}/overview`, method: 'GET' })
+    .reply(200, { environments: [{ environment: 'development' }] });
   const client = await connectClient(stubbed);
 
   const result = await client.callTool({ name: 'inspect', arguments: { queries: [{ kind: 'project', project }] } });
@@ -131,24 +176,43 @@ test('inspect tool returns its results as structured content and as text', async
 
 test('search tool returns its results as structured content', async () => {
   const { unleash: stubbed, stub } = createStubbedClient();
-  stub.intercept({ path: '/api/admin/segments', method: 'GET' }).reply(200, { segments: [{ id: 1, name: 'Beta', createdAt: '2026-10-22T08:00:00.000Z', usedInProjects: 2, usedInFeatures: 3 }] });
+  stub.intercept({ path: '/api/admin/segments', method: 'GET' }).reply(200, {
+    segments: [{ id: 1, name: 'Beta', createdAt: '2026-10-22T08:00:00.000Z', usedInProjects: 2, usedInFeatures: 3 }],
+  });
   const client = await connectClient(stubbed);
 
-  const result = await client.callTool({ name: 'search', arguments: { queries: [{ kind: 'segments', query: 'beta' }] } });
+  const result = await client.callTool({
+    name: 'search',
+    arguments: { queries: [{ kind: 'segments', query: 'beta' }] },
+  });
 
-  assert.deepEqual(result.structuredContent, { results: [{ kind: 'segments', segments: [{ id: 1, name: 'Beta', createdAt: '2026-10-22T08:00:00.000Z', usedInProjects: 2, usedInFlags: 3 }] }] });
+  assert.deepEqual(result.structuredContent, {
+    results: [
+      {
+        kind: 'segments',
+        segments: [{ id: 1, name: 'Beta', createdAt: '2026-10-22T08:00:00.000Z', usedInProjects: 2, usedInFlags: 3 }],
+      },
+    ],
+  });
   await client.close();
 });
 
 test('evaluate tool asks as the unleash-mcp app when no context is given', async () => {
   const { unleash: stubbed, stub } = createStubbedClient();
   const body = JSON.stringify({ environment: 'development', context: { appName: 'unleash-mcp' } });
-  stub.intercept({ path: `/api/admin/playground/features/${flag}`, method: 'POST', body }).reply(200, { feature: { isEnabled: true, isEnabledInCurrentEnvironment: true, strategies: { data: [] } } });
+  stub
+    .intercept({ path: `/api/admin/playground/features/${flag}`, method: 'POST', body })
+    .reply(200, { feature: { isEnabled: true, isEnabledInCurrentEnvironment: true, strategies: { data: [] } } });
   const client = await connectClient(stubbed);
 
-  const result = await client.callTool({ name: 'evaluate', arguments: { queries: [{ flag, environment: 'development' }] } });
+  const result = await client.callTool({
+    name: 'evaluate',
+    arguments: { queries: [{ flag, environment: 'development' }] },
+  });
 
-  assert.deepEqual(result.structuredContent, { results: [{ kind: 'evaluated', flag, environment: 'development', result: 'on' }] });
+  assert.deepEqual(result.structuredContent, {
+    results: [{ kind: 'evaluated', flag, environment: 'development', result: 'on' }],
+  });
   await client.close();
 });
 
@@ -158,7 +222,10 @@ test('send_feedback is not listed when the user opted out', async () => {
 
   const { tools } = await client.listTools();
 
-  assert.equal(tools.some((tool) => tool.name === 'send_feedback'), false);
+  assert.equal(
+    tools.some((tool) => tool.name === 'send_feedback'),
+    false,
+  );
   await client.close();
 });
 
@@ -166,7 +233,10 @@ test('send_feedback tool returns its result as structured content', async () => 
   const { unleash: stubbed } = createStubbedClient();
   const client = await connectClient(stubbed, async () => ({ kind: 'sent' }));
 
-  const result = await client.callTool({ name: 'send_feedback', arguments: { issueType: 'unsupported_action', summary: 'The user asked to rename a project.' } });
+  const result = await client.callTool({
+    name: 'send_feedback',
+    arguments: { issueType: 'unsupported_action', summary: 'The user asked to rename a project.' },
+  });
 
   assert.deepEqual(result.structuredContent, { result: { kind: 'sent' } });
   await client.close();
@@ -178,7 +248,13 @@ test('send_feedback can name every other tool the server lists', async () => {
 
   const { tools } = await client.listTools();
 
-  assert.deepEqual(tools.map((tool) => tool.name).filter((name) => name !== 'send_feedback').sort(), [...reportableTools].sort());
+  assert.deepEqual(
+    tools
+      .map((tool) => tool.name)
+      .filter((name) => name !== 'send_feedback')
+      .sort(),
+    [...reportableTools].sort(),
+  );
   await client.close();
 });
 
@@ -216,7 +292,10 @@ test('send_feedback names the client the agent connected with', async () => {
     return { kind: 'sent' };
   });
 
-  await client.callTool({ name: 'send_feedback', arguments: { issueType: 'unsupported_action', summary: 'The user asked to rename a project.' } });
+  await client.callTool({
+    name: 'send_feedback',
+    arguments: { issueType: 'unsupported_action', summary: 'The user asked to rename a project.' },
+  });
 
   assert.deepEqual(reportedClient, { name: 'test-client', version: '0.0.0' });
   await client.close();
@@ -225,12 +304,17 @@ test('send_feedback names the client the agent connected with', async () => {
 test('send_feedback asks for consent through the client the agent runs in', async () => {
   const { unleash: stubbed } = createStubbedClient();
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
-  await createServer(stubbed, async (_input, { ask }) => (await ask('Send reports?')) === 'granted' ? { kind: 'sent' } : { kind: 'disabled' }).connect(serverTransport);
+  await createServer(stubbed, async (_input, { ask }) =>
+    (await ask('Send reports?')) === 'granted' ? { kind: 'sent' } : { kind: 'disabled' },
+  ).connect(serverTransport);
   const client = new Client({ name: 'test-client', version: '0.0.0' }, { capabilities: { elicitation: {} } });
   client.setRequestHandler(ElicitRequestSchema, async () => ({ action: 'accept', content: {} }));
   await client.connect(clientTransport);
 
-  const result = await client.callTool({ name: 'send_feedback', arguments: { issueType: 'unsupported_action', summary: 'The user asked to rename a project.' } });
+  const result = await client.callTool({
+    name: 'send_feedback',
+    arguments: { issueType: 'unsupported_action', summary: 'The user asked to rename a project.' },
+  });
 
   assert.deepEqual(result.structuredContent, { result: { kind: 'sent' } });
   await client.close();

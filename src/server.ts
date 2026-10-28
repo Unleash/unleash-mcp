@@ -46,30 +46,46 @@ const toFailedToolResult = (result: Failed) => ({
 
 // Clients that defer tools show the agent only tool names and these instructions until it loads a tool.
 const outcomes = {
-  release: 'Turn a feature on or off in an environment: for everyone, a percentage, chosen audiences or segments, split across values, or through a release template or release plan milestone; turning on creates a missing flag. For a permanent kill switch, use kill_switch.',
-  kill_switch: 'Add a permanent kill switch, named after what it turns off, or flip one on or off in an environment, for everyone or chosen audiences; flipping creates a missing switch.',
-  inspect: 'See a project, flag, context field or segment in full, such as the environments of a project, who gets a flag in each environment and when SDKs last saw it there, or which flags use a context field or segment.',
-  search: 'Find projects, environments, flags, segments, context fields, tag types, tags, release templates and event types, filter flags by tag, segment, lifecycle stage, creator or creation date, and get the ids and names the other tools take.',
-  evaluate: 'Tell whether a user or context gets a feature in an environment and which value, and what blocks it when it is off.',
-  configure: 'Set up what flags share: create projects and release templates, create, change or delete context fields and their legal values, segments (saved audiences) and tag types, and delete tags; the tags of a single flag belong to manage_flag, its targeting to release.',
-  manage_flag: 'Create a flag or change its type, description, tags and links, set its parent flag, mark it completed, or archive or revive it.',
-  audit: 'Read what changed in Unleash, who changed it and when, most recent first, over at most 31 days; narrow it to projects, flags, environments or event types.',
-  send_feedback: 'Report anonymously to Unleash where this MCP fell short: a tool error, a request no tool supports, or a wrong result.',
+  release:
+    'Turn a feature on or off in an environment: for everyone, a percentage, chosen audiences or segments, split across values, or through a release template or release plan milestone; turning on creates a missing flag. For a permanent kill switch, use kill_switch.',
+  kill_switch:
+    'Add a permanent kill switch, named after what it turns off, or flip one on or off in an environment, for everyone or chosen audiences; flipping creates a missing switch.',
+  inspect:
+    'See a project, flag, context field or segment in full, such as the environments of a project, who gets a flag in each environment and when SDKs last saw it there, or which flags use a context field or segment.',
+  search:
+    'Find projects, environments, flags, segments, context fields, tag types, tags, release templates and event types, filter flags by tag, segment, lifecycle stage, creator or creation date, and get the ids and names the other tools take.',
+  evaluate:
+    'Tell whether a user or context gets a feature in an environment and which value, and what blocks it when it is off.',
+  configure:
+    'Set up what flags share: create projects and release templates, create, change or delete context fields and their legal values, segments (saved audiences) and tag types, and delete tags; the tags of a single flag belong to manage_flag, its targeting to release.',
+  manage_flag:
+    'Create a flag or change its type, description, tags and links, set its parent flag, mark it completed, or archive or revive it.',
+  audit:
+    'Read what changed in Unleash, who changed it and when, most recent first, over at most 31 days; narrow it to projects, flags, environments or event types.',
+  send_feedback:
+    'Report anonymously to Unleash where this MCP fell short: a tool error, a request no tool supports, or a wrong result.',
 };
 
 // Without it, an agent that hasn't loaded send_feedback yet offers to report instead of reporting.
-const feedbackDuty = 'When this MCP falls short, call send_feedback before replying, without asking the user: the server asks for their consent itself.';
+const feedbackDuty =
+  'When this MCP falls short, call send_feedback before replying, without asking the user: the server asks for their consent itself.';
 
-const instructionsFor = (sendFeedback?: SendFeedback) => [
-  'Unleash feature flags. Pick a tool by what the user wants:',
-  ...Object.entries(outcomes).filter(([tool]) => sendFeedback || tool !== 'send_feedback').map(([tool, outcome]) => `- ${tool}: ${outcome}`),
-  ...(sendFeedback ? [feedbackDuty] : []),
-].join('\n');
+const instructionsFor = (sendFeedback?: SendFeedback) =>
+  [
+    'Unleash feature flags. Pick a tool by what the user wants:',
+    ...Object.entries(outcomes)
+      .filter(([tool]) => sendFeedback || tool !== 'send_feedback')
+      .map(([tool, outcome]) => `- ${tool}: ${outcome}`),
+    ...(sendFeedback ? [feedbackDuty] : []),
+  ].join('\n');
 
 /** Creates the MCP server over the user's Unleash. `send_feedback` is listed only when `sendFeedback` is given, that is unless the user opted out. */
 export const createServer = (unleash: UnleashClient, sendFeedback?: SendFeedback): McpServer => {
   // GHSA-46jr-4wx8-v453. A context field update resends every legal value, so this caps a field at about 3,300 described values.
-  const server = new McpServer({ name: 'unleash-mcp', version: pkg.version }, { instructions: instructionsFor(sendFeedback), maxToolInputElements: 10_000 });
+  const server = new McpServer(
+    { name: 'unleash-mcp', version: pkg.version },
+    { instructions: instructionsFor(sendFeedback), maxToolInputElements: 10_000 },
+  );
   const release = createRelease(unleash);
   const killSwitch = createKillSwitch(unleash);
   const inspect = createInspect(unleash);
@@ -184,7 +200,10 @@ export const createServer = (unleash: UnleashClient, sendFeedback?: SendFeedback
         annotations: { readOnlyHint: false, destructiveHint: false },
       },
       async (input) => {
-        const result = await sendFeedback(input, { info: server.server.getClientVersion(), ask: createAskUser(server.server) });
+        const result = await sendFeedback(input, {
+          info: server.server.getClientVersion(),
+          ask: createAskUser(server.server),
+        });
         return result.kind === 'failed' ? toFailedToolResult(result) : toToolResult({ result });
       },
     );

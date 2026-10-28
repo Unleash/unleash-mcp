@@ -26,14 +26,24 @@ const deleteFlags = async (): Promise<void> => {
 before(async () => {
   await deleteFlags();
   await admin.POST(features, { params: { path: { projectId: project } }, body: { name: first, type: 'kill-switch' } });
-  await admin.POST('/api/admin/features/{featureName}/tags', { params: { path: { featureName: first } }, body: { type: 'simple', value: 'mcp-search' } });
+  await admin.POST('/api/admin/features/{featureName}/tags', {
+    params: { path: { featureName: first } },
+    body: { type: 'simple', value: 'mcp-search' },
+  });
   await admin.POST(features, { params: { path: { projectId: project } }, body: { name: second } });
   await admin.POST(features, { params: { path: { projectId: project } }, body: { name: archived } });
   await deleteSegmentNamed(admin, segment);
   const created = await createSegment(admin, { kind: 'segment', action: 'create', name: segment, constraints: [] });
   segmentId = created.kind === 'applied' ? created.id : 0;
-  await createRelease(admin)({ project, flag: { name: second, state: 'on' }, environment: 'development', audience: { targets: [{ name: 'Beta', segments: [segmentId] }] } });
-  await admin.DELETE('/api/admin/projects/{projectId}/features/{featureName}', { params: { path: { projectId: project, featureName: archived } } });
+  await createRelease(admin)({
+    project,
+    flag: { name: second, state: 'on' },
+    environment: 'development',
+    audience: { targets: [{ name: 'Beta', segments: [segmentId] }] },
+  });
+  await admin.DELETE('/api/admin/projects/{projectId}/features/{featureName}', {
+    params: { path: { projectId: project, featureName: archived } },
+  });
 });
 // The flags go first: Unleash may refuse to delete a segment in use.
 after(async () => {
@@ -51,14 +61,19 @@ test('finds a page of flags by a part of their name, with the total across pages
   assert.partialDeepStrictEqual(output, {
     kind: 'flags',
     total: 2,
-    flags: [{
-      name: first,
-      project,
-      type: 'kill-switch',
-      createdBy: 'Mateusz K',
-      tags: [{ type: 'simple', value: 'mcp-search' }],
-      environments: [{ name: 'development', state: 'off' }, { name: 'production', state: 'off' }],
-    }],
+    flags: [
+      {
+        name: first,
+        project,
+        type: 'kill-switch',
+        createdBy: 'Mateusz K',
+        tags: [{ type: 'simple', value: 'mcp-search' }],
+        environments: [
+          { name: 'development', state: 'off' },
+          { name: 'production', state: 'off' },
+        ],
+      },
+    ],
   });
 });
 
@@ -70,53 +85,100 @@ test('skips the first page with the offset', async () => {
 
 test('maps a row, naming the lifecycle stage as the UI does', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: '/api/admin/search/features', query: { offset: '0', limit: '20' }, method: 'GET' }).reply(200, {
-    total: 1,
-    features: [{
-      name: 'checkout',
-      project: 'web',
-      type: 'release',
-      lifecycle: { stage: 'pre-live', enteredStageAt: '2026-10-21T08:00:00.000Z' },
-      environments: [{ name: 'production', enabled: true, lastSeenAt: '2026-10-22T08:00:00.000Z' }],
-    }],
-  });
+  stub
+    .intercept({ path: '/api/admin/search/features', query: { offset: '0', limit: '20' }, method: 'GET' })
+    .reply(200, {
+      total: 1,
+      features: [
+        {
+          name: 'checkout',
+          project: 'web',
+          type: 'release',
+          lifecycle: { stage: 'pre-live', enteredStageAt: '2026-10-21T08:00:00.000Z' },
+          environments: [{ name: 'production', enabled: true, lastSeenAt: '2026-10-22T08:00:00.000Z' }],
+        },
+      ],
+    });
 
   const output = await searchFlags(unleash, { kind: 'flags', offset: 0, limit: 20 });
 
   assert.deepEqual(output, {
     kind: 'flags',
     total: 1,
-    flags: [{ name: 'checkout', project: 'web', type: 'release', stage: 'develop', environments: [{ name: 'production', state: 'on', lastSeenAt: '2026-10-22T08:00:00.000Z' }] }],
+    flags: [
+      {
+        name: 'checkout',
+        project: 'web',
+        type: 'release',
+        stage: 'develop',
+        environments: [{ name: 'production', state: 'on', lastSeenAt: '2026-10-22T08:00:00.000Z' }],
+      },
+    ],
   });
 });
 
 test('keeps only flags in the given lifecycle stages, archived ones included when asked', async () => {
-  const output = await searchFlags(unleash, { kind: 'flags', project, query: 'mcp-searched', stages: ['archived'], offset: 0, limit: 20 });
+  const output = await searchFlags(unleash, {
+    kind: 'flags',
+    project,
+    query: 'mcp-searched',
+    stages: ['archived'],
+    offset: 0,
+    limit: 20,
+  });
 
   assert.partialDeepStrictEqual(output, { kind: 'flags', total: 1, flags: [{ name: archived }] });
 });
 
 test('keeps only flags with a target on any of the given segments', async () => {
-  const output = await searchFlags(unleash, { kind: 'flags', project, query: 'mcp-searched', segments: { match: 'any', of: [segment] }, offset: 0, limit: 20 });
+  const output = await searchFlags(unleash, {
+    kind: 'flags',
+    project,
+    query: 'mcp-searched',
+    segments: { match: 'any', of: [segment] },
+    offset: 0,
+    limit: 20,
+  });
   assert.partialDeepStrictEqual(output, { kind: 'flags', total: 1, flags: [{ name: second }] });
 });
 
 test('keeps only flags carrying all of the given tags', async () => {
-  const output = await searchFlags(unleash, { kind: 'flags', project, query: 'mcp-searched', tags: { match: 'all', of: [{ type: 'simple', value: 'mcp-search' }] }, offset: 0, limit: 20 });
+  const output = await searchFlags(unleash, {
+    kind: 'flags',
+    project,
+    query: 'mcp-searched',
+    tags: { match: 'all', of: [{ type: 'simple', value: 'mcp-search' }] },
+    offset: 0,
+    limit: 20,
+  });
 
   assert.partialDeepStrictEqual(output, { kind: 'flags', total: 1, flags: [{ name: first }] });
 });
 
 // Both sandbox tokens belong to the same user, who created every fixture: leaving that user out leaves nothing.
 test('leaves out the flags created by any of the given users', async () => {
-  const output = await searchFlags(unleash, { kind: 'flags', project, query: 'mcp-searched', createdBy: { match: 'none', of: [user] }, offset: 0, limit: 20 });
+  const output = await searchFlags(unleash, {
+    kind: 'flags',
+    project,
+    query: 'mcp-searched',
+    createdBy: { match: 'none', of: [user] },
+    offset: 0,
+    limit: 20,
+  });
 
   assert.deepEqual(output, { kind: 'flags', total: 0, flags: [] });
 });
 
 // The flags are created while recording, so a day well before the recording keeps them all and the archived one out.
 test('keeps only flags created on or after a day', async () => {
-  const output = await searchFlags(unleash, { kind: 'flags', project, query: 'mcp-searched', createdAt: { match: 'onOrAfter', date: '2026-10-01' }, offset: 0, limit: 20 });
+  const output = await searchFlags(unleash, {
+    kind: 'flags',
+    project,
+    query: 'mcp-searched',
+    createdAt: { match: 'onOrAfter', date: '2026-10-01' },
+    offset: 0,
+    limit: 20,
+  });
 
   assert.partialDeepStrictEqual(output, { kind: 'flags', total: 2, flags: [{ name: first }, { name: second }] });
 });
@@ -125,21 +187,23 @@ test('keeps only flags created on or after a day', async () => {
 // The recorded tests replay by full request, so they pin the spellings they send; the stub spells the rest.
 test('sends every filter as Unleash spells it', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({
-    path: '/api/admin/search/features',
-    query: {
-      project: 'IS:web',
-      query: 'checkout',
-      lifecycle: 'IS_ANY_OF:initial,pre-live,live,completed,archived',
-      segment: 'EXCLUDE_IF_ANY_OF:Beta users,Staff',
-      tag: 'EXCLUDE_ALL:simple:beta,team:payments',
-      createdBy: 'IS_ANY_OF:17,18',
-      createdAt: 'IS_BEFORE:2026-10-05',
-      offset: '0',
-      limit: '20',
-    },
-    method: 'GET',
-  }).reply(200, { total: 0, features: [] });
+  stub
+    .intercept({
+      path: '/api/admin/search/features',
+      query: {
+        project: 'IS:web',
+        query: 'checkout',
+        lifecycle: 'IS_ANY_OF:initial,pre-live,live,completed,archived',
+        segment: 'EXCLUDE_IF_ANY_OF:Beta users,Staff',
+        tag: 'EXCLUDE_ALL:simple:beta,team:payments',
+        createdBy: 'IS_ANY_OF:17,18',
+        createdAt: 'IS_BEFORE:2026-10-05',
+        offset: '0',
+        limit: '20',
+      },
+      method: 'GET',
+    })
+    .reply(200, { total: 0, features: [] });
 
   const output = await searchFlags(unleash, {
     kind: 'flags',
@@ -147,7 +211,13 @@ test('sends every filter as Unleash spells it', async () => {
     query: 'checkout',
     stages: ['define', 'develop', 'production', 'cleanup', 'archived'],
     segments: { match: 'none', of: ['Beta users', 'Staff'] },
-    tags: { match: 'notAll', of: [{ type: 'simple', value: 'beta' }, { type: 'team', value: 'payments' }] },
+    tags: {
+      match: 'notAll',
+      of: [
+        { type: 'simple', value: 'beta' },
+        { type: 'team', value: 'payments' },
+      ],
+    },
     createdBy: { match: 'any', of: [17, 18] },
     createdAt: { match: 'before', date: '2026-10-05' },
     offset: 0,
@@ -159,9 +229,20 @@ test('sends every filter as Unleash spells it', async () => {
 
 test('fails with the Unleash error when the flags cannot be searched', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: '/api/admin/search/features', query: { project: 'IS:web', offset: '0', limit: '20' }, method: 'GET' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
+  stub
+    .intercept({
+      path: '/api/admin/search/features',
+      query: { project: 'IS:web', offset: '0', limit: '20' },
+      method: 'GET',
+    })
+    .reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
 
   const output = await searchFlags(unleash, { kind: 'flags', project: 'web', offset: 0, limit: 20 });
 
-  assert.deepEqual(output, { kind: 'failed', status: 500, name: 'UnknownError', reasons: ['connect ECONNREFUSED 10.0.0.5:5432'] });
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 500,
+    name: 'UnknownError',
+    reasons: ['connect ECONNREFUSED 10.0.0.5:5432'],
+  });
 });

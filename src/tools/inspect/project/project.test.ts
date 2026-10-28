@@ -10,7 +10,10 @@ const flagNaming = { pattern: '^mcp-[a-z-]+$', example: 'mcp-flag', description:
 
 // Every flag the tests create has to match the pattern.
 before(async () => {
-  await admin.PUT('/api/admin/projects/{projectId}/settings', { params: { path: { projectId: project } }, body: { featureNaming: flagNaming } });
+  await admin.PUT('/api/admin/projects/{projectId}/settings', {
+    params: { path: { projectId: project } },
+    body: { featureNaming: flagNaming },
+  });
 });
 after(close);
 
@@ -32,9 +35,16 @@ test('fails with the Unleash error when the project does not exist', async () =>
 
 test('fails with the Unleash error when the project cannot be read', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: `/api/admin/projects/${project}/overview`, method: 'GET' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
+  stub
+    .intercept({ path: `/api/admin/projects/${project}/overview`, method: 'GET' })
+    .reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
 
   const output = await inspectProject(unleash, { kind: 'project', project });
 
-  assert.deepEqual(output, { kind: 'failed', status: 500, name: 'UnknownError', reasons: ['connect ECONNREFUSED 10.0.0.5:5432'] });
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 500,
+    name: 'UnknownError',
+    reasons: ['connect ECONNREFUSED 10.0.0.5:5432'],
+  });
 });

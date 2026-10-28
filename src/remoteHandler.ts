@@ -22,16 +22,17 @@ export type McpRequestHandler = (
  */
 export const createRemoteHandler =
   (fetch: typeof globalThis.fetch) =>
-    ({ baseUrl, feedbackConsent, feedbackUrl }: RemoteHandlerOptions): McpRequestHandler =>
-      async (req, res, { authHeaders, parsedBody }) => {
-        const unleash = createUnleashClient({ baseUrl, headers: authHeaders, fetch });
-        const sendFeedback = feedbackConsent === 'granted' ? createSendFeedback(fetch, pkg.version, feedbackUrl, granted) : undefined;
-        const server = createServer(unleash, sendFeedback);
-        const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
-        res.on('close', () => {
-          transport.close().catch(() => {});
-          server.close().catch(() => {});
-        });
-        await server.connect(transport);
-        await transport.handleRequest(req, res, parsedBody);
-      };
+  ({ baseUrl, feedbackConsent, feedbackUrl }: RemoteHandlerOptions): McpRequestHandler =>
+  async (req, res, { authHeaders, parsedBody }) => {
+    const unleash = createUnleashClient({ baseUrl, headers: authHeaders, fetch });
+    const sendFeedback =
+      feedbackConsent === 'granted' ? createSendFeedback(fetch, pkg.version, feedbackUrl, granted) : undefined;
+    const server = createServer(unleash, sendFeedback);
+    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
+    res.on('close', () => {
+      transport.close().catch(() => {});
+      server.close().catch(() => {});
+    });
+    await server.connect(transport);
+    await transport.handleRequest(req, res, parsedBody);
+  };

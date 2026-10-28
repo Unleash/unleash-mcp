@@ -376,3 +376,7 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 - Rejected: Postel's law (be liberal in what you accept). It keeps old clients working, but agents read the schema every session, so there are none; it would only hide their mistakes.
 - The shared shapes are strict too, so an output using them fails on an extra key instead of dropping it. Read tools still drop unknown keys for now, except in the shared shapes they reuse, such as search's tag filter.
 - Rejected for now: lenient outputs, though the API may add new fields over time. Outputs map Unleash data key by key, so new fields don't reach them, and clients still get closed output schemas.
+
+## 2026-10-28 — Formatter
+
+- Biome formats the code, at 120 characters a line: fewer changes than 100. Supersedes "the formatter is off for now" (Linter).

@@ -16,7 +16,11 @@ export type ConsentStore = {
 };
 
 // Same file as v1, so a decision taken with v1 still holds.
-const consentFile = z.object({ consent: z.enum(['granted', 'denied']), decidedAt: z.string(), consentVersion: z.literal(1) });
+const consentFile = z.object({
+  consent: z.enum(['granted', 'denied']),
+  decidedAt: z.string(),
+  consentVersion: z.literal(1),
+});
 
 /** Creates a store over the file at `location`, dating each decision with `now`. */
 export const createConsentStore = (location: string, now: () => Date): ConsentStore => ({
@@ -26,7 +30,11 @@ export const createConsentStore = (location: string, now: () => Date): ConsentSt
     return consentFile.safeParse(parseJson(contents)).data?.consent;
   },
   write: async (decision) => {
-    const record: z.infer<typeof consentFile> = { consent: decision, decidedAt: now().toISOString(), consentVersion: 1 };
+    const record: z.infer<typeof consentFile> = {
+      consent: decision,
+      decidedAt: now().toISOString(),
+      consentVersion: 1,
+    };
     // Written aside then renamed, so a crash never leaves a half-written file.
     const temporary = `${location}.${process.pid}.tmp`;
     try {
@@ -48,13 +56,19 @@ const parseJson = (contents: string | undefined): unknown => {
 };
 
 /** Where this server keeps its files when the user doesn't pick a directory: the platform's config directory, as v1 did. */
-export const platformConfigDir = (env: Record<string, string | undefined>, platform: NodeJS.Platform, home: string): string => {
+export const platformConfigDir = (
+  env: Record<string, string | undefined>,
+  platform: NodeJS.Platform,
+  home: string,
+): string => {
   const base = env.XDG_CONFIG_HOME?.trim()
     ? resolve(env.XDG_CONFIG_HOME)
     : platform === 'darwin'
       ? join(home, 'Library', 'Application Support')
       : platform === 'win32'
-        ? env.APPDATA?.trim() ? resolve(env.APPDATA) : join(home, 'AppData', 'Roaming')
+        ? env.APPDATA?.trim()
+          ? resolve(env.APPDATA)
+          : join(home, 'AppData', 'Roaming')
         : join(home, '.config');
   return join(base, 'unleash-mcp');
 };

@@ -5,8 +5,13 @@ import type { AskUser } from './consent.ts';
 const timeoutMs = 60_000;
 
 /** Asks the user of the client connected to `server` through an MCP elicitation form with no fields: accepting grants, declining denies. */
-export const createAskUser = (server: Server): AskUser => async (message) => {
-  if (!server.getClientCapabilities()?.elicitation?.form) return undefined;
-  const { action } = await server.elicitInput({ mode: 'form', message, requestedSchema: { type: 'object', properties: {} } }, { timeout: timeoutMs });
-  return action === 'accept' ? 'granted' : action === 'decline' ? 'denied' : undefined;
-};
+export const createAskUser =
+  (server: Server): AskUser =>
+  async (message) => {
+    if (!server.getClientCapabilities()?.elicitation?.form) return undefined;
+    const { action } = await server.elicitInput(
+      { mode: 'form', message, requestedSchema: { type: 'object', properties: {} } },
+      { timeout: timeoutMs },
+    );
+    return action === 'accept' ? 'granted' : action === 'decline' ? 'denied' : undefined;
+  };

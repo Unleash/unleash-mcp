@@ -10,7 +10,10 @@ import { createAskUser } from './consentPrompt.ts';
 const connect = async (t: { after: (fn: () => Promise<void>) => void }, answer?: ElicitResult['action']) => {
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
   const server = new McpServer({ name: 'test-server', version: '0.0.0' });
-  const client = new Client({ name: 'test-client', version: '0.0.0' }, { capabilities: answer ? { elicitation: {} } : {} });
+  const client = new Client(
+    { name: 'test-client', version: '0.0.0' },
+    { capabilities: answer ? { elicitation: {} } : {} },
+  );
   const questions: string[] = [];
   if (answer) {
     client.setRequestHandler(ElicitRequestSchema, async ({ params }) => {

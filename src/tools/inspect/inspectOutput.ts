@@ -24,7 +24,10 @@ const project = z.object({
 
 const lifecycle = z.object({
   stage: lifecycleStage,
-  status: z.string().optional().describe('Detail of the stage when Unleash has one, such as kept or discarded in cleanup'),
+  status: z
+    .string()
+    .optional()
+    .describe('Detail of the stage when Unleash has one, such as kept or discarded in cleanup'),
   enteredAt: z.string().describe('ISO timestamp'),
 });
 
@@ -39,7 +42,9 @@ const milestone = z.object({
   id: z.string(),
   name: z.string(),
   active: z.literal(true).optional().describe('Set on the milestone the plan is at'),
-  transition: transition.optional().describe('Set when the plan moves on from this milestone by itself, once the condition is met'),
+  transition: transition
+    .optional()
+    .describe('Set when the plan moves on from this milestone by itself, once the condition is met'),
   targets: targets.optional().describe('The audiences this milestone gives the feature to'),
 });
 
@@ -73,7 +78,10 @@ const flag = z.object({
   children: z.array(z.string()).optional().describe('Flags that depend on this one'),
   tags: z.array(tag).optional(),
   links: z.array(link).optional().describe('Related URLs, such as the pull request or the ticket'),
-  changeRequests: z.array(pendingChangeRequest).optional().describe('Change requests with changes to this flag not applied yet; people review them in the Unleash UI'),
+  changeRequests: z
+    .array(pendingChangeRequest)
+    .optional()
+    .describe('Change requests with changes to this flag not applied yet; people review them in the Unleash UI'),
 });
 
 const usage = z.object({ project: z.string(), flag: z.string(), environment: z.string() });
@@ -85,7 +93,10 @@ const contextField = z.object({
   description: z.string().optional(),
   stickiness: z.boolean().describe('Whether flags can use the field for custom stickiness'),
   legalValues: z.array(legalValue).optional().describe('Set when constraints on the field may only use these values'),
-  usedBy: z.array(usage).optional().describe('Set when usage is included; every flag environment with a constraint on the field'),
+  usedBy: z
+    .array(usage)
+    .optional()
+    .describe('Set when usage is included; every flag environment with a constraint on the field'),
 });
 
 const segment = z.object({
@@ -97,7 +108,10 @@ const segment = z.object({
   constraints: z.array(constraint).describe('All must match for a user to be in the segment'),
   createdAt: z.string().optional().describe('ISO timestamp'),
   createdBy: z.string().optional().describe('Email of the user who created the segment'),
-  usedBy: z.array(usage).optional().describe('Set when usage is included; every flag environment with a target on the segment'),
+  usedBy: z
+    .array(usage)
+    .optional()
+    .describe('Set when usage is included; every flag environment with a target on the segment'),
 });
 
 const result = z.discriminatedUnion('kind', [project, flag, contextField, segment, failed]);

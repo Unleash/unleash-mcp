@@ -12,7 +12,8 @@ const project = 'mcp-server';
 const projectField = 'mcpProjectLegalValueField';
 
 const deleteFields = async (): Promise<void> => {
-  for (const contextField of [field, projectField]) await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: contextField });
+  for (const contextField of [field, projectField])
+    await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: contextField });
 };
 
 before(async () => {
@@ -26,7 +27,13 @@ after(async () => {
 });
 
 test('adds a legal value to a context field', async () => {
-  const output = await createLegalValue(unleash, { kind: 'legal_value', action: 'create', field, value: 'gold', description: 'Paying customers' });
+  const output = await createLegalValue(unleash, {
+    kind: 'legal_value',
+    action: 'create',
+    field,
+    value: 'gold',
+    description: 'Paying customers',
+  });
 
   assert.deepEqual(output, { kind: 'applied' });
 });
@@ -34,7 +41,9 @@ test('adds a legal value to a context field', async () => {
 test('fails with the Unleash error when the context field does not exist', async () => {
   const { unleash, stub } = createStubbedClient();
   const message = `Could not find context field with name ${field}`;
-  stub.intercept({ path: `/api/admin/context/${field}/legal-values`, method: 'POST' }).reply(404, unleashError('NotFoundError', message));
+  stub
+    .intercept({ path: `/api/admin/context/${field}/legal-values`, method: 'POST' })
+    .reply(404, unleashError('NotFoundError', message));
 
   const output = await createLegalValue(unleash, { kind: 'legal_value', action: 'create', field, value: 'gold' });
 
@@ -42,7 +51,10 @@ test('fails with the Unleash error when the context field does not exist', async
 });
 
 test('removes a legal value from a context field', async () => {
-  await admin.POST('/api/admin/context/{contextField}/legal-values', { params: { path: { contextField: field } }, body: { value: 'silver' } });
+  await admin.POST('/api/admin/context/{contextField}/legal-values', {
+    params: { path: { contextField: field } },
+    body: { value: 'silver' },
+  });
 
   const output = await deleteLegalValue(unleash, { kind: 'legal_value', action: 'delete', field, value: 'silver' });
 
@@ -52,7 +64,9 @@ test('removes a legal value from a context field', async () => {
 test('fails with the Unleash error when the context field to remove a value from does not exist', async () => {
   const { unleash, stub } = createStubbedClient();
   const message = `Could not find context field with name ${field}`;
-  stub.intercept({ path: `/api/admin/context/${field}/legal-values/gold`, method: 'DELETE' }).reply(404, unleashError('NotFoundError', message));
+  stub
+    .intercept({ path: `/api/admin/context/${field}/legal-values/gold`, method: 'DELETE' })
+    .reply(404, unleashError('NotFoundError', message));
 
   const output = await deleteLegalValue(unleash, { kind: 'legal_value', action: 'delete', field, value: 'gold' });
 
@@ -60,15 +74,30 @@ test('fails with the Unleash error when the context field to remove a value from
 });
 
 test('adds a legal value to a context field in a project', async () => {
-  const output = await createLegalValue(unleash, { kind: 'legal_value', action: 'create', project, field: projectField, value: 'gold' });
+  const output = await createLegalValue(unleash, {
+    kind: 'legal_value',
+    action: 'create',
+    project,
+    field: projectField,
+    value: 'gold',
+  });
 
   assert.deepEqual(output, { kind: 'applied' });
 });
 
 test('removes a legal value from a context field in a project', async () => {
-  await admin.POST('/api/admin/context/{contextField}/legal-values', { params: { path: { contextField: projectField } }, body: { value: 'silver' } });
+  await admin.POST('/api/admin/context/{contextField}/legal-values', {
+    params: { path: { contextField: projectField } },
+    body: { value: 'silver' },
+  });
 
-  const output = await deleteLegalValue(unleash, { kind: 'legal_value', action: 'delete', project, field: projectField, value: 'silver' });
+  const output = await deleteLegalValue(unleash, {
+    kind: 'legal_value',
+    action: 'delete',
+    project,
+    field: projectField,
+    value: 'silver',
+  });
 
   assert.deepEqual(output, { kind: 'applied' });
 });

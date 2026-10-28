@@ -3,7 +3,8 @@ import { test } from 'node:test';
 import type { Target } from '../target.ts';
 import { planMilestone, planTargets, planTemplate } from './plan.ts';
 
-const variantsOf = (target: Target) => planTargets('mcp-flag', 'on', [target], { enabled: true, strategyIds: [] }).adds[0]?.variants;
+const variantsOf = (target: Target) =>
+  planTargets('mcp-flag', 'on', [target], { enabled: true, strategyIds: [] }).adds[0]?.variants;
 
 test('gives a value with a share a fixed part of the audience', () => {
   const variants = variantsOf({ name: 'Checkout test', values: [{ name: 'a' }, { name: 'control', share: 20 }] });
@@ -15,7 +16,10 @@ test('gives a value with a share a fixed part of the audience', () => {
 });
 
 test('splits what the shares leave among the values without one', () => {
-  const variants = variantsOf({ name: 'Checkout test', values: [{ name: 'control', share: 20 }, { name: 'a' }, { name: 'b' }] });
+  const variants = variantsOf({
+    name: 'Checkout test',
+    values: [{ name: 'control', share: 20 }, { name: 'a' }, { name: 'b' }],
+  });
 
   assert.deepEqual(variants, [
     { name: 'control', weight: 200, weightType: 'fix', stickiness: 'default' },
@@ -25,7 +29,13 @@ test('splits what the shares leave among the values without one', () => {
 });
 
 test('lets the last value take what is left when every value has a share', () => {
-  const variants = variantsOf({ name: 'Checkout test', values: [{ name: 'control', share: 30 }, { name: 'new', share: 70 }] });
+  const variants = variantsOf({
+    name: 'Checkout test',
+    values: [
+      { name: 'control', share: 30 },
+      { name: 'new', share: 70 },
+    ],
+  });
 
   assert.deepEqual(variants, [
     { name: 'control', weight: 300, weightType: 'fix', stickiness: 'default' },

@@ -7,10 +7,15 @@ import { toUsedBy } from '../shared/usage.ts';
 
 // Usage is the strategies-by-segment request the Unleash UI makes before a delete. Unleash answers it with an
 // indexed join, but a widely used segment makes it long, so it only runs when included.
-export const inspectSegment = async (unleash: UnleashClient, { id, include = [] }: SegmentQuery): Promise<Segment | Failed> => {
+export const inspectSegment = async (
+  unleash: UnleashClient,
+  { id, include = [] }: SegmentQuery,
+): Promise<Segment | Failed> => {
   const [found, used] = await Promise.all([
     unleash.GET('/api/admin/segments/{id}', { params: { path: { id } } }),
-    include.includes('usage') ? unleash.GET('/api/admin/segments/{id}/strategies', { params: { path: { id } } }) : undefined,
+    include.includes('usage')
+      ? unleash.GET('/api/admin/segments/{id}/strategies', { params: { path: { id } } })
+      : undefined,
   ]);
   if (!found.response.ok || !found.data) return toFailed(found);
   if (used && (!used.response.ok || !used.data)) return toFailed(used);

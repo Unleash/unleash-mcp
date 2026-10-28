@@ -7,7 +7,10 @@ import type { Outcome } from './manageFlagOutput.ts';
 export const completeFlag = async (unleash: UnleashClient, { project, flag, outcome }: Complete): Promise<Outcome> => {
   const completed = await unleash.POST('/api/admin/projects/{projectId}/features/{featureName}/lifecycle/complete', {
     params: { path: { projectId: project, featureName: flag } },
-    body: { status: outcome.kind, ...(outcome.kind === 'kept' && outcome.value !== undefined ? { statusValue: outcome.value } : {}) },
+    body: {
+      status: outcome.kind,
+      ...(outcome.kind === 'kept' && outcome.value !== undefined ? { statusValue: outcome.value } : {}),
+    },
   });
   if (!completed.response.ok) return toFailed(completed);
   return { kind: 'applied' };

@@ -9,7 +9,9 @@ import { createChangeRequestReader } from '../shared/changeRequest.ts';
 import { defineFlag } from './define.ts';
 import { setParentDependency } from './setParentDependency.ts';
 
-const { unleash, admin, close } = createRecordedClient(new URL('./setParentDependency.snapshot.json', import.meta.url).pathname);
+const { unleash, admin, close } = createRecordedClient(
+  new URL('./setParentDependency.snapshot.json', import.meta.url).pathname,
+);
 const project = 'mcp-server';
 const parent = 'mcp-parent-flag';
 const child = 'mcp-child-flag';
@@ -31,7 +33,12 @@ after(async () => {
 
 // `mcp-server` requires change requests in production. The recording pins the change Unleash accepted.
 test('puts the parent of a flag in a change request where the project requires one', async () => {
-  const output = await setParentDependency(unleash, createChangeRequestReader(unleash), { action: 'set_parent_dependency', project, flag: child, parent: { kind: 'on', flag: parent } });
+  const output = await setParentDependency(unleash, createChangeRequestReader(unleash), {
+    action: 'set_parent_dependency',
+    project,
+    flag: child,
+    parent: { kind: 'on', flag: parent },
+  });
 
   assert(output.kind === 'pending_change_request');
   changeRequestId = output.changeRequest.id;
@@ -44,10 +51,16 @@ const dependencies = '/api/admin/projects/web/features/checkout-v2/dependencies'
 test('makes a flag depend on its parent serving one of the given values', async () => {
   const { unleash, stub } = createStubbedClient();
   stubChangeRequestsIn(stub, 'web');
-  const onWithValues = (body: string): boolean => isDeepStrictEqual(JSON.parse(body), { feature: 'checkout', enabled: true, variants: ['blue'] });
+  const onWithValues = (body: string): boolean =>
+    isDeepStrictEqual(JSON.parse(body), { feature: 'checkout', enabled: true, variants: ['blue'] });
   stub.intercept({ path: dependencies, method: 'POST', body: onWithValues }).reply(200, '');
 
-  const output = await setParentDependency(unleash, createChangeRequestReader(unleash), { action: 'set_parent_dependency', project: 'web', flag: 'checkout-v2', parent: { kind: 'on', flag: 'checkout', values: ['blue'] } });
+  const output = await setParentDependency(unleash, createChangeRequestReader(unleash), {
+    action: 'set_parent_dependency',
+    project: 'web',
+    flag: 'checkout-v2',
+    parent: { kind: 'on', flag: 'checkout', values: ['blue'] },
+  });
 
   assert.deepEqual(output, { kind: 'applied' });
 });
@@ -58,7 +71,12 @@ test('makes a flag depend on its parent being off', async () => {
   const off = (body: string): boolean => isDeepStrictEqual(JSON.parse(body), { feature: 'checkout', enabled: false });
   stub.intercept({ path: dependencies, method: 'POST', body: off }).reply(200, '');
 
-  const output = await setParentDependency(unleash, createChangeRequestReader(unleash), { action: 'set_parent_dependency', project: 'web', flag: 'checkout-v2', parent: { kind: 'off', flag: 'checkout' } });
+  const output = await setParentDependency(unleash, createChangeRequestReader(unleash), {
+    action: 'set_parent_dependency',
+    project: 'web',
+    flag: 'checkout-v2',
+    parent: { kind: 'off', flag: 'checkout' },
+  });
 
   assert.deepEqual(output, { kind: 'applied' });
 });
@@ -68,7 +86,12 @@ test('stops a flag depending on its parent', async () => {
   stubChangeRequestsIn(stub, 'web');
   stub.intercept({ path: dependencies, method: 'DELETE' }).reply(200, '');
 
-  const output = await setParentDependency(unleash, createChangeRequestReader(unleash), { action: 'set_parent_dependency', project: 'web', flag: 'checkout-v2', parent: { kind: 'none' } });
+  const output = await setParentDependency(unleash, createChangeRequestReader(unleash), {
+    action: 'set_parent_dependency',
+    project: 'web',
+    flag: 'checkout-v2',
+    parent: { kind: 'none' },
+  });
 
   assert.deepEqual(output, { kind: 'applied' });
 });
@@ -77,10 +100,22 @@ test('stops a flag depending on its parent', async () => {
 test('puts the removal of a parent in a change request where the project requires one', async () => {
   const { unleash, stub } = createStubbedClient();
   stubChangeRequestsIn(stub, 'web', production);
-  const removal = (body: string): boolean => isDeepStrictEqual(JSON.parse(body), { feature: 'checkout-v2', action: 'deleteDependency' });
-  stub.intercept({ path: '/api/admin/projects/web/environments/production/change-requests', method: 'POST', body: removal }).reply(200, { id: 7, state: 'In review' });
+  const removal = (body: string): boolean =>
+    isDeepStrictEqual(JSON.parse(body), { feature: 'checkout-v2', action: 'deleteDependency' });
+  stub
+    .intercept({
+      path: '/api/admin/projects/web/environments/production/change-requests',
+      method: 'POST',
+      body: removal,
+    })
+    .reply(200, { id: 7, state: 'In review' });
 
-  const output = await setParentDependency(unleash, createChangeRequestReader(unleash), { action: 'set_parent_dependency', project: 'web', flag: 'checkout-v2', parent: { kind: 'none' } });
+  const output = await setParentDependency(unleash, createChangeRequestReader(unleash), {
+    action: 'set_parent_dependency',
+    project: 'web',
+    flag: 'checkout-v2',
+    parent: { kind: 'none' },
+  });
 
   assert.partialDeepStrictEqual(output, { kind: 'pending_change_request', changeRequest: { id: 7 } });
 });
@@ -91,7 +126,12 @@ test('fails with the Unleash error when the parent is refused', async () => {
   stubChangeRequestsIn(stub, 'web');
   stub.intercept({ path: dependencies, method: 'POST' }).reply(403, unleashError('InvalidOperationError', message));
 
-  const output = await setParentDependency(unleash, createChangeRequestReader(unleash), { action: 'set_parent_dependency', project: 'web', flag: 'checkout-v2', parent: { kind: 'on', flag: 'checkout' } });
+  const output = await setParentDependency(unleash, createChangeRequestReader(unleash), {
+    action: 'set_parent_dependency',
+    project: 'web',
+    flag: 'checkout-v2',
+    parent: { kind: 'on', flag: 'checkout' },
+  });
 
   assert.deepEqual(output, { kind: 'failed', status: 403, name: 'InvalidOperationError', reasons: [message] });
 });

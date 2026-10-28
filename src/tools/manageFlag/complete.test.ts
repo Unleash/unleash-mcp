@@ -12,7 +12,10 @@ const flag = 'mcp-completed-flag';
 
 before(async () => {
   await deleteFlag(admin, project, flag);
-  await admin.POST('/api/admin/projects/{projectId}/features', { params: { path: { projectId: project } }, body: { name: flag } });
+  await admin.POST('/api/admin/projects/{projectId}/features', {
+    params: { path: { projectId: project } },
+    body: { name: flag },
+  });
 });
 after(async () => {
   await deleteFlag(admin, project, flag);
@@ -33,7 +36,12 @@ test('marks a flag completed with the feature discarded', async () => {
   const discarded = (body: string): boolean => isDeepStrictEqual(JSON.parse(body), { status: 'discarded' });
   stub.intercept({ path: complete, method: 'POST', body: discarded }).reply(200);
 
-  const outcome = await completeFlag(unleash, { action: 'complete', project: 'web', flag: 'checkout', outcome: { kind: 'discarded' } });
+  const outcome = await completeFlag(unleash, {
+    action: 'complete',
+    project: 'web',
+    flag: 'checkout',
+    outcome: { kind: 'discarded' },
+  });
 
   assert.deepEqual(outcome, { kind: 'applied' });
 });
@@ -44,7 +52,12 @@ test('records which value was kept', async () => {
   const kept = (body: string): boolean => isDeepStrictEqual(JSON.parse(body), { status: 'kept', statusValue: 'blue' });
   stub.intercept({ path: complete, method: 'POST', body: kept }).reply(200);
 
-  const outcome = await completeFlag(unleash, { action: 'complete', project: 'web', flag: 'checkout', outcome: { kind: 'kept', value: 'blue' } });
+  const outcome = await completeFlag(unleash, {
+    action: 'complete',
+    project: 'web',
+    flag: 'checkout',
+    outcome: { kind: 'kept', value: 'blue' },
+  });
 
   assert.deepEqual(outcome, { kind: 'applied' });
 });
@@ -52,9 +65,16 @@ test('records which value was kept', async () => {
 test('fails with the Unleash error when the flag cannot be completed', async () => {
   const { unleash, stub } = createStubbedClient();
   const message = 'There\'s no feature named "missing" in project "web".';
-  stub.intercept({ path: '/api/admin/projects/web/features/missing/lifecycle/complete', method: 'POST' }).reply(404, unleashError('NotFoundError', message));
+  stub
+    .intercept({ path: '/api/admin/projects/web/features/missing/lifecycle/complete', method: 'POST' })
+    .reply(404, unleashError('NotFoundError', message));
 
-  const outcome = await completeFlag(unleash, { action: 'complete', project: 'web', flag: 'missing', outcome: { kind: 'discarded' } });
+  const outcome = await completeFlag(unleash, {
+    action: 'complete',
+    project: 'web',
+    flag: 'missing',
+    outcome: { kind: 'discarded' },
+  });
 
   assert.deepEqual(outcome, { kind: 'failed', status: 404, name: 'NotFoundError', reasons: [message] });
 });

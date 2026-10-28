@@ -4,8 +4,18 @@ import { manageFlagInput } from './manageFlagInput.ts';
 
 test('refuses values for a parent that must be off, which Unleash would drop', () => {
   const parsed = manageFlagInput.safeParse({
-    operations: [{ action: 'set_parent_dependency', project: 'web', flag: 'checkout-v2', parent: { kind: 'off', flag: 'checkout', values: ['blue'] } }],
+    operations: [
+      {
+        action: 'set_parent_dependency',
+        project: 'web',
+        flag: 'checkout-v2',
+        parent: { kind: 'off', flag: 'checkout', values: ['blue'] },
+      },
+    ],
   });
 
-  assert.deepEqual(parsed.error?.issues.map((i) => i.code), ['unrecognized_keys']);
+  assert.deepEqual(
+    parsed.error?.issues.map((i) => i.code),
+    ['unrecognized_keys'],
+  );
 });

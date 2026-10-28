@@ -5,14 +5,19 @@ import { unleashError } from '../../../unleash/testError.ts';
 import { deleteFlag } from '../../../unleash/testSetup.ts';
 import { searchFlagCreators } from './flagCreators.ts';
 
-const { unleash, admin, close } = createRecordedClient(new URL('./flagCreators.snapshot.json', import.meta.url).pathname);
+const { unleash, admin, close } = createRecordedClient(
+  new URL('./flagCreators.snapshot.json', import.meta.url).pathname,
+);
 const project = 'mcp-server';
 const flag = 'mcp-creator-flag';
 
 // The user behind the token creates a flag, so it is a creator whatever else the sandbox holds.
 before(async () => {
   await deleteFlag(admin, project, flag);
-  await unleash.POST('/api/admin/projects/{projectId}/features', { params: { path: { projectId: project } }, body: { name: flag } });
+  await unleash.POST('/api/admin/projects/{projectId}/features', {
+    params: { path: { projectId: project } },
+    body: { name: flag },
+  });
 });
 after(async () => {
   await deleteFlag(admin, project, flag);
@@ -20,17 +25,24 @@ after(async () => {
 });
 
 test('finds the users who created a flag by the start of their email', async () => {
-  const output = await searchFlagCreators(unleash, { kind: 'flag_creators', query: 'mateusz@getunleash.ai', offset: 0, limit: 20 });
+  const output = await searchFlagCreators(unleash, {
+    kind: 'flag_creators',
+    query: 'mateusz@getunleash.ai',
+    offset: 0,
+    limit: 20,
+  });
 
   assert.partialDeepStrictEqual(output, { kind: 'flag_creators', total: 1, creators: [{ id: 17, name: 'Mateusz K' }] });
 });
 
 test('pages the creators and tells how many match in all', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: '/api/admin/flag-creators', query: { q: 'a', offset: '1', limit: '1' }, method: 'GET' }).reply(200, {
-    total: 3,
-    flagCreators: [{ id: 7, name: 'Alice', username: 'alice' }],
-  });
+  stub
+    .intercept({ path: '/api/admin/flag-creators', query: { q: 'a', offset: '1', limit: '1' }, method: 'GET' })
+    .reply(200, {
+      total: 3,
+      flagCreators: [{ id: 7, name: 'Alice', username: 'alice' }],
+    });
 
   const output = await searchFlagCreators(unleash, { kind: 'flag_creators', query: 'a', offset: 1, limit: 1 });
 
@@ -39,9 +51,16 @@ test('pages the creators and tells how many match in all', async () => {
 
 test('fails with the Unleash error when the creators cannot be listed', async () => {
   const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: '/api/admin/flag-creators', query: { offset: '0', limit: '20' }, method: 'GET' }).reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
+  stub
+    .intercept({ path: '/api/admin/flag-creators', query: { offset: '0', limit: '20' }, method: 'GET' })
+    .reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
 
   const output = await searchFlagCreators(unleash, { kind: 'flag_creators', offset: 0, limit: 20 });
 
-  assert.deepEqual(output, { kind: 'failed', status: 500, name: 'UnknownError', reasons: ['connect ECONNREFUSED 10.0.0.5:5432'] });
+  assert.deepEqual(output, {
+    kind: 'failed',
+    status: 500,
+    name: 'UnknownError',
+    reasons: ['connect ECONNREFUSED 10.0.0.5:5432'],
+  });
 });
