@@ -19,6 +19,9 @@ const flagNaming = z.object({
 const project = z.object({
   kind: z.literal('project'),
   environments: z.array(z.string()).describe('Names release accepts as environment'),
+  defaultStickiness: z
+    .string()
+    .describe('What a target sticks on in the Unleash UI when none is picked; give it as target stickiness to match'),
   flagNaming: flagNaming.optional().describe('Set when the project enforces a naming pattern on new flags'),
 });
 
@@ -31,7 +34,7 @@ const lifecycle = z.object({
   enteredAt: z.string().describe('ISO timestamp'),
 });
 
-const targets = z.array(target.required({ rollout: true }));
+const targets = z.array(target.required({ rollout: true, stickiness: true }));
 
 const transition = z.discriminatedUnion('type', [
   z.object({ type: z.literal('time'), intervalMinutes: z.number() }),

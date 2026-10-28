@@ -14,6 +14,7 @@ export const inspectProject = async (unleash: UnleashClient, { project }: Projec
   return {
     kind: 'project',
     environments: (found.data.environments ?? []).map((e) => e.environment),
+    defaultStickiness: found.data.defaultStickiness ?? 'default',
     ...(naming?.pattern ? { flagNaming: toFlagNaming(naming.pattern, naming) } : {}),
   };
 };

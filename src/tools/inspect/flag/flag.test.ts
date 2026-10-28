@@ -94,7 +94,7 @@ before(async () => {
     project,
     flag: { name: flag, state: 'on' },
     environment: 'development',
-    audience: { targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values }] },
+    audience: { targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values, stickiness: 'userId' }] },
   });
   await addReleasePlan();
 });
@@ -120,7 +120,7 @@ test('describes a flag with its lifecycle, environments, who worked on it, its p
       {
         name: 'development',
         state: 'on',
-        targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values }],
+        targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values, stickiness: 'userId' }],
       },
       { name: 'production', state: 'off' },
     ],

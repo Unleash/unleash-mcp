@@ -43,6 +43,17 @@ test('lets the last value take what is left when every value has a share', () =>
   ]);
 });
 
+test('keeps users in the rollout and in their value by the stickiness of the target', () => {
+  const target = { name: 'Checkout test', values: [{ name: 'control' }, { name: 'new' }], stickiness: 'companyId' };
+
+  const [strategy] = planTargets('mcp-flag', 'on', [target], { enabled: true, strategyIds: [] }).adds;
+
+  assert.partialDeepStrictEqual(strategy, {
+    parameters: { stickiness: 'companyId' },
+    variants: [{ stickiness: 'companyId' }, { stickiness: 'companyId' }],
+  });
+});
+
 const everyone = [{ name: 'Everyone' }];
 
 test('turns off an environment that is on', () => {

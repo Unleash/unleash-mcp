@@ -85,7 +85,7 @@ test('creates a missing flag', async () => {
     kind: 'released',
     flag: { status: 'new', name: flag, state: 'on' },
     environment: 'development',
-    targets: [{ name: 'Everyone', rollout: 50 }],
+    targets: [{ name: 'Everyone', rollout: 50, stickiness: 'default' }],
   });
 });
 
@@ -103,7 +103,7 @@ test('releases an existing flag', async () => {
     kind: 'released',
     flag: { status: 'existing', name: flag, state: 'on' },
     environment: 'development',
-    targets: [{ name: 'Everyone', rollout: 50 }],
+    targets: [{ name: 'Everyone', rollout: 50, stickiness: 'default' }],
   });
 });
 
@@ -129,8 +129,8 @@ test('releases to several audiences', async () => {
     flag: { status: 'existing', name: flag, state: 'on' },
     environment: 'development',
     targets: [
-      { name: 'Everyone', rollout: 50 },
-      { name: 'Beta testers', rollout: 100, constraints: [beta], values: [blue] },
+      { name: 'Everyone', rollout: 50, stickiness: 'default' },
+      { name: 'Beta testers', rollout: 100, constraints: [beta], values: [blue], stickiness: 'default' },
     ],
   });
 });
@@ -150,7 +150,7 @@ test('splits an audience across values', async () => {
     kind: 'released',
     flag: { status: 'existing', name: flag, state: 'on' },
     environment: 'development',
-    targets: [{ name: 'Checkout test', rollout: 100, values }],
+    targets: [{ name: 'Checkout test', rollout: 100, values, stickiness: 'default' }],
   });
 });
 
@@ -168,7 +168,7 @@ test('releases to an audience defined in Unleash', async () => {
     kind: 'released',
     flag: { status: 'existing', name: flag, state: 'on' },
     environment: 'development',
-    targets: [{ name: 'Beta testers', rollout: 100, segments: [segmentId] }],
+    targets: [{ name: 'Beta testers', rollout: 100, segments: [segmentId], stickiness: 'default' }],
   });
 });
 
@@ -186,7 +186,7 @@ test('removes the audiences a release leaves out', async () => {
     kind: 'released',
     flag: { status: 'existing', name: flag, state: 'on' },
     environment: 'development',
-    targets: [{ name: 'Beta testers', rollout: 100 }],
+    targets: [{ name: 'Beta testers', rollout: 100, stickiness: 'default' }],
   });
 });
 
@@ -204,7 +204,7 @@ test('turns a flag off', async () => {
     kind: 'released',
     flag: { status: 'existing', name: flag, state: 'off' },
     environment: 'development',
-    targets: [{ name: 'Beta testers', rollout: 100 }],
+    targets: [{ name: 'Beta testers', rollout: 100, stickiness: 'default' }],
   });
 });
 
@@ -222,7 +222,7 @@ test('turns a flag back on', async () => {
     kind: 'released',
     flag: { status: 'existing', name: flag, state: 'on' },
     environment: 'development',
-    targets: [{ name: 'Beta testers', rollout: 100 }],
+    targets: [{ name: 'Beta testers', rollout: 100, stickiness: 'default' }],
   });
 });
 
@@ -267,7 +267,7 @@ test('puts the release in a change request where the environment requires one', 
   assert.partialDeepStrictEqual(output, {
     flag: { status: 'existing', name: flag, state: 'on' },
     environment: 'production',
-    targets: [{ name: 'Everyone', rollout: 50 }],
+    targets: [{ name: 'Everyone', rollout: 50, stickiness: 'default' }],
     changeRequest: { state: 'In review' },
   });
 });

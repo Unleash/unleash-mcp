@@ -17,12 +17,13 @@ before(async () => {
 });
 after(close);
 
-test('lists the environments and the flag naming pattern of a project', async () => {
+test('lists the environments, the default stickiness and the flag naming pattern of a project', async () => {
   const output = await inspectProject(unleash, { kind: 'project', project });
 
   assert.deepEqual(output, {
     kind: 'project',
     environments: ['development', 'production'],
+    defaultStickiness: 'default',
     flagNaming,
   });
 });

@@ -80,7 +80,7 @@ test('release tool reports the targets', async () => {
       kind: 'released',
       flag: { status: 'new', name: flag, state: 'on' },
       environment: 'development',
-      targets: [{ name: 'Everyone', rollout: 50 }],
+      targets: [{ name: 'Everyone', rollout: 50, stickiness: 'default' }],
     },
   });
   await client.close();
@@ -169,7 +169,7 @@ test('inspect tool returns its results as structured content and as text', async
 
   const result = await client.callTool({ name: 'inspect', arguments: { queries: [{ kind: 'project', project }] } });
 
-  const results = { results: [{ kind: 'project', environments: ['development'] }] };
+  const results = { results: [{ kind: 'project', environments: ['development'], defaultStickiness: 'default' }] };
   assert.deepEqual(result, { structuredContent: results, content: [{ type: 'text', text: JSON.stringify(results) }] });
   await client.close();
 });

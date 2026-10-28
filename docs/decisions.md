@@ -380,3 +380,9 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 ## 2026-10-28 — Formatter
 
 - Biome formats the code, at 120 characters a line: fewer changes than 100. Supersedes "the formatter is off for now" (Linter).
+
+## 2026-10-28 — Stickiness on targets
+
+- Stickiness is set per target, on the shared target shape, so release, kill_switch and the experiment tool take it alike. Unleash requires it on each variant too, so the variants get the target's; values never take their own.
+- Left out, a target sticks on Unleash's `default`. The project's default stickiness is on `inspect project` for the agent to pass along. Rejected: the tools reading the project's default themselves, which costs a request on every call and puts a lookup inside a command.
+- Outputs and `inspect` always show a target's stickiness, so a target round-trips unchanged.
