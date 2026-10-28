@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { isDeepStrictEqual } from 'node:util';
 import type { Interceptable } from 'undici';
-import { createStubbedClient } from '../../unleash/testClient.ts';
-import { requestRelease } from './changeRequest.ts';
+import { createStubbedClient } from '../../../unleash/testClient.ts';
+import { requestPlan } from './changeRequest.ts';
 
 const project = 'mcp-server';
 
@@ -30,7 +30,7 @@ test('submits every change of a release in one change request', async () => {
   stub.intercept({ path: changeRequests, method: 'POST', body: actions }).reply(200, draft);
   stubSubmit(stub);
 
-  const requested = await requestRelease(unleash, path, { updates: [{ id: 's1', strategy: defaultStrategy }], adds: [beta], deletes: ['s2'], toggle: 'on' });
+  const requested = await requestPlan(unleash, path, { updates: [{ id: 's1', strategy: defaultStrategy }], adds: [beta], deletes: ['s2'], toggle: 'on' });
 
   assert.partialDeepStrictEqual(requested, { kind: 'requested', changeRequest: { id: 7 } });
 });
@@ -45,7 +45,7 @@ test('applies the template before removing the audiences it replaces in the chan
   stub.intercept({ path: changeRequests, method: 'POST', body: templateFirst }).reply(200, draft);
   stubSubmit(stub);
 
-  const requested = await requestRelease(unleash, path, { ...defaultPlan, deletes: ['s1'], template: 't1' });
+  const requested = await requestPlan(unleash, path, { ...defaultPlan, deletes: ['s1'], template: 't1' });
 
   assert.equal(requested.kind, 'requested');
 });
@@ -60,7 +60,7 @@ test('starts the milestone before removing the audiences it replaces in the chan
   stub.intercept({ path: changeRequests, method: 'POST', body: milestoneFirst }).reply(200, draft);
   stubSubmit(stub);
 
-  const requested = await requestRelease(unleash, path, { ...defaultPlan, deletes: ['s1'], milestone: { planId: 'p1', milestoneId: 'm2' } });
+  const requested = await requestPlan(unleash, path, { ...defaultPlan, deletes: ['s1'], milestone: { planId: 'p1', milestoneId: 'm2' } });
 
   assert.equal(requested.kind, 'requested');
 });
@@ -75,7 +75,7 @@ test('turns the environment off before changing its audiences in the change requ
   stub.intercept({ path: changeRequests, method: 'POST', body: disablesFirst }).reply(200, draft);
   stubSubmit(stub);
 
-  const requested = await requestRelease(unleash, path, { ...defaultPlan, updates: [{ id: 's1', strategy: defaultStrategy }], toggle: 'off' });
+  const requested = await requestPlan(unleash, path, { ...defaultPlan, updates: [{ id: 's1', strategy: defaultStrategy }], toggle: 'off' });
 
   assert.equal(requested.kind, 'requested');
 });
@@ -86,7 +86,7 @@ test('leaves an enabled environment as it is in the change request', async () =>
   stub.intercept({ path: changeRequests, method: 'POST', body: onlyAdds }).reply(200, draft);
   stubSubmit(stub);
 
-  const requested = await requestRelease(unleash, path, { ...defaultPlan, adds: [defaultStrategy] });
+  const requested = await requestPlan(unleash, path, { ...defaultPlan, adds: [defaultStrategy] });
 
   assert.equal(requested.kind, 'requested');
 });

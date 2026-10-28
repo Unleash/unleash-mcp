@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import type { Target } from '../shared/target.ts';
-import { planMilestone, planRelease, planTemplate } from './releasePlan.ts';
+import type { Target } from '../target.ts';
+import { planMilestone, planTargets, planTemplate } from './plan.ts';
 
-const variantsOf = (target: Target) => planRelease('mcp-flag', 'on', [target], { enabled: true, strategyIds: [] }).adds[0]?.variants;
+const variantsOf = (target: Target) => planTargets('mcp-flag', 'on', [target], { enabled: true, strategyIds: [] }).adds[0]?.variants;
 
 test('gives a value with a share a fixed part of the audience', () => {
   const variants = variantsOf({ name: 'Checkout test', values: [{ name: 'a' }, { name: 'control', share: 20 }] });
@@ -36,19 +36,19 @@ test('lets the last value take what is left when every value has a share', () =>
 const everyone = [{ name: 'Everyone' }];
 
 test('turns off an environment that is on', () => {
-  const plan = planRelease('mcp-flag', 'off', everyone, { enabled: true, strategyIds: ['s1'] });
+  const plan = planTargets('mcp-flag', 'off', everyone, { enabled: true, strategyIds: ['s1'] });
 
   assert.equal(plan.toggle, 'off');
 });
 
 test('turns on an environment that is off', () => {
-  const plan = planRelease('mcp-flag', 'on', everyone, { enabled: false, strategyIds: ['s1'] });
+  const plan = planTargets('mcp-flag', 'on', everyone, { enabled: false, strategyIds: ['s1'] });
 
   assert.equal(plan.toggle, 'on');
 });
 
 test('leaves an environment that is already off as it is', () => {
-  const plan = planRelease('mcp-flag', 'off', everyone, { enabled: false, strategyIds: ['s1'] });
+  const plan = planTargets('mcp-flag', 'off', everyone, { enabled: false, strategyIds: ['s1'] });
 
   assert.equal(plan.toggle, undefined);
 });

@@ -1,11 +1,11 @@
-import type { UnleashClient } from '../../unleash/client.ts';
-import { type Requested, requestChanges } from '../shared/changeRequest.ts';
-import type { Failed } from '../shared/failed.ts';
-import type { EnvironmentPath, Plan } from './releasePlan.ts';
+import type { UnleashClient } from '../../../unleash/client.ts';
+import { type Requested, requestChanges } from '../changeRequest.ts';
+import type { Failed } from '../failed.ts';
+import type { EnvironmentPath, Plan } from './plan.ts';
 
 // All of a release goes into one change request, so it is approved or rejected as a whole. Unleash adds it to the
 // user's open draft, if any, and the whole draft is submitted for review unless it already was.
-export const requestRelease = (unleash: UnleashClient, path: EnvironmentPath, plan: Plan): Promise<Requested | Failed> => {
+export const requestPlan = (unleash: UnleashClient, path: EnvironmentPath, plan: Plan): Promise<Requested | Failed> => {
   const feature = path.featureName;
   // Ordered as the direct writes are: disabling first, enabling last.
   const toggle = { feature, action: 'updateEnabled' as const, payload: { enabled: plan.toggle === 'on' } };

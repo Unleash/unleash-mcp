@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createStubbedClient } from '../../unleash/testClient.ts';
-import { unleashError } from '../../unleash/testError.ts';
+import { createStubbedClient } from '../../../unleash/testClient.ts';
+import { unleashError } from '../../../unleash/testError.ts';
 import { applyTemplate } from './template.ts';
 
 const path = { projectId: 'mcp-server', featureName: 'mcp-flag', environment: 'development' };
