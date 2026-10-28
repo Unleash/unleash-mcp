@@ -6,6 +6,7 @@ import { createRecordedClient, createStubbedClient } from '../../unleash/testCli
 import { unleashError } from '../../unleash/testError.ts';
 import { cancelChangeRequest, deleteFlag } from '../../unleash/testSetup.ts';
 import { createKillSwitch } from './killSwitch.ts';
+import { killSwitchInput } from './killSwitchInput.ts';
 import { killSwitchOutput } from './killSwitchOutput.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./killSwitch.snapshot.json', import.meta.url).pathname);
@@ -58,4 +59,10 @@ test('fails with the Unleash error when the switch cannot be created', async () 
   const output = await createKillSwitch(unleash)({ project: 'web', flag: { name: 'disable-payments', state: 'on' }, environment: 'development' });
 
   assert.deepEqual(output, { kind: 'failed', status: 403, name: 'PermissionError', reasons: [message] });
+});
+
+test('refuses release\'s audience, which it would drop and turn the switch on for everyone', () => {
+  const parsed = killSwitchInput.safeParse({ project: 'web', flag: { name: 'disable-payments', state: 'on' }, environment: 'production', audience: { targets: [{ name: 'Beta' }] } });
+
+  assert.deepEqual(parsed.error?.issues.map((i) => i.code), ['unrecognized_keys']);
 });
