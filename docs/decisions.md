@@ -362,10 +362,16 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 
 - Releasing software, kill switching and A/B test splits are separate enough use cases to justify separate top-level tools, despite all of them using similar, if not identical, setup under the hood. For experiments Unleash only does the split, not checking the results.
 - So the rollout engine is shared code, not part of `release`: planning an environment's end state, the direct writes, the change request for an environment, applying a template and starting a milestone live in `src/tools/shared/rollout/`, and each tool keeps only its own input, output and planning of its audience.
-- Release plans stay in the shared engine, though kill switches don't use them. Rejected: moving them into `release`, which scattered the order of the shared writes.
+- Release plans stay in the shared engine, even though kill switches don't use them. Rejected: moving them into `release`, which spread the order of the writes over too many places.
 
 ## 2026-10-28 — Kill switch tool
 
-- A missing switch is created as a permanent `kill-switch` flag. A negated name, such as `disable-payments`, is encouraged, not enforced.
-- Like release: one environment per call, same change requests. Targets default to everyone, to prevent overspecifying.
-- Retyping an existing flag, e.g. a release turned into a kill switch, is skipped for now.
+- A missing switch is created behind the scenes as a permanent `kill-switch` flag. Encourage a negated name like `disable-payments`, but don't enforce it.
+- Same as release: one environment per call, same change request behaviour. Targets default to everyone, to prevent overspecifying.
+- Skip changing the type of an existing flag for now, though people often turn releases into permanent kill switches.
+
+## 2026-10-28 — Strict inputs for tools that write
+
+- Tools that write refuse keys they don't know, at any level. A dropped key reports success for something the agent didn't ask for, e.g. release's audience sent to kill_switch turns the switch on for everyone. A refusal names the key, so the agent fixes the call.
+- Rejected: Postel's law (be liberal in what you accept). It keeps old clients working, but agents read the schema every session, so there are none; it would only hide their mistakes.
+- The shared shapes are strict too, so outputs using them can't return extra keys. Read tools still drop unknown keys for now.

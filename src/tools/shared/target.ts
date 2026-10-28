@@ -8,7 +8,7 @@ const operators = [
   'REGEX', 'IN_CIDR',
 ] as const;
 
-export const constraint = z.object({
+export const constraint = z.strictObject({
   field: z.string().describe('Context field name, as a context fields search returns it, e.g. userId, email, appName'),
   operator: z.enum(operators).describe('How the field is compared with the values'),
   values: z.array(z.string()).min(1).describe('Matches when the field matches any of them. On a field with legal values, only those, as a context field inspect lists them'),
@@ -16,9 +16,9 @@ export const constraint = z.object({
   caseInsensitive: z.boolean().optional().describe('Ignores case in string comparisons'),
 });
 
-const value = z.object({
+const value = z.strictObject({
   name: z.string().describe('What the code receives to tell values apart, e.g. blue-button'),
-  payload: z.object({
+  payload: z.strictObject({
     type: z.enum(['string', 'json', 'csv', 'number']).describe('How the code should parse the value'),
     value: z.string().describe('e.g. {"color":"blue"}'),
   }).optional().describe('Data the code receives with the value'),
@@ -32,7 +32,7 @@ const values = z.array(value).min(1).refine(
   'When every value has a share, the shares must add up to 100',
 );
 
-export const target = z.object({
+export const target = z.strictObject({
   name: z.string().describe('What the audience is, e.g. Beta testers. Shown in the Unleash UI'),
   rollout: z.number().int().min(0).max(100).optional().describe('Percentage of the audience that gets the feature, default 100'),
   constraints: z.array(constraint).optional().describe('All must match for a user to be in the audience'),
