@@ -29,7 +29,7 @@ export const createRemoteHandler =
       feedbackConsent === 'granted'
         ? createSendFeedback({ fetch, mcpVersion: pkg.version, feedbackBaseUrl: feedbackUrl, consent: granted })
         : undefined;
-    const server = createServer(unleash, sendFeedback);
+    const server = createServer(unleash, fetch, sendFeedback);
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
     res.on('close', () => {
       transport.close().catch(() => {});

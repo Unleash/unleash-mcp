@@ -20,3 +20,15 @@ export const toFailed = ({ response, error }: FailedCall): Failed => ({
   name: error?.name ?? 'UnknownError',
   reasons: error?.details?.map((d) => d.message) ?? [],
 });
+
+/** How long a call outside the Unleash client waits for a reply, so a hanging connection doesn't block the agent. */
+export const timeoutMs = 10_000;
+
+/**
+ * Maps a rejected `fetch` to `Failed`. fetch rejects only when no reply came: no connection (a TypeError whose cause
+ * says why) or the timeout fired. No reply means no HTTP status, hence 0.
+ */
+export const toUnreachable = (error: Error): Failed => {
+  const cause = error.cause instanceof Error ? [error.cause.message] : [];
+  return { kind: 'failed', status: 0, name: 'NetworkError', reasons: [error.message, ...cause] };
+};
