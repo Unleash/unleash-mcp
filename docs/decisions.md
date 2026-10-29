@@ -410,3 +410,7 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 ## 2026-10-29 — Named parameters
 
 - A function with four or more parameters takes its data as one object, with its collaborators (`unleash`, `editionOf`, `fetch`) first as positional parameters. Four positional values of the same type, such as two tag arrays, can be swapped silently; named data makes a call read on its own. Rejected: one object for everything, which hides which argument is the injected dependency.
+
+## 2026-10-29 — Pre-commit hook
+
+- A pre-commit hook typechecks, lints and runs every test, so a commit never breaks the build. It is a checked-in script that `pnpm install` wires through `core.hooksPath`. Rejected: a hook package such as husky, one more dependency for one script.
