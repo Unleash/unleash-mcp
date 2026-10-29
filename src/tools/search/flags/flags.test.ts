@@ -30,6 +30,10 @@ before(async () => {
     params: { path: { featureName: first } },
     body: { type: 'simple', value: 'mcp-search' },
   });
+  await admin.PATCH('/api/admin/projects/{projectId}/features/{featureName}', {
+    params: { path: { projectId: project, featureName: first } },
+    body: [{ op: 'replace', path: '/stale', value: true }],
+  });
   await admin.POST(features, { params: { path: { projectId: project } }, body: { name: second } });
   await admin.POST(features, { params: { path: { projectId: project } }, body: { name: archived } });
   await deleteSegmentNamed(admin, segment);
@@ -130,6 +134,19 @@ test('keeps only flags in the given lifecycle stages, archived ones included whe
   assert.partialDeepStrictEqual(output, { kind: 'flags', total: 1, flags: [{ name: archived }] });
 });
 
+test('keeps only flags marked stale', async () => {
+  const output = await searchFlags(unleash, {
+    kind: 'flags',
+    project,
+    query: 'mcp-searched',
+    staleness: ['stale'],
+    offset: 0,
+    limit: 20,
+  });
+
+  assert.partialDeepStrictEqual(output, { kind: 'flags', total: 1, flags: [{ name: first }] });
+});
+
 test('keeps only flags with a target on any of the given segments', async () => {
   const output = await searchFlags(unleash, {
     kind: 'flags',
@@ -194,6 +211,7 @@ test('sends every filter as Unleash spells it', async () => {
         project: 'IS:web',
         query: 'checkout',
         lifecycle: 'IS_ANY_OF:initial,pre-live,live,completed,archived',
+        state: 'IS_ANY_OF:active,stale,potentially-stale',
         segment: 'EXCLUDE_IF_ANY_OF:Beta users,Staff',
         tag: 'EXCLUDE_ALL:simple:beta,team:payments',
         createdBy: 'IS_ANY_OF:17,18',
@@ -210,6 +228,7 @@ test('sends every filter as Unleash spells it', async () => {
     project: 'web',
     query: 'checkout',
     stages: ['define', 'develop', 'production', 'cleanup', 'archived'],
+    staleness: ['active', 'stale', 'potentially_stale'],
     segments: { match: 'none', of: ['Beta users', 'Staff'] },
     tags: {
       match: 'notAll',

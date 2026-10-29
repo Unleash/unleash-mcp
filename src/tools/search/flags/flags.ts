@@ -3,6 +3,7 @@ import type { UnleashClient } from '../../../unleash/client.ts';
 import { type Failed, toFailed } from '../../shared/failed.ts';
 import { toFlagState } from '../../shared/flagState.ts';
 import { toLifecycleStage, toUnleashStage } from '../../shared/lifecycleStage.ts';
+import { toUnleashStaleness } from '../../shared/staleness.ts';
 import type { FlagsQuery, Match } from '../searchInput.ts';
 import type { Flags } from '../searchOutput.ts';
 
@@ -12,7 +13,7 @@ type UnleashFlag = components['schemas']['featureSearchResponseSchema'];
 // drop what the search computes per flag (strategies, variants, plans) and keep the summary.
 export const searchFlags = async (
   unleash: UnleashClient,
-  { project, query, stages, segments, tags, createdBy, createdAt, offset, limit }: FlagsQuery,
+  { project, query, stages, staleness, segments, tags, createdBy, createdAt, offset, limit }: FlagsQuery,
 ): Promise<Flags | Failed> => {
   const found = await unleash.GET('/api/admin/search/features', {
     params: {
@@ -20,6 +21,7 @@ export const searchFlags = async (
         ...(project ? { project: `IS:${project}` } : {}),
         ...(query ? { query } : {}),
         ...(stages ? { lifecycle: `IS_ANY_OF:${stages.map(toUnleashStage).join(',')}` } : {}),
+        ...(staleness ? { state: `IS_ANY_OF:${staleness.map(toUnleashStaleness).join(',')}` } : {}),
         ...(segments ? { segment: `${toOperator[segments.match]}:${segments.of.join(',')}` } : {}),
         ...(tags
           ? { tag: `${toOperator[tags.match]}:${tags.of.map(({ type, value }) => `${type}:${value}`).join(',')}` }

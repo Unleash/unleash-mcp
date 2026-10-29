@@ -430,3 +430,7 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 ## 2026-10-29 — Marking a flag stale
 
 - `manage_flag` gets a `set_staleness` operation taking `staleness: 'stale' | 'active'`, sent as the JSON patch of `/stale` the Unleash UI sends, with no change request, as in the UI. Rejected: a `stale` field on `define`, which reads the flag first and would hide a one-call note behind a sync; the bulk `/stale` endpoint, since a batch of operations covers several flags.
+
+## 2026-10-29 — Search filters flags by staleness
+
+- A flags search takes `staleness`, any of `active`, `stale` and `potentially_stale`, the states the Unleash UI filters by, sent as Unleash's `state` filter; the name differs because `state` is enabled or disabled in every tool. The vocabulary is shared with `manage_flag`, which can set only `stale` and `active`, since Unleash computes potentially stale on its own. Rejected: a `stale` field on flag rows, since a filtered search already answers which flags are stale.

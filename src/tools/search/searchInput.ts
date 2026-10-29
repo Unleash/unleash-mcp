@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { lifecycleStage } from '../shared/lifecycleStage.ts';
+import { staleness } from '../shared/staleness.ts';
 import { tag } from '../shared/tag.ts';
 
 const segments = z
@@ -45,6 +46,13 @@ const flags = z
       .min(1)
       .optional()
       .describe('Keeps flags in any of these lifecycle stages; archived flags only come back when archived is listed'),
+    staleness: z
+      .array(staleness)
+      .min(1)
+      .optional()
+      .describe(
+        'Keeps flags in any of these states: stale is set by a person, potentially_stale is what Unleash marks on its own past the expected lifetime',
+      ),
     segments: matching(z.string())
       .optional()
       .describe('Keeps flags whose targets match these segments, by exact name as a segments search returns it'),
