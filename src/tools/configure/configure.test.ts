@@ -101,6 +101,18 @@ test('answers a created project with its id', async () => {
   });
 });
 
+test('names an updated project by its id', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: '/api/admin/projects/pet-shop', method: 'PUT' }).reply(200, {});
+  const configure = createConfigure(unleash);
+
+  const output = await configure({ changes: [{ kind: 'project', action: 'update', id: 'pet-shop', name: 'Pets' }] });
+
+  assert.deepEqual(output, {
+    results: [{ kind: 'applied', resource: 'project', action: 'update', id: 'pet-shop', name: 'Pets' }],
+  });
+});
+
 test('names an updated segment by its id', async () => {
   const { unleash, stub } = createStubbedClient();
   stub.intercept({ path: '/api/admin/segments/42', method: 'PUT' }).reply(204, '');

@@ -10,9 +10,12 @@ test('answers each query in the order asked, failures included', async () => {
   stub
     .intercept({ path: '/api/admin/projects/unknown/overview', method: 'GET' })
     .reply(404, unleashError('NotFoundError', 'No project found'));
-  stub
-    .intercept({ path: '/api/admin/projects/known/overview', method: 'GET' })
-    .reply(200, { environments: [{ environment: 'development' }], defaultStickiness: 'userId' });
+  stub.intercept({ path: '/api/admin/projects/known/overview', method: 'GET' }).reply(200, {
+    name: 'Known',
+    mode: 'open',
+    environments: [{ environment: 'development' }],
+    defaultStickiness: 'userId',
+  });
   stub
     .intercept({ path: '/api/admin/projects/known/features/mcp-flag', method: 'GET' })
     .reply(200, { name: 'mcp-flag', type: 'release' });
@@ -40,7 +43,7 @@ test('answers each query in the order asked, failures included', async () => {
   assert.deepEqual(output, {
     results: [
       { kind: 'failed', status: 404, name: 'NotFoundError', reasons: ['No project found'] },
-      { kind: 'project', environments: ['development'], defaultStickiness: 'userId' },
+      { kind: 'project', name: 'Known', mode: 'open', environments: ['development'], defaultStickiness: 'userId' },
       { kind: 'flag', name: 'mcp-flag', type: 'release', environments: [] },
       { kind: 'context_field', name: 'tier', stickiness: true },
       { kind: 'segment', id: 7, name: 'Beta', constraints: [], createdAt: '2026-10-22T08:00:00.000Z' },

@@ -4,7 +4,7 @@ import type { Change, ConfigureInput } from './configureInput.ts';
 import type { ConfigureOutput, ConfigureResult, Outcome, PendingChange, Target } from './configureOutput.ts';
 import { createContextField, deleteContextField, updateContextField } from './contextField.ts';
 import { createLegalValue, deleteLegalValue } from './legalValue.ts';
-import { createProject } from './project.ts';
+import { createProject, updateProject } from './project.ts';
 import { createReleaseTemplate } from './releaseTemplate.ts';
 import { createSegment, deleteSegment, updateSegment } from './segment.ts';
 import { deleteTag } from './tag.ts';
@@ -39,7 +39,7 @@ const apply = (
     case 'segment':
       return applySegment(unleash, environmentsOf, change);
     case 'project':
-      return createProject(unleash, change);
+      return applyProject(unleash, change);
   }
 };
 
@@ -91,6 +91,15 @@ const applySegment = (
   }
 };
 
+const applyProject = (unleash: UnleashClient, change: ChangeOf<'project'>): Promise<Outcome> => {
+  switch (change.action) {
+    case 'create':
+      return createProject(unleash, change);
+    case 'update':
+      return updateProject(unleash, change);
+  }
+};
+
 const resultOf = (change: Change, outcome: Outcome | PendingChange): ConfigureResult => {
   const target = targetOf(change);
   // Only the steps for resources that have an id answer one, and only segment updates and deletes wait for a
@@ -115,7 +124,7 @@ const targetOf = (change: Change): Target => {
     case 'segment':
       return segmentTarget(change);
     case 'project':
-      return { resource: 'project', action: change.action, name: change.name };
+      return projectTarget(change);
   }
 };
 
@@ -127,5 +136,14 @@ const segmentTarget = (change: ChangeOf<'segment'>): Target => {
       return { resource: 'segment', action: change.action, id: change.id, name: change.name };
     case 'delete':
       return { resource: 'segment', action: change.action, id: change.id };
+  }
+};
+
+const projectTarget = (change: ChangeOf<'project'>): Target => {
+  switch (change.action) {
+    case 'create':
+      return { resource: 'project', action: change.action, name: change.name };
+    case 'update':
+      return { resource: 'project', action: change.action, id: change.id, name: change.name };
   }
 };

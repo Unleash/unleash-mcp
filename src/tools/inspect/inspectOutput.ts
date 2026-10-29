@@ -18,6 +18,13 @@ const flagNaming = z.object({
 
 const project = z.object({
   kind: z.literal('project'),
+  name: z.string(),
+  description: z.string().optional().describe('Set when the project has one'),
+  mode: z
+    .enum(['open', 'protected', 'private'])
+    .describe(
+      'open: anyone can see it and submit change requests. protected: only members submit change requests. private: only members see it',
+    ),
   environments: z.array(z.string()).describe('Names release accepts as environment'),
   defaultStickiness: z
     .string()

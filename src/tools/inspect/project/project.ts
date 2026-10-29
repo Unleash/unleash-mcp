@@ -10,9 +10,12 @@ export const inspectProject = async (unleash: UnleashClient, { project }: Projec
     params: { path: { projectId: project } },
   });
   if (!found.response.ok || !found.data) return toFailed(found);
-  const naming = found.data.featureNaming;
+  const { name, description, mode, featureNaming: naming } = found.data;
   return {
     kind: 'project',
+    name,
+    ...(description ? { description } : {}),
+    mode: mode ?? 'open',
     environments: (found.data.environments ?? []).map((e) => e.environment),
     defaultStickiness: found.data.defaultStickiness ?? 'default',
     ...(naming?.pattern ? { flagNaming: toFlagNaming(naming.pattern, naming) } : {}),
