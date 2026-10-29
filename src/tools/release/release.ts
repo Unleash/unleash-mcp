@@ -1,5 +1,4 @@
 import type { UnleashClient } from '../../unleash/client.ts';
-import { ensureFlag } from '../shared/rollout/ensureFlag.ts';
 import { createRollout } from '../shared/rollout/rollout.ts';
 import { withDefaults } from '../shared/strategy.ts';
 import type { ReleaseInput } from './releaseInput.ts';
@@ -8,18 +7,17 @@ import { planAudience } from './releasePlan.ts';
 
 export const createRelease = (unleash: UnleashClient) => {
   const rollout = createRollout(unleash);
-  return async ({ project, flag: { name, state }, environment, audience }: ReleaseInput): Promise<ReleaseResult> => {
+  return async ({ project, flag, environment, audience }: ReleaseInput): Promise<ReleaseResult> => {
     const rolledOut = await rollout({
       project,
-      name,
+      flag,
       environment,
-      ensure: () => ensureFlag(unleash, project, { flag: name, environment }),
-      planFor: (current) => planAudience({ flag: name, state, audience, current }),
+      planFor: (current) => planAudience({ flag: flag.name, state: flag.state, audience, current }),
     });
     if (rolledOut.kind === 'failed') return rolledOut;
 
     const outcome = {
-      flag: { status: rolledOut.flag.kind, name, state },
+      flag: rolledOut.flag,
       environment,
       ...('targets' in audience && { targets: audience.targets.map(withDefaults) }),
     };
