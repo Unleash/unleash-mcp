@@ -4,7 +4,8 @@ import type { Target } from '../target.ts';
 import { planMilestone, planTargets, planTemplate } from './plan.ts';
 
 const variantsOf = (target: Target) =>
-  planTargets('mcp-flag', 'on', [target], { enabled: true, strategyIds: [] }).adds[0]?.variants;
+  planTargets({ flag: 'mcp-flag', state: 'on', targets: [target], current: { state: 'on', strategyIds: [] } }).adds[0]
+    ?.variants;
 
 test('gives a value with a share a fixed part of the audience', () => {
   const variants = variantsOf({ name: 'Checkout test', values: [{ name: 'a' }, { name: 'control', share: 20 }] });
@@ -46,7 +47,12 @@ test('lets the last value take what is left when every value has a share', () =>
 test('keeps users in the rollout and in their value by the stickiness of the target', () => {
   const target = { name: 'Checkout test', values: [{ name: 'control' }, { name: 'new' }], stickiness: 'companyId' };
 
-  const [strategy] = planTargets('mcp-flag', 'on', [target], { enabled: true, strategyIds: [] }).adds;
+  const [strategy] = planTargets({
+    flag: 'mcp-flag',
+    state: 'on',
+    targets: [target],
+    current: { state: 'on', strategyIds: [] },
+  }).adds;
 
   assert.partialDeepStrictEqual(strategy, {
     parameters: { stickiness: 'companyId' },
@@ -57,25 +63,44 @@ test('keeps users in the rollout and in their value by the stickiness of the tar
 const everyone = [{ name: 'Everyone' }];
 
 test('turns off an environment that is on', () => {
-  const plan = planTargets('mcp-flag', 'off', everyone, { enabled: true, strategyIds: ['s1'] });
+  const plan = planTargets({
+    flag: 'mcp-flag',
+    state: 'off',
+    targets: everyone,
+    current: { state: 'on', strategyIds: ['s1'] },
+  });
 
   assert.equal(plan.toggle, 'off');
 });
 
 test('turns on an environment that is off', () => {
-  const plan = planTargets('mcp-flag', 'on', everyone, { enabled: false, strategyIds: ['s1'] });
+  const plan = planTargets({
+    flag: 'mcp-flag',
+    state: 'on',
+    targets: everyone,
+    current: { state: 'off', strategyIds: ['s1'] },
+  });
 
   assert.equal(plan.toggle, 'on');
 });
 
 test('leaves an environment that is already off as it is', () => {
-  const plan = planTargets('mcp-flag', 'off', everyone, { enabled: false, strategyIds: ['s1'] });
+  const plan = planTargets({
+    flag: 'mcp-flag',
+    state: 'off',
+    targets: everyone,
+    current: { state: 'off', strategyIds: ['s1'] },
+  });
 
   assert.equal(plan.toggle, undefined);
 });
 
 test('removes every audience of the environment when a template replaces them', () => {
-  const plan = planTemplate('01JB9GGTGQYEQ9D40R17T3YVW2', 'on', { enabled: true, strategyIds: ['s1', 's2'] });
+  const plan = planTemplate({
+    template: '01JB9GGTGQYEQ9D40R17T3YVW2',
+    state: 'on',
+    current: { state: 'on', strategyIds: ['s1', 's2'] },
+  });
 
   assert.deepEqual(plan, { updates: [], adds: [], deletes: ['s1', 's2'], template: '01JB9GGTGQYEQ9D40R17T3YVW2' });
 });
@@ -83,7 +108,7 @@ test('removes every audience of the environment when a template replaces them', 
 test('removes every audience of the environment when a milestone replaces them', () => {
   const milestone = { planId: '01JB9GGTGQYEQ9D40R17T3YVW3', milestoneId: 'm2' };
 
-  const plan = planMilestone(milestone, 'on', { enabled: false, strategyIds: ['s1'] });
+  const plan = planMilestone({ milestone, state: 'on', current: { state: 'off', strategyIds: ['s1'] } });
 
   assert.deepEqual(plan, { updates: [], adds: [], deletes: ['s1'], milestone, toggle: 'on' });
 });

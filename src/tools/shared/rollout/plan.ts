@@ -20,14 +20,24 @@ export type Plan = {
   milestone?: MilestoneRef;
 };
 
-/** What an environment has now: whether it is on and the ids of its strategies, in order. */
-export type Current = { enabled: boolean; strategyIds: string[] };
+/** What the flag's environment has: its state and the ids of its strategies, in order. */
+export type EnvironmentState = { state: FlagState; strategyIds: string[] };
 
-const toggleOf = (state: FlagState, current: Current): Pick<Plan, 'toggle'> =>
-  (state === 'on') !== current.enabled ? { toggle: state } : {};
+const toggleOf = (state: FlagState, current: EnvironmentState): Pick<Plan, 'toggle'> =>
+  state !== current.state ? { toggle: state } : {};
 
 // Existing strategies are reused by position so their history survives.
-export const planTargets = (flag: string, state: FlagState, targets: Target[], current: Current): Plan => {
+export const planTargets = ({
+  flag,
+  state,
+  targets,
+  current,
+}: {
+  flag: string;
+  state: FlagState;
+  targets: Target[];
+  current: EnvironmentState;
+}): Plan => {
   const plan: Plan = {
     updates: [],
     adds: [],
@@ -44,7 +54,15 @@ export const planTargets = (flag: string, state: FlagState, targets: Target[], c
 };
 
 /** Plans a release through a release template. The template's plan brings its own strategies, so the environment's own ones all go. */
-export const planTemplate = (template: string, state: FlagState, current: Current): Plan => ({
+export const planTemplate = ({
+  template,
+  state,
+  current,
+}: {
+  template: string;
+  state: FlagState;
+  current: EnvironmentState;
+}): Plan => ({
   updates: [],
   adds: [],
   deletes: current.strategyIds,
@@ -53,7 +71,15 @@ export const planTemplate = (template: string, state: FlagState, current: Curren
 });
 
 /** Plans a release through a milestone of the environment's release plan. The plan brings its own strategies, so the environment's own ones all go. */
-export const planMilestone = (milestone: MilestoneRef, state: FlagState, current: Current): Plan => ({
+export const planMilestone = ({
+  milestone,
+  state,
+  current,
+}: {
+  milestone: MilestoneRef;
+  state: FlagState;
+  current: EnvironmentState;
+}): Plan => ({
   updates: [],
   adds: [],
   deletes: current.strategyIds,

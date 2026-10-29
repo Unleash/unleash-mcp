@@ -22,7 +22,7 @@ export const createKillSwitch = (unleash: UnleashClient) => {
       name,
       environment,
       ensure: () => ensureFlag(unleash, project, { flag: name, environment, create: { type: 'kill-switch' } }),
-      planFor: (flag) => planTargets(name, state, targets, flag),
+      planFor: (current) => planTargets({ flag: name, state, targets, current }),
     });
     if (rolledOut.kind === 'failed') return rolledOut;
 
