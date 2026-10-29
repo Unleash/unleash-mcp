@@ -17,15 +17,31 @@ before(async () => {
 });
 after(close);
 
-test('lists the environments, the default stickiness and the flag naming pattern of a project', async () => {
+test('shows the settings, environments and flag naming pattern of a project', async () => {
   const output = await inspectProject(unleash, { kind: 'project', project });
 
   assert.deepEqual(output, {
     kind: 'project',
+    name: 'mcp-server',
+    mode: 'open',
     environments: ['development', 'production'],
     defaultStickiness: 'default',
     flagNaming,
   });
+});
+
+// The sandbox project has no description, and the recorded test shows an empty one is left out.
+test('shows the description of a project that has one', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const description = 'Flags of the MCP server tests';
+  stub
+    .intercept({ path: `/api/admin/projects/${project}/overview`, method: 'GET' })
+    .reply(200, { name: project, description, mode: 'private' }, { headers: { 'content-type': 'application/json' } });
+
+  const output = await inspectProject(unleash, { kind: 'project', project });
+
+  assert.ok(output.kind === 'project');
+  assert.equal(output.description, description);
 });
 
 test('fails with the Unleash error when the project does not exist', async () => {

@@ -164,12 +164,16 @@ test('inspect tool returns its results as structured content and as text', async
   const { unleash: stubbed, stub } = createStubbedClient();
   stub
     .intercept({ path: `/api/admin/projects/${project}/overview`, method: 'GET' })
-    .reply(200, { environments: [{ environment: 'development' }] });
+    .reply(200, { name: project, mode: 'open', environments: [{ environment: 'development' }] });
   const client = await connectClient(stubbed);
 
   const result = await client.callTool({ name: 'inspect', arguments: { queries: [{ kind: 'project', project }] } });
 
-  const results = { results: [{ kind: 'project', environments: ['development'], defaultStickiness: 'default' }] };
+  const results = {
+    results: [
+      { kind: 'project', name: project, mode: 'open', environments: ['development'], defaultStickiness: 'default' },
+    ],
+  };
   assert.deepEqual(result, { structuredContent: results, content: [{ type: 'text', text: JSON.stringify(results) }] });
   await client.close();
 });
