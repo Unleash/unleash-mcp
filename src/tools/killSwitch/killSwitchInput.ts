@@ -6,7 +6,7 @@ const flag = z.strictObject({
   name: z
     .string()
     .describe(
-      'Kill switch name, as a flags search returns it, or a new one, created as a permanent kill switch. Name it after what it turns off, e.g. disable-payments',
+      'Kill switch name, as a flags search returns it, or a new one, created as a permanent kill switch. Name it after what it turns off, e.g. disable-payments. An existing flag keeps its type; manage_flag changes it',
     ),
   state: flagState.describe(
     'on: the app turns off what the switch is named after, e.g. payments for disable-payments; off: the app works as usual',

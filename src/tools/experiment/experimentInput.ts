@@ -6,7 +6,7 @@ const flag = z.strictObject({
   name: z
     .string()
     .describe(
-      'Feature flag name, as a flags search returns it. Created as an experiment when missing, in either state',
+      'Feature flag name, as a flags search returns it. Created as an experiment when missing, in either state. An existing flag keeps its type; manage_flag changes it',
     ),
   state: flagState.describe('on: each audience is split across its values; off: nobody gets the feature'),
 });
