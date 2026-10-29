@@ -284,6 +284,25 @@ const createStubbedOpenSource = () => {
 const feature = `/api/admin/projects/${project}/features/${flag}`;
 const base = `${feature}/environments/development`;
 
+test('creates a missing flag when turning it off', async () => {
+  const { unleash, stub } = createStubbedOpenSource();
+  const release = createRelease(unleash);
+  stub
+    .intercept({ path: feature, method: 'GET' })
+    .reply(404, unleashError('NotFoundError', `Could not find feature flag ${flag}`));
+  stub.intercept({ path: `/api/admin/projects/${project}/features`, method: 'POST' }).reply(201, { name: flag });
+  stub.intercept({ path: `${base}/strategies`, method: 'POST' }).reply(200, {});
+
+  const output = await release({
+    project,
+    flag: { name: flag, state: 'off' },
+    environment: 'development',
+    audience: { targets: [{ name: 'Everyone' }] },
+  });
+
+  assert.partialDeepStrictEqual(output, { kind: 'released', flag: { status: 'new', state: 'off' } });
+});
+
 test('fails with the Unleash error when the rollout cannot be set', async () => {
   const { unleash, stub } = createStubbedOpenSource();
   const release = createRelease(unleash);

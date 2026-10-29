@@ -390,6 +390,10 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 ## 2026-10-28 — Experiment tool
 
 - `experiment` is release with targets only, where every target names the values it gets: split within an audience by share, or one value per audience as control and treatment groups. Rejected: at least two values per target, which rules out one value per audience; `ab_test` and `configure_experiments` as names; a single-audience shape with top-level values.
-- A missing flag is created as an `experiment` flag reporting impression data, with an opt-out; an existing flag keeps its type and impression setting. Only turning on creates it, as in release.
+- A missing flag is created as an `experiment` flag reporting impression data, with an opt-out; an existing flag keeps its type and impression setting.
 - Changing shares or stickiness mid-run is allowed and moves users between values; the input says so rather than refusing.
 - How an experiment ends, and shipping the winner, is not part of the tool.
+
+## 2026-10-29 — A missing flag is always created
+
+- Release, kill switch and experiment create a missing flag in either state and write its targets, as the kill switch already did. Supersedes "Only turning on creates a missing flag" (2026-10-23 Release turns a flag on or off).

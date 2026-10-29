@@ -21,12 +21,7 @@ export const createExperiment = (unleash: UnleashClient) => {
       environment,
       // A missing experiment reports impressions unless told not to; an existing flag keeps its type and setting.
       ensure: () =>
-        ensureFlag(unleash, project, {
-          flag: name,
-          state,
-          environment,
-          create: { type: 'experiment', impressionData },
-        }),
+        ensureFlag(unleash, project, { flag: name, environment, create: { type: 'experiment', impressionData } }),
       planFor: (flag) => planTargets(name, state, targets, flag),
     });
     if (rolledOut.kind === 'failed') return rolledOut;

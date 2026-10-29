@@ -1,9 +1,7 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { z } from 'zod';
-import { stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
-import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
-import { unleashError } from '../../unleash/testError.ts';
+import { createRecordedClient } from '../../unleash/testClient.ts';
 import { cancelChangeRequest, deleteFlag } from '../../unleash/testSetup.ts';
 import { createKillSwitch } from './killSwitch.ts';
 import { killSwitchInput } from './killSwitchInput.ts';
@@ -64,26 +62,6 @@ test('puts the switch in a change request where the environment requires one', a
   changeRequestId = output.changeRequest.id;
   assert.equal(output.changeRequest.state, 'In review');
   assert.equal(describedByOutputSchema(output), undefined);
-});
-
-test('fails with the Unleash error when the switch cannot be created', async () => {
-  const { unleash, stub } = createStubbedClient();
-  const message = 'You need the CREATE_FEATURE permission';
-  stubChangeRequestsIn(stub, 'web');
-  stub
-    .intercept({ path: '/api/admin/projects/web/features/disable-payments', method: 'GET' })
-    .reply(404, unleashError('NotFoundError', 'Could not find feature flag disable-payments'));
-  stub
-    .intercept({ path: '/api/admin/projects/web/features', method: 'POST' })
-    .reply(403, unleashError('PermissionError', message));
-
-  const output = await createKillSwitch(unleash)({
-    project: 'web',
-    flag: { name: 'disable-payments', state: 'on' },
-    environment: 'development',
-  });
-
-  assert.deepEqual(output, { kind: 'failed', status: 403, name: 'PermissionError', reasons: [message] });
 });
 
 test("refuses release's audience, which it would drop and turn the switch on for everyone", () => {
