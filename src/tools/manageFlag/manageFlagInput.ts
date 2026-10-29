@@ -56,7 +56,7 @@ const complete = z
     outcome: z.discriminatedUnion('kind', [kept, discarded]).describe('How the rollout ended'),
   })
   .describe(
-    'Mark a flag completed: its rollout is over and the code is ready for cleanup. Only a note for people; SDKs are not affected',
+    'Record how the rollout ended: the feature was kept or discarded, and the code is ready for cleanup. Use when the work on the feature is done, whether or not the flag is overdue; for an overdue flag, see set_staleness. Only a note for people; SDKs are not affected',
   );
 
 const setStaleness = z
@@ -65,11 +65,11 @@ const setStaleness = z
     project: z.string().describe('Project id, as a flags search returns it'),
     flag: z.string().describe('Flag name, as a flags search returns it'),
     staleness: markedStaleness.describe(
-      'stale: the flag is overdue and should go from the code; active: it is in use again',
+      'stale: the flag outlived its expected lifetime and nobody acted on it; active: the flag is still in use, so the marking was wrong',
     ),
   })
   .describe(
-    'Mark a flag stale, or active again. Only a note for people and reports; SDKs are not affected. Unleash marks a flag potentially stale on its own once its expected lifetime passes',
+    'Record whether a flag is overdue, confirming or overriding the potentially_stale that Unleash computes once the expected lifetime passes; it says nothing about how the rollout ended, which is complete. Only a note for people; SDKs are not affected',
   );
 
 const archive = z
