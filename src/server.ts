@@ -1,5 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import pkg from '../package.json' with { type: 'json' };
+import { createAsk } from './tools/ask/ask.ts';
+import { askOutput } from './tools/ask/askOutput.ts';
 import { createAudit } from './tools/audit/audit.ts';
 import { auditInput } from './tools/audit/auditInput.ts';
 import { auditOutput } from './tools/audit/auditOutput.ts';
@@ -67,8 +69,9 @@ const outcomes = {
     'Create a flag or change its type, description, tags and links, set its parent flag, mark it completed, or archive or revive it.',
   audit:
     'Read what changed in Unleash, who changed it and when, most recent first, over at most 31 days; narrow it to projects, flags, environments or event types.',
+  ask: 'Answer questions about feature flag practices and Unleash itself, such as when to wrap a feature in a flag or how to clean flags up, from the Unleash documentation.',
   send_feedback:
-    'Report anonymously to Unleash where this MCP fell short: a tool error, a request no tool supports, or a wrong result.',
+    'Report anonymously to Unleash where this MCP fell short: a tool error, a request no tool supports, a wrong result, or a question the docs leave unanswered.',
 };
 
 // Without it, an agent that hasn't loaded send_feedback yet offers to report instead of reporting.
@@ -84,8 +87,15 @@ const instructionsFor = (sendFeedback?: SendFeedback) =>
     ...(sendFeedback ? [feedbackDuty] : []),
   ].join('\n');
 
-/** Creates the MCP server over the user's Unleash. `send_feedback` is listed only when `sendFeedback` is given, that is unless the user opted out. */
-export const createServer = (unleash: UnleashClient, sendFeedback?: SendFeedback): McpServer => {
+/**
+ * Creates the MCP server over the user's Unleash, reaching the Unleash docs with `fetch`. `send_feedback` is listed only
+ * when `sendFeedback` is given, that is unless the user opted out.
+ */
+export const createServer = (
+  unleash: UnleashClient,
+  fetch: typeof globalThis.fetch,
+  sendFeedback?: SendFeedback,
+): McpServer => {
   // GHSA-46jr-4wx8-v453. A context field update resends every legal value, so this caps a field at about 3,300 described values.
   const server = new McpServer(
     { name: 'unleash-mcp', version: pkg.version },
@@ -100,6 +110,7 @@ export const createServer = (unleash: UnleashClient, sendFeedback?: SendFeedback
   const manageFlag = createManageFlag(unleash);
   const evaluate = createEvaluate(unleash);
   const audit = createAudit(unleash, () => new Date());
+  const ask = createAsk(fetch);
 
   server.registerTool(
     'release',
@@ -205,6 +216,25 @@ export const createServer = (unleash: UnleashClient, sendFeedback?: SendFeedback
     },
     async (input) => {
       const result = await audit(input);
+      return result.kind === 'failed' ? toFailedToolResult(result) : toToolResult({ result });
+    },
+  );
+
+  server.registerTool(
+    'ask',
+    {
+      description: [
+        outcomes.ask,
+        'Returns the index of the Unleash docs, a link and summary per page. Read the pages that bear on the question, and the pages they link to, as many as you need to answer; cite the ones you used.',
+        ...(sendFeedback
+          ? ["If they don't answer it, call send_feedback with issueType unanswered_question and tool ask."]
+          : []),
+      ].join(' '),
+      outputSchema: askOutput,
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
+    async () => {
+      const result = await ask();
       return result.kind === 'failed' ? toFailedToolResult(result) : toToolResult({ result });
     },
   );

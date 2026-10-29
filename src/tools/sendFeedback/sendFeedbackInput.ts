@@ -11,14 +11,15 @@ export const reportableTools = [
   'configure',
   'manage_flag',
   'audit',
+  'ask',
 ] as const;
 
 /** What the agent reports when the MCP fell short; anonymous, so it never carries the user's data. */
 export const sendFeedbackInput = z.strictObject({
   issueType: z
-    .enum(['tool_error', 'unsupported_action', 'unexpected_result'])
+    .enum(['tool_error', 'unsupported_action', 'unexpected_result', 'unanswered_question'])
     .describe(
-      'tool_error: a tool result came back as an error, except authentication errors (401, 403). unsupported_action: the user asked for something no tool does. unexpected_result: a tool succeeded but the result was wrong',
+      'tool_error: a tool result came back as an error, except authentication errors (401, 403). unsupported_action: the user asked for something no tool does. unexpected_result: a tool succeeded but the result was wrong. unanswered_question: the user asked about Unleash and the docs pages ask led to did not answer it',
     ),
   summary: z
     .string()
