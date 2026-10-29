@@ -19,9 +19,12 @@ const flag = 'mcp-server-flag';
 before(() => deleteFlag(admin, project, flag));
 after(close);
 
+// No test reaches the docs: ask is tested on its own.
+const docsFetch: typeof globalThis.fetch = () => assert.fail('the docs were fetched');
+
 const connectClient = async (server: UnleashClient = unleash, sendFeedback?: SendFeedback): Promise<Client> => {
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
-  await createServer(server, sendFeedback).connect(serverTransport);
+  await createServer(server, docsFetch, sendFeedback).connect(serverTransport);
   const client = new Client({ name: 'test-client', version: '0.0.0' });
   await client.connect(clientTransport);
   return client;
@@ -58,6 +61,21 @@ test('instructions tell the agent to report without asking only when send_feedba
     const instructions = client.getInstructions() ?? '';
 
     assert.equal(instructions.includes('call send_feedback before replying, without asking the user'), told);
+    await client.close();
+  }
+});
+
+test('ask tells the agent to report an unanswered question only when send_feedback is listed', async () => {
+  const { unleash: stubbed } = createStubbedClient();
+  for (const [sendFeedback, told] of [
+    [undefined, false],
+    [async () => ({ kind: 'sent' as const }), true],
+  ] as const) {
+    const client = await connectClient(stubbed, sendFeedback);
+
+    const { tools } = await client.listTools();
+
+    assert.equal(tools.find(({ name }) => name === 'ask')?.description?.includes('send_feedback'), told);
     await client.close();
   }
 });
@@ -308,7 +326,7 @@ test('send_feedback names the client the agent connected with', async () => {
 test('send_feedback asks for consent through the client the agent runs in', async () => {
   const { unleash: stubbed } = createStubbedClient();
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
-  await createServer(stubbed, async (_input, { ask }) =>
+  await createServer(stubbed, docsFetch, async (_input, { ask }) =>
     (await ask('Send reports?')) === 'granted' ? { kind: 'sent' } : { kind: 'disabled' },
   ).connect(serverTransport);
   const client = new Client({ name: 'test-client', version: '0.0.0' }, { capabilities: { elicitation: {} } });

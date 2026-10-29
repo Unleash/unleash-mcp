@@ -411,6 +411,13 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 
 - A function with four or more parameters takes its data as one object, with its collaborators (`unleash`, `editionOf`, `fetch`) first as positional parameters. Four positional values of the same type, such as two tag arrays, can be swapped silently; named data makes a call read on its own. Rejected: one object for everything, which hides which argument is the injected dependency.
 
+## 2026-10-29 — ask tool
+
+- `ask` answers broader questions about Unleash and its practices from the docs: it returns `llms.txt` and the agent reads the pages it needs.
+- It keeps "Instructions for AI Agents" and "Docs" and drops "API Docs" and "OpenAPI Specification". Link descriptions stay.
+- No input: the question would only be useful in `send_feedback`.
+- When the docs don't answer, the agent reports it to `send_feedback` with its own issue type, `unanswered_question`. Rejected: reusing `unsupported_action`.
+
 ## 2026-10-29 — Pre-commit hook
 
 - A pre-commit hook typechecks, lints and runs every test, so a commit never breaks the build. It is a checked-in script that `pnpm install` wires through `core.hooksPath`. Rejected: a hook package such as husky, one more dependency for one script.
