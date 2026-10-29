@@ -76,5 +76,5 @@ test('replaces the legacy target that serves everyone', async () => {
 
   const output = await ensureFlag(unleash, project, { flag, environment: 'development' });
 
-  assert.deepEqual(output, { kind: 'existing', state: 'on', strategyIds: ['s1'] });
+  assert.deepEqual(output, { kind: 'found', state: 'enabled', strategyIds: ['s1'] });
 });

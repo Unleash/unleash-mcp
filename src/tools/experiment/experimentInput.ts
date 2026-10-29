@@ -8,7 +8,7 @@ const flag = z.strictObject({
     .describe(
       'Feature flag name, as a flags search returns it. Created as an experiment when missing, in either state. An existing flag keeps its type; manage_flag changes it',
     ),
-  state: flagState.describe('on: each audience is split across its values; off: nobody gets the feature'),
+  state: flagState.describe('enabled: each audience is split across its values; disabled: nobody gets the feature'),
 });
 
 // Each audience names the values it gets; audiences may serve one value each, as control and treatment groups do.

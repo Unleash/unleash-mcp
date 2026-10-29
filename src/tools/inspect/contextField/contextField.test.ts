@@ -37,7 +37,7 @@ before(async () => {
   await createContextField(admin, { kind: 'context_field', action: 'create', project, name: projectField });
   await createRelease(admin)({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: {
       targets: [

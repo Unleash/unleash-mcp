@@ -75,7 +75,7 @@ const flags = z
     limit: z.number().int().min(1).max(50).default(20).describe('Flags per page'),
   })
   .describe(
-    'Flags by name or tag, paged. Unleash pages and matches; rows carry type, lifecycle stage, tags and where the flag is on',
+    'Flags by name or tag, paged. Unleash pages and matches; rows carry type, lifecycle stage, tags and where the flag is enabled',
   );
 
 const flagCreators = z

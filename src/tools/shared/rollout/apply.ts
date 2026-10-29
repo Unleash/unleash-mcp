@@ -25,7 +25,7 @@ export const applyPlan = async (
   path: EnvironmentPath,
   plan: Plan,
 ): Promise<AppliedPlan | Failed> => {
-  if (plan.toggle === 'off') {
+  if (plan.state === 'disabled') {
     const disabled = await unleash.POST(disable, { params: { path } });
     if (!disabled.response.ok) return toFailed(disabled);
   }
@@ -45,7 +45,7 @@ export const applyPlan = async (
     const deleted = await unleash.DELETE(strategy, { params: { path: { ...path, strategyId: id } } });
     if (!deleted.response.ok) return toFailed(deleted);
   }
-  if (plan.toggle === 'on') {
+  if (plan.state === 'enabled') {
     const enabled = await unleash.POST(enable, { params: { path } });
     if (!enabled.response.ok) return toFailed(enabled);
   }

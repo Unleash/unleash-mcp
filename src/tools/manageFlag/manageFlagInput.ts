@@ -29,7 +29,7 @@ const define = z
       ),
   })
   .describe(
-    'Make sure the flag exists as listed: creates it, off in every environment, or changes an existing one to match. What is listed is what the flag ends up with; what is left out is left alone. Release turns a flag on',
+    'Make sure the flag exists as listed: creates it, disabled in every environment, or changes an existing one to match. What is listed is what the flag ends up with; what is left out is left alone. Release enables a flag',
   );
 
 const kept = z
@@ -75,7 +75,7 @@ const revive = z
     flag: z.string().describe('Flag name, as a flags search with the archived stage returns it'),
   })
   .describe(
-    'Bring an archived flag back, off in every environment; links to parent flags removed by archiving stay removed. Unleash answers success for a flag that is missing or not archived and leaves it as it is',
+    'Bring an archived flag back, disabled in every environment; links to parent flags removed by archiving stay removed. Unleash answers success for a flag that is missing or not archived and leaves it as it is',
   );
 
 // Not offered for now: deleting can't be undone, while an archived flag can be revived. Kept for when it is.
@@ -89,15 +89,13 @@ const remove = z
     'Delete an archived flag permanently; it cannot be revived. Ask the user first. Unleash answers success for a flag that is missing or not archived and leaves it as it is',
   );
 
-const noParent = z.strictObject({ kind: z.literal('none') }).describe('The flag stops depending on another');
-
 const setParentDependency = z
   .strictObject({
     action: z.literal('set_parent_dependency'),
     project: z.string().describe('Project id, as a flags search returns it'),
     flag: z.string().describe('Flag name, as a flags search returns it'),
     parent: z
-      .discriminatedUnion('kind', [...parent.options, noParent])
+      .union([parent, z.null().describe('The flag stops depending on another')])
       .describe(
         'The parent, as a flags search returns it, in the same project, and how it must be; an inspect of a flag returns its parent in this shape. Inspect both flags first: the parent must have no parent and this flag no children',
       ),

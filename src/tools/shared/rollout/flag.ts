@@ -15,11 +15,13 @@ type UnleashEnvironment = components['schemas']['featureEnvironmentSchema'];
 export type FoundFlag = { kind: 'found'; environments: UnleashEnvironment[] } | { kind: 'missing' };
 
 /** The flag as a rollout finds it in the environment, created on the way when it was missing. */
-export type EnsuredFlag = EnvironmentState & { kind: 'new' | 'existing' };
+export type EnsuredFlag = EnvironmentState & { kind: 'created' | 'found' };
 
 /** The flag a rollout reports back. */
 export const rolledOutFlag = z.object({
-  status: z.enum(['new', 'existing']).describe('new: the flag was created; existing: it was there already'),
+  origin: z
+    .enum(['created', 'found'])
+    .describe('created: the flag was created on the way; found: it was there already'),
   name: z.string(),
   state: flagState,
 });

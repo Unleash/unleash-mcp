@@ -36,7 +36,7 @@ test('applies the operations after a failed one, naming the operation each resul
         action: 'set_parent_dependency',
         project: 'web',
         flag: 'checkout-v2',
-        parent: { kind: 'on', flag: 'checkout' },
+        parent: { state: 'enabled', flag: 'checkout' },
       },
       { action: 'revive', project: 'web', flag: 'older-checkout' },
     ],
@@ -53,7 +53,7 @@ test('applies the operations after a failed one, naming the operation each resul
         flag: 'gone',
         error: { status: 404, name: 'NotFoundError', reasons: [message] },
       },
-      { kind: 'applied', action: 'define', project: 'web', flag: 'checkout', status: 'new', changed: [] },
+      { kind: 'applied', action: 'define', project: 'web', flag: 'checkout', origin: 'created', changed: [] },
       {
         kind: 'pending_change_request',
         action: 'archive',

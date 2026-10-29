@@ -42,7 +42,7 @@ const defineNew = async (
   if (syncedTags.kind === 'failed') return syncedTags;
   const syncedLinks = await syncLinks(unleash, { path, current: [], listed: links });
   if (syncedLinks.kind === 'failed') return syncedLinks;
-  return { kind: 'applied', status: 'new', changed: [...syncedTags.changed, ...syncedLinks.changed] };
+  return { kind: 'applied', origin: 'created', changed: [...syncedTags.changed, ...syncedLinks.changed] };
 };
 
 // The flag read leaves the tags out, so they are read when some are listed.
@@ -60,7 +60,7 @@ const defineExisting = async (
   if (syncedLinks.kind === 'failed') return syncedLinks;
   return {
     kind: 'applied',
-    status: 'existing',
+    origin: 'found',
     changed: [...syncedDetails.changed, ...syncedTags.changed, ...syncedLinks.changed],
   };
 };

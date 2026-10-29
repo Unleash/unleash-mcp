@@ -14,7 +14,7 @@ type RolloutInput = {
   environment: string;
   /** What a missing flag is created with. */
   whenMissing?: FlagOptions;
-  /** Called with what the environment has once the flag is read, since the plan reuses its strategies and toggles only on a change. */
+  /** Called with what the environment has once the flag is read, since the plan reuses its strategies and writes the state only when it changes. */
   planFor: (current: EnvironmentState) => Plan;
 };
 
@@ -39,7 +39,7 @@ export const createRollout = (unleash: UnleashClient) => {
     // The flag is created directly even where changes need approval, as Unleash's own import does.
     const ensured = await ensureFlag(unleash, project, { flag: name, environment, whenMissing });
     if (ensured.kind === 'failed') return ensured;
-    const flag = { status: ensured.kind, name, state };
+    const flag = { origin: ensured.kind, name, state };
 
     const path = { projectId: project, featureName: name, environment };
     const plan = planFor(ensured);

@@ -11,7 +11,7 @@ const released = z.object({
   targets: z
     .array(target.required({ rollout: true, stickiness: true }))
     .optional()
-    .describe('The audiences that get the feature while it is on'),
+    .describe('The audiences that get the feature while it is enabled'),
   template: z
     .object({
       id: z.string(),
@@ -38,7 +38,7 @@ const pendingChangeRequest = z.object({
   targets: z
     .array(target.required({ rollout: true, stickiness: true }))
     .optional()
-    .describe('The audiences that get the feature while it is on, once the change request is applied'),
+    .describe('The audiences that get the feature while it is enabled, once the change request is applied'),
   template: z
     .object({ id: z.string() })
     .optional()

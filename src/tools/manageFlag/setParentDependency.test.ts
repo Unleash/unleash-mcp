@@ -37,7 +37,7 @@ test('puts the parent of a flag in a change request where the project requires o
     action: 'set_parent_dependency',
     project,
     flag: child,
-    parent: { kind: 'on', flag: parent },
+    parent: { state: 'enabled', flag: parent },
   });
 
   assert(output.kind === 'pending_change_request');
@@ -59,7 +59,7 @@ test('makes a flag depend on its parent serving one of the given values', async 
     action: 'set_parent_dependency',
     project: 'web',
     flag: 'checkout-v2',
-    parent: { kind: 'on', flag: 'checkout', values: ['blue'] },
+    parent: { state: 'enabled', flag: 'checkout', values: ['blue'] },
   });
 
   assert.deepEqual(output, { kind: 'applied' });
@@ -75,7 +75,7 @@ test('makes a flag depend on its parent being off', async () => {
     action: 'set_parent_dependency',
     project: 'web',
     flag: 'checkout-v2',
-    parent: { kind: 'off', flag: 'checkout' },
+    parent: { state: 'disabled', flag: 'checkout' },
   });
 
   assert.deepEqual(output, { kind: 'applied' });
@@ -90,7 +90,7 @@ test('stops a flag depending on its parent', async () => {
     action: 'set_parent_dependency',
     project: 'web',
     flag: 'checkout-v2',
-    parent: { kind: 'none' },
+    parent: null,
   });
 
   assert.deepEqual(output, { kind: 'applied' });
@@ -114,7 +114,7 @@ test('puts the removal of a parent in a change request where the project require
     action: 'set_parent_dependency',
     project: 'web',
     flag: 'checkout-v2',
-    parent: { kind: 'none' },
+    parent: null,
   });
 
   assert.partialDeepStrictEqual(output, { kind: 'pending_change_request', changeRequest: { id: 7 } });
@@ -130,7 +130,7 @@ test('fails with the Unleash error when the parent is refused', async () => {
     action: 'set_parent_dependency',
     project: 'web',
     flag: 'checkout-v2',
-    parent: { kind: 'on', flag: 'checkout' },
+    parent: { state: 'enabled', flag: 'checkout' },
   });
 
   assert.deepEqual(output, { kind: 'failed', status: 403, name: 'InvalidOperationError', reasons: [message] });

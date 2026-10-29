@@ -9,7 +9,7 @@ test('refuses values for a parent that must be off, which Unleash would drop', (
         action: 'set_parent_dependency',
         project: 'web',
         flag: 'checkout-v2',
-        parent: { kind: 'off', flag: 'checkout', values: ['blue'] },
+        parent: { state: 'disabled', flag: 'checkout', values: ['blue'] },
       },
     ],
   });

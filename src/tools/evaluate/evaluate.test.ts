@@ -76,7 +76,7 @@ before(async () => {
   segmentId = created.kind === 'applied' ? created.id : 0;
   await createRelease(admin)({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment,
     audience: {
       targets: [
@@ -135,7 +135,7 @@ test('the feature is on for a context a target matches, with the value it serves
         kind: 'evaluated',
         flag,
         environment,
-        result: 'on',
+        result: 'enabled',
         value: { name: 'blue', payload: { type: 'string', value: 'b' } },
         targets: [
           {
@@ -185,14 +185,14 @@ test('the feature is off for a context no target matches, a disabled one aside, 
         kind: 'evaluated',
         flag,
         environment,
-        result: 'off',
+        result: 'disabled',
         targets: [{ name: 'Beta', result: 'missed', missedBy: { constraints: [beta] } }, paused, sdkOnlyMissed],
       },
       {
         kind: 'evaluated',
         flag,
         environment,
-        result: 'off',
+        result: 'disabled',
         targets: [
           { name: 'Beta', result: 'missed', missedBy: { segments: [{ id: segmentId, name: segment }] } },
           paused,
@@ -203,7 +203,7 @@ test('the feature is off for a context no target matches, a disabled one aside, 
         kind: 'evaluated',
         flag,
         environment,
-        result: 'off',
+        result: 'disabled',
         targets: [
           { name: 'Beta', result: 'missed', missedBy: { rollout: 80, stickiness: 'userId' } },
           paused,
@@ -230,11 +230,18 @@ test('an off feature names what blocks it whatever its targets: its environment 
         kind: 'evaluated',
         flag,
         environment: 'production',
-        result: 'off',
+        result: 'disabled',
         blockedBy: ['environment'],
         targets: [sdkOnlyUnknown, everyone, bySession({ stickiness: 'sessionId' }), nobodyYet('userId')],
       },
-      { kind: 'evaluated', flag: child, environment, result: 'off', blockedBy: ['parent'], targets: [sdkOnlyUnknown] },
+      {
+        kind: 'evaluated',
+        flag: child,
+        environment,
+        result: 'disabled',
+        blockedBy: ['parent'],
+        targets: [sdkOnlyUnknown],
+      },
     ],
   });
 });
@@ -258,7 +265,7 @@ test('a rollout under 100 names the field it groups contexts by, or that field a
     kind: 'evaluated',
     flag,
     environment: 'production',
-    result: 'off',
+    result: 'disabled',
     blockedBy: ['environment'],
     targets: [sdkOnlyMissed, everyone, ...targets],
   });
@@ -287,7 +294,7 @@ test('returns only the type and value of the payload served', async () => {
         kind: 'evaluated',
         flag,
         environment,
-        result: 'on',
+        result: 'enabled',
         value: { name: 'blue', payload: { type: 'string', value: 'b' } },
       },
     ],
@@ -321,7 +328,7 @@ test('answers each query in the order asked, a failure naming its flag and envir
         flag: 'missing',
         environment,
       },
-      { kind: 'evaluated', flag, environment, result: 'on' },
+      { kind: 'evaluated', flag, environment, result: 'enabled' },
     ],
   });
 });

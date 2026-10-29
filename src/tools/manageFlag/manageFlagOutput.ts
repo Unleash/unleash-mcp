@@ -14,7 +14,9 @@ const applied = z.discriminatedUnion('action', [
   z.object({
     kind: z.literal('applied'),
     ...define,
-    status: z.enum(['new', 'existing']).describe('new: the flag was created; existing: it was there already'),
+    origin: z
+      .enum(['created', 'found'])
+      .describe('created: the flag was created on the way; found: it was there already'),
     changed: z
       .array(changed)
       .describe('What was written after the flag was read or created; empty when an existing flag already matched'),
@@ -54,7 +56,7 @@ export const manageFlagOutput = {
 export type ManageFlagOutput = z.infer<z.ZodObject<typeof manageFlagOutput>>;
 export type ManageFlagResult = z.infer<typeof result>;
 export type Changed = z.infer<typeof changed>;
-/** What a step answers. Only define says whether the flag was new and what it wrote. The tool adds the operation it answers. */
-export type Outcome = { kind: 'applied'; status?: 'new' | 'existing'; changed?: Changed[] } | Failed;
+/** What a step answers. Only define says whether it created the flag and what it wrote. The tool adds the operation it answers. */
+export type Outcome = { kind: 'applied'; origin?: 'created' | 'found'; changed?: Changed[] } | Failed;
 /** What a step answers when the operation waits for approval: the change request holding it. */
 export type PendingChange = { kind: 'pending_change_request'; changeRequest: ChangeRequest };

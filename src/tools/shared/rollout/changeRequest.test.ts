@@ -50,7 +50,7 @@ test('submits every change of a release in one change request', async () => {
     updates: [{ id: 's1', strategy: defaultStrategy }],
     adds: [beta],
     deletes: ['s2'],
-    toggle: 'on',
+    state: 'enabled',
   });
 
   assert.partialDeepStrictEqual(requested, { kind: 'requested', changeRequest: { id: 7 } });
@@ -103,7 +103,7 @@ test('turns the environment off before changing its audiences in the change requ
   const requested = await requestPlan(unleash, path, {
     ...defaultPlan,
     updates: [{ id: 's1', strategy: defaultStrategy }],
-    toggle: 'off',
+    state: 'disabled',
   });
 
   assert.equal(requested.kind, 'requested');

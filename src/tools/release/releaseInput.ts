@@ -8,7 +8,7 @@ const flag = z.strictObject({
 });
 
 const targets = z.strictObject({
-  targets: z.array(target).min(1).describe('The audiences that get the feature while it is on, ORed'),
+  targets: z.array(target).min(1).describe('The audiences that get the feature while it is enabled, ORed'),
 });
 
 const template = z.strictObject({
@@ -36,7 +36,7 @@ export const releaseInput = z.strictObject({
   audience: z
     .xor([targets, template, milestone])
     .describe(
-      'Who gets the feature while it is on: targets, a release template, or a milestone of the release plan the flag has. Replaces what the environment had',
+      'Who gets the feature while it is enabled: targets, a release template, or a milestone of the release plan the flag has. Replaces what the environment had',
     ),
 });
 

@@ -69,7 +69,7 @@ test('release tool reports the targets', async () => {
     name: 'release',
     arguments: {
       project,
-      flag: { name: flag, state: 'on' },
+      flag: { name: flag, state: 'enabled' },
       environment: 'development',
       audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
     },
@@ -78,7 +78,7 @@ test('release tool reports the targets', async () => {
   assert.deepEqual(result.structuredContent, {
     result: {
       kind: 'released',
-      flag: { status: 'new', name: flag, state: 'on' },
+      flag: { origin: 'created', name: flag, state: 'enabled' },
       environment: 'development',
       targets: [{ name: 'Everyone', rollout: 50, stickiness: 'default' }],
     },
@@ -101,7 +101,7 @@ test('release tool reports a failure as text', async () => {
     name: 'release',
     arguments: {
       project,
-      flag: { name: flag, state: 'on' },
+      flag: { name: flag, state: 'enabled' },
       environment: 'development',
       audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
     },
@@ -215,7 +215,7 @@ test('evaluate tool asks as the unleash-mcp app when no context is given', async
   });
 
   assert.deepEqual(result.structuredContent, {
-    results: [{ kind: 'evaluated', flag, environment: 'development', result: 'on' }],
+    results: [{ kind: 'evaluated', flag, environment: 'development', result: 'enabled' }],
   });
   await client.close();
 });

@@ -17,7 +17,7 @@ export const setParentDependency = async (
   if (route.kind === 'failed') return route;
   if (route.kind === 'changeRequest') {
     const change =
-      parent.kind !== 'none'
+      parent !== null
         ? { feature: flag, action: 'addDependency' as const, payload: toDependency(parent) }
         : { feature: flag, action: 'deleteDependency' as const };
     const requested = await requestChanges(unleash, route, change);
@@ -26,7 +26,7 @@ export const setParentDependency = async (
   }
   const path = { projectId: project, child: flag };
   const written =
-    parent.kind !== 'none'
+    parent !== null
       ? await unleash.POST(dependencies, { params: { path }, body: toDependency(parent) })
       : await unleash.DELETE(dependencies, { params: { path } });
   if (!written.response.ok) return toFailed(written);
@@ -34,6 +34,6 @@ export const setParentDependency = async (
 };
 
 const toDependency = (parent: Parent) =>
-  parent.kind === 'off'
+  parent.state === 'disabled'
     ? { feature: parent.flag, enabled: false }
     : { feature: parent.flag, enabled: true, ...(parent.values ? { variants: parent.values } : {}) };

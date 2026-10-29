@@ -92,7 +92,7 @@ before(async () => {
   });
   await createRelease(admin)({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values, stickiness: 'userId' }] },
   });
@@ -119,14 +119,14 @@ test('describes a flag with its lifecycle, environments, who worked on it, its p
     environments: [
       {
         name: 'development',
-        state: 'on',
+        state: 'enabled',
         targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values, stickiness: 'userId' }],
       },
-      { name: 'production', state: 'off' },
+      { name: 'production', state: 'disabled' },
     ],
     createdBy: 'Mateusz K',
     collaborators: ['Mateusz K'],
-    parent: { kind: 'on', flag: parent },
+    parent: { state: 'enabled', flag: parent },
     tags: [{ type: 'simple', value: 'mcp-inspect' }],
     links: [{ url: 'https://example.com/mcp-inspect', title: 'Spec' }],
   });
@@ -146,7 +146,7 @@ test('names the flags that depend on a flag and the release plan rolling it out'
     environments: [
       {
         name: 'development',
-        state: 'off',
+        state: 'disabled',
         releasePlan: {
           name: template,
           milestones: [
@@ -165,7 +165,7 @@ test('names the flags that depend on a flag and the release plan rolling it out'
           ],
         },
       },
-      { name: 'production', state: 'off' },
+      { name: 'production', state: 'disabled' },
     ],
     createdBy: 'Mateusz K',
     collaborators: ['Mateusz K'],
@@ -223,7 +223,7 @@ test('treats a transition without a type as time based', async () => {
     environments: [
       {
         name: 'development',
-        state: 'on',
+        state: 'enabled',
         releasePlan: {
           id: 'p1',
           name: 'Plan',
@@ -253,8 +253,8 @@ test('tells when an SDK last saw the flag in each environment', async () => {
     name: flag,
     type: 'release',
     environments: [
-      { name: 'development', state: 'on', lastSeenAt: '2026-10-21T09:00:00.000Z' },
-      { name: 'production', state: 'off' },
+      { name: 'development', state: 'enabled', lastSeenAt: '2026-10-21T09:00:00.000Z' },
+      { name: 'production', state: 'disabled' },
     ],
   });
 });
@@ -308,7 +308,7 @@ test('tells which values the parent must serve', async () => {
     name: flag,
     type: 'release',
     environments: [],
-    parent: { kind: 'on', flag: parent, values: ['blue'] },
+    parent: { state: 'enabled', flag: parent, values: ['blue'] },
   });
 });
 
@@ -326,7 +326,7 @@ test('tells when the parent must be off', async () => {
     name: flag,
     type: 'release',
     environments: [],
-    parent: { kind: 'off', flag: parent },
+    parent: { state: 'disabled', flag: parent },
   });
 });
 
