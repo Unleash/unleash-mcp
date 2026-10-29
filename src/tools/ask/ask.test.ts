@@ -16,6 +16,7 @@ const index = `# Unleash Documentation
 ## Instructions for AI Agents
 
 - For clean Markdown of any page, append \`.md\` to the page URL
+- For AI client integration (Claude Code, Cursor, etc.), connect to the MCP server at https://docs.getunleash.io/_mcp/server
 
 ## Docs
 
@@ -30,7 +31,7 @@ const index = `# Unleash Documentation
 - [OpenAPI JSON](https://docs.getunleash.io/openapi.json)
 `;
 
-test('gives the agent the docs index without the API reference', async () => {
+test('gives the agent the docs index without the API reference or the docs MCP server', async () => {
   const { fetch, stub } = createStubbedFetch();
   stub.intercept({ path: '/llms.txt' }).reply(200, index);
 
