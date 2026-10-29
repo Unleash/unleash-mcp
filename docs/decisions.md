@@ -426,3 +426,7 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 
 - The state a flag has in an environment is `enabled` | `disabled` everywhere the tools take or return it (`release`, `experiment`, `kill_switch`, `inspect`, `evaluate`), the words the Unleash UI, docs and event types (`feature-environment-enabled`) use, so an agent reads one vocabulary across the tools and `audit`. Supersedes the `'on' | 'off'` literals (2026-10-23 Release turns a flag on or off). Rejected: a boolean `enabled`, which cannot carry `evaluate`'s `unknown`; translating audit's event types and diffs to on/off, a mapping with no end.
 - A parent dependency is the parent flag in a state, `{ flag, state, values? }`, with the `state` and `values` `release` and `inspect` use for a flag in an environment; `manage_flag` takes `parent: null` to drop it, as `inspect` leaves the field out. Supersedes `kind: 'on' | 'off' | 'none'`. Rejected: `kind`, which reads as a different sort of thing; a `none` state, which is not one; and, for now, a separate `remove_parent_dependency` action, which would keep every case tagged.
+
+## 2026-10-29 — Marking a flag stale
+
+- `manage_flag` gets a `set_staleness` operation taking `staleness: 'stale' | 'active'`, sent as the JSON patch of `/stale` the Unleash UI sends, with no change request, as in the UI. Rejected: a `stale` field on `define`, which reads the flag first and would hide a one-call note behind a sync; the bulk `/stale` endpoint, since a batch of operations covers several flags.

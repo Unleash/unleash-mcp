@@ -58,6 +58,19 @@ const complete = z
     'Mark a flag completed: its rollout is over and the code is ready for cleanup. Only a note for people; SDKs are not affected',
   );
 
+const setStaleness = z
+  .strictObject({
+    action: z.literal('set_staleness'),
+    project: z.string().describe('Project id, as a flags search returns it'),
+    flag: z.string().describe('Flag name, as a flags search returns it'),
+    staleness: z
+      .enum(['stale', 'active'])
+      .describe('stale: the flag is overdue and should go from the code; active: it is in use again'),
+  })
+  .describe(
+    'Mark a flag stale, or active again. Only a note for people and reports; SDKs are not affected. Unleash marks a flag potentially stale on its own once its expected lifetime passes',
+  );
+
 const archive = z
   .strictObject({
     action: z.literal('archive'),
@@ -104,7 +117,14 @@ const setParentDependency = z
     'Make a flag depend on a parent flag in every environment, or stop it depending on one. A flag has at most one parent; setting one replaces the old. In a project whose changes need approval, it goes into a change request',
   );
 
-const operation = z.discriminatedUnion('action', [define, complete, archive, revive, setParentDependency]);
+const operation = z.discriminatedUnion('action', [
+  define,
+  complete,
+  setStaleness,
+  archive,
+  revive,
+  setParentDependency,
+]);
 
 export const manageFlagInput = z.strictObject({
   operations: z.array(operation).min(1).describe('Applied in the order given; one result per operation'),
@@ -114,6 +134,7 @@ export type ManageFlagInput = z.infer<typeof manageFlagInput>;
 export type Operation = z.infer<typeof operation>;
 export type Define = z.infer<typeof define>;
 export type Complete = z.infer<typeof complete>;
+export type SetStaleness = z.infer<typeof setStaleness>;
 export type Archive = z.infer<typeof archive>;
 export type Revive = z.infer<typeof revive>;
 export type Delete = z.infer<typeof remove>;

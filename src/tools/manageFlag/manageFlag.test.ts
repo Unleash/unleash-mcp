@@ -25,6 +25,9 @@ test('applies the operations after a failed one, naming the operation each resul
     .reply(200, { id: 7, state: 'In review' })
     .times(2);
   stub.intercept({ path: '/api/admin/projects/web/revive', method: 'POST' }).reply(200, '');
+  stub
+    .intercept({ path: '/api/admin/projects/web/features/checkout', method: 'PATCH' })
+    .reply(200, { name: 'checkout' });
   const manageFlag = createManageFlag(unleash);
 
   const output = await manageFlag({
@@ -39,11 +42,12 @@ test('applies the operations after a failed one, naming the operation each resul
         parent: { state: 'enabled', flag: 'checkout' },
       },
       { action: 'revive', project: 'web', flag: 'older-checkout' },
+      { action: 'set_staleness', project: 'web', flag: 'checkout', staleness: 'stale' },
     ],
   });
 
   assert.equal(z.object(manageFlagOutput).safeParse(output).error, undefined);
-  assert.equal(output.results.length, 5);
+  assert.equal(output.results.length, 6);
   assert.partialDeepStrictEqual(output, {
     results: [
       {
@@ -69,6 +73,7 @@ test('applies the operations after a failed one, naming the operation each resul
         changeRequest: { id: 7 },
       },
       { kind: 'applied', action: 'revive', project: 'web', flag: 'older-checkout' },
+      { kind: 'applied', action: 'set_staleness', project: 'web', flag: 'checkout' },
     ],
   });
 });
