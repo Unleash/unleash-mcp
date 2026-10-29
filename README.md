@@ -2,6 +2,21 @@
 
 An MCP server that lets AI agents work with Unleash the way you'd work in the Unleash UI: find flags, roll them out, check who gets them, and see what changed. It's in alpha and isn't published to npm, so you run it from source.
 
+## Tools
+
+| Tool            | Description                                                                                                                                                                                  | Example prompt                                                  |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `search`        | Find projects, flags, segments, context fields, tags, tag types, flag creators, release templates, event types and environments by name.                                                     | "Which flags in the checkout project are tagged team:payments?" |
+| `inspect`       | Read a project, flag, context field or segment in full.                                                                                                                                      | "Show me everything about the new-checkout flag."               |
+| `evaluate`      | Tell whether a flag is on, off or unknown for a context in an environment.                                                                                                                   | "Does user 42 get new-checkout in production?"                  |
+| `release`       | Turn a flag on for audiences, split by value or through a release template, or turn it off. Creates the flag if it doesn't exist. Opens a change request where the environment requires one. | "Roll out new-checkout to 10% of users in production."          |
+| `kill_switch`   | Turn a permanent kill switch on or off, for everyone or chosen audiences. Creates the switch if it doesn't exist. Opens a change request where the environment requires one.                 | "Turn off payments in production."                              |
+| `experiment`    | Run an A/B test: give audiences values such as control and treatment, by share or one each, or stop it. Creates a missing flag. Opens a change request where the environment requires one.   | "Split checkout 50/50 between control and the new flow."        |
+| `manage_flag`   | Define flags, set a parent dependency, mark flags completed, archive and revive them. Doesn't delete flags.                                                                                  | "Archive the old-banner flag."                                  |
+| `configure`     | Change context fields and their legal values, segments, tag types and tags, release templates and projects.                                                                                  | "Create a beta-testers segment for userId 1, 2 and 3."          |
+| `audit`         | Read what changed, who changed it and when, over at most 31 days.                                                                                                                            | "What changed in production yesterday?"                         |
+| `send_feedback` | Report to Unleash where the server fell short. Asks you first, unless `UNLEASH_MCP_SEND_FEEDBACK` decides.                                                                                   | None: the agent calls it on its own.                            |
+
 ## Install locally
 
 You need Node 24 or later and pnpm.
@@ -100,21 +115,6 @@ claude mcp add unleash https://your-instance.getunleash.io/api/admin/mcp \
 ```
 
 Codex takes the token from an environment variable named in its `config.toml`, as `bearer_token_env_var` under `[mcp_servers.unleash]`.
-
-## Tools
-
-| Tool            | Description                                                                                                                                                                                  | Example prompt                                                  |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `search`        | Find projects, flags, segments, context fields, tags, tag types, flag creators, release templates, event types and environments by name.                                                     | "Which flags in the checkout project are tagged team:payments?" |
-| `inspect`       | Read a project, flag, context field or segment in full.                                                                                                                                      | "Show me everything about the new-checkout flag."               |
-| `evaluate`      | Tell whether a flag is on, off or unknown for a context in an environment.                                                                                                                   | "Does user 42 get new-checkout in production?"                  |
-| `release`       | Turn a flag on for audiences, split by value or through a release template, or turn it off. Creates the flag if it doesn't exist. Opens a change request where the environment requires one. | "Roll out new-checkout to 10% of users in production."          |
-| `kill_switch`   | Turn a permanent kill switch on or off, for everyone or chosen audiences. Creates the switch if it doesn't exist. Opens a change request where the environment requires one.                 | "Turn off payments in production."                              |
-| `experiment`    | Run an A/B test: give audiences values such as control and treatment, by share or one each, or stop it. Creates a missing flag. Opens a change request where the environment requires one.   | "Split checkout 50/50 between control and the new flow."        |
-| `manage_flag`   | Define flags, set a parent dependency, mark flags completed, archive and revive them. Doesn't delete flags.                                                                                  | "Archive the old-banner flag."                                  |
-| `configure`     | Change context fields and their legal values, segments, tag types and tags, release templates and projects.                                                                                  | "Create a beta-testers segment for userId 1, 2 and 3."          |
-| `audit`         | Read what changed, who changed it and when, over at most 31 days.                                                                                                                            | "What changed in production yesterday?"                         |
-| `send_feedback` | Report to Unleash where the server fell short. Asks you first, unless `UNLEASH_MCP_SEND_FEEDBACK` decides.                                                                                   | None: the agent calls it on its own.                            |
 
 ## Development
 
