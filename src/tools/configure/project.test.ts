@@ -92,6 +92,26 @@ test('changes every setting of a project', async () => {
   assert.deepEqual(output, { kind: 'applied' });
 });
 
+// Unleash answers 200 to a mode in the project update without saving it, so only the body sent shows the mode goes to settings.
+test('changes the mode through the project settings', async () => {
+  const { unleash, stub } = createStubbedClient();
+  const body = (expected: object) => (sent: string) => isDeepStrictEqual(JSON.parse(sent), expected);
+  stub.intercept({ path: '/api/admin/projects/mcp-project', method: 'PUT', body: body({ name }) }).reply(200, {});
+  stub
+    .intercept({ path: '/api/admin/projects/mcp-project/settings', method: 'PUT', body: body({ mode: 'private' }) })
+    .reply(200, {});
+
+  const output = await updateProject(unleash, {
+    kind: 'project',
+    action: 'update',
+    id: 'mcp-project',
+    name,
+    mode: 'private',
+  });
+
+  assert.deepEqual(output, { kind: 'applied' });
+});
+
 const json = { headers: { 'content-type': 'application/json' } };
 const overview = (environments: string[]) => ({ environments: environments.map((environment) => ({ environment })) });
 

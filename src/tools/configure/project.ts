@@ -37,9 +37,15 @@ export const updateProject = async (
   const path = { projectId: id };
   const updated = await unleash.PUT('/api/admin/projects/{projectId}', {
     params: { path },
-    body: { name, description, mode, defaultStickiness },
+    body: { name, description, defaultStickiness },
   });
   if (!updated.response.ok) return toFailed(updated);
+
+  // Unleash's project update takes a mode but doesn't save it; only the settings endpoint does.
+  if (mode) {
+    const moved = await unleash.PUT('/api/admin/projects/{projectId}/settings', { params: { path }, body: { mode } });
+    if (!moved.response.ok) return toFailed(moved);
+  }
 
   if (environments) {
     const refused = await setEnvironments(unleash, id, environments);
