@@ -368,7 +368,7 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 
 - A missing switch is created behind the scenes as a permanent `kill-switch` flag. Encourage a negated name like `disable-payments`, but don't enforce it.
 - Same as release: one environment per call, same change request behaviour. Targets default to everyone, to prevent overspecifying.
-- Skip changing the type of an existing flag for now, though people often turn releases into permanent kill switches.
+- An existing flag keeps its type: what a flag is belongs to `manage_flag`, whose define changes the type, and the rollout tools only set who gets it in an environment. Rejected: `kill_switch` and `experiment` retyping a flag they find, which puts a flag-level write in an environment-level tool.
 
 ## 2026-10-28 — Strict inputs for tools that write
 
