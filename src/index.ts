@@ -33,4 +33,4 @@ const sendFeedback =
         consent,
       });
 
-await createServer(unleash, sendFeedback).connect(new StdioServerTransport());
+await createServer(unleash, globalThis.fetch, sendFeedback).connect(new StdioServerTransport());

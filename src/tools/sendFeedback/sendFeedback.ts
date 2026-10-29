@@ -1,5 +1,5 @@
 import type { components } from '../../unleash/api.d.ts';
-import { type Failed, type FailedCall, toFailed } from '../shared/failed.ts';
+import { type Failed, type FailedCall, timeoutMs, toFailed, toUnreachable } from '../shared/failed.ts';
 import type { AskUser, Consent } from './consent.ts';
 import type { SendFeedbackInput } from './sendFeedbackInput.ts';
 import type { SendFeedbackResult } from './sendFeedbackOutput.ts';
@@ -63,16 +63,6 @@ const notConfigured: Failed = {
   status: 0,
   name: 'NotConfigured',
   reasons: ['No feedback instance is configured: set UNLEASH_FEEDBACK_URL'],
-};
-
-// A hanging connection would block the agent, so it fails the same way as no connection.
-const timeoutMs = 10_000;
-
-// fetch rejects only when no reply came: no connection (a TypeError whose cause says why) or the timeout fired.
-// No reply means no HTTP status, hence 0.
-const toUnreachable = (error: Error): Failed => {
-  const cause = error.cause instanceof Error ? [error.cause.message] : [];
-  return { kind: 'failed', status: 0, name: 'NetworkError', reasons: [error.message, ...cause] };
 };
 
 // The client picks its own name and version, so each is cut to a short, plain value.
