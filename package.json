@@ -22,9 +22,11 @@
   ],
   "scripts": {
     "start": "node src/index.ts",
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "typecheck": "tsc",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
+    "check": "pnpm run --parallel \"/^(typecheck|lint|test)$/\"",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "prepack": "pnpm build",
     "test": "node --env-file=.env --test",
