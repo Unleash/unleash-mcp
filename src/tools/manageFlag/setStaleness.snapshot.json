@@ -1,0 +1,237 @@
+[
+  {
+    "hash": "tvNN6a7vQMTIUKSpHayNZ_Kd-tpNkPU1ov9C6l0bMto",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-stale-flag",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "204",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3Atc3RhbGUtZmxhZ1wiIGluIHByb2plY3QgXCJtY3Atc2VydmVyXCIuIiwiZGV0YWlscyI6W3sibWVzc2FnZSI6IlRoZXJlJ3Mgbm8gZmVhdHVyZSBuYW1lZCBcIm1jcC1zdGFsZS1mbGFnXCIgaW4gcHJvamVjdCBcIm1jcC1zZXJ2ZXJcIi4ifV19",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G10EAGR/ua/TdV5md0/UoMJnxU/uKUnlDZUHGbGpm2Kv+AJP/I2NY2EBrgH23jLM9nkUUCBR3AWUJ5bq6fDwQmZazk6CvIaecwncr2tYcWFwELb8eQuvAgoCJvnEvD4VcOtpCAqCGawicAOGxAouOYErFaxbqZDL3dJ+aYvyLhJHcFpBkojC48wJ3K8/CiIHxsTvA6698YQDj6cYaZZ6qxyk9Qxdzduay4aKFbYFf9Tw4vcsCQbOhoAjKECdQavAkPcCBUGU6ZkCYfeJ2gutBKEtxziecQQFS2TASTxlBVHiNzM9FXCgS91mVZnpw+eqdsa6psoPuvsJU3ufXYK7hpnAVZ3bb3mDwqfp6ugVKJgXHPlLDOBgEtmTK4ox4hkKxk8SwM3DFmzJ6I78UFfWtuz7um0PHXlsDJlDhWgQ69r2ncbW4IHIGqvJG+191TaVf5we1voePYwscbsXH45wq0AuuaEAd0CB5qdw0G7li529ML2eB5Z54Zcrpd2jdVZaRryk+MNG3wHMrxvm9WSQ2IJAK5nAXcNp4ngz/DOB07Wl+prCvMzClMl2wit2n9v3xJY63RvLukdu+kp3rE3NDbetNiXptsGOjdW+rLBpjLds21rbsrGNpfRHnBp/bm8B",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "c0EivLmaNdjB4QIeaaLROYfd-eqXfE6Ga1-aqthNIVk",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-stale-flag",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "106",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBmZWF0dXJlIGZsYWcgZm91bmQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiTm8gZmVhdHVyZSBmbGFnIGZvdW5kIn1dfQ==",
+          "trailers": {}
+        },
+        {
+          "statusCode": 202,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "qWTALQ5NHNcYnPtG52ptkCd_kj-AJMF59WuSmGqP0Nw",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/archive/mcp-stale-flag",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "hrL5jgEUtokbOhnu3sKcQUVYK8tw1kdRzZhgazK5cQk",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "25",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"name\":\"mcp-stale-flag\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "headers": {
+            "content-length": "177",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoibWNwLXN0YWxlLWZsYWciLCJkZXNjcmlwdGlvbiI6bnVsbCwidHlwZSI6InJlbGVhc2UiLCJwcm9qZWN0IjoibWNwLXNlcnZlciIsInN0YWxlIjpmYWxzZSwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yOVQxNDozODo1MS45MjdaIiwiaW1wcmVzc2lvbkRhdGEiOmZhbHNlLCJhcmNoaXZlZCI6ZmFsc2V9",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "5f1kusD5ZjM5n4pCmy41Xchl-Dcwcx7DpN9G93ICEYg",
+    "snapshot": {
+      "request": {
+        "method": "PATCH",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-stale-flag",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "47",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "[{\"op\":\"replace\",\"path\":\"/stale\",\"value\":true}]"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "176",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoibWNwLXN0YWxlLWZsYWciLCJkZXNjcmlwdGlvbiI6bnVsbCwidHlwZSI6InJlbGVhc2UiLCJwcm9qZWN0IjoibWNwLXNlcnZlciIsInN0YWxlIjp0cnVlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTI5VDE0OjM4OjUxLjkyN1oiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  }
+]
