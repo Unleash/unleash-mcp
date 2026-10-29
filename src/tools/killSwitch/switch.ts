@@ -15,7 +15,7 @@ export const ensureSwitch = async (
     const current = currentIn(found.environments, environment);
     return 'kind' in current ? current : { kind: 'existing', ...current };
   }
-  const created = await createFlag(unleash, project, flag, 'kill-switch');
+  const created = await createFlag(unleash, project, flag, { type: 'kill-switch' });
   if (created.kind === 'failed') return created;
   return { kind: 'new', enabled: false, strategyIds: [] };
 };

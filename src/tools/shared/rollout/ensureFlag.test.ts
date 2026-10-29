@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createStubbedClient } from '../../unleash/testClient.ts';
-import { unleashError } from '../../unleash/testError.ts';
-import { ensureFlag } from './flag.ts';
+import { createStubbedClient } from '../../../unleash/testClient.ts';
+import { unleashError } from '../../../unleash/testError.ts';
+import { ensureFlag } from './ensureFlag.ts';
 
 const project = 'mcp-server';
 const flag = 'mcp-flag';

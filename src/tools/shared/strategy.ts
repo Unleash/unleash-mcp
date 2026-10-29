@@ -6,6 +6,13 @@ export const rolloutOf = (target: Target): number => target.rollout ?? 100;
 /** What keeps a user in the target's rollout and in their value, Unleash's `default` when the target leaves it out. */
 export const stickinessOf = (target: Target): string => target.stickiness ?? 'default';
 
+/** A target as the tools report it back: with the rollout and stickiness it was written with. */
+export const withDefaults = <T extends Target>(target: T) => ({
+  ...target,
+  rollout: rolloutOf(target),
+  stickiness: stickinessOf(target),
+});
+
 /**
  * Turns an agent-facing target into the Unleash strategy that serves it. `groupId` keys the rollout's stickiness.
  * Unleash requires the stickiness on each variant too, so they get the target's.
