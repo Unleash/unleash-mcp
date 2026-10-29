@@ -1,5 +1,4 @@
 import type { UnleashClient } from '../../unleash/client.ts';
-import { ensureFlag } from '../shared/rollout/ensureFlag.ts';
 import { planTargets } from '../shared/rollout/plan.ts';
 import { createRollout } from '../shared/rollout/rollout.ts';
 import { withDefaults } from '../shared/strategy.ts';
@@ -10,27 +9,22 @@ export const createExperiment = (unleash: UnleashClient) => {
   const rollout = createRollout(unleash);
   return async ({
     project,
-    flag: { name, state },
+    flag,
     environment,
     targets,
     impressionData = true,
   }: ExperimentInput): Promise<ExperimentResult> => {
     const rolledOut = await rollout({
       project,
-      name,
+      flag,
       environment,
       // A missing experiment reports impressions unless told not to; an existing flag keeps its type and setting.
-      ensure: () =>
-        ensureFlag(unleash, project, { flag: name, environment, create: { type: 'experiment', impressionData } }),
-      planFor: (current) => planTargets({ flag: name, state, targets, current }),
+      whenMissing: { type: 'experiment', impressionData },
+      planFor: (current) => planTargets({ flag: flag.name, state: flag.state, targets, current }),
     });
     if (rolledOut.kind === 'failed') return rolledOut;
 
-    const outcome = {
-      flag: { status: rolledOut.flag.kind, name, state },
-      environment,
-      targets: targets.map(withDefaults),
-    };
+    const outcome = { flag: rolledOut.flag, environment, targets: targets.map(withDefaults) };
     if (rolledOut.kind === 'requested')
       return { kind: 'pending_change_request', ...outcome, changeRequest: rolledOut.changeRequest };
     return { kind: 'split', ...outcome };

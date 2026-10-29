@@ -23,6 +23,7 @@ export const rolledOutFlag = z.object({
   name: z.string(),
   state: flagState,
 });
+export type RolledOutFlag = z.infer<typeof rolledOutFlag>;
 
 export const readFlag = async (unleash: UnleashClient, project: string, flag: string): Promise<FoundFlag | Failed> => {
   const found = await unleash.GET(feature, { params: { path: { projectId: project, featureName: flag } } });
