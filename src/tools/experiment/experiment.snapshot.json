@@ -1,0 +1,666 @@
+[
+  {
+    "hash": "ikLeskJYtZkRgnFjFGwX1EX5oIsg83Fdl-342mcT6Xo",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-checkout-experiment",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "222",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3AtY2hlY2tvdXQtZXhwZXJpbWVudFwiIGluIHByb2plY3QgXCJtY3Atc2VydmVyXCIuIiwiZGV0YWlscyI6W3sibWVzc2FnZSI6IlRoZXJlJ3Mgbm8gZmVhdHVyZSBuYW1lZCBcIm1jcC1jaGVja291dC1leHBlcmltZW50XCIgaW4gcHJvamVjdCBcIm1jcC1zZXJ2ZXJcIi4ifV19",
+          "trailers": {}
+        },
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "222",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3AtY2hlY2tvdXQtZXhwZXJpbWVudFwiIGluIHByb2plY3QgXCJtY3Atc2VydmVyXCIuIiwiZGV0YWlscyI6W3sibWVzc2FnZSI6IlRoZXJlJ3Mgbm8gZmVhdHVyZSBuYW1lZCBcIm1jcC1jaGVja291dC1leHBlcmltZW50XCIgaW4gcHJvamVjdCBcIm1jcC1zZXJ2ZXJcIi4ifV19",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G7AFAMT/X7N3tb8/yQoziI2Q0ivK03AGcQ48f3fommIDgJF+Ji0tOul0a8BIoMbSgTXIHuw3oBnPdK7ZOEqw313dWgTwAiPvZZifF4h2Jhi0Lf++mSJDINjMH4nifYaJawgCzQwOcTCcVhI4owwjBeJyteGzg6BP5yXx2+QowSiBzMkyTZ5UowxQ8GEJYVkZApselK230fRboCs7PIK9qmBYIqclQGA/ifthGikFMvth7yPl7JV3tGvgefQnO6NGf4pNGIEFveLyIPOW9IGw/RagihXmAr/4uuy5g8E8HIqN2Q8uKxdHCIAEiUmOT8WglBJqIzaBTBNm9b9DezUp4B0MZPm6Ld+8fvnmxpcn9+9/efHx0+OXz+QzLV9DgD0HgsHjY0pnSyQIUOZMmNGGTNtvgUSBbKZ3wUZdSXakabXJjeWGDa0u6cIvkS2Q/JLufEG5bjXSbCnbPM1vUWK80WTATMtJHMsjy5bbrFs8gjo4iLAfrc9B0AzKlI4pAQbYIBFt3n8xufsMAyVVW5SyUPpT2ZqqNFV7XUr1A1OdD85gLuAzq1o78EvBz57JFbzsKULAz3aizynA4D/zIZvdbkr22LJNB1gAP77sru8dadepvtKkektNX6qOVFVTQ22rKulU29iOKq0GWdqmqQZNuq2Vlo1utLubb9fqmrudiNNyLd2esAnwGVL5lEVLsnLQVZVODzQwuVd+JPYzPY4uR0G7KmSH1ZZxA8ToJwqGV53gRxrOhkAwF8hsJ4LBMhHNEFjFeji5j2wnUlco4Ku66gc2geDjXhGwhFo8KEelNSfr3/oJhe73tgE=",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G7EFAMT/X7N3tb8/yQoziI2Q0ivK03AGcQ48f3ficmIBQKQ/JzVx7EWvtQHHBFr7PLAN0oNVQBmnNtfs4CSH/ZKytYjSC4y8lmF+XiDamWDQtvz7ZooMgWAzfySK9xkmriEINDM4ycGMNmQSOKMMIwXictXgs4OkT+cl8dvkKMEogczJMk2edMMUkPFhCWFZGQKnHhStN1L3W6AtOziCvCpjWCKnJUDgQImrYRopBTL7Ye8j5eyWY7Rr4HnkJzsDRn+KTUhDoo7MzdcNmDehD4TttwBXDDAX+MbXSc8dDObhUJzMvn1ZufiHAFCQqOT4QAxKKaHWbxPINIFW+ju0F5MC3sFAlq/b8s3rl29ufHly//6XFx8/PX75TD7T8jUE2HMgGDw+pnS2RIIAZyBIt22/BRIFspneBRt1RdiRptUmN5YcNri8pFV+iXRJFZTsVjnNlpzNU/wWWcYbzgaExUmZM/2RZQvDaSUBt3sEcXAQoj9coAOh6ZEpHVMCTGKDRLh7/9nk7jMMlFRtUcpC6U9la6rSVO11KdUPTLU8OIO5gE+vau3ALwU/eyZX8LKnCAE/24k+pwCD/8yHbHa7Kdljyzb9wQLw8Wl3fe9Iu071lSbVW2r6UnWkqpoaaltVSafaxnZUaTXI0jZNNWjSba20bHSj3d18u1bX3O1EnJZr6faETYDPkEqlLFyTlbQQvJVODzQwuVd+JPYzPY4uR0G5KmSHFJcxA8TwGgXC+57gRxrOhkAwF8hsJ4LBPhGVENjGujO5j2wnUpcu4NO66gc2geDjXpFkCcV4QI4Ka07Wv/UTCtXvbQM=",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G7EFAMT/X7N3tb8/yQoziI2Q0ivK03AGcQ48f3ficmIBQKQ/JzVx7EWvtQHHBFr7PLAN0oNVQBmnNtfs4CSH/ZKytYjSC4y8lmF+XiDamWDQtvz7ZooMgWAzfySK9xkmriEINDM4ycGMNmQSOKMMIwXictXgs4OkT+cl8dvkKMEogczJMk2edMMUkPFhCWFZGQKnHhStN1L3W6AtOziCvCpjWCKnJUDgQImrYRopBTL7Ye8j5eyWY7Rr4HnkJzsDRn+KTUhDoo7MzdcNmDehD4TttwBXDDAX+MbXSc8dDObhUJzMvn1ZufiHAFCQqOT4QAxKKaHWbxPINIFW+ju0F5MC3sFAlq/b8s3rl29ufHly//6XFx8/PX75TD7T8jUE2HMgGDw+pnS2RIIAZyBIt22/BRIFspneBRt1RdiRptUmN5YcNri8pFV+iXRJFZTsVjnNlpzNU/wWWcYbzgaExUmZM/2RZQvDaSUBt3sEcXAQoj9coAOh6ZEpHVMCTGKDRLh7/9nk7jMMlFRtUcpC6U9la6rSVO11KdUPTLU8OIO5gE+vau3ALwU/eyZX8LKnCAE/24k+pwCD/8yHbHa7Kdljyzb9wQLw8Wl3fe9Iu071lSbVW2r6UnWkqpoaaltVSafaxnZUaTXI0jZNNWjSba20bHSj3d18u1bX3O1EnJZr6faETYDPkEqlLFyTlbQQvJVODzQwuVd+JPYzPY4uR0G5KmSHFJcxA8TwGgXC+57gRxrOhkAwF8hsJ4LBPhGVENjGujO5j2wnUpcu4NO66gc2geDjXpFkCcV4QI4Ka07Wv/UTCtXvbQM=",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "PCYGrvBl2NE9QQgarX1KlUcN7876SDRIWuVyLbfs-00",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-checkout-experiment",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "106",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBmZWF0dXJlIGZsYWcgZm91bmQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiTm8gZmVhdHVyZSBmbGFnIGZvdW5kIn1dfQ==",
+          "trailers": {}
+        },
+        {
+          "statusCode": 202,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "D4vlX1QK0M-0eyv2G7RuCQI4YTS4tAty3oD62gyS_LM",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/archive/mcp-checkout-experiment",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "Z33xUUfJs9kqghQI9hhOrW2nL22ngIVS3xVsdKYE15Q",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/ui-config",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "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",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "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",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G/ETAGQrm9+frikdZ0xi4CWT55uHQB5ZKQx/2UW3sFW0W/4tNUtR3LdfC7ES+s7O3GGiX8D3L+LeTCzhqYi3e3RSZxnOOn9TIOIwoV3VK/xPC1DBoQ7cekisBAXsA7YK1RW+ly8zqCxlKmA+r5/d1/MG9+1rl+2bOVR7DEoFzL6ftvz6mNfNr//OPr63L70Jqv1qPN1ZeVNWOnHEgA9pwcnuOUH/wY6iEpKjlFRZ4oZ7kmwKCqV1/Q339Fe2rh6GL+zpnUNoTmyuAyIKuMmneOB4Q4+j/8QYKUF1hYg9QQWStQeqHPwwvFFFWf7bVnz+dv1bAWqJnTWuox7/goE9GksEib7yprVzpLqRA0VlwofbNDj8Q9xBlBGeeqHtBRJ3gslzbE/MIWIjOd3yRbeRgZ1ygXcv/0bojI/0Qr1gzLbnYJSW8b7yXzALTNE+yRIgLiVpk3gf/CPTNgZCBXsEkd+hO6xEjWNrDc+i6NJlsHmPHBA8i85G0ZPfKrZoSEMv6PG8Js3B9BOYlwUGvARBD9UV7DIQVHC4rwFQwIHdvhlUMH0qy7Is4aZQACT9ehVLmW4FSDaPRr7xBzUbHAQcjjaTvqdoBP8Xc1onK62S9KxkK/EzdB2Rza3WAtvBo9Enntd0ZGWJS9C8m+HUJtbXbhsxRsnRkfdEQQMG1+Kqb2nBZ2ThTSenTSKynW3BFHwT84b8BUMmgJfpMV4aS2jUMukKW45OgEbAnP4F1KK7/AUTIzVoC2SAQIbhFCuvtY2Ke1rGwJEauwRqkuMDb1qVdS2BalVuQx/nciwn2nUih62xQz6kba1SGH6Az874yHZZ0yDJQpGAXLp4bGO4LZIkeQ6TA8X5eeB0+RLjPTsfJkYsqZ2ctkrphY7saCY5mpkv/ROmWO/kSG8VPLHvbJ6CYT1wV4VD19EirsU3lBizLsL6Zo78/0yNP2wSuoNbH+ckau4HY4mf4kl4tGNJxF+YTsrkVmmzbJVGmez7wG1na3Ibm3g0PvRJGiXHvCGzYkmvGRdJolH0Im53TiF8WKmWOLbKzmyoHh5wuI3S+8b3itHv5HzfkuXYF3fP8rDH7ToiCgtWL8MStXQ+KdLtkKN9D5TQJPDMR6k/Uno16kbuUgsPHVCWIVkpJZ3Qv7J1kd6vHtglcs1DoTkYayp+1mEyncwepF2LO5Dx8KoFdHmng9isw1YsXzrjA3fRsswmO9qRVf0lp2U0Sp44DhQ318YfFgGPkiwP90sJoNodNTFLybrGJGEbbHFH3We8iNO/sm/J2o7vj5T+zBz8Jxl6NLTJGMyerd5JsVVKdRuPAOQrdxSGT4p5TVfWrPqLo9W4WrYu71gpwtw9d4UJ+/fjMPes4WMGSouA7QfvybhngRs61CQUVTdRjm2gFbYUr4dcFpJ6n+IJPOFTfA7SkLS8nxfWIeClyelIl9HqJu96tnWOoZi+yRDw0ibJ0Qed4fMjhsyyTrmNGLLASzGb9GjkaxdYr3bgEBrXkc+B/KzD2NKadsfhCZNrmm5r/I1Nwv2e3QsazkT1GWOJsC9V8p7LKX6yPAfDZlhI+pI491YjDYpVtksp+prrilIKTwJ+eZAqwAjyPGHvVgdHTR4G8VgHKv59574tJproB/NfjAPy0EXAduUAWAD4OO5j70yvSfLwmjEVMCkpoBo7iw9vLtHBVubz5kR4sBFS5tAgLccHjKLki38ckqgXo083/BI1KkaFSB/iUbu6t8pfJi58PPZhqZopfbL2aK5L8cBFiLB3lKdoLtEtfdFN9BdzVoMGKxy0N8AIvxWw2+AqrIUKMj9T7ouhAA3SYoQKMoH2bnRXh3C3u5S73s3K3KFQOdbK2xUQOB4Uqn9eUznOu+0Qy03YSYQKAu8Spst/dyIHhQK6RPv8NCetHh68OM1G63lxCgUYW8A7XCndeQRVbsWvEV7ZfuUdTlf330iUCzqIUMJjqsFrfo+HzBNiPKyRnBzdOfF0J/EOg+vt3/q41kzintucyG+6JLnt5vFoT31X7EMn2sv8x1DB8/30voQCqEcO7uBWAF1NtynQn4e8XYymxpTcjqiHYemhgvEhdo75tBuBcYB0p1hJMgzdf83Px8n4j6cxFLBDpW3iFVoHFaBRY7aOohWItpvSw6YzeX8ooIrwrwfefD2HQvVP+A3+zX2OZdwLVFe4U4hRqiuIqkwEjLzhD/998sf06cf9dL+fPI89+incCghopCDUcCuA9WMMOFYGjmoYHQnqiX6WE5rQ0/MId2M/+kHTx9FP58vR88+np/Gz3z2VUw+3Yvp7PVlHWevVsj4iB9wlGGMoygAV7HMIMD9hJhX6wT1PtbRKbU/Rph4h47IsgzjLZLZNh3CF6jGP+M+j3wQP/p/2ZgtoyJJJ1XH5I1ZXlFbTCckQm8UsuVRtQGocJmhhZu+/ooSfwaNinJZmhLlSKFTTspqG2k7CodDGO4uLPRqF6rEs5kDsfxRlATjw8oIvVBMhkXACpmWZXWwXa0EujyWq9RIFQqUN9YOJAPSUidB/xxCxGVUOt9Tw3BWqniT5OlvlmJflF1wUELwjH94ZH3OUh5UEJRTQ47lZGrLTCZTDZLHoTu9EQx34SMtolI4YGnISvUL1VIYEPoPtDtUVjs+BCb/qFR5UEmbPxleXIYR44+pZ3jKCAk+6pjY++VMe7ebX8mgMYSsXjyThcwOWkAJLARnS0kM1+fG8xuQqaXYtqwIA",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "_jJqT0bsXrUqt8WSp25X4grEJSQ-H24k8SLZY40jAXs",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/change-requests/config",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "205",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "W3siZW52aXJvbm1lbnQiOiJkZXZlbG9wbWVudCIsInR5cGUiOiJkZXZlbG9wbWVudCIsInJlcXVpcmVkQXBwcm92YWxzIjpudWxsLCJjaGFuZ2VSZXF1ZXN0RW5hYmxlZCI6ZmFsc2V9LHsiZW52aXJvbm1lbnQiOiJwcm9kdWN0aW9uIiwidHlwZSI6InByb2R1Y3Rpb24iLCJyZXF1aXJlZEFwcHJvdmFscyI6MSwiY2hhbmdlUmVxdWVzdEVuYWJsZWQiOnRydWV9XQ==",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "205",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "W3siZW52aXJvbm1lbnQiOiJkZXZlbG9wbWVudCIsInR5cGUiOiJkZXZlbG9wbWVudCIsInJlcXVpcmVkQXBwcm92YWxzIjpudWxsLCJjaGFuZ2VSZXF1ZXN0RW5hYmxlZCI6ZmFsc2V9LHsiZW52aXJvbm1lbnQiOiJwcm9kdWN0aW9uIiwidHlwZSI6InByb2R1Y3Rpb24iLCJyZXF1aXJlZEFwcHJvdmFscyI6MSwiY2hhbmdlUmVxdWVzdEVuYWJsZWQiOnRydWV9XQ==",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "205",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "W3siZW52aXJvbm1lbnQiOiJkZXZlbG9wbWVudCIsInR5cGUiOiJkZXZlbG9wbWVudCIsInJlcXVpcmVkQXBwcm92YWxzIjpudWxsLCJjaGFuZ2VSZXF1ZXN0RW5hYmxlZCI6ZmFsc2V9LHsiZW52aXJvbm1lbnQiOiJwcm9kdWN0aW9uIiwidHlwZSI6InByb2R1Y3Rpb24iLCJyZXF1aXJlZEFwcHJvdmFscyI6MSwiY2hhbmdlUmVxdWVzdEVuYWJsZWQiOnRydWV9XQ==",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "BpVr61p0H8euHUqU1os1UcwRZ4y9_okRJnJfRubka8I",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "76",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"name\":\"mcp-checkout-experiment\",\"type\":\"experiment\",\"impressionData\":true}"
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "headers": {
+            "content-length": "188",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJuYW1lIjoibWNwLWNoZWNrb3V0LWV4cGVyaW1lbnQiLCJkZXNjcmlwdGlvbiI6bnVsbCwidHlwZSI6ImV4cGVyaW1lbnQiLCJwcm9qZWN0IjoibWNwLXNlcnZlciIsInN0YWxlIjpmYWxzZSwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yOFQxNjozMTozNi4wMDJaIiwiaW1wcmVzc2lvbkRhdGEiOnRydWUsImFyY2hpdmVkIjpmYWxzZX0=",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "tJmhDa3vGUGNV7ADIoE7RwBN9ITW-2usvYWXodheuAg",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-checkout-experiment/environments/development/strategies",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "334",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"name\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"mcp-checkout-experiment\"},\"constraints\":[],\"segments\":[],\"variants\":[{\"name\":\"control\",\"weight\":500,\"weightType\":\"fix\",\"stickiness\":\"default\"},{\"name\":\"treatment\",\"weight\":500,\"weightType\":\"variable\",\"stickiness\":\"default\"}]}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "399",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJpZCI6IjAxTTYxTk1LTjlWRkFBVkpTVEVLSDBIODBNIiwibmFtZSI6ImZsZXhpYmxlUm9sbG91dCIsImNvbnN0cmFpbnRzIjpbXSwicGFyYW1ldGVycyI6eyJncm91cElkIjoibWNwLWNoZWNrb3V0LWV4cGVyaW1lbnQiLCJyb2xsb3V0IjoiMTAwIiwic3RpY2tpbmVzcyI6ImRlZmF1bHQifSwidmFyaWFudHMiOlt7Im5hbWUiOiJjb250cm9sIiwid2VpZ2h0Ijo1MDAsInN0aWNraW5lc3MiOiJkZWZhdWx0Iiwid2VpZ2h0VHlwZSI6ImZpeCJ9LHsibmFtZSI6InRyZWF0bWVudCIsIndlaWdodCI6NTAwLCJzdGlja2luZXNzIjoiZGVmYXVsdCIsIndlaWdodFR5cGUiOiJ2YXJpYWJsZSJ9XSwic2VnbWVudHMiOltdLCJ0aXRsZSI6IkV2ZXJ5b25lIiwiZGlzYWJsZWQiOmZhbHNlLCJzb3J0T3JkZXIiOjB9",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "kBh2D19ayRHs8L_RRLlQ6dXkbAluwE-fsIujVjOdvzg",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-checkout-experiment/environments/development/on",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "0",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "_I7vX8ciT3roVExf6o7zO1EqrBWt7j8Uj7bC1MoyWFE",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-checkout-experiment/environments/development/off",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "0",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "fCr5-3ShWBWZDFGXGhVAzQ8INEKsEuX329pY2cFKHUo",
+    "snapshot": {
+      "request": {
+        "method": "PUT",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-checkout-experiment/environments/development/strategies/01M61NMKN9VFAAVJSTEKH0H80M",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "334",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"name\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"mcp-checkout-experiment\"},\"constraints\":[],\"segments\":[],\"variants\":[{\"name\":\"control\",\"weight\":500,\"weightType\":\"fix\",\"stickiness\":\"default\"},{\"name\":\"treatment\",\"weight\":500,\"weightType\":\"variable\",\"stickiness\":\"default\"}]}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "399",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "eyJpZCI6IjAxTTYxTk1LTjlWRkFBVkpTVEVLSDBIODBNIiwibmFtZSI6ImZsZXhpYmxlUm9sbG91dCIsInRpdGxlIjoiRXZlcnlvbmUiLCJkaXNhYmxlZCI6ZmFsc2UsImNvbnN0cmFpbnRzIjpbXSwicGFyYW1ldGVycyI6eyJncm91cElkIjoibWNwLWNoZWNrb3V0LWV4cGVyaW1lbnQiLCJyb2xsb3V0IjoiMTAwIiwic3RpY2tpbmVzcyI6ImRlZmF1bHQifSwidmFyaWFudHMiOlt7Im5hbWUiOiJjb250cm9sIiwid2VpZ2h0Ijo1MDAsInN0aWNraW5lc3MiOiJkZWZhdWx0Iiwid2VpZ2h0VHlwZSI6ImZpeCJ9LHsibmFtZSI6InRyZWF0bWVudCIsIndlaWdodCI6NTAwLCJzdGlja2luZXNzIjoiZGVmYXVsdCIsIndlaWdodFR5cGUiOiJ2YXJpYWJsZSJ9XSwic29ydE9yZGVyIjowLCJzZWdtZW50cyI6W119",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "cHpdInlaG-JCMrf2DtTFgzVqbBfdC43I3F590PXq9Cw",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/environments/production/change-requests",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "497",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "[{\"feature\":\"mcp-checkout-experiment\",\"action\":\"addStrategy\",\"payload\":{\"name\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"mcp-checkout-experiment\"},\"constraints\":[],\"segments\":[],\"variants\":[{\"name\":\"control\",\"weight\":500,\"weightType\":\"fix\",\"stickiness\":\"default\"},{\"name\":\"treatment\",\"weight\":500,\"weightType\":\"variable\",\"stickiness\":\"default\"}]}},{\"feature\":\"mcp-checkout-experiment\",\"action\":\"updateEnabled\",\"payload\":{\"enabled\":true}}]"
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G2IFAMTvbaanq9+3nZPIUlomrV9rGdAEC3YlnjR2Z+pU9AhF/RdlTg2NZdF5nk0RSMd5tcW3RqRArVGFW53TxEMvP8XJCvaTjB27hbOgomsaA3W6FxBenrGf5ChK/PDrR8dF1zQwWOqDcKOA1gUPg4Pzz9c1hgveJ1BhcIXhIQiHcc2SxAuJMIhoXhD74hq0+TeVdW9wniR6PggIe3dwKjbTsIiHgTvwJJ/jHoQz1TXRbjdFvmDlmLI/LC+7GwYrve3KoeqlHFiaoSg7KataGmnbsspt2TbcSdWXY15w01RjL31bl33e9E1vn6bHdXnPPo6iMdyLjydsBmNU+PBzBaHMyzYr8qzsPxUtVQVV7f3+QfMDBmiGoJ+3eJXNYVyz1Ou34VyznwQAoHMMRnzhglvOgqo67w0YzCcJ56tlldeeh71YGKx8vQ9sQbeQibMhjeeyqfgrYTc2gwu7+wRb+1Ejq0zXFQGOOePKh7Dfh3OFM9O/vpB4HbzAIMl0EK8J9PO3QVx/OELs9sYYvMawh0FGklSgJs8NkrpxcV5SAoF1sJzz6XrVInZX2MzTyLElsk11oN6VYS/YfhuQTQC6xUfi9n9vfYyLQOxCKPIc2y42g0wiNXaw/CE+tfp7+239DlMV4+dvgyieC14EMyUcuZOUVUB4Ffm/opU/uYMk5cNqFzhd9RTK2wY=",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "f7z-l3uSUZgz8beYM0A7xuC5UYjFfBRTAf896gsN5k8",
+    "snapshot": {
+      "request": {
+        "method": "PUT",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/change-requests/1755/state",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "21",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"state\":\"In review\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G40FAMTvl2qnq99PsicUq7TMtn6tZSRmFWQb9AC7a/4vh35Cp/4XHY6tR2PRHM/btMHm8zjrWycSUBklXDp1yQ4/P2QbFug3Io47w2hQ1lSVQjRxLSC8vGc7yMJL/fDri6usqSooTDVAOFFAa5yFwsbY59Pk3Y7XAZQpHGG4C8Kmn5IgficeChXNQ6JfHEGbf1NetgrbIN7yRkBYm42JopPoVmKhYDY8yGe/BuE+xinQcjl43nFk37I/HC+77DotrW7yrmgl71iqLssbyYtSKqnrvEh1XlfcSNHmfZpxVRV9K21d5m1atVWrn4bHZf5AP/YSvXvgHw+YFXpv8OjnEYQ8zeskS5O8/ZTVVGRU1LftXfUDCmhaoJ9nvMrapp+S1uvX3TYmPwkAQKcq9PjCCbeMBhVl2iowmE8StpPmKK8td2vRUJj4uHasQWfIg7Oh6Lcym/grYRdnhQu7+QRr/TF6jjIcLwQ45owrH9x67bYRwUz/eif+6KxAIciwERsD6Odvhbr+UEL89kbvbPRuDYWOJKlAVZoqhGj6lbESAgisg/XUT8fJCsccMKvVSNoS3a5uYN6Vbi2YfyuQjQk64yNxJ3+vY4zzQByFkKUptl2aFTqJ5NnA8ofE1Mrf82/vD5iqGD9/K3jRjbMqmCmh5IEQOQoI7+3Cy87IHvL4J7OREHkz+eaQV57/Z2JhldqEjTa3aX33A/MM",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "6pdhwx5P_lcg5CDly-2LxCPGOhuCJF29NvoTnTjZx_4",
+    "snapshot": {
+      "request": {
+        "method": "PUT",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/change-requests/1755/state",
+        "headers": {
+          "content-type": "application/json",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "21",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node",
+          "accept-encoding": "br, gzip, deflate, zstd"
+        },
+        "body": "{\"state\":\"Cancelled\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-encoding": "br",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "G7QFAMT/lmqnq+cl2ROKKWpmW7/W8iX+KkzUBrC75v9y5ocndOp/0eGcrW1rP2/TBhsT4/BbJxJQGSVcOnXJDj8/ZBsW6DcihjvDO1hVFYVA8qlnWLy8o7HjVeD64adXV6oqCghMNWFxooDWTyMEBj8+n+cw7aiPsErgCMNDWAztnEUOOw4QqGhewu7FEXbzb9J5LbCNHEYaGBa9H3xil6XpnkcI+IE6/hx6WNylNEe7XneBdpQotOwPx8uum8Zx7SrdmJp1Q1w0SlesTc4Fl6U20umyoIpNrVupqChMW3Nd5rqWRV3U7ml8nOsH7nHgFKYH4XGHRaANBod+nmChpS4zJTNdf1KlNcqa8rbeFD8ggGYa9ucZr7IwtHPWev3itE3ZTwIA0GkCLb5wwj3vYE0uawEC80mL7ewo8euRmp4dBGY69hM52DP4wcHYFLa8mPgrYZcWgQu3+gQ59zEFStwdLwQ45owTH6a+n7YJwUz/esfhOI0MgcjdwGOKsD9/C9T1hxLitzfaaUxh6iHQkSQVbCGlQEy+vfcjxwgL1sF62qfjbEXWH7CI1UjaEt1e3cC8E03PWH4LkE0U9oyPxB3+vYsxPgCxEwslJbadWQQ6iRTIw/KHxNTc38tv7w8QVbF+/hYIbPhpVMFMCSVeTJRIMUVjy31WAnn5Jz9wTDTMvmlQaZuNTHWrzWabV4H+J+xt3o+rwDvP+9UKZbn5gWUB",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  }
+]
