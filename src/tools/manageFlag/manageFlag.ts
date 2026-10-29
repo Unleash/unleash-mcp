@@ -7,6 +7,7 @@ import type { ManageFlagInput, Operation } from './manageFlagInput.ts';
 import type { ManageFlagOutput, ManageFlagResult, Outcome, PendingChange } from './manageFlagOutput.ts';
 import { reviveFlag } from './revive.ts';
 import { setParentDependency } from './setParentDependency.ts';
+import { setStaleness } from './setStaleness.ts';
 
 /** Builds the manage flag tool: applies the operations one after another, one result per operation. */
 export const createManageFlag = (unleash: UnleashClient) => {
@@ -29,6 +30,8 @@ const apply = (
       return defineFlag(unleash, operation);
     case 'complete':
       return completeFlag(unleash, operation);
+    case 'set_staleness':
+      return setStaleness(unleash, operation);
     case 'archive':
       return archiveFlag(unleash, environmentsOf, operation);
     case 'revive':

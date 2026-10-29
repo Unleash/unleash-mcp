@@ -4,6 +4,7 @@ import { type Failed, failed } from '../shared/failed.ts';
 
 const define = { action: z.literal('define'), project: z.string(), flag: z.string() };
 const complete = { action: z.literal('complete'), project: z.string(), flag: z.string() };
+const setStaleness = { action: z.literal('set_staleness'), project: z.string(), flag: z.string() };
 const archive = { action: z.literal('archive'), project: z.string(), flag: z.string() };
 const revive = { action: z.literal('revive'), project: z.string(), flag: z.string() };
 const setParentDependency = { action: z.literal('set_parent_dependency'), project: z.string(), flag: z.string() };
@@ -22,6 +23,7 @@ const applied = z.discriminatedUnion('action', [
       .describe('What was written after the flag was read or created; empty when an existing flag already matched'),
   }),
   z.object({ kind: z.literal('applied'), ...complete }),
+  z.object({ kind: z.literal('applied'), ...setStaleness }),
   z.object({ kind: z.literal('applied'), ...archive }),
   z.object({ kind: z.literal('applied'), ...revive }),
   z.object({ kind: z.literal('applied'), ...setParentDependency }),
@@ -34,6 +36,7 @@ const error = failed
 const failedOperation = z.discriminatedUnion('action', [
   z.object({ kind: z.literal('failed'), ...define, error }),
   z.object({ kind: z.literal('failed'), ...complete, error }),
+  z.object({ kind: z.literal('failed'), ...setStaleness, error }),
   z.object({ kind: z.literal('failed'), ...archive, error }),
   z.object({ kind: z.literal('failed'), ...revive, error }),
   z.object({ kind: z.literal('failed'), ...setParentDependency, error }),

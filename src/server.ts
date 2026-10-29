@@ -66,7 +66,7 @@ const outcomes = {
   configure:
     'Set up what flags share: create or change projects (environments, change requests, default stickiness), create release templates, create, change or delete context fields and their legal values, segments (saved audiences) and tag types, and delete tags; the tags of a single flag belong to manage_flag, its targeting to release.',
   manage_flag:
-    'Create a flag or change its type, description, tags and links, set its parent flag, mark it completed, or archive or revive it.',
+    'Create a flag or change its type, description, tags and links, set its parent flag, mark it completed or stale, or archive or revive it.',
   audit:
     'Read what changed in Unleash, who changed it and when, most recent first, over at most 31 days; narrow it to projects, flags, environments or event types.',
   ask: 'Answer questions about feature flag practices and Unleash itself, such as when to wrap a feature in a flag or how to clean flags up, from the Unleash documentation.',
