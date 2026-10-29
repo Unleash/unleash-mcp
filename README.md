@@ -74,7 +74,7 @@ To keep secrets out of your client config, copy `.env.example` to `.env`, fill i
 
 ## Connect to the remote server
 
-Unleash Enterprise can serve this MCP server itself, over [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http), so nothing runs on your machine. An admin turns it on under **Admin** > **Remote MCP Server**; the same page decides whether `send_feedback` reports are sent.
+Unleash Enterprise hosts this server, over [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#streamable-http), so nothing runs on your machine. An admin turns it on under **Admin** > **Remote MCP Server**; `send_feedback` reports are sent unless the admin turns them off there.
 
 Register the server with your MCP client. For Claude Code:
 
@@ -82,13 +82,14 @@ Register the server with your MCP client. For Claude Code:
 claude mcp add unleash https://your-instance.getunleash.io/api/admin/mcp --transport http
 ```
 
-For Codex:
+For Codex, add the server and then log in:
 
 ```bash
-codex mcp add unleash https://your-instance.getunleash.io/api/admin/mcp --transport http
+codex mcp add unleash --url https://your-instance.getunleash.io/api/admin/mcp
+codex mcp login unleash
 ```
 
-On first use, the client opens your browser to log in to Unleash. Unleash then creates a personal access token for the client, valid for 24 hours by default, and the server acts with your permissions.
+The login opens your browser to log in to Unleash; Claude Code does the same on first use. Unleash then creates a personal access token for the client, valid for 24 hours, and the server acts with your permissions.
 
 Where a browser login isn't possible, such as in CI, send a personal access token of your own instead and no login happens:
 
@@ -97,6 +98,8 @@ claude mcp add unleash https://your-instance.getunleash.io/api/admin/mcp \
   --transport http \
   --header "Authorization: Bearer user:your-personal-access-token"
 ```
+
+Codex takes the token from an environment variable named in its `config.toml`, as `bearer_token_env_var` under `[mcp_servers.unleash]`.
 
 ## Tools
 
