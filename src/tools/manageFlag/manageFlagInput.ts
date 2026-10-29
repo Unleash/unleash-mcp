@@ -22,7 +22,7 @@ const define = z
         'Exactly the tags the flag has, by type and value as flag rows show them. The type must exist; a value that does not exist yet is created, so check a tags search first when it should match an existing one. An empty list removes them all',
       ),
     links: z
-      .array(link)
+      .array(link.extend({ url: z.url({ protocol: /^https?$/ }) }))
       .optional()
       .describe(
         'Exactly the related URLs the flag has, such as the pull request or the ticket, matched by URL: a changed title is not applied. An empty list removes them all',

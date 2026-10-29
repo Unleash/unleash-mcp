@@ -38,7 +38,7 @@
           "name": "UNLEASH_MCP_SEND_FEEDBACK"
         },
         {
-          "description": "Base URL of the Unleash instance that receives send_feedback reports (defaults to the production instance)",
+          "description": "Unleash instance that receives send_feedback reports. Unset, reports fail.",
           "isRequired": false,
           "format": "string",
           "isSecret": false,

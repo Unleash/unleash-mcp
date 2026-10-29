@@ -35,10 +35,10 @@ export const trimIndex = (index: string): string =>
 /** Creates `ask`, fetching the docs index with the given `fetch` on every call. */
 export const createAsk =
   (fetch: typeof globalThis.fetch): Ask =>
-    async () => {
-      const response = await fetch(indexUrl, { signal: AbortSignal.timeout(timeoutMs) }).catch(toUnreachable);
-      if (!(response instanceof Response)) return response;
-      // The docs site answers errors in HTML, never as an Unleash error.
-      if (!response.ok) return toFailed({ response });
-      return { kind: 'docs', index: trimIndex(await response.text()) };
-    };
+  async () => {
+    const response = await fetch(indexUrl, { signal: AbortSignal.timeout(timeoutMs) }).catch(toUnreachable);
+    if (!(response instanceof Response)) return response;
+    // The docs site answers errors in HTML, never as an Unleash error.
+    if (!response.ok) return toFailed({ response });
+    return { kind: 'docs', index: trimIndex(await response.text()) };
+  };
