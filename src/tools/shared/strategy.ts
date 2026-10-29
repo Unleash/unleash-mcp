@@ -23,21 +23,22 @@ export const toStrategy = (groupId: string, target: Target) => ({
   parameters: { rollout: String(rolloutOf(target)), stickiness: stickinessOf(target), groupId },
   constraints: (target.constraints ?? []).map(toUnleashConstraint),
   segments: target.segments ?? [],
-  variants: (target.values ?? []).map((value, i, all) => toVariant(value, i, all, stickinessOf(target))),
+  variants: toVariants(target.values ?? [], stickinessOf(target)),
 });
 
 /** The Unleash strategy a target becomes. */
 export type Strategy = ReturnType<typeof toStrategy>;
 
-const toVariant = ({ share, ...value }: Value, i: number, all: Value[], stickiness: string) => {
-  const fixed = share !== undefined && (i < all.length - 1 || all.some((v) => v.share === undefined));
-  return {
-    ...value,
-    weight: (share ?? 0) * 10,
-    weightType: fixed ? ('fix' as const) : ('variable' as const),
-    stickiness,
-  };
-};
+const toVariants = (values: Value[], stickiness: string) =>
+  values.map(({ share, ...value }, i) => {
+    const fixed = share !== undefined && (i < values.length - 1 || values.some((v) => v.share === undefined));
+    return {
+      ...value,
+      weight: (share ?? 0) * 10,
+      weightType: fixed ? ('fix' as const) : ('variable' as const),
+      stickiness,
+    };
+  });
 
 /** Turns an agent-facing constraint into the shape Unleash stores on strategies and segments. */
 export const toUnleashConstraint = (c: Constraint) => ({

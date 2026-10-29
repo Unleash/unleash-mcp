@@ -4,14 +4,15 @@ import type { Failed } from '../failed.ts';
 import { type AppliedPlan, applyPlan } from './apply.ts';
 import { requestPlan } from './changeRequest.ts';
 import type { EnsuredFlag } from './flag.ts';
-import type { Plan } from './plan.ts';
+import type { EnvironmentState, Plan } from './plan.ts';
 
 type RolloutInput = {
   project: string;
   name: string;
   environment: string;
   ensure: () => Promise<EnsuredFlag | Failed>;
-  planFor: (flag: EnsuredFlag) => Plan;
+  /** Called with what the environment has once the flag is read, since the plan reuses its strategies and toggles only on a change. */
+  planFor: (current: EnvironmentState) => Plan;
 };
 
 /** Either written directly or waiting in a change request. */

@@ -2,8 +2,8 @@ import { z } from 'zod';
 import type { components } from '../../../unleash/api.d.ts';
 import type { UnleashClient } from '../../../unleash/client.ts';
 import { type Failed, toFailed } from '../failed.ts';
-import { flagState } from '../flagState.ts';
-import type { Current } from './plan.ts';
+import { flagState, toFlagState } from '../flagState.ts';
+import type { EnvironmentState } from './plan.ts';
 
 const features = '/api/admin/projects/{projectId}/features';
 const feature = '/api/admin/projects/{projectId}/features/{featureName}';
@@ -15,7 +15,7 @@ type UnleashEnvironment = components['schemas']['featureEnvironmentSchema'];
 export type FoundFlag = { kind: 'found'; environments: UnleashEnvironment[] } | { kind: 'missing' };
 
 /** The flag as a rollout finds it in the environment, created on the way when it was missing. */
-export type EnsuredFlag = Current & { kind: 'new' | 'existing' };
+export type EnsuredFlag = EnvironmentState & { kind: 'new' | 'existing' };
 
 /** The flag a rollout reports back. */
 export const rolledOutFlag = z.object({
@@ -49,12 +49,15 @@ export const createFlag = async (
 };
 
 /** What an environment of the flag has now, refusing one with targets a rollout would turn into gradual rollouts or drop. */
-export const currentIn = (environments: UnleashEnvironment[], environment: string): Current | Failed => {
+export const environmentStateIn = (
+  environments: UnleashEnvironment[],
+  environment: string,
+): EnvironmentState | Failed => {
   const found = environments.find((e) => e.name === environment);
   const strategies = found?.strategies ?? [];
   const notGradual = strategies.filter((s) => !gradual.includes(s.name)).map((s) => s.title || s.name);
   if (notGradual.length) return notGradualIn(environment, notGradual);
-  return { enabled: found?.enabled ?? false, strategyIds: strategies.flatMap((s) => (s.id ? [s.id] : [])) };
+  return { state: toFlagState(found?.enabled ?? false), strategyIds: strategies.flatMap((s) => (s.id ? [s.id] : [])) };
 };
 
 // Unleash's legacy `default` serves everyone, as a 100% gradual rollout does, so rewriting it as one changes nothing.
