@@ -1,6 +1,7 @@
 import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { z } from 'zod';
+import type { Clock } from '../../clock.ts';
 
 /** The user's answer to whether reports may be sent to Unleash. */
 export type Decision = 'granted' | 'denied';
@@ -23,7 +24,7 @@ const consentFile = z.object({
 });
 
 /** Creates a store over the file at `location`, dating each decision with `now`. */
-export const createConsentStore = (location: string, now: () => Date): ConsentStore => ({
+export const createConsentStore = (location: string, now: Clock): ConsentStore => ({
   location,
   read: async () => {
     const contents = await readFile(location, 'utf8').catch(() => undefined);

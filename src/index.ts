@@ -3,6 +3,7 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import pkg from '../package.json' with { type: 'json' };
+import { systemClock } from './clock.ts';
 import { readConfig } from './config.ts';
 import { createServer } from './server.ts';
 import { createConsent, granted } from './tools/sendFeedback/consent.ts';
@@ -19,7 +20,7 @@ const unleash = createUnleashClient({
 });
 
 const configDir = config.UNLEASH_MCP_CONFIG_DIR ?? platformConfigDir(process.env, process.platform, homedir());
-const consentStore = createConsentStore(join(configDir, 'feedback_consent.json'), () => new Date());
+const consentStore = createConsentStore(join(configDir, 'feedback_consent.json'), systemClock);
 
 // true grants, false leaves send_feedback out, unset asks the user.
 const consent = config.UNLEASH_MCP_SEND_FEEDBACK ? granted : createConsent(consentStore);

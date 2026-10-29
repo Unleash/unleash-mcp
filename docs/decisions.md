@@ -434,3 +434,11 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 ## 2026-10-29 — Search filters flags by staleness
 
 - A flags search takes `staleness`, any of `active`, `stale` and `potentially_stale`, the states the Unleash UI filters by, sent as Unleash's `state` filter; the name differs because `state` is enabled or disabled in every tool. The vocabulary is shared with `manage_flag`, which can set only `stale` and `active`, since Unleash computes potentially stale on its own. Rejected: a `stale` field on flag rows, since a filtered search already answers which flags are stale.
+
+## 2026-10-29 — Inspect reports staleness
+
+- An inspected flag carries `staleness`: `stale` from Unleash's `stale` field, so what `set_staleness` writes can be read back; `potentially_stale` when the flag is past `expectedLifetimeEndsAt`, the date Unleash derives from the flag's lifetime, else its type's, and the rule its own job applies, since Unleash returns the marking only as a search filter and the two reads should agree on a flag, which they do up to the job's interval. The field is always present, as `state` is on an environment; absence meaning active would turn the union into a nullable pair. `expectedLifetimeEndsAt` stays as the date behind it. Rejected: `stale` or `active` only, which mirrors the flag page but contradicts a staleness search.
+
+## 2026-10-29 — Clock
+
+- Anything that needs the time takes a `Clock` (`src/clock.ts`), wired with `systemClock` at the composition roots; tests pass `fixedClock` (`src/testClock.ts`). A recorded test that asserts a time-dependent value, such as whether a flag is past its expected lifetime, then stays deterministic. Rejected: `() => new Date()` spelled out at each call site, and reading the clock inside a mapper.

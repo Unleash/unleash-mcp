@@ -1,3 +1,4 @@
+import type { Clock } from '../../../clock.ts';
 import type { components } from '../../../unleash/api.d.ts';
 import type { UnleashClient } from '../../../unleash/client.ts';
 import { changeRequestUrl, type EditionReader } from '../../shared/changeRequest.ts';
@@ -8,6 +9,7 @@ import type { FlagType } from '../../shared/flagType.ts';
 import { toLifecycleStage, type UnleashStage } from '../../shared/lifecycleStage.ts';
 import type { Link } from '../../shared/link.ts';
 import type { Parent } from '../../shared/parent.ts';
+import { toStaleness } from '../../shared/staleness.ts';
 import type { Tag } from '../../shared/tag.ts';
 import type { Target, Value } from '../../shared/target.ts';
 import type { FlagQuery } from '../inspectInput.ts';
@@ -24,6 +26,7 @@ import type {
 export const inspectFlag = async (
   unleash: UnleashClient,
   editionOf: EditionReader,
+  now: Clock,
   { project, flag }: FlagQuery,
 ): Promise<Flag | Failed> => {
   // The flag endpoint leaves the tags and the change requests out, so they take requests of their own.
@@ -43,6 +46,7 @@ export const inspectFlag = async (
     createdAt,
     createdBy,
     lifecycle,
+    stale,
     expectedLifetimeEndsAt,
     environments,
     collaborators,
@@ -52,13 +56,15 @@ export const inspectFlag = async (
   } = found.data;
   const tags = tagged.data.tags;
   const collaboratorNames = collaborators?.users.map((user) => user.name) ?? [];
+  // Unleash returns `expectedLifetimeEndsAt` but leaves it out of its OpenAPI spec, hence the type check.
+  const lifetimeEndsAt = typeof expectedLifetimeEndsAt === 'string' ? expectedLifetimeEndsAt : undefined;
   return {
     kind: 'flag',
     name,
     type: type as FlagType,
     ...(lifecycle ? { lifecycle: toLifecycle(lifecycle) } : {}),
-    // Unleash returns `expectedLifetimeEndsAt` but leaves it out of its OpenAPI spec, hence the type check.
-    ...(typeof expectedLifetimeEndsAt === 'string' ? { expectedLifetimeEndsAt } : {}),
+    staleness: toStaleness(stale, lifetimeEndsAt, now()),
+    ...(lifetimeEndsAt ? { expectedLifetimeEndsAt: lifetimeEndsAt } : {}),
     environments: (environments ?? []).map(toEnvironment),
     ...(createdAt ? { createdAt } : {}),
     ...(createdBy ? { createdBy: createdBy.name } : {}),

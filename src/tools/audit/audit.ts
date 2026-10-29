@@ -1,3 +1,4 @@
+import type { Clock } from '../../clock.ts';
 import type { components } from '../../unleash/api.d.ts';
 import type { UnleashClient } from '../../unleash/client.ts';
 import { toFailed } from '../shared/failed.ts';
@@ -11,7 +12,7 @@ const pageSize = 25;
 
 // Unleash pages and filters on its side; a date range always narrows the search, so it reads a bounded slice of the event log.
 export const createAudit =
-  (unleash: UnleashClient, now: () => Date) =>
+  (unleash: UnleashClient, now: Clock) =>
   async ({ project, flag, environment, type, to, days, include, offset }: AuditInput): Promise<AuditResult> => {
     const last = to ?? toUtcDate(now());
     const first = daysBefore(last, days - 1);
