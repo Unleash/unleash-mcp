@@ -17,7 +17,7 @@ export const ensureFlag = async (
     const current = environmentStateIn(found.environments, input.environment);
     return 'kind' in current ? current : { kind: 'existing', ...current };
   }
-  const created = await createFlag(unleash, project, input.flag, input.whenMissing);
+  const created = await createFlag(unleash, { project, name: input.flag, ...input.whenMissing });
   if (created.kind === 'failed') return created;
   return { kind: 'new', state: 'off', strategyIds: [] };
 };

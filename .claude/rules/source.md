@@ -10,5 +10,6 @@ paths:
 - Keep dependencies minimal. Ask before adding one.
 - Be light on the Unleash backend: agents call more than humans, so use the fewest requests possible. Pass `view=core` wherever the endpoint offers it.
 - Be token efficient in anything the agent reads.
+- Collaborators (`unleash`, `editionOf`, `fetch`) come first, as positional parameters. A function with four or more parameters takes its data as one object.
 
-Why: `docs/decisions.md` (v2 constraints, Toolchain, Type checking, Core views, Published package is built).
+Why: `docs/decisions.md` (v2 constraints, Toolchain, Type checking, Core views, Published package is built, Named parameters).
