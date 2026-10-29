@@ -3,9 +3,10 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
+import { fixedClock } from '../../testClock.ts';
 import { createConsentStore, platformConfigDir } from './consentStore.ts';
 
-const decidedAt = new Date('2026-10-27T10:00:00.000Z');
+const now = fixedClock('2026-10-27T10:00:00.000Z');
 
 // A fresh directory per test, removed once the test is done.
 const tempDir = async (t: { after: (fn: () => Promise<void>) => void }): Promise<string> => {
@@ -17,9 +18,9 @@ const tempDir = async (t: { after: (fn: () => Promise<void>) => void }): Promise
 test('remembers the decision for the next session', async (t) => {
   const location = join(await tempDir(t), 'unleash-mcp', 'feedback_consent.json');
 
-  await createConsentStore(location, () => decidedAt).write('granted');
+  await createConsentStore(location, now).write('granted');
 
-  assert.equal(await createConsentStore(location, () => decidedAt).read(), 'granted');
+  assert.equal(await createConsentStore(location, now).read(), 'granted');
   assert.deepEqual(JSON.parse(await readFile(location, 'utf8')), {
     consent: 'granted',
     decidedAt: '2026-10-27T10:00:00.000Z',
@@ -28,14 +29,14 @@ test('remembers the decision for the next session', async (t) => {
 });
 
 test('has no decision before the user is asked', async (t) => {
-  const store = createConsentStore(join(await tempDir(t), 'feedback_consent.json'), () => decidedAt);
+  const store = createConsentStore(join(await tempDir(t), 'feedback_consent.json'), now);
 
   assert.equal(await store.read(), undefined);
 });
 
 test('has no decision when the file holds something else', async (t) => {
   const location = join(await tempDir(t), 'feedback_consent.json');
-  const store = createConsentStore(location, () => decidedAt);
+  const store = createConsentStore(location, now);
 
   for (const contents of [
     'not json',
@@ -49,7 +50,7 @@ test('has no decision when the file holds something else', async (t) => {
 test('keeps no decision, without failing, when the directory cannot be created', async (t) => {
   const blocker = join(await tempDir(t), 'a-file');
   await writeFile(blocker, '');
-  const store = createConsentStore(join(blocker, 'feedback_consent.json'), () => decidedAt);
+  const store = createConsentStore(join(blocker, 'feedback_consent.json'), now);
 
   await store.write('granted');
 

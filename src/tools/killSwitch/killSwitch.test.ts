@@ -23,7 +23,7 @@ after(async () => {
   await close();
 });
 
-// The recording pins the create as a kill switch and the target for everyone.
+// The recording pins the create as a kill switch that lives forever, and the target for everyone.
 test('creates a missing switch and turns it on for everyone', async () => {
   const output = await createKillSwitch(unleash)({
     project,

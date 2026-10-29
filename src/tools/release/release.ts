@@ -7,11 +7,18 @@ import { planAudience } from './releasePlan.ts';
 
 export const createRelease = (unleash: UnleashClient) => {
   const rollout = createRollout(unleash);
-  return async ({ project, flag, environment, audience }: ReleaseInput): Promise<ReleaseResult> => {
+  return async ({
+    project,
+    flag,
+    environment,
+    audience,
+    expectedLifetimeDays,
+  }: ReleaseInput): Promise<ReleaseResult> => {
     const rolledOut = await rollout({
       project,
       flag,
       environment,
+      whenMissing: { lifetimeDays: expectedLifetimeDays },
       planFor: (current) => planAudience({ flag: flag.name, state: flag.state, audience, current }),
     });
     if (rolledOut.kind === 'failed') return rolledOut;

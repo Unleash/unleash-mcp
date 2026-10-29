@@ -13,13 +13,14 @@ export const createExperiment = (unleash: UnleashClient) => {
     environment,
     targets,
     impressionData = true,
+    expectedLifetimeDays,
   }: ExperimentInput): Promise<ExperimentResult> => {
     const rolledOut = await rollout({
       project,
       flag,
       environment,
       // A missing experiment reports impressions unless told not to; an existing flag keeps its type and setting.
-      whenMissing: { type: 'experiment', impressionData },
+      whenMissing: { type: 'experiment', impressionData, lifetimeDays: expectedLifetimeDays },
       planFor: (current) => planTargets({ flag: flag.name, state: flag.state, targets, current }),
     });
     if (rolledOut.kind === 'failed') return rolledOut;

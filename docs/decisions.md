@@ -441,4 +441,8 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 
 ## 2026-10-29 — Clock
 
-- Anything that needs the time takes a `Clock` (`src/clock.ts`), wired with `systemClock` at the composition roots; tests pass `fixedClock` (`src/testClock.ts`). A recorded test that asserts a time-dependent value, such as whether a flag is past its expected lifetime, then stays deterministic. Rejected: `() => new Date()` spelled out at each call site, and reading the clock inside a mapper.
+- Anything that needs the time takes a `Clock` (`src/clock.ts`), wired with `systemClock` at the composition roots; tests pass `fixedClock` (`src/testClock.ts`), or a closure over a date they also assert on. A recorded test that asserts a time-dependent value, such as whether a flag is past its expected lifetime, then stays deterministic. Rejected: `() => new Date()` spelled out at each call site, and reading the clock inside a mapper.
+
+## 2026-10-29 — Expected lifetime of a flag
+
+- `release` and `experiment` take `expectedLifetimeDays` for the flag they create, sent as Unleash's `lifetimeDays` (behind its `perFlagLifetime` flag, on in the sandbox and left out of its OpenAPI spec, hence a cast); left out, the flag inherits its type's lifetime as before. A kill switch is created with `lifetimeDays: 0`, for ever, so it never counts as stale whatever lifetime the instance gave the kill-switch type, which is editable; a stock instance already has it permanent. An existing flag keeps its lifetime, as it keeps its type. Checked on the sandbox: an update without `lifetimeDays` keeps the one set, so `define`'s full update is safe. Rejected: 0 for ever on `release` and `experiment`, since a permanent flag is a kill switch; a lifetime on `define`, until an agent needs to change one; a date instead of days, since Unleash counts from the creation date.

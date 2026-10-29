@@ -30,6 +30,14 @@ export const experimentInput = z.strictObject({
     .describe(
       'Whether SDKs report each evaluation, so analytics can attribute results to values. On when the flag is created unless false; an existing flag keeps its setting',
     ),
+  expectedLifetimeDays: z
+    .number()
+    .int()
+    .min(1)
+    .optional()
+    .describe(
+      'Days a missing flag is expected to live once created, after which Unleash marks it potentially stale; the lifetime of its type when left out. An existing flag keeps its lifetime',
+    ),
 });
 
 export type ExperimentInput = z.infer<typeof experimentInput>;
