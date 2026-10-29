@@ -7,6 +7,7 @@ import { legalValue } from '../shared/legalValue.ts';
 import { lifecycleStage } from '../shared/lifecycleStage.ts';
 import { link } from '../shared/link.ts';
 import { parent } from '../shared/parent.ts';
+import { staleness } from '../shared/staleness.ts';
 import { tag } from '../shared/tag.ts';
 import { constraint, target } from '../shared/target.ts';
 
@@ -79,7 +80,13 @@ const flag = z.object({
   name: z.string(),
   type: flagType,
   lifecycle: lifecycle.optional().describe('Where the flag is in its life'),
-  expectedLifetimeEndsAt: z.string().optional().describe('ISO timestamp; after it the flag counts as stale'),
+  staleness: staleness.describe(
+    'stale: marked by a person, with manage_flag or in Unleash; potentially_stale: past its expected lifetime; active otherwise',
+  ),
+  expectedLifetimeEndsAt: z
+    .string()
+    .optional()
+    .describe('ISO timestamp; after it the flag is potentially stale. Left out for a permanent flag'),
   environments: z.array(environment),
   createdAt: z.string().optional().describe('ISO timestamp'),
   createdBy: z.string().optional().describe('Name of the user who created the flag'),

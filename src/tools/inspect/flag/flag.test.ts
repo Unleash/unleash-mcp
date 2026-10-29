@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
+import { fixedClock } from '../../../testClock.ts';
 import { stubEnterprise } from '../../../unleash/testChangeRequest.ts';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
@@ -104,17 +105,20 @@ after(async () => {
 });
 
 const timestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+// Fixed, and before any recording: a flag created at recording time with a lifetime has not reached its end.
+const now = fixedClock('2026-10-29T00:00:00.000Z');
 
 // The flag is created anew on every recording, so the timestamps are left to the partial match.
 // A kill switch has no expected lifetime.
 test('describes a flag with its lifecycle, environments, who worked on it, its parent, tags and links', async () => {
-  const output = await inspectFlag(unleash, editionOf, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, editionOf, now, { kind: 'flag', project, flag });
 
   assert(!('expectedLifetimeEndsAt' in output));
   assert.partialDeepStrictEqual(output, {
     kind: 'flag',
     name: flag,
     type: 'kill-switch',
+    staleness: 'active',
     lifecycle: { stage: 'define' },
     environments: [
       {
@@ -134,7 +138,7 @@ test('describes a flag with its lifecycle, environments, who worked on it, its p
 
 // The parent is created without a type, so Unleash gives it the default `release` with its lifetime.
 test('names the flags that depend on a flag and the release plan rolling it out', async () => {
-  const output = await inspectFlag(unleash, editionOf, { kind: 'flag', project, flag: parent });
+  const output = await inspectFlag(unleash, editionOf, now, { kind: 'flag', project, flag: parent });
 
   assert(output.kind === 'flag');
   assert.match(output.expectedLifetimeEndsAt ?? '', timestamp);
@@ -142,6 +146,7 @@ test('names the flags that depend on a flag and the release plan rolling it out'
     kind: 'flag',
     name: parent,
     type: 'release',
+    staleness: 'active',
     lifecycle: { stage: 'define' },
     environments: [
       {
@@ -182,12 +187,13 @@ test('names the lifecycle stage as the Unleash UI does, with its status', async 
   });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
-  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, openSource, now, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, {
     kind: 'flag',
     name: flag,
     type: 'release',
+    staleness: 'active',
     lifecycle: { stage: 'cleanup', status: 'kept', enteredAt: '2026-10-21T09:00:00.000Z' },
     environments: [],
   });
@@ -214,12 +220,13 @@ test('treats a transition without a type as time based', async () => {
   });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
-  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, openSource, now, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, {
     kind: 'flag',
     name: flag,
     type: 'release',
+    staleness: 'active',
     environments: [
       {
         name: 'development',
@@ -231,6 +238,35 @@ test('treats a transition without a type as time based', async () => {
         },
       },
     ],
+  });
+});
+
+test('tells when a person marked the flag stale', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release', stale: true });
+  stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
+
+  const output = await inspectFlag(unleash, openSource, now, { kind: 'flag', project, flag });
+
+  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', staleness: 'stale', environments: [] });
+});
+
+test('tells when the flag is past its expected lifetime and nobody marked it stale', async () => {
+  const { unleash, stub } = createStubbedClient();
+  stub
+    .intercept({ path: flagPath, method: 'GET' })
+    .reply(200, { name: flag, type: 'release', stale: false, expectedLifetimeEndsAt: '2024-03-19T13:53:30.828Z' });
+  stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
+
+  const output = await inspectFlag(unleash, openSource, now, { kind: 'flag', project, flag });
+
+  assert.deepEqual(output, {
+    kind: 'flag',
+    name: flag,
+    type: 'release',
+    staleness: 'potentially_stale',
+    expectedLifetimeEndsAt: '2024-03-19T13:53:30.828Z',
+    environments: [],
   });
 });
 
@@ -246,12 +282,13 @@ test('tells when an SDK last saw the flag in each environment', async () => {
   });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
-  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, openSource, now, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, {
     kind: 'flag',
     name: flag,
     type: 'release',
+    staleness: 'active',
     environments: [
       { name: 'development', state: 'enabled', lastSeenAt: '2026-10-21T09:00:00.000Z' },
       { name: 'production', state: 'disabled' },
@@ -284,7 +321,7 @@ test("returns only the type and value of a value's payload", async () => {
   });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
-  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, openSource, now, { kind: 'flag', project, flag });
 
   assert(output.kind === 'flag');
   assert.deepEqual(output.environments[0]?.targets?.[0]?.values, [
@@ -301,12 +338,13 @@ test('tells which values the parent must serve', async () => {
   });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
-  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, openSource, now, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, {
     kind: 'flag',
     name: flag,
     type: 'release',
+    staleness: 'active',
     environments: [],
     parent: { state: 'enabled', flag: parent, values: ['blue'] },
   });
@@ -319,19 +357,20 @@ test('tells when the parent must be off', async () => {
     .reply(200, { name: flag, type: 'release', dependencies: [{ feature: parent, enabled: false, variants: [] }] });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
-  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, openSource, now, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, {
     kind: 'flag',
     name: flag,
     type: 'release',
+    staleness: 'active',
     environments: [],
     parent: { state: 'disabled', flag: parent },
   });
 });
 
 test('fails with the Unleash error when the flag does not exist', async () => {
-  const output = await inspectFlag(unleash, editionOf, { kind: 'flag', project, flag: 'mcp-unknown' });
+  const output = await inspectFlag(unleash, editionOf, now, { kind: 'flag', project, flag: 'mcp-unknown' });
 
   assert.deepEqual(output, {
     kind: 'failed',
@@ -348,7 +387,7 @@ test('fails with the Unleash error when the flag cannot be read', async () => {
     .reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
-  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, openSource, now, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, {
     kind: 'failed',
@@ -365,7 +404,7 @@ test('fails with the Unleash error when the tags cannot be read', async () => {
     .intercept({ path: tagsPath, method: 'GET' })
     .reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
 
-  const output = await inspectFlag(unleash, openSource, { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, openSource, now, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, {
     kind: 'failed',
@@ -384,12 +423,13 @@ test('lists the change requests waiting with changes to the flag, linked to the 
     .intercept({ path: pendingPath, method: 'GET' })
     .reply(200, [{ id: 7, environment: 'production', state: 'In review' }]);
 
-  const output = await inspectFlag(unleash, createEditionReader(unleash), { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, createEditionReader(unleash), now, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, {
     kind: 'flag',
     name: flag,
     type: 'release',
+    staleness: 'active',
     environments: [],
     changeRequests: [
       {
@@ -411,7 +451,7 @@ test('fails with the Unleash error when the change requests cannot be read', asy
     .intercept({ path: pendingPath, method: 'GET' })
     .reply(500, unleashError('UnknownError', 'connect ECONNREFUSED 10.0.0.5:5432'));
 
-  const output = await inspectFlag(unleash, createEditionReader(unleash), { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, createEditionReader(unleash), now, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, {
     kind: 'failed',
@@ -429,7 +469,7 @@ test('fails with the Unleash error when the edition cannot be read', async () =>
   stub.intercept({ path: flagPath, method: 'GET' }).reply(200, { name: flag, type: 'release' });
   stub.intercept({ path: tagsPath, method: 'GET' }).reply(200, { version: 1, tags: [] });
 
-  const output = await inspectFlag(unleash, createEditionReader(unleash), { kind: 'flag', project, flag });
+  const output = await inspectFlag(unleash, createEditionReader(unleash), now, { kind: 'flag', project, flag });
 
   assert.deepEqual(output, {
     kind: 'failed',

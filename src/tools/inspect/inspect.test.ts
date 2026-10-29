@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { fixedClock } from '../../testClock.ts';
 import { createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { createInspect } from './inspect.ts';
@@ -28,7 +29,7 @@ test('answers each query in the order asked, failures included', async () => {
   stub
     .intercept({ path: '/api/admin/segments/7', method: 'GET' })
     .reply(200, { id: 7, name: 'Beta', constraints: [], createdAt: '2026-10-22T08:00:00.000Z' });
-  const inspect = createInspect(unleash);
+  const inspect = createInspect(unleash, fixedClock('2026-10-29T00:00:00.000Z'));
 
   const output = await inspect({
     queries: [
@@ -44,7 +45,7 @@ test('answers each query in the order asked, failures included', async () => {
     results: [
       { kind: 'failed', status: 404, name: 'NotFoundError', reasons: ['No project found'] },
       { kind: 'project', name: 'Known', mode: 'open', environments: ['development'], defaultStickiness: 'userId' },
-      { kind: 'flag', name: 'mcp-flag', type: 'release', environments: [] },
+      { kind: 'flag', name: 'mcp-flag', type: 'release', staleness: 'active', environments: [] },
       { kind: 'context_field', name: 'tier', stickiness: true },
       { kind: 'segment', id: 7, name: 'Beta', constraints: [], createdAt: '2026-10-22T08:00:00.000Z' },
     ],

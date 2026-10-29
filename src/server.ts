@@ -1,5 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import pkg from '../package.json' with { type: 'json' };
+import { systemClock } from './clock.ts';
 import { createAsk } from './tools/ask/ask.ts';
 import { askOutput } from './tools/ask/askOutput.ts';
 import { createAudit } from './tools/audit/audit.ts';
@@ -104,12 +105,12 @@ export const createServer = (
   const release = createRelease(unleash);
   const killSwitch = createKillSwitch(unleash);
   const experiment = createExperiment(unleash);
-  const inspect = createInspect(unleash);
+  const inspect = createInspect(unleash, systemClock);
   const configure = createConfigure(unleash);
   const search = createSearch(unleash);
   const manageFlag = createManageFlag(unleash);
   const evaluate = createEvaluate(unleash);
-  const audit = createAudit(unleash, () => new Date());
+  const audit = createAudit(unleash, systemClock);
   const ask = createAsk(fetch);
 
   server.registerTool(
