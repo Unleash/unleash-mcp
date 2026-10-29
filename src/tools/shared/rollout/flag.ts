@@ -37,14 +37,9 @@ export type FlagOptions = { type?: FlagType; impressionData?: boolean };
 
 export const createFlag = async (
   unleash: UnleashClient,
-  project: string,
-  flag: string,
-  options: FlagOptions = {},
+  { project, ...flag }: { project: string; name: string } & FlagOptions,
 ): Promise<{ kind: 'created' } | Failed> => {
-  const created = await unleash.POST(features, {
-    params: { path: { projectId: project } },
-    body: { name: flag, ...options },
-  });
+  const created = await unleash.POST(features, { params: { path: { projectId: project } }, body: flag });
   if (!created.response.ok) return toFailed(created);
   return { kind: 'created' };
 };

@@ -32,7 +32,7 @@ export const inspectFlag = async (
       params: { path: { projectId: project, featureName: flag } },
     }),
     unleash.GET('/api/admin/features/{featureName}/tags', { params: { path: { featureName: flag } } }),
-    readPendingChangeRequests(unleash, editionOf, project, flag),
+    readPendingChangeRequests(unleash, editionOf, { project, flag }),
   ]);
   if (!found.response.ok || !found.data) return toFailed(found);
   if (!tagged.response.ok || !tagged.data) return toFailed(tagged);
@@ -75,8 +75,7 @@ export const inspectFlag = async (
 const readPendingChangeRequests = async (
   unleash: UnleashClient,
   editionOf: EditionReader,
-  project: string,
-  flag: string,
+  { project, flag }: { project: string; flag: string },
 ): Promise<{ kind: 'changeRequests'; changeRequests: PendingChangeRequest[] } | Failed> => {
   const edition = await editionOf();
   if (edition.kind === 'failed') return edition;

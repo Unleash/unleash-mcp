@@ -406,3 +406,7 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 - An update stops at the first refused write; the writes before it stay.
 - Update sends the mode to the project settings endpoint, one more request only when a mode is given: Unleash's project update takes a mode and answers 200 but doesn't save it. Create saves it.
 - Inspect project returns the name, description and mode, so an agent can check what an update wrote. They come in the overview it already reads, and the overview doesn't deprecate the description, unlike the projects list search reads.
+
+## 2026-10-29 — Named parameters
+
+- A function with four or more parameters takes its data as one object, with its collaborators (`unleash`, `editionOf`, `fetch`) first as positional parameters. Four positional values of the same type, such as two tag arrays, can be swapped silently; named data makes a call read on its own. Rejected: one object for everything, which hides which argument is the injected dependency.

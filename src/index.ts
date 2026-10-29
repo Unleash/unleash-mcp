@@ -26,6 +26,11 @@ const consent = config.UNLEASH_MCP_SEND_FEEDBACK ? granted : createConsent(conse
 const sendFeedback =
   config.UNLEASH_MCP_SEND_FEEDBACK === false
     ? undefined
-    : createSendFeedback(globalThis.fetch, pkg.version, config.UNLEASH_FEEDBACK_URL, consent);
+    : createSendFeedback({
+        fetch: globalThis.fetch,
+        mcpVersion: pkg.version,
+        feedbackBaseUrl: config.UNLEASH_FEEDBACK_URL,
+        consent,
+      });
 
 await createServer(unleash, sendFeedback).connect(new StdioServerTransport());

@@ -26,7 +26,9 @@ export const createRemoteHandler =
   async (req, res, { authHeaders, parsedBody }) => {
     const unleash = createUnleashClient({ baseUrl, headers: authHeaders, fetch });
     const sendFeedback =
-      feedbackConsent === 'granted' ? createSendFeedback(fetch, pkg.version, feedbackUrl, granted) : undefined;
+      feedbackConsent === 'granted'
+        ? createSendFeedback({ fetch, mcpVersion: pkg.version, feedbackBaseUrl: feedbackUrl, consent: granted })
+        : undefined;
     const server = createServer(unleash, sendFeedback);
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
     res.on('close', () => {

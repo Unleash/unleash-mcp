@@ -20,12 +20,17 @@ export type SendFeedback = (input: SendFeedbackInput, client: ConnectedClient) =
  * with the server's `mcpVersion`. Each report waits for `consent`. Without `feedbackBaseUrl` every report fails, before the
  * user is asked: there is no default instance to send to.
  */
-export const createSendFeedback = (
-  fetch: typeof globalThis.fetch,
-  mcpVersion: string,
-  feedbackBaseUrl: string | undefined,
-  consent: Consent,
-): SendFeedback => {
+export const createSendFeedback = ({
+  fetch,
+  mcpVersion,
+  feedbackBaseUrl,
+  consent,
+}: {
+  fetch: typeof globalThis.fetch;
+  mcpVersion: string;
+  feedbackBaseUrl: string | undefined;
+  consent: Consent;
+}): SendFeedback => {
   if (!feedbackBaseUrl) return async () => notConfigured;
   const feedbackUrl = `${feedbackBaseUrl.replace(/\/+$/, '')}/feedback`;
   return async ({ issueType, summary, tool, error }, { info, ask }) => {
