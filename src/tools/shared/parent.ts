@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-const on = z
+const enabled = z
   .strictObject({
-    kind: z.literal('on'),
+    state: z.literal('enabled'),
     flag: z.string(),
     values: z
       .array(z.string())
@@ -12,13 +12,13 @@ const on = z
         "Served only where the parent serves one of these values: their names, as inspect lists them under the parent's targets",
       ),
   })
-  .describe('Served only where the parent is on');
+  .describe('Served only where the parent is enabled');
 
-const off = z
-  .strictObject({ kind: z.literal('off'), flag: z.string() })
-  .describe('Served only where the parent is off');
+const disabled = z
+  .strictObject({ state: z.literal('disabled'), flag: z.string() })
+  .describe('Served only where the parent is disabled');
 
 /** The flag a flag depends on, as manage_flag takes it and inspect returns it. */
-export const parent = z.discriminatedUnion('kind', [on, off]);
+export const parent = z.discriminatedUnion('state', [enabled, disabled]);
 
 export type Parent = z.infer<typeof parent>;

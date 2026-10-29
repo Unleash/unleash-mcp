@@ -37,7 +37,7 @@ before(async () => {
   segmentId = created.kind === 'applied' ? created.id : 0;
   await createRelease(admin)({
     project,
-    flag: { name: second, state: 'on' },
+    flag: { name: second, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Beta', segments: [segmentId] }] },
   });
@@ -69,8 +69,8 @@ test('finds a page of flags by a part of their name, with the total across pages
         createdBy: 'Mateusz K',
         tags: [{ type: 'simple', value: 'mcp-search' }],
         environments: [
-          { name: 'development', state: 'off' },
-          { name: 'production', state: 'off' },
+          { name: 'development', state: 'disabled' },
+          { name: 'production', state: 'disabled' },
         ],
       },
     ],
@@ -111,7 +111,7 @@ test('maps a row, naming the lifecycle stage as the UI does', async () => {
         project: 'web',
         type: 'release',
         stage: 'develop',
-        environments: [{ name: 'production', state: 'on', lastSeenAt: '2026-10-22T08:00:00.000Z' }],
+        environments: [{ name: 'production', state: 'enabled', lastSeenAt: '2026-10-22T08:00:00.000Z' }],
       },
     ],
   });

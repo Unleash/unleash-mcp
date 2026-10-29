@@ -8,9 +8,9 @@ import type { EnvironmentPath, Plan } from './plan.ts';
 export const requestPlan = (unleash: UnleashClient, path: EnvironmentPath, plan: Plan): Promise<Requested | Failed> => {
   const feature = path.featureName;
   // Ordered as the direct writes are: disabling first, enabling last.
-  const toggle = { feature, action: 'updateEnabled' as const, payload: { enabled: plan.toggle === 'on' } };
+  const toggle = { feature, action: 'updateEnabled' as const, payload: { enabled: plan.state === 'enabled' } };
   const changes = [
-    ...(plan.toggle === 'off' ? [toggle] : []),
+    ...(plan.state === 'disabled' ? [toggle] : []),
     ...plan.updates.map(({ id, strategy }) => ({
       feature,
       action: 'updateStrategy' as const,
@@ -20,7 +20,7 @@ export const requestPlan = (unleash: UnleashClient, path: EnvironmentPath, plan:
     ...(plan.template ? [{ feature, action: 'addReleasePlan' as const, payload: { templateId: plan.template } }] : []),
     ...(plan.milestone ? [{ feature, action: 'startMilestone' as const, payload: plan.milestone }] : []),
     ...plan.deletes.map((id) => ({ feature, action: 'deleteStrategy' as const, payload: { id } })),
-    ...(plan.toggle === 'on' ? [toggle] : []),
+    ...(plan.state === 'enabled' ? [toggle] : []),
   ];
   return requestChanges(
     unleash,

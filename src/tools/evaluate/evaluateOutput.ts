@@ -60,15 +60,15 @@ const evaluated = z.object({
   kind: z.literal('evaluated'),
   ...query,
   result: z
-    .enum(['on', 'off', 'unknown'])
+    .enum(['enabled', 'disabled', 'unknown'])
     .describe(
-      'unknown: only a target Unleash cannot evaluate on the server could have turned the feature on. SDKs may still serve it',
+      'unknown: only a target Unleash cannot evaluate on the server could have enabled the feature. SDKs may still serve it',
     ),
   blockedBy: z
     .array(blocker)
     .optional()
     .describe(
-      'What turns the feature off whatever its targets say. environment: the feature is off in this environment. parent: the flag it depends on, as a flag inspect shows it, does not resolve as required. Its targets show what happens once nothing blocks it',
+      'What disables the feature whatever its targets say. environment: the feature is disabled in this environment. parent: the flag it depends on, as a flag inspect shows it, does not resolve as required. Its targets show what happens once nothing blocks it',
     ),
   value: servedValue.optional().describe('What the code receives, when the flag has values'),
   targets: z

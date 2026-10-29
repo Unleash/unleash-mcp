@@ -8,14 +8,14 @@ export type EnvironmentPath = { projectId: string; featureName: string; environm
 export type MilestoneRef = { planId: string; milestoneId: string };
 
 /**
- * The writes that take an environment to a release's end state. `toggle` is set only when the state changes.
+ * The writes that take an environment to a release's end state. `state` is set only when it changes.
  * `template` is the release template to apply, and `milestone` the release plan milestone to start, when the release goes through one.
  */
 export type Plan = {
   updates: { id: string; strategy: Strategy }[];
   adds: Strategy[];
   deletes: string[];
-  toggle?: FlagState;
+  state?: FlagState;
   template?: string;
   milestone?: MilestoneRef;
 };
@@ -23,8 +23,8 @@ export type Plan = {
 /** What the flag's environment has: its state and the ids of its strategies, in order. */
 export type EnvironmentState = { state: FlagState; strategyIds: string[] };
 
-const toggleOf = (state: FlagState, current: EnvironmentState): Pick<Plan, 'toggle'> =>
-  state !== current.state ? { toggle: state } : {};
+const stateOf = (state: FlagState, current: EnvironmentState): Pick<Plan, 'state'> =>
+  state !== current.state ? { state } : {};
 
 // Existing strategies are reused by position so their history survives.
 export const planTargets = ({
@@ -42,7 +42,7 @@ export const planTargets = ({
     updates: [],
     adds: [],
     deletes: current.strategyIds.slice(targets.length),
-    ...toggleOf(state, current),
+    ...stateOf(state, current),
   };
   for (const [i, target] of targets.entries()) {
     const id = current.strategyIds[i];
@@ -67,7 +67,7 @@ export const planTemplate = ({
   adds: [],
   deletes: current.strategyIds,
   template,
-  ...toggleOf(state, current),
+  ...stateOf(state, current),
 });
 
 /** Plans a release through a milestone of the environment's release plan. The plan brings its own strategies, so the environment's own ones all go. */
@@ -84,5 +84,5 @@ export const planMilestone = ({
   adds: [],
   deletes: current.strategyIds,
   milestone,
-  ...toggleOf(state, current),
+  ...stateOf(state, current),
 });

@@ -45,7 +45,7 @@ const evaluate = async (
     kind: 'evaluated',
     flag,
     environment,
-    result: isEnabled ? 'on' : onlySdksCanTell ? 'unknown' : 'off',
+    result: isEnabled ? 'enabled' : onlySdksCanTell ? 'unknown' : 'disabled',
     ...(blockedBy.length ? { blockedBy } : {}),
     ...(variant?.enabled ? { value: toValue(variant) } : {}),
     ...(strategies.data.length ? { targets: strategies.data.map((strategy) => toTarget(strategy, context)) } : {}),

@@ -76,14 +76,14 @@ test('creates a missing flag', async () => {
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
   });
 
   assert.deepEqual(output, {
     kind: 'released',
-    flag: { status: 'new', name: flag, state: 'on' },
+    flag: { origin: 'created', name: flag, state: 'enabled' },
     environment: 'development',
     targets: [{ name: 'Everyone', rollout: 50, stickiness: 'default' }],
   });
@@ -94,14 +94,14 @@ test('releases an existing flag', async () => {
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
   });
 
   assert.deepEqual(output, {
     kind: 'released',
-    flag: { status: 'existing', name: flag, state: 'on' },
+    flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'development',
     targets: [{ name: 'Everyone', rollout: 50, stickiness: 'default' }],
   });
@@ -114,7 +114,7 @@ test('releases to several audiences', async () => {
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: {
       targets: [
@@ -126,7 +126,7 @@ test('releases to several audiences', async () => {
 
   assert.deepEqual(output, {
     kind: 'released',
-    flag: { status: 'existing', name: flag, state: 'on' },
+    flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'development',
     targets: [
       { name: 'Everyone', rollout: 50, stickiness: 'default' },
@@ -141,14 +141,14 @@ test('splits an audience across values', async () => {
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Checkout test', values }] },
   });
 
   assert.deepEqual(output, {
     kind: 'released',
-    flag: { status: 'existing', name: flag, state: 'on' },
+    flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'development',
     targets: [{ name: 'Checkout test', rollout: 100, values, stickiness: 'default' }],
   });
@@ -159,14 +159,14 @@ test('releases to an audience defined in Unleash', async () => {
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Beta testers', segments: [segmentId] }] },
   });
 
   assert.deepEqual(output, {
     kind: 'released',
-    flag: { status: 'existing', name: flag, state: 'on' },
+    flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'development',
     targets: [{ name: 'Beta testers', rollout: 100, segments: [segmentId], stickiness: 'default' }],
   });
@@ -177,14 +177,14 @@ test('removes the audiences a release leaves out', async () => {
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Beta testers' }] },
   });
 
   assert.deepEqual(output, {
     kind: 'released',
-    flag: { status: 'existing', name: flag, state: 'on' },
+    flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'development',
     targets: [{ name: 'Beta testers', rollout: 100, stickiness: 'default' }],
   });
@@ -195,14 +195,14 @@ test('turns a flag off', async () => {
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'off' },
+    flag: { name: flag, state: 'disabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Beta testers' }] },
   });
 
   assert.deepEqual(output, {
     kind: 'released',
-    flag: { status: 'existing', name: flag, state: 'off' },
+    flag: { origin: 'found', name: flag, state: 'disabled' },
     environment: 'development',
     targets: [{ name: 'Beta testers', rollout: 100, stickiness: 'default' }],
   });
@@ -213,14 +213,14 @@ test('turns a flag back on', async () => {
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Beta testers' }] },
   });
 
   assert.deepEqual(output, {
     kind: 'released',
-    flag: { status: 'existing', name: flag, state: 'on' },
+    flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'development',
     targets: [{ name: 'Beta testers', rollout: 100, stickiness: 'default' }],
   });
@@ -238,14 +238,14 @@ test('moves the release plan to another milestone, replacing the audiences', asy
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { releasePlan, milestone: plan.data.milestones[1].id },
   });
 
   assert.deepEqual(output, {
     kind: 'released',
-    flag: { status: 'existing', name: flag, state: 'on' },
+    flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'development',
     releasePlan: { id: releasePlan, plan: template, milestone: 'Everyone' },
   });
@@ -257,7 +257,7 @@ test('puts the release in a change request where the environment requires one', 
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'production',
     audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
   });
@@ -265,7 +265,7 @@ test('puts the release in a change request where the environment requires one', 
   assert(output.kind === 'pending_change_request');
   changeRequestId = output.changeRequest.id;
   assert.partialDeepStrictEqual(output, {
-    flag: { status: 'existing', name: flag, state: 'on' },
+    flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'production',
     targets: [{ name: 'Everyone', rollout: 50, stickiness: 'default' }],
     changeRequest: { state: 'In review' },
@@ -295,12 +295,12 @@ test('creates a missing flag when turning it off', async () => {
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'off' },
+    flag: { name: flag, state: 'disabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Everyone' }] },
   });
 
-  assert.partialDeepStrictEqual(output, { kind: 'released', flag: { status: 'new', state: 'off' } });
+  assert.partialDeepStrictEqual(output, { kind: 'released', flag: { origin: 'created', state: 'disabled' } });
 });
 
 test('fails with the Unleash error when the rollout cannot be set', async () => {
@@ -313,7 +313,7 @@ test('fails with the Unleash error when the rollout cannot be set', async () => 
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
   });
@@ -337,7 +337,7 @@ test('fails with the Unleash error when the environment cannot be enabled', asyn
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
   });
@@ -367,7 +367,7 @@ test('fails with the Unleash error when an audience cannot be changed', async ()
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
   });
@@ -391,7 +391,7 @@ test('fails with the Unleash error when a left out audience cannot be removed', 
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
   });
@@ -414,7 +414,7 @@ test('takes the segments away from an audience that no longer names them', async
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
   });
@@ -431,7 +431,7 @@ test('leaves an enabled environment as it is', async () => {
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
   });
@@ -450,7 +450,7 @@ test('stops serving the feature before changing its audiences', async () => {
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'off' },
+    flag: { name: flag, state: 'disabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
   });
@@ -481,14 +481,14 @@ test('releases through a release template, replacing the audiences', async () =>
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { template },
   });
 
   assert.deepEqual(output, {
     kind: 'released',
-    flag: { status: 'existing', name: flag, state: 'on' },
+    flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'development',
     template: { id: template, plan: 'Gradual rollout', milestone: 'Internal' },
   });
@@ -506,14 +506,14 @@ test('puts a template release in a change request where the environment requires
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'production',
     audience: { template },
   });
 
   assert.deepEqual(output, {
     kind: 'pending_change_request',
-    flag: { status: 'existing', name: flag, state: 'on' },
+    flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'production',
     template: { id: template },
     changeRequest: { id: 7, state: 'In review', url: `https://unleash.example/projects/${project}/change-requests/7` },
@@ -532,14 +532,14 @@ test('puts a milestone start in a change request where the environment requires 
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'production',
     audience: milestone,
   });
 
   assert.deepEqual(output, {
     kind: 'pending_change_request',
-    flag: { status: 'existing', name: flag, state: 'on' },
+    flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'production',
     releasePlan: { id: milestone.releasePlan, milestone: 'm2' },
     changeRequest: { id: 7, state: 'In review', url: `https://unleash.example/projects/${project}/change-requests/7` },
@@ -576,7 +576,7 @@ test('fails on an error reply without a body', async () => {
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
   });
@@ -594,7 +594,7 @@ test('fails without touching the flag when the edition cannot be read', async ()
 
   const output = await release({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
   });

@@ -180,8 +180,8 @@ const toParent = ({
   variants?: string[];
 }): Parent =>
   enabled === false
-    ? { kind: 'off', flag: feature }
-    : { kind: 'on', flag: feature, ...(variants?.length ? { values: variants } : {}) };
+    ? { state: 'disabled', flag: feature }
+    : { state: 'enabled', flag: feature, ...(variants?.length ? { values: variants } : {}) };
 
 const toTag = ({ type, value }: Tag): Tag => ({ type, value });
 

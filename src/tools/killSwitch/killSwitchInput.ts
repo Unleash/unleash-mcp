@@ -9,7 +9,7 @@ const flag = z.strictObject({
       'Kill switch name, as a flags search returns it, or a new one, created as a permanent kill switch. Name it after what it turns off, e.g. disable-payments. An existing flag keeps its type; manage_flag changes it',
     ),
   state: flagState.describe(
-    'on: the app turns off what the switch is named after, e.g. payments for disable-payments; off: the app works as usual',
+    'enabled: the app turns off what the switch is named after, e.g. payments for disable-payments; disabled: the app works as usual',
   ),
 });
 

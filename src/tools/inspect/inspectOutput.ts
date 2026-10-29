@@ -84,7 +84,9 @@ const flag = z.object({
   createdAt: z.string().optional().describe('ISO timestamp'),
   createdBy: z.string().optional().describe('Name of the user who created the flag'),
   collaborators: z.array(z.string()).optional().describe('Names of the users who changed the flag, most recent first'),
-  parent: parent.optional().describe('The flag this one depends on: it is off unless the parent resolves as required'),
+  parent: parent
+    .optional()
+    .describe('The flag this one depends on: it is disabled unless the parent resolves as required'),
   children: z.array(z.string()).optional().describe('Flags that depend on this one'),
   tags: z.array(tag).optional(),
   links: z.array(link).optional().describe('Related URLs, such as the pull request or the ticket'),

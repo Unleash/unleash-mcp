@@ -27,13 +27,13 @@ after(async () => {
 test('creates a missing switch and turns it on for everyone', async () => {
   const output = await createKillSwitch(unleash)({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
   });
 
   assert.deepEqual(output, {
     kind: 'switched',
-    flag: { status: 'new', name: flag, state: 'on' },
+    flag: { origin: 'created', name: flag, state: 'enabled' },
     environment: 'development',
     targets: [{ name: 'Everyone', rollout: 100, stickiness: 'default' }],
   });
@@ -43,18 +43,18 @@ test('creates a missing switch and turns it on for everyone', async () => {
 test('turns an existing switch off', async () => {
   const output = await createKillSwitch(unleash)({
     project,
-    flag: { name: flag, state: 'off' },
+    flag: { name: flag, state: 'disabled' },
     environment: 'development',
   });
 
-  assert.partialDeepStrictEqual(output, { kind: 'switched', flag: { status: 'existing', state: 'off' } });
+  assert.partialDeepStrictEqual(output, { kind: 'switched', flag: { origin: 'found', state: 'disabled' } });
 });
 
 // `mcp-server` requires change requests in production.
 test('puts the switch in a change request where the environment requires one', async () => {
   const output = await createKillSwitch(unleash)({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'production',
   });
 
@@ -67,7 +67,7 @@ test('puts the switch in a change request where the environment requires one', a
 test("refuses release's audience, which it would drop and turn the switch on for everyone", () => {
   const parsed = killSwitchInput.safeParse({
     project: 'web',
-    flag: { name: 'disable-payments', state: 'on' },
+    flag: { name: 'disable-payments', state: 'enabled' },
     environment: 'production',
     audience: { targets: [{ name: 'Beta' }] },
   });

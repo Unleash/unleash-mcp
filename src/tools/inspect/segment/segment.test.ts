@@ -36,7 +36,7 @@ before(async () => {
   id = created.data?.id ?? 0;
   await createRelease(admin)({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: {
       targets: [

@@ -34,7 +34,7 @@ test('creates a missing flag with its type, description, tags and links', async 
     links: [pullRequest],
   });
 
-  assert.deepEqual(outcome, { kind: 'applied', status: 'new', changed: ['tags', 'links'] });
+  assert.deepEqual(outcome, { kind: 'applied', origin: 'created', changed: ['tags', 'links'] });
 });
 
 // Runs after the create and lists other tags and links: the recording pins the tag swap in one request, and the
@@ -49,7 +49,7 @@ test('changes an existing flag to what is listed and leaves out what is not', as
     links: [{ url: 'https://example.com/ticket/42' }],
   });
 
-  assert.deepEqual(outcome, { kind: 'applied', status: 'existing', changed: ['description', 'tags', 'links'] });
+  assert.deepEqual(outcome, { kind: 'applied', origin: 'found', changed: ['description', 'tags', 'links'] });
 });
 
 const web = '/api/admin/projects/web/features';
@@ -83,7 +83,7 @@ test('writes nothing when an existing flag already has what is listed', async ()
     links: [{ url: 'https://example.com/pr/1' }],
   });
 
-  assert.deepEqual(outcome, { kind: 'applied', status: 'existing', changed: [] });
+  assert.deepEqual(outcome, { kind: 'applied', origin: 'found', changed: [] });
 });
 
 // Only the exact body matches: the description must come back with the new type, or Unleash would clear it.
@@ -108,7 +108,7 @@ test('changes the type of an existing flag without losing its description', asyn
     type: 'kill-switch',
   });
 
-  assert.deepEqual(outcome, { kind: 'applied', status: 'existing', changed: ['type'] });
+  assert.deepEqual(outcome, { kind: 'applied', origin: 'found', changed: ['type'] });
 });
 
 // Only the exact body matches: one request adds the missing tag and removes the unlisted one, keeping the rest.
@@ -139,7 +139,7 @@ test('adds and removes tags so an existing flag has exactly those listed', async
     ],
   });
 
-  assert.deepEqual(outcome, { kind: 'applied', status: 'existing', changed: ['tags'] });
+  assert.deepEqual(outcome, { kind: 'applied', origin: 'found', changed: ['tags'] });
 });
 
 // Only the read and the delete are stubbed, so posting the link the flag keeps fails the test.
@@ -157,7 +157,7 @@ test('removes the links an existing flag has beyond those listed', async () => {
     links: [{ url: 'https://example.com/pr/1' }],
   });
 
-  assert.deepEqual(outcome, { kind: 'applied', status: 'existing', changed: ['links'] });
+  assert.deepEqual(outcome, { kind: 'applied', origin: 'found', changed: ['links'] });
 });
 
 test('fails with the Unleash error when the flag cannot be read', async () => {

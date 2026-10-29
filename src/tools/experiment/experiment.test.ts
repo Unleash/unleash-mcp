@@ -35,14 +35,14 @@ after(async () => {
 test('creates a missing flag and splits everyone across the values', async () => {
   const output = await createExperiment(unleash)({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'development',
     targets: everyone,
   });
 
   assert.deepEqual(output, {
     kind: 'split',
-    flag: { status: 'new', name: flag, state: 'on' },
+    flag: { origin: 'created', name: flag, state: 'enabled' },
     environment: 'development',
     targets: [{ name: 'Everyone', rollout: 100, stickiness: 'default', values }],
   });
@@ -52,19 +52,19 @@ test('creates a missing flag and splits everyone across the values', async () =>
 test('stops an existing experiment', async () => {
   const output = await createExperiment(unleash)({
     project,
-    flag: { name: flag, state: 'off' },
+    flag: { name: flag, state: 'disabled' },
     environment: 'development',
     targets: everyone,
   });
 
-  assert.partialDeepStrictEqual(output, { kind: 'split', flag: { status: 'existing', state: 'off' } });
+  assert.partialDeepStrictEqual(output, { kind: 'split', flag: { origin: 'found', state: 'disabled' } });
 });
 
 // `mcp-server` requires change requests in production.
 test('puts the experiment in a change request where the environment requires one', async () => {
   const output = await createExperiment(unleash)({
     project,
-    flag: { name: flag, state: 'on' },
+    flag: { name: flag, state: 'enabled' },
     environment: 'production',
     targets: everyone,
   });
@@ -90,7 +90,7 @@ test('creates the flag without impression data when told not to report them', as
 
   await createExperiment(unleash)({
     project: 'web',
-    flag: { name: 'checkout-experiment', state: 'on' },
+    flag: { name: 'checkout-experiment', state: 'enabled' },
     environment: 'development',
     targets: everyone,
     impressionData: false,
@@ -102,7 +102,7 @@ test('creates the flag without impression data when told not to report them', as
 test('refuses an audience without values, which would be a release', () => {
   const parsed = experimentInput.safeParse({
     project: 'web',
-    flag: { name: 'checkout-experiment', state: 'on' },
+    flag: { name: 'checkout-experiment', state: 'enabled' },
     environment: 'development',
     targets: [{ name: 'Everyone' }],
   });
