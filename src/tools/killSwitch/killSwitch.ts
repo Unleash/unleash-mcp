@@ -1,7 +1,7 @@
 import type { UnleashClient } from '../../unleash/client.ts';
 import { planTargets } from '../shared/rollout/plan.ts';
 import { createRollout } from '../shared/rollout/rollout.ts';
-import { rolloutOf, stickinessOf } from '../shared/strategy.ts';
+import { withDefaults } from '../shared/strategy.ts';
 import type { Target } from '../shared/target.ts';
 import type { KillSwitchInput } from './killSwitchInput.ts';
 import type { KillSwitchResult } from './killSwitchOutput.ts';
@@ -29,7 +29,7 @@ export const createKillSwitch = (unleash: UnleashClient) => {
     const outcome = {
       flag: { status: rolledOut.flag.kind, name, state },
       environment,
-      targets: targets.map((t) => ({ ...t, rollout: rolloutOf(t), stickiness: stickinessOf(t) })),
+      targets: targets.map(withDefaults),
     };
     if (rolledOut.kind === 'requested')
       return { kind: 'pending_change_request', ...outcome, changeRequest: rolledOut.changeRequest };

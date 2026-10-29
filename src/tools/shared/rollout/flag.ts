@@ -31,15 +31,18 @@ export const readFlag = async (unleash: UnleashClient, project: string, flag: st
   return { kind: 'found', environments: found.data?.environments ?? [] };
 };
 
+/** What a flag is created with beyond its name. */
+export type FlagOptions = { type?: FlagType; impressionData?: boolean };
+
 export const createFlag = async (
   unleash: UnleashClient,
   project: string,
   flag: string,
-  type?: FlagType,
+  options: FlagOptions = {},
 ): Promise<{ kind: 'created' } | Failed> => {
   const created = await unleash.POST(features, {
     params: { path: { projectId: project } },
-    body: { name: flag, ...(type && { type }) },
+    body: { name: flag, ...options },
   });
   if (!created.response.ok) return toFailed(created);
   return { kind: 'created' };

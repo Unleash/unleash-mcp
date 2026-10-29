@@ -9,6 +9,9 @@ import { configureOutput } from './tools/configure/configureOutput.ts';
 import { createEvaluate } from './tools/evaluate/evaluate.ts';
 import { evaluateInput } from './tools/evaluate/evaluateInput.ts';
 import { evaluateOutput } from './tools/evaluate/evaluateOutput.ts';
+import { createExperiment } from './tools/experiment/experiment.ts';
+import { experimentInput } from './tools/experiment/experimentInput.ts';
+import { experimentOutput } from './tools/experiment/experimentOutput.ts';
 import { createInspect } from './tools/inspect/inspect.ts';
 import { inspectInput } from './tools/inspect/inspectInput.ts';
 import { inspectOutput } from './tools/inspect/inspectOutput.ts';
@@ -47,7 +50,9 @@ const toFailedToolResult = (result: Failed) => ({
 // Clients that defer tools show the agent only tool names and these instructions until it loads a tool.
 const outcomes = {
   release:
-    'Turn a feature on or off in an environment: for everyone, a percentage, chosen audiences or segments, split across values, or through a release template or release plan milestone; turning on creates a missing flag. For a permanent kill switch, use kill_switch.',
+    'Turn a feature on or off in an environment: for everyone, a percentage, chosen audiences or segments, split across values, or through a release template or release plan milestone; turning on creates a missing flag. For a permanent kill switch, use kill_switch; for an A/B test, use experiment.',
+  experiment:
+    'Run an A/B test: split audiences across values such as control and treatment in an environment, with what keeps a user in their value, or stop it; turning on creates a missing experiment flag reporting impressions. Unleash does the split; measuring the results is up to your analytics.',
   kill_switch:
     'Add a permanent kill switch, named after what it turns off, or flip one on or off in an environment, for everyone or chosen audiences; flipping creates a missing switch.',
   inspect:
@@ -88,6 +93,7 @@ export const createServer = (unleash: UnleashClient, sendFeedback?: SendFeedback
   );
   const release = createRelease(unleash);
   const killSwitch = createKillSwitch(unleash);
+  const experiment = createExperiment(unleash);
   const inspect = createInspect(unleash);
   const configure = createConfigure(unleash);
   const search = createSearch(unleash);
@@ -104,6 +110,19 @@ export const createServer = (unleash: UnleashClient, sendFeedback?: SendFeedback
     },
     async (input) => {
       const result = await release(input);
+      return result.kind === 'failed' ? toFailedToolResult(result) : toToolResult({ result });
+    },
+  );
+
+  server.registerTool(
+    'experiment',
+    {
+      description: `${outcomes.experiment} Where the environment requires change requests, the experiment goes into a change request submitted for review instead of being applied.`,
+      inputSchema: experimentInput,
+      outputSchema: experimentOutput,
+    },
+    async (input) => {
+      const result = await experiment(input);
       return result.kind === 'failed' ? toFailedToolResult(result) : toToolResult({ result });
     },
   );

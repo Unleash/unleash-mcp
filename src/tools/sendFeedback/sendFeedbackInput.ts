@@ -4,6 +4,7 @@ import { z } from 'zod';
 export const reportableTools = [
   'release',
   'kill_switch',
+  'experiment',
   'inspect',
   'search',
   'evaluate',

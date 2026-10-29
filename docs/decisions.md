@@ -386,3 +386,10 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 - Stickiness is set per target, on the shared target shape, so release, kill_switch and the experiment tool take it alike. Unleash requires it on each variant too, so the variants get the target's; values never take their own.
 - Left out, a target sticks on Unleash's `default`. The project's default stickiness is on `inspect project` for the agent to pass along. Rejected: the tools reading the project's default themselves, which costs a request on every call and puts a lookup inside a command.
 - Outputs and `inspect` always show a target's stickiness, so a target round-trips unchanged.
+
+## 2026-10-28 — Experiment tool
+
+- `experiment` is release with targets only, where every target names the values it gets: split within an audience by share, or one value per audience as control and treatment groups. Rejected: at least two values per target, which rules out one value per audience; `ab_test` and `configure_experiments` as names; a single-audience shape with top-level values.
+- A missing flag is created as an `experiment` flag reporting impression data, with an opt-out; an existing flag keeps its type and impression setting. Only turning on creates it, as in release.
+- Changing shares or stickiness mid-run is allowed and moves users between values; the input says so rather than refusing.
+- How an experiment ends, and shipping the winner, is not part of the tool.
