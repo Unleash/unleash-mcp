@@ -60,7 +60,7 @@ const outcomes = {
   inspect:
     'See a project, flag, context field or segment in full, such as the environments of a project, who gets a flag in each environment and when SDKs last saw it there, or which flags use a context field or segment.',
   search:
-    'Find projects, environments, flags, segments, context fields, tag types, tags, release templates and event types, filter flags by tag, segment, lifecycle stage, creator or creation date, and get the ids and names the other tools take.',
+    'Find projects, environments, flags, segments, context fields, tag types, tags, release templates and event types, filter flags by tag, segment, lifecycle stage, staleness, creator or creation date, and get the ids and names the other tools take.',
   evaluate:
     'Tell whether a user or context gets a feature in an environment and which value, and what blocks it when it is off.',
   configure:

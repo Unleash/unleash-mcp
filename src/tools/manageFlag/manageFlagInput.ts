@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { flagType } from '../shared/flagType.ts';
 import { link } from '../shared/link.ts';
 import { parent } from '../shared/parent.ts';
+import { staleness } from '../shared/staleness.ts';
 import { tag } from '../shared/tag.ts';
 
 const define = z
@@ -63,8 +64,8 @@ const setStaleness = z
     action: z.literal('set_staleness'),
     project: z.string().describe('Project id, as a flags search returns it'),
     flag: z.string().describe('Flag name, as a flags search returns it'),
-    staleness: z
-      .enum(['stale', 'active'])
+    staleness: staleness
+      .exclude(['potentially_stale'])
       .describe('stale: the flag is overdue and should go from the code; active: it is in use again'),
   })
   .describe(
