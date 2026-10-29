@@ -3,7 +3,7 @@ import { flagState } from '../shared/flagState.ts';
 import { target } from '../shared/target.ts';
 
 const flag = z.strictObject({
-  name: z.string().describe('Feature flag name, as a flags search returns it. Created when missing and state is on'),
+  name: z.string().describe('Feature flag name, as a flags search returns it. Created when missing, in either state'),
   state: flagState.describe('Whether the environment serves the feature to the targets'),
 });
 

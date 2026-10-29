@@ -13,7 +13,7 @@ export const createRelease = (unleash: UnleashClient) => {
       project,
       name,
       environment,
-      ensure: () => ensureFlag(unleash, project, { flag: name, state, environment }),
+      ensure: () => ensureFlag(unleash, project, { flag: name, environment }),
       planFor: (flag) => planAudience(name, state, audience, flag),
     });
     if (rolledOut.kind === 'failed') return rolledOut;

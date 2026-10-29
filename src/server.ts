@@ -50,9 +50,9 @@ const toFailedToolResult = (result: Failed) => ({
 // Clients that defer tools show the agent only tool names and these instructions until it loads a tool.
 const outcomes = {
   release:
-    'Turn a feature on or off in an environment: for everyone, a percentage, chosen audiences or segments, split across values, or through a release template or release plan milestone; turning on creates a missing flag. For a permanent kill switch, use kill_switch; for an A/B test, use experiment.',
+    'Turn a feature on or off in an environment: for everyone, a percentage, chosen audiences or segments, split across values, or through a release template or release plan milestone; a missing flag is created. For a permanent kill switch, use kill_switch; for an A/B test, use experiment.',
   experiment:
-    'Run an A/B test: split audiences across values such as control and treatment in an environment, with what keeps a user in their value, or stop it; turning on creates a missing experiment flag reporting impressions. Unleash does the split; measuring the results is up to your analytics.',
+    'Run an A/B test: split audiences across values such as control and treatment in an environment, with what keeps a user in their value, or stop it; a missing flag is created as an experiment reporting impressions, and Unleash does the split, not the measuring.',
   kill_switch:
     'Add a permanent kill switch, named after what it turns off, or flip one on or off in an environment, for everyone or chosen audiences; flipping creates a missing switch.',
   inspect:

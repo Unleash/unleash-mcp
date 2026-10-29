@@ -15,7 +15,7 @@ test('fails with the Unleash error when the flag cannot be read', async () => {
     .intercept({ path: feature, method: 'GET' })
     .reply(401, unleashError('AuthenticationRequired', 'You must log in to use Unleash'));
 
-  const output = await ensureFlag(unleash, project, { flag, state: 'on', environment: 'development' });
+  const output = await ensureFlag(unleash, project, { flag, environment: 'development' });
 
   assert.deepEqual(output, {
     kind: 'failed',
@@ -34,30 +34,13 @@ test('fails with the Unleash error when the flag cannot be created', async () =>
     .intercept({ path: features, method: 'POST' })
     .reply(403, unleashError('PermissionError', 'You need the CREATE_FEATURE permission'));
 
-  const output = await ensureFlag(unleash, project, { flag, state: 'on', environment: 'development' });
+  const output = await ensureFlag(unleash, project, { flag, environment: 'development' });
 
   assert.deepEqual(output, {
     kind: 'failed',
     status: 403,
     name: 'PermissionError',
     reasons: ['You need the CREATE_FEATURE permission'],
-  });
-});
-
-// No stub for creating the flag: a request to create it would fail the test.
-test('fails without creating the flag when a missing flag is turned off', async () => {
-  const { unleash, stub } = createStubbedClient();
-  stub
-    .intercept({ path: feature, method: 'GET' })
-    .reply(404, unleashError('NotFoundError', `Could not find feature flag ${flag}`));
-
-  const output = await ensureFlag(unleash, project, { flag, state: 'off', environment: 'development' });
-
-  assert.deepEqual(output, {
-    kind: 'failed',
-    status: 404,
-    name: 'NotFoundError',
-    reasons: [`Could not find feature flag ${flag}`],
   });
 });
 
@@ -72,7 +55,7 @@ test('refuses to replace targets that are not gradual rollouts', async () => {
     .intercept({ path: feature, method: 'GET' })
     .reply(200, { name: flag, environments: [{ name: 'development', enabled: true, strategies }] });
 
-  const output = await ensureFlag(unleash, project, { flag, state: 'on', environment: 'development' });
+  const output = await ensureFlag(unleash, project, { flag, environment: 'development' });
 
   assert.deepEqual(output, {
     kind: 'failed',
@@ -91,7 +74,7 @@ test('replaces the legacy target that serves everyone', async () => {
     .intercept({ path: feature, method: 'GET' })
     .reply(200, { name: flag, environments: [{ name: 'development', enabled: true, strategies }] });
 
-  const output = await ensureFlag(unleash, project, { flag, state: 'on', environment: 'development' });
+  const output = await ensureFlag(unleash, project, { flag, environment: 'development' });
 
   assert.deepEqual(output, { kind: 'existing', enabled: true, strategyIds: ['s1'] });
 });

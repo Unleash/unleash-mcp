@@ -75,17 +75,13 @@ test('puts the experiment in a change request where the environment requires one
   assert.equal(describedByOutputSchema(output), undefined);
 });
 
-const missing = (stub: ReturnType<typeof createStubbedClient>['stub']) => {
+// Unleash refuses the create, so the test stops there with the request it was sent.
+test('creates the flag without impression data when told not to report them', async () => {
+  const { unleash, stub } = createStubbedClient();
   stubChangeRequestsIn(stub, 'web');
   stub
     .intercept({ path: '/api/admin/projects/web/features/checkout-experiment', method: 'GET' })
     .reply(404, unleashError('NotFoundError', 'Could not find feature flag checkout-experiment'));
-};
-
-// Unleash refuses the create, so the test stops there with the request it was sent.
-test('creates the flag without impression data when told not to report them', async () => {
-  const { unleash, stub } = createStubbedClient();
-  missing(stub);
   let created: unknown;
   stub.intercept({ path: '/api/admin/projects/web/features', method: 'POST' }).reply(403, (request) => {
     created = JSON.parse(String(request.body));
@@ -101,25 +97,6 @@ test('creates the flag without impression data when told not to report them', as
   });
 
   assert.deepEqual(created, { name: 'checkout-experiment', type: 'experiment', impressionData: false });
-});
-
-test("fails with Unleash's not found when turning off a flag that does not exist", async () => {
-  const { unleash, stub } = createStubbedClient();
-  missing(stub);
-
-  const output = await createExperiment(unleash)({
-    project: 'web',
-    flag: { name: 'checkout-experiment', state: 'off' },
-    environment: 'development',
-    targets: everyone,
-  });
-
-  assert.deepEqual(output, {
-    kind: 'failed',
-    status: 404,
-    name: 'NotFoundError',
-    reasons: ['Could not find feature flag checkout-experiment'],
-  });
 });
 
 test('refuses an audience without values, which would be a release', () => {
