@@ -397,3 +397,12 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 ## 2026-10-29 — A missing flag is always created
 
 - Release, kill switch and experiment create a missing flag in either state and write its targets, as the kill switch already did. Supersedes "Only turning on creates a missing flag" (2026-10-23 Release turns a flag on or off).
+
+## 2026-10-29 — Project update in configure
+
+- `configure` changes projects with `action: 'update'`, keyed on the project id. Supersedes "Only create for now" in "Projects in configure". Rejected: an upsert, since Unleash picks project ids, so it could only tell create from update by whether an id is given.
+- Update covers name, description, mode, default stickiness, environments and change request environments. Left out settings stay.
+- Environments are an end state, diffed against the project overview (one read), as inspect lists them. Change request environments are per-environment operations, the ones left out stay: nothing shows their current config, so the agent can't send back what to keep.
+- An update stops at the first refused write; the writes before it stay.
+- Update sends the mode to the project settings endpoint, one more request only when a mode is given: Unleash's project update takes a mode and answers 200 but doesn't save it. Create saves it.
+- Inspect project returns the name, description and mode, so an agent can check what an update wrote. They come in the overview it already reads, and the overview doesn't deprecate the description, unlike the projects list search reads.

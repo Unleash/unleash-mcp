@@ -34,11 +34,21 @@ const releaseTemplate = {
   name: z.string(),
 };
 
-const project = {
+// Unleash picks a project's id on create, so the target differs by action, as for segments.
+const createdProject = {
   resource: z.literal('project'),
-  action: z.enum(['create']),
+  action: z.literal('create'),
   name: z.string(),
 };
+
+const updatedProject = {
+  resource: z.literal('project'),
+  action: z.literal('update'),
+  id: z.string(),
+  name: z.string(),
+};
+
+const project = z.discriminatedUnion('action', [z.object(createdProject), z.object(updatedProject)]);
 
 // A segment has no id until it is created, so the target differs by action.
 const createdSegment = {
@@ -73,7 +83,7 @@ const target = z.discriminatedUnion('resource', [
   z.object(tag),
   z.object(releaseTemplate),
   segment,
-  z.object(project),
+  project,
 ]);
 
 const error = failed.omit({ kind: true }).describe('What Unleash answered; the change was not applied');
@@ -93,11 +103,14 @@ const applied = z.discriminatedUnion('resource', [
     z.object({ kind: z.literal('applied'), ...updatedSegment }),
     z.object({ kind: z.literal('applied'), ...deletedSegment }),
   ]),
-  z.object({
-    kind: z.literal('applied'),
-    ...project,
-    id: z.string().describe('Project id, as other changes and tools take it'),
-  }),
+  z.discriminatedUnion('action', [
+    z.object({
+      kind: z.literal('applied'),
+      ...createdProject,
+      id: z.string().describe('Project id, as other changes and tools take it'),
+    }),
+    z.object({ kind: z.literal('applied'), ...updatedProject }),
+  ]),
 ]);
 
 const failedChange = z.discriminatedUnion('resource', [
@@ -111,7 +124,10 @@ const failedChange = z.discriminatedUnion('resource', [
     z.object({ kind: z.literal('failed'), ...updatedSegment, error }),
     z.object({ kind: z.literal('failed'), ...deletedSegment, error }),
   ]),
-  z.object({ kind: z.literal('failed'), ...project, error }),
+  z.discriminatedUnion('action', [
+    z.object({ kind: z.literal('failed'), ...createdProject, error }),
+    z.object({ kind: z.literal('failed'), ...updatedProject, error }),
+  ]),
 ]);
 
 const changeRequest = changeRequestShape.describe('The change request holding the change, submitted for review');

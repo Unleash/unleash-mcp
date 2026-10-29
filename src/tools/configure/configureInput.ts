@@ -201,24 +201,36 @@ const deleteSegment = z
     'Delete a segment. Unleash refuses while a flag targets it; inspect the segment with usage to find those flags. In a project whose changes need approval, it goes into a change request',
   );
 
+const projectSettings = {
+  description: z.string().optional().describe('What the project holds'),
+  mode: z
+    .enum(['open', 'protected', 'private'])
+    .optional()
+    .describe(
+      'open (default): anyone can see it and submit change requests. protected: only members submit change requests. private: only members see it',
+    ),
+  defaultStickiness: z
+    .string()
+    .optional()
+    .describe(
+      'What gradual rollouts in the project stick on by default: default, userId, sessionId, random, or a field with stickiness from a context fields search',
+    ),
+};
+
+const requiredApprovals = z
+  .number()
+  .int()
+  .min(1)
+  .max(10)
+  .optional()
+  .describe('Approvals a change request needs; 1 when left out');
+
 const createProject = z
   .strictObject({
     kind: z.literal('project'),
     action: z.literal('create'),
     name: z.string().describe('e.g. Pet shop'),
-    description: z.string().optional().describe('What the project holds'),
-    mode: z
-      .enum(['open', 'protected', 'private'])
-      .optional()
-      .describe(
-        'open (default): anyone can see it and submit change requests. protected: only members submit change requests. private: only members see it',
-      ),
-    defaultStickiness: z
-      .string()
-      .optional()
-      .describe(
-        'What gradual rollouts in the project stick on by default: default, userId, sessionId, random, or a field with stickiness from a context fields search',
-      ),
+    ...projectSettings,
     environments: z
       .array(z.string())
       .optional()
@@ -229,19 +241,44 @@ const createProject = z
       .array(
         z.strictObject({
           name: z.string().describe('Environment name, as a project inspect lists it'),
-          requiredApprovals: z
-            .number()
-            .int()
-            .min(1)
-            .max(10)
-            .optional()
-            .describe('Approvals a change request needs; 1 when left out'),
+          requiredApprovals,
         }),
       )
       .optional()
       .describe('Environments whose changes need an approved change request'),
   })
   .describe('Create a project. Unleash picks its id, which the result answers');
+
+const updateProject = z
+  .strictObject({
+    kind: z.literal('project'),
+    action: z.literal('update'),
+    id: z.string().describe('Project id, as a projects search returns it'),
+    name: z.string().describe('Project name, as a projects search returns it, or a new one to rename it'),
+    ...projectSettings,
+    mode: projectSettings.mode.describe(
+      'open: anyone can see it and submit change requests. protected: only members submit change requests. private: only members see it',
+    ),
+    environments: z
+      .array(z.string())
+      .optional()
+      .describe(
+        'Every environment the project ends with enabled, as a project inspect lists them; the others are disabled. Empty disables all',
+      ),
+    changeRequestEnvironments: z
+      .array(
+        z.strictObject({
+          name: z.string().describe('Environment name, as a project inspect lists it'),
+          enabled: z.boolean().describe('Whether changes there need an approved change request'),
+          requiredApprovals,
+        }),
+      )
+      .optional()
+      .describe('Environments whose change requests to turn on or off; the ones left out stay as they are'),
+  })
+  .describe(
+    'Change a project; left out settings stay. Disabling an environment takes it off every flag in the project: check and ask before. Stops at the first refused write, keeping the ones before',
+  );
 
 const change = z.union([
   createContextField,
@@ -258,6 +295,7 @@ const change = z.union([
   updateSegment,
   deleteSegment,
   createProject,
+  updateProject,
 ]);
 
 export const configureInput = z.strictObject({
@@ -280,3 +318,4 @@ export type CreateSegment = z.infer<typeof createSegment>;
 export type UpdateSegment = z.infer<typeof updateSegment>;
 export type DeleteSegment = z.infer<typeof deleteSegment>;
 export type CreateProject = z.infer<typeof createProject>;
+export type UpdateProject = z.infer<typeof updateProject>;
