@@ -4,7 +4,7 @@ import { z } from 'zod';
 const blankAsUnset = (value: unknown) => (typeof value === 'string' && value.trim() === '' ? undefined : value);
 
 const configSchema = z.object({
-  UNLEASH_BASE_URL: z.url(),
+  UNLEASH_BASE_URL: z.url({ protocol: /^https?$/ }),
   UNLEASH_PAT: z.string().min(1),
   UNLEASH_SNAPSHOT_MODE: z.enum(['record', 'playback']).default('playback'),
   // The user's consent to sending anonymous feedback to Unleash. Unset, the user is asked on the first report.

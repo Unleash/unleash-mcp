@@ -15,6 +15,10 @@ test('sends feedback to the instance the user picks', () => {
   assert.equal(config.UNLEASH_FEEDBACK_URL, 'https://sandbox.getunleash.io/enterprise');
 });
 
+test('refuses an Unleash instance that is not an http(s) URL', () => {
+  assert.throws(() => readConfig({ ...required, UNLEASH_BASE_URL: 'file:///etc/unleash' }));
+});
+
 test('refuses a feedback instance that is not an http(s) URL', () => {
   assert.throws(() => readConfig({ ...required, UNLEASH_FEEDBACK_URL: 'ftp://sandbox.getunleash.io' }));
 });
