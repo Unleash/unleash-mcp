@@ -76,7 +76,7 @@ test('puts the experiment in a change request where the environment requires one
 });
 
 // Unleash refuses the create, so the test stops there with the request it was sent.
-test('creates the flag without impression data when told not to report them', async () => {
+test('creates the flag without impression data when told not to report them, and with its expected lifetime', async () => {
   const { unleash, stub } = createStubbedClient();
   stubChangeRequestsIn(stub, 'web');
   stub
@@ -94,9 +94,15 @@ test('creates the flag without impression data when told not to report them', as
     environment: 'development',
     targets: everyone,
     impressionData: false,
+    expectedLifetimeDays: 30,
   });
 
-  assert.deepEqual(created, { name: 'checkout-experiment', type: 'experiment', impressionData: false });
+  assert.deepEqual(created, {
+    name: 'checkout-experiment',
+    type: 'experiment',
+    impressionData: false,
+    lifetimeDays: 30,
+  });
 });
 
 test('refuses an audience without values, which would be a release', () => {

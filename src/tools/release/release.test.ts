@@ -71,7 +71,8 @@ after(async () => {
   await close();
 });
 
-test('creates a missing flag', async () => {
+// The recording pins the create with the expected lifetime.
+test('creates a missing flag with its expected lifetime', async () => {
   const release = createRelease(unleash);
 
   const output = await release({
@@ -79,6 +80,7 @@ test('creates a missing flag', async () => {
     flag: { name: flag, state: 'enabled' },
     environment: 'development',
     audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
+    expectedLifetimeDays: 30,
   });
 
   assert.deepEqual(output, {

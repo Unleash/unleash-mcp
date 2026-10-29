@@ -34,14 +34,18 @@ export const readFlag = async (unleash: UnleashClient, project: string, flag: st
   return { kind: 'found', environments: found.data?.environments ?? [] };
 };
 
-/** What a flag is created with beyond its name. */
-export type FlagOptions = { type?: FlagType; impressionData?: boolean };
+/** What a flag is created with beyond its name. `lifetimeDays` is how long it is expected to live, 0 for ever; its type's lifetime when left out. */
+export type FlagOptions = { type?: FlagType; impressionData?: boolean; lifetimeDays?: number };
 
 export const createFlag = async (
   unleash: UnleashClient,
   { project, ...flag }: { project: string; name: string } & FlagOptions,
 ): Promise<{ kind: 'created' } | Failed> => {
-  const created = await unleash.POST(features, { params: { path: { projectId: project } }, body: flag });
+  // Unleash accepts `lifetimeDays` on create but leaves it out of its OpenAPI spec, hence the cast.
+  const created = await unleash.POST(features, {
+    params: { path: { projectId: project } },
+    body: flag as Omit<typeof flag, 'lifetimeDays'>,
+  });
   if (!created.response.ok) return toFailed(created);
   return { kind: 'created' };
 };

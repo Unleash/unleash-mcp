@@ -38,6 +38,14 @@ export const releaseInput = z.strictObject({
     .describe(
       'Who gets the feature while it is enabled: targets, a release template, or a milestone of the release plan the flag has. Replaces what the environment had',
     ),
+  expectedLifetimeDays: z
+    .number()
+    .int()
+    .min(1)
+    .optional()
+    .describe(
+      'Days a missing flag is expected to live once created, after which Unleash marks it potentially stale; the lifetime of its type when left out. An existing flag keeps its lifetime',
+    ),
 });
 
 export type ReleaseInput = z.infer<typeof releaseInput>;

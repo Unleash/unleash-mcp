@@ -15,7 +15,8 @@ export const createKillSwitch = (unleash: UnleashClient) => {
       project,
       flag,
       environment,
-      whenMissing: { type: 'kill-switch' },
+      // A kill switch stays for ever, so it never counts as stale.
+      whenMissing: { type: 'kill-switch', lifetimeDays: 0 },
       planFor: (current) => planTargets({ flag: flag.name, state: flag.state, targets, current }),
     });
     if (rolledOut.kind === 'failed') return rolledOut;
