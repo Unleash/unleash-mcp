@@ -54,7 +54,7 @@ You need Node 24 or later and pnpm.
 
 5. Ask your agent "List my Unleash projects". If it answers with your projects, the server is running.
 
-## Configure the server
+## Configure the local server
 
 | Variable                    | Required | Description                                                                                                        |
 | --------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------ |
@@ -71,6 +71,32 @@ Nothing is sent until you agree. The first report asks you through your MCP clie
 If you dismiss the question, or your client can't show it, feedback stays off until the next session. OpenCode, Gemini and Antigravity never show it, so there feedback stays off unless `UNLEASH_MCP_SEND_FEEDBACK` is `true`.
 
 To keep secrets out of your client config, copy `.env.example` to `.env`, fill it in, and start the server with `node --env-file=.env /absolute/path/to/unleash-mcp/src/index.ts`.
+
+## Connect to the remote server
+
+Unleash Enterprise can serve this MCP server itself, over [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http), so nothing runs on your machine. An admin turns it on under **Admin** > **Remote MCP Server**; the same page decides whether `send_feedback` reports are sent.
+
+Register the server with your MCP client. For Claude Code:
+
+```bash
+claude mcp add unleash https://your-instance.getunleash.io/api/admin/mcp --transport http
+```
+
+For Codex:
+
+```bash
+codex mcp add unleash https://your-instance.getunleash.io/api/admin/mcp --transport http
+```
+
+On first use, the client opens your browser to log in to Unleash. Unleash then creates a personal access token for the client, valid for 24 hours by default, and the server acts with your permissions.
+
+Where a browser login isn't possible, such as in CI, send a personal access token of your own instead and no login happens:
+
+```bash
+claude mcp add unleash https://your-instance.getunleash.io/api/admin/mcp \
+  --transport http \
+  --header "Authorization: Bearer user:your-personal-access-token"
+```
 
 ## Tools
 
