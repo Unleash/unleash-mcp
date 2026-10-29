@@ -62,7 +62,7 @@ const outcomes = {
   evaluate:
     'Tell whether a user or context gets a feature in an environment and which value, and what blocks it when it is off.',
   configure:
-    'Set up what flags share: create projects and release templates, create, change or delete context fields and their legal values, segments (saved audiences) and tag types, and delete tags; the tags of a single flag belong to manage_flag, its targeting to release.',
+    'Set up what flags share: create or change projects (environments, change requests, default stickiness), create release templates, create, change or delete context fields and their legal values, segments (saved audiences) and tag types, and delete tags; the tags of a single flag belong to manage_flag, its targeting to release.',
   manage_flag:
     'Create a flag or change its type, description, tags and links, set its parent flag, mark it completed, or archive or revive it.',
   audit:
