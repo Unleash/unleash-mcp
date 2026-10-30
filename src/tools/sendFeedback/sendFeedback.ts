@@ -1,5 +1,5 @@
 import type { components } from '../../unleash/api.d.ts';
-import { type Failed, type FailedCall, timeoutMs, toFailed, toUnreachable } from '../shared/failed.ts';
+import { type FailedCall, timeoutMs, toFailed, toUnreachable } from '../shared/failed.ts';
 import type { AskUser, Consent } from './consent.ts';
 import type { SendFeedbackInput } from './sendFeedbackInput.ts';
 import type { SendFeedbackResult } from './sendFeedbackOutput.ts';
@@ -15,10 +15,12 @@ export type ConnectedClient = { info?: ClientInfo; ask: AskUser };
 /** The `send_feedback` tool: posts one anonymous report to Unleash, naming the client when it is known, once the user consents. */
 export type SendFeedback = (input: SendFeedbackInput, client: ConnectedClient) => Promise<SendFeedbackResult>;
 
+/** The Unleash instance that receives reports unless the user or host picks another. */
+export const defaultFeedbackBaseUrl = 'https://eu.app.unleash-hosted.com/hosted/';
+
 /**
  * Creates `send_feedback`, posting with the given `fetch` to the Unleash instance at `feedbackBaseUrl` and tagging each report
- * with the server's `mcpVersion`. Each report waits for `consent`. Without `feedbackBaseUrl` every report fails, before the
- * user is asked: there is no default instance to send to.
+ * with the server's `mcpVersion`. Each report waits for `consent`.
  */
 export const createSendFeedback = ({
   fetch,
@@ -28,10 +30,9 @@ export const createSendFeedback = ({
 }: {
   fetch: typeof globalThis.fetch;
   mcpVersion: string;
-  feedbackBaseUrl: string | undefined;
+  feedbackBaseUrl: string;
   consent: Consent;
 }): SendFeedback => {
-  if (!feedbackBaseUrl) return async () => notConfigured;
   const feedbackUrl = `${feedbackBaseUrl.replace(/\/+$/, '')}/feedback`;
   return async ({ issueType, summary, tool, error }, { info, ask }) => {
     if ((await consent({ name: info?.name, ask })) === 'denied') return { kind: 'disabled' };
@@ -55,14 +56,6 @@ export const createSendFeedback = ({
       return toFailed({ response, error: (await response.json().catch(() => undefined)) as FailedCall['error'] });
     return { kind: 'sent' };
   };
-};
-
-// Nothing was called, so there is no HTTP status, hence 0.
-const notConfigured: Failed = {
-  kind: 'failed',
-  status: 0,
-  name: 'NotConfigured',
-  reasons: ['No feedback instance is configured: set UNLEASH_FEEDBACK_URL'],
 };
 
 // The client picks its own name and version, so each is cut to a short, plain value.
