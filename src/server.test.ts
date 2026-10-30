@@ -19,7 +19,7 @@ const flag = 'mcp-server-flag';
 before(() => deleteFlag(admin, project, flag));
 after(close);
 
-// No test reaches the docs: ask is tested on its own.
+// No test reaches the docs: docs is tested on its own.
 const docsFetch: typeof globalThis.fetch = () => assert.fail('the docs were fetched');
 
 const connectClient = async (server: UnleashClient = unleash, sendFeedback?: SendFeedback): Promise<Client> => {
@@ -65,7 +65,7 @@ test('instructions tell the agent to report without asking only when send_feedba
   }
 });
 
-test('ask tells the agent to report an unanswered question only when send_feedback is listed', async () => {
+test('docs tells the agent to report an unanswered question only when send_feedback is listed', async () => {
   const { unleash: stubbed } = createStubbedClient();
   for (const [sendFeedback, told] of [
     [undefined, false],
@@ -75,7 +75,7 @@ test('ask tells the agent to report an unanswered question only when send_feedba
 
     const { tools } = await client.listTools();
 
-    assert.equal(tools.find(({ name }) => name === 'ask')?.description?.includes('send_feedback'), told);
+    assert.equal(tools.find(({ name }) => name === 'docs')?.description?.includes('send_feedback'), told);
     await client.close();
   }
 });
