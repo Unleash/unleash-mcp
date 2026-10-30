@@ -1,14 +1,14 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import pkg from '../package.json' with { type: 'json' };
 import { systemClock } from './clock.ts';
-import { createAsk } from './tools/ask/ask.ts';
-import { askOutput } from './tools/ask/askOutput.ts';
 import { createAudit } from './tools/audit/audit.ts';
 import { auditInput } from './tools/audit/auditInput.ts';
 import { auditOutput } from './tools/audit/auditOutput.ts';
 import { createConfigure } from './tools/configure/configure.ts';
 import { configureInput } from './tools/configure/configureInput.ts';
 import { configureOutput } from './tools/configure/configureOutput.ts';
+import { createDocs } from './tools/docs/docs.ts';
+import { docsOutput } from './tools/docs/docsOutput.ts';
 import { createEvaluate } from './tools/evaluate/evaluate.ts';
 import { evaluateInput } from './tools/evaluate/evaluateInput.ts';
 import { evaluateOutput } from './tools/evaluate/evaluateOutput.ts';
@@ -70,7 +70,7 @@ const outcomes = {
     'Create a flag or change its type, description, tags and links, set its parent flag, mark it completed or stale, or archive or revive it.',
   audit:
     'Read what changed in Unleash, who changed it and when, most recent first, over at most 31 days; narrow it to projects, flags, environments or event types.',
-  ask: 'Answer questions about feature flag practices and Unleash itself, such as when to wrap a feature in a flag or how to clean flags up, from the Unleash documentation.',
+  docs: 'Answer questions about feature flag practices and Unleash itself, such as when to wrap a feature in a flag or how to clean flags up, from the current Unleash documentation rather than from memory.',
   send_feedback:
     'Report anonymously to Unleash where this MCP fell short: a tool error, a request no tool supports, a wrong result, or a question the docs leave unanswered.',
 };
@@ -111,7 +111,7 @@ export const createServer = (
   const manageFlag = createManageFlag(unleash);
   const evaluate = createEvaluate(unleash);
   const audit = createAudit(unleash, systemClock);
-  const ask = createAsk(fetch);
+  const docs = createDocs(fetch);
 
   server.registerTool(
     'release',
@@ -222,20 +222,20 @@ export const createServer = (
   );
 
   server.registerTool(
-    'ask',
+    'docs',
     {
       description: [
-        outcomes.ask,
+        outcomes.docs,
         'Returns the index of the Unleash docs, a link and summary per page. Read the pages that bear on the question, and the pages they link to, as many as you need to answer; cite the ones you used.',
         ...(sendFeedback
-          ? ["If they don't answer it, call send_feedback with issueType unanswered_question and tool ask."]
+          ? ["If they don't answer it, call send_feedback with issueType unanswered_question and tool docs."]
           : []),
       ].join(' '),
-      outputSchema: askOutput,
+      outputSchema: docsOutput,
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
     async () => {
-      const result = await ask();
+      const result = await docs();
       return result.kind === 'failed' ? toFailedToolResult(result) : toToolResult({ result });
     },
   );
