@@ -55,7 +55,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "859",
+            "content-length": "891",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -66,7 +66,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"stats\":{\"avgTimeToProdCurrentWindow\":0,\"createdCurrentWindow\":3,\"createdPastWindow\":0,\"archivedCurrentWindow\":1,\"archivedPastWindow\":0,\"projectActivityCurrentWindow\":2817,\"projectActivityPastWindow\":0,\"projectMembersAddedCurrentWindow\":3},\"name\":\"mcp-server\",\"description\":\"\",\"mode\":\"open\",\"featureLimit\":null,\"featureNaming\":{\"pattern\":\"^mcp-[a-z-]+$\",\"example\":\"mcp-flag\",\"description\":\"mcp, dash, lowercase words\"},\"linkTemplates\":[],\"defaultStickiness\":\"default\",\"health\":67,\"technicalDebt\":33,\"favorite\":false,\"updatedAt\":\"2026-10-30T07:16:53.076Z\",\"createdAt\":\"2026-10-20T08:11:51.313Z\",\"onboardingStatus\":{\"status\":\"first-flag-created\",\"feature\":\"mcp-detailed-flag\"},\"environments\":[{\"environment\":\"development\"},{\"environment\":\"production\"}],\"featureTypeCounts\":[{\"type\":\"experiment\",\"count\":1},{\"type\":\"release\",\"count\":5}],\"members\":3,\"version\":1}",
+          "body": "{\"stats\":{\"avgTimeToProdCurrentWindow\":0,\"createdCurrentWindow\":3,\"createdPastWindow\":0,\"archivedCurrentWindow\":1,\"archivedPastWindow\":0,\"projectActivityCurrentWindow\":2817,\"projectActivityPastWindow\":0,\"projectMembersAddedCurrentWindow\":3},\"name\":\"mcp-server\",\"description\":\"\",\"mode\":\"open\",\"featureLimit\":null,\"featureNaming\":{\"pattern\":\"^mcp-[a-z-]+$\",\"example\":\"mcp-flag\",\"description\":\"mcp, dash, lowercase words\"},\"linkTemplates\":[],\"defaultStickiness\":\"default\",\"health\":67,\"technicalDebt\":33,\"favorite\":false,\"updatedAt\":\"2026-10-30T08:17:22.342Z\",\"createdAt\":\"2026-10-20T08:11:51.313Z\",\"onboardingStatus\":{\"status\":\"first-flag-created\",\"feature\":\"mcp-defined-flag\"},\"environments\":[{\"environment\":\"development\"},{\"environment\":\"production\"}],\"featureTypeCounts\":[{\"type\":\"experiment\",\"count\":1},{\"type\":\"kill-switch\",\"count\":1},{\"type\":\"release\",\"count\":4}],\"members\":3,\"version\":1}",
           "trailers": {}
         }
       ],
