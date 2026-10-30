@@ -454,3 +454,7 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 ## 2026-10-30 — Snapshots hold text
 
 - Recorded response bodies are stored as the text Unleash sent, so a snapshot reads and diffs as JSON. Unleash is asked for uncompressed answers, and the test client converts between the checked-in text and the base64 undici reads and writes, since undici has no option for it. As the request headers no longer vary by Node major, neither should undici's hash, which is expected to supersede "The snapshots replay only on the Node major they were recorded on" (2026-10-23 Node versions) once a replay on Node 24 confirms it. Rejected: patching undici's loader, and keeping base64 with a decoding script for diffs.
+
+## 2026-10-30 — send_feedback default instance
+
+- Reports go to `https://eu.app.unleash-hosted.com/hosted/` unless `UNLEASH_FEEDBACK_URL` (or the remote host's `feedbackUrl`) picks another. Supersedes "no default" in "send_feedback consent".

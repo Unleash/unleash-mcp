@@ -71,13 +71,13 @@ You need Node 24 or later and pnpm.
 
 ## Configure the local server
 
-| Variable                    | Required | Description                                                                                                        |
-| --------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------ |
-| `UNLEASH_BASE_URL`          | Yes      | URL of your Unleash instance, such as `https://sandbox.getunleash.io/enterprise`.                                  |
-| `UNLEASH_PAT`               | Yes      | Personal access token the server calls Unleash with.                                                               |
-| `UNLEASH_MCP_SEND_FEEDBACK` | No       | `true` sends reports without asking, `false` leaves `send_feedback` out. Unset, you are asked on the first report. |
-| `UNLEASH_FEEDBACK_URL`      | No       | Unleash instance that receives `send_feedback` reports. Unset, reports fail.                                       |
-| `UNLEASH_MCP_CONFIG_DIR`    | No       | Directory that keeps your answer, `feedback_consent.json`. Defaults to your platform config directory.             |
+| Variable                    | Required | Description                                                                                                                    |
+| --------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `UNLEASH_BASE_URL`          | Yes      | URL of your Unleash instance, such as `https://sandbox.getunleash.io/enterprise`.                                              |
+| `UNLEASH_PAT`               | Yes      | Personal access token the server calls Unleash with.                                                                           |
+| `UNLEASH_MCP_SEND_FEEDBACK` | No       | `true` sends reports without asking, `false` leaves `send_feedback` out. Unset, you are asked on the first report.             |
+| `UNLEASH_FEEDBACK_URL`      | No       | Unleash instance that receives `send_feedback` reports. Unset, Unleash's instance (https://eu.app.unleash-hosted.com/hosted/). |
+| `UNLEASH_MCP_CONFIG_DIR`    | No       | Directory that keeps your answer, `feedback_consent.json`. Defaults to your platform config directory.                         |
 
 `send_feedback` sends anonymous reports to Unleash when the server fell short: a tool error, a request no tool supports, or a wrong result. A report names the tool, the error and the MCP client the agent runs in. Say yes to help us fix what doesn't work for you.
 
