@@ -1,8 +1,8 @@
 import { timeoutMs, toFailed, toUnreachable } from '../shared/failed.ts';
-import type { AskResult } from './askOutput.ts';
+import type { DocsResult } from './docsOutput.ts';
 
-/** The `ask` tool: hands the agent the Unleash docs index, to read the pages that answer the user's question. */
-export type Ask = () => Promise<AskResult>;
+/** The `docs` tool: hands the agent the Unleash docs index, to read the pages that answer the user's question. */
+export type Docs = () => Promise<DocsResult>;
 
 const indexUrl = 'https://docs.getunleash.io/llms.txt';
 
@@ -32,9 +32,9 @@ export const trimIndex = (index: string): string =>
     .join('')
     .trimEnd();
 
-/** Creates `ask`, fetching the docs index with the given `fetch` on every call. */
-export const createAsk =
-  (fetch: typeof globalThis.fetch): Ask =>
+/** Creates `docs`, fetching the docs index with the given `fetch` on every call. */
+export const createDocs =
+  (fetch: typeof globalThis.fetch): Docs =>
   async () => {
     const response = await fetch(indexUrl, { signal: AbortSignal.timeout(timeoutMs) }).catch(toUnreachable);
     if (!(response instanceof Response)) return response;

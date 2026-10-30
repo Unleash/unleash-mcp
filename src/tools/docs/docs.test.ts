@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { type Interceptable, MockAgent } from 'undici';
-import { createAsk } from './ask.ts';
+import { createDocs } from './docs.ts';
 
 // Not recorded: the docs index is not part of the Unleash sandbox, and churns.
 const createStubbedFetch = (): { fetch: typeof fetch; stub: Interceptable } => {
@@ -35,7 +35,7 @@ test('gives the agent the docs index without the API reference or the docs MCP s
   const { fetch, stub } = createStubbedFetch();
   stub.intercept({ path: '/llms.txt' }).reply(200, index);
 
-  const output = await createAsk(fetch)();
+  const output = await createDocs(fetch)();
 
   assert.deepEqual(output, {
     kind: 'docs',
@@ -55,7 +55,7 @@ test('fails with the status the docs site answers', async () => {
   const { fetch, stub } = createStubbedFetch();
   stub.intercept({ path: '/llms.txt' }).reply(503, '<html>Unavailable</html>');
 
-  const output = await createAsk(fetch)();
+  const output = await createDocs(fetch)();
 
   assert.deepEqual(output, { kind: 'failed', status: 503, name: 'UnknownError', reasons: [] });
 });
@@ -64,7 +64,7 @@ test('fails as a network error when the docs site cannot be reached', async () =
   const { fetch, stub } = createStubbedFetch();
   stub.intercept({ path: '/llms.txt' }).replyWithError(new Error('getaddrinfo ENOTFOUND docs.getunleash.io'));
 
-  const output = await createAsk(fetch)();
+  const output = await createDocs(fetch)();
 
   assert.partialDeepStrictEqual(output, { kind: 'failed', status: 0, name: 'NetworkError' });
 });
