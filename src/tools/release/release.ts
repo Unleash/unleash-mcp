@@ -26,7 +26,7 @@ export const createRelease = (unleash: UnleashClient) => {
     const outcome = {
       flag: rolledOut.flag,
       environment,
-      ...('targets' in audience && { targets: audience.targets.map(withDefaults) }),
+      ...('targets' in audience && { targets: audience.targets.map(withDefaults(flag.name)) }),
     };
 
     if (rolledOut.kind === 'requested') {

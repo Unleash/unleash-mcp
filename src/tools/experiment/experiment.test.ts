@@ -44,7 +44,7 @@ test('creates a missing flag and splits everyone across the values', async () =>
     kind: 'split',
     flag: { origin: 'created', name: flag, state: 'enabled' },
     environment: 'development',
-    targets: [{ name: 'Everyone', rollout: 100, stickiness: 'default', values }],
+    targets: [{ name: 'Everyone', rollout: 100, stickiness: 'default', rolloutGroup: flag, values }],
   });
   assert.equal(describedByOutputSchema(output), undefined);
 });

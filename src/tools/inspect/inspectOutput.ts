@@ -42,7 +42,7 @@ const lifecycle = z.object({
   enteredAt: z.string().describe('ISO timestamp'),
 });
 
-const targets = z.array(target.required({ rollout: true, stickiness: true }));
+const targets = z.array(target.required({ rollout: true, stickiness: true, rolloutGroup: true }));
 
 const transition = z.discriminatedUnion('type', [
   z.object({ type: z.literal('time'), intervalMinutes: z.number() }),

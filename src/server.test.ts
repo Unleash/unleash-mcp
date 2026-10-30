@@ -98,7 +98,7 @@ test('release tool reports the targets', async () => {
       kind: 'released',
       flag: { origin: 'created', name: flag, state: 'enabled' },
       environment: 'development',
-      targets: [{ name: 'Everyone', rollout: 50, stickiness: 'default' }],
+      targets: [{ name: 'Everyone', rollout: 50, stickiness: 'default', rolloutGroup: flag }],
     },
   });
   await client.close();

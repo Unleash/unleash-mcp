@@ -22,7 +22,7 @@ export const experimentInput = z.strictObject({
     .array(experimentTarget)
     .min(1)
     .describe(
-      'The audiences in the experiment, ORed, each with the values it gets, such as control and treatment: split within one audience by share, or one value per audience. Replaces what the environment had. Changing shares or stickiness mid-run moves users between values',
+      'The audiences in the experiment, ORed, each with the values it gets, such as control and treatment: split within one audience by share, or one value per audience. Replaces what the environment had. Changing shares, stickiness or the rollout group mid-run moves users between values',
     ),
   impressionData: z
     .boolean()

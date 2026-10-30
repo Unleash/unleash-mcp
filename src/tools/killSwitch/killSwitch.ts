@@ -21,7 +21,7 @@ export const createKillSwitch = (unleash: UnleashClient) => {
     });
     if (rolledOut.kind === 'failed') return rolledOut;
 
-    const outcome = { flag: rolledOut.flag, environment, targets: targets.map(withDefaults) };
+    const outcome = { flag: rolledOut.flag, environment, targets: targets.map(withDefaults(flag.name)) };
     if (rolledOut.kind === 'requested')
       return { kind: 'pending_change_request', ...outcome, changeRequest: rolledOut.changeRequest };
     return { kind: 'switched', ...outcome };

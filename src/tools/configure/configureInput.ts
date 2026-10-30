@@ -119,7 +119,12 @@ const advance = z
 const milestone = z
   .strictObject({
     name: z.string().describe('e.g. Internal, 50%, Everyone'),
-    targets: z.array(target).min(1).describe('The audiences that get the feature while the milestone is active, OR-ed'),
+    targets: z
+      .array(target)
+      .min(1)
+      .describe(
+        'The audiences that get the feature while the milestone is active, OR-ed. A rollout group set here is shared by every flag the template releases; left out, each flag draws on its own name',
+      ),
     advance: advance.optional(),
   })
   .describe('One step of the rollout');

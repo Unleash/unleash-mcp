@@ -95,7 +95,18 @@ before(async () => {
     project,
     flag: { name: flag, state: 'enabled' },
     environment: 'development',
-    audience: { targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values, stickiness: 'userId' }] },
+    audience: {
+      targets: [
+        {
+          name: 'Beta testers',
+          rollout: 50,
+          constraints: [beta],
+          values,
+          stickiness: 'userId',
+          rolloutGroup: 'mcp-other-draw',
+        },
+      ],
+    },
   });
   await addReleasePlan();
 });
@@ -110,7 +121,7 @@ const now = fixedClock('2026-10-29T00:00:00.000Z');
 
 // The flag is created anew on every recording, so the timestamps are left to the partial match.
 // A kill switch has no expected lifetime.
-test('describes a flag with its lifecycle, environments, who worked on it, its parent, tags and links', async () => {
+test('describes a flag with its lifecycle, environments, who worked on it, its parent, tags, links and the draw a target shares', async () => {
   const output = await inspectFlag(unleash, editionOf, now, { kind: 'flag', project, flag });
 
   assert(!('expectedLifetimeEndsAt' in output));
@@ -124,7 +135,16 @@ test('describes a flag with its lifecycle, environments, who worked on it, its p
       {
         name: 'development',
         state: 'enabled',
-        targets: [{ name: 'Beta testers', rollout: 50, constraints: [beta], values, stickiness: 'userId' }],
+        targets: [
+          {
+            name: 'Beta testers',
+            rollout: 50,
+            constraints: [beta],
+            values,
+            stickiness: 'userId',
+            rolloutGroup: 'mcp-other-draw',
+          },
+        ],
       },
       { name: 'production', state: 'disabled' },
     ],
