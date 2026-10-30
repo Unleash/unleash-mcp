@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { defaultFeedbackBaseUrl } from './tools/sendFeedback/sendFeedback.ts';
 
 // An env file line such as `UNLEASH_FEEDBACK_URL=` sets an empty string, which means unset.
 const blankAsUnset = (value: unknown) => (typeof value === 'string' && value.trim() === '' ? undefined : value);
@@ -11,8 +12,8 @@ const configSchema = z.object({
   UNLEASH_MCP_SEND_FEEDBACK: z.preprocess(blankAsUnset, z.stringbool().optional()),
   // Where the user's consent is kept between sessions. Unset, the platform's config directory.
   UNLEASH_MCP_CONFIG_DIR: z.preprocess(blankAsUnset, z.string().optional()),
-  // The Unleash instance that receives feedback. No default: without it, send_feedback fails.
-  UNLEASH_FEEDBACK_URL: z.preprocess(blankAsUnset, z.url({ protocol: /^https?$/ }).optional()),
+  // The Unleash instance that receives feedback. Unset, Unleash's own instance.
+  UNLEASH_FEEDBACK_URL: z.preprocess(blankAsUnset, z.url({ protocol: /^https?$/ }).default(defaultFeedbackBaseUrl)),
 });
 
 export type Config = z.infer<typeof configSchema>;

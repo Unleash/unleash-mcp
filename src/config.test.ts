@@ -4,9 +4,12 @@ import { readConfig } from './config.ts';
 
 const required = { UNLEASH_BASE_URL: 'https://unleash.example.com', UNLEASH_PAT: 'user:token' };
 
-test('has no feedback instance unless the user sets one', () => {
-  assert.equal(readConfig(required).UNLEASH_FEEDBACK_URL, undefined);
-  assert.equal(readConfig({ ...required, UNLEASH_FEEDBACK_URL: ' ' }).UNLEASH_FEEDBACK_URL, undefined);
+test("sends feedback to Unleash's instance unless the user picks another", () => {
+  assert.equal(readConfig(required).UNLEASH_FEEDBACK_URL, 'https://eu.app.unleash-hosted.com/hosted/');
+  assert.equal(
+    readConfig({ ...required, UNLEASH_FEEDBACK_URL: ' ' }).UNLEASH_FEEDBACK_URL,
+    'https://eu.app.unleash-hosted.com/hosted/',
+  );
 });
 
 test('sends feedback to the instance the user picks', () => {

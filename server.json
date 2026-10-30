@@ -38,7 +38,7 @@
           "name": "UNLEASH_MCP_SEND_FEEDBACK"
         },
         {
-          "description": "Unleash instance that receives send_feedback reports. Unset, reports fail.",
+          "description": "Unleash instance that receives send_feedback reports. Unset, Unleash's instance (https://eu.app.unleash-hosted.com/hosted/).",
           "isRequired": false,
           "format": "string",
           "isSecret": false,
