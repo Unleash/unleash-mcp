@@ -15,6 +15,7 @@ An MCP server that lets AI agents work with Unleash the way you'd work in the Un
 | `manage_flag`   | Define flags, set a parent dependency, mark flags completed, archive and revive them. Doesn't delete flags.                                                                                  | "Archive the old-banner flag."                                  |
 | `configure`     | Change context fields and their legal values, segments, tag types and tags, release templates and projects.                                                                                  | "Create a beta-testers segment for userId 1, 2 and 3."          |
 | `audit`         | Read what changed, who changed it and when, over at most 31 days.                                                                                                                            | "What changed in production yesterday?"                         |
+| `ask`           | Answer questions about feature flag practices and Unleash itself from the Unleash documentation.                                                                                             | "How should I clean up old flags?"                              |
 | `send_feedback` | Report to Unleash where the server fell short. Asks you first, unless `UNLEASH_MCP_SEND_FEEDBACK` decides.                                                                                   | None: the agent calls it on its own.                            |
 
 ## Install locally
