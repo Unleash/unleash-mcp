@@ -87,25 +87,26 @@ test('creates a missing flag with its expected lifetime', async () => {
     kind: 'released',
     flag: { origin: 'created', name: flag, state: 'enabled' },
     environment: 'development',
-    targets: [{ name: 'Everyone', rollout: 50, stickiness: 'default' }],
+    targets: [{ name: 'Everyone', rollout: 50, stickiness: 'default', rolloutGroup: flag }],
   });
 });
 
-test('releases an existing flag', async () => {
+// The recording pins the rollout group on the strategy, so the rollout picks the same users as the other flag's.
+test('releases an existing flag, picking the same users as another flag', async () => {
   const release = createRelease(unleash);
 
   const output = await release({
     project,
     flag: { name: flag, state: 'enabled' },
     environment: 'development',
-    audience: { targets: [{ name: 'Everyone', rollout: 50 }] },
+    audience: { targets: [{ name: 'Everyone', rollout: 50, rolloutGroup: 'mcp-other-flag' }] },
   });
 
   assert.deepEqual(output, {
     kind: 'released',
     flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'development',
-    targets: [{ name: 'Everyone', rollout: 50, stickiness: 'default' }],
+    targets: [{ name: 'Everyone', rollout: 50, rolloutGroup: 'mcp-other-flag', stickiness: 'default' }],
   });
 });
 
@@ -131,8 +132,15 @@ test('releases to several audiences', async () => {
     flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'development',
     targets: [
-      { name: 'Everyone', rollout: 50, stickiness: 'default' },
-      { name: 'Beta testers', rollout: 100, constraints: [beta], values: [blue], stickiness: 'default' },
+      { name: 'Everyone', rollout: 50, stickiness: 'default', rolloutGroup: flag },
+      {
+        name: 'Beta testers',
+        rollout: 100,
+        constraints: [beta],
+        values: [blue],
+        stickiness: 'default',
+        rolloutGroup: flag,
+      },
     ],
   });
 });
@@ -152,7 +160,7 @@ test('splits an audience across values', async () => {
     kind: 'released',
     flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'development',
-    targets: [{ name: 'Checkout test', rollout: 100, values, stickiness: 'default' }],
+    targets: [{ name: 'Checkout test', rollout: 100, values, stickiness: 'default', rolloutGroup: flag }],
   });
 });
 
@@ -170,7 +178,7 @@ test('releases to an audience defined in Unleash', async () => {
     kind: 'released',
     flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'development',
-    targets: [{ name: 'Beta testers', rollout: 100, segments: [segmentId], stickiness: 'default' }],
+    targets: [{ name: 'Beta testers', rollout: 100, segments: [segmentId], stickiness: 'default', rolloutGroup: flag }],
   });
 });
 
@@ -188,7 +196,7 @@ test('removes the audiences a release leaves out', async () => {
     kind: 'released',
     flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'development',
-    targets: [{ name: 'Beta testers', rollout: 100, stickiness: 'default' }],
+    targets: [{ name: 'Beta testers', rollout: 100, stickiness: 'default', rolloutGroup: flag }],
   });
 });
 
@@ -206,7 +214,7 @@ test('turns a flag off', async () => {
     kind: 'released',
     flag: { origin: 'found', name: flag, state: 'disabled' },
     environment: 'development',
-    targets: [{ name: 'Beta testers', rollout: 100, stickiness: 'default' }],
+    targets: [{ name: 'Beta testers', rollout: 100, stickiness: 'default', rolloutGroup: flag }],
   });
 });
 
@@ -224,7 +232,7 @@ test('turns a flag back on', async () => {
     kind: 'released',
     flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'development',
-    targets: [{ name: 'Beta testers', rollout: 100, stickiness: 'default' }],
+    targets: [{ name: 'Beta testers', rollout: 100, stickiness: 'default', rolloutGroup: flag }],
   });
 });
 
@@ -269,7 +277,7 @@ test('puts the release in a change request where the environment requires one', 
   assert.partialDeepStrictEqual(output, {
     flag: { origin: 'found', name: flag, state: 'enabled' },
     environment: 'production',
-    targets: [{ name: 'Everyone', rollout: 50, stickiness: 'default' }],
+    targets: [{ name: 'Everyone', rollout: 50, stickiness: 'default', rolloutGroup: flag }],
     changeRequest: { state: 'In review' },
   });
 });

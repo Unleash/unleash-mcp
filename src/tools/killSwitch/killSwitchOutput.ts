@@ -4,7 +4,7 @@ import { type Failed, failed } from '../shared/failed.ts';
 import { rolledOutFlag as flag } from '../shared/rollout/flag.ts';
 import { target } from '../shared/target.ts';
 
-const targets = z.array(target.required({ rollout: true, stickiness: true }));
+const targets = z.array(target.required({ rollout: true, stickiness: true, rolloutGroup: true }));
 
 const switched = z.object({
   kind: z.literal('switched'),

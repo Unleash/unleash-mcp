@@ -48,7 +48,9 @@ const evaluate = async (
     result: isEnabled ? 'enabled' : onlySdksCanTell ? 'unknown' : 'disabled',
     ...(blockedBy.length ? { blockedBy } : {}),
     ...(variant?.enabled ? { value: toValue(variant) } : {}),
-    ...(strategies.data.length ? { targets: strategies.data.map((strategy) => toTarget(strategy, context)) } : {}),
+    ...(strategies.data.length
+      ? { targets: strategies.data.map((strategy) => toTarget(strategy, context, flag)) }
+      : {}),
   };
 };
 
@@ -57,7 +59,7 @@ const toValue = ({ name, payload }: UnleashVariant): ServedValue => ({
   ...(payload ? { payload: { type: payload.type, value: payload.value } } : {}),
 });
 
-const toTarget = (strategy: UnleashStrategy, context: EvaluateQuery['context']): EvaluatedTarget => {
+const toTarget = (strategy: UnleashStrategy, context: EvaluateQuery['context'], flag: string): EvaluatedTarget => {
   const named = strategy.title ? { name: strategy.title } : {};
   if (strategy.disabled) return { ...named, result: 'disabled' };
   if (strategy.result.enabled === 'unknown')
@@ -67,7 +69,7 @@ const toTarget = (strategy: UnleashStrategy, context: EvaluateQuery['context']):
     return {
       ...named,
       result: 'matched',
-      matchedBy: { ...passedConditions(strategy), ...rolloutConditions(strategy, stickiness) },
+      matchedBy: { ...passedConditions(strategy), ...rolloutConditions(strategy, stickiness, flag) },
     };
   const failed = failedConditions(strategy);
   if (failed.segments || failed.constraints) return { ...named, result: 'missed', missedBy: failed };
@@ -76,13 +78,13 @@ const toTarget = (strategy: UnleashStrategy, context: EvaluateQuery['context']):
   return {
     ...named,
     result: 'missed',
-    missedBy: lacksStickiness ? { stickiness } : rolloutConditions(strategy, stickiness),
+    missedBy: lacksStickiness ? { stickiness } : rolloutConditions(strategy, stickiness, flag),
   };
 };
 
-const rolloutConditions = ({ parameters }: UnleashStrategy, stickiness: string): Conditions => {
+const rolloutConditions = ({ parameters }: UnleashStrategy, stickiness: string, flag: string): Conditions => {
   const rollout = Number(parameters.rollout ?? 100);
-  return rollout < 100 ? { rollout, stickiness } : {};
+  return rollout < 100 ? { rollout, stickiness, rolloutGroup: parameters.groupId ?? flag } : {};
 };
 
 // Unleash's default sticks to userId, then sessionId, then a new random draw on every call.

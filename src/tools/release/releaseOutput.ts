@@ -9,7 +9,7 @@ const released = z.object({
   flag,
   environment: z.string(),
   targets: z
-    .array(target.required({ rollout: true, stickiness: true }))
+    .array(target.required({ rollout: true, stickiness: true, rolloutGroup: true }))
     .optional()
     .describe('The audiences that get the feature while it is enabled'),
   template: z
@@ -36,7 +36,7 @@ const pendingChangeRequest = z.object({
   environment: z.string(),
   changeRequest: changeRequest.describe('The change request holding the release, submitted for review'),
   targets: z
-    .array(target.required({ rollout: true, stickiness: true }))
+    .array(target.required({ rollout: true, stickiness: true, rolloutGroup: true }))
     .optional()
     .describe('The audiences that get the feature while it is enabled, once the change request is applied'),
   template: z

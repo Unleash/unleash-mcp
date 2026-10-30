@@ -35,7 +35,7 @@ test('creates a missing switch and turns it on for everyone', async () => {
     kind: 'switched',
     flag: { origin: 'created', name: flag, state: 'enabled' },
     environment: 'development',
-    targets: [{ name: 'Everyone', rollout: 100, stickiness: 'default' }],
+    targets: [{ name: 'Everyone', rollout: 100, stickiness: 'default', rolloutGroup: flag }],
   });
   assert.equal(describedByOutputSchema(output), undefined);
 });

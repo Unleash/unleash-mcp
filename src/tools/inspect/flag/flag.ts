@@ -65,7 +65,7 @@ export const inspectFlag = async (
     ...(lifecycle ? { lifecycle: toLifecycle(lifecycle) } : {}),
     staleness: toStaleness(stale, lifetimeEndsAt, now()),
     ...(lifetimeEndsAt ? { expectedLifetimeEndsAt: lifetimeEndsAt } : {}),
-    environments: (environments ?? []).map(toEnvironment),
+    environments: (environments ?? []).map(toEnvironment(name)),
     ...(createdAt ? { createdAt } : {}),
     ...(createdBy ? { createdBy: createdBy.name } : {}),
     ...(collaboratorNames.length ? { collaborators: collaboratorNames } : {}),
@@ -114,27 +114,31 @@ type UnleashStrategy = {
 };
 
 // Unleash allows one release plan per environment; its schema is an array anyway.
-const toEnvironment = ({ name, enabled, lastSeenAt, strategies, releasePlans }: UnleashEnvironment): Environment => ({
-  name,
-  state: toFlagState(enabled),
-  ...(lastSeenAt ? { lastSeenAt } : {}),
-  ...(strategies?.length ? { targets: strategies.map(toTarget) } : {}),
-  ...(releasePlans?.[0] ? { releasePlan: toReleasePlan(releasePlans[0]) } : {}),
-});
+const toEnvironment =
+  (flag: string) =>
+  ({ name, enabled, lastSeenAt, strategies, releasePlans }: UnleashEnvironment): Environment => ({
+    name,
+    state: toFlagState(enabled),
+    ...(lastSeenAt ? { lastSeenAt } : {}),
+    ...(strategies?.length ? { targets: strategies.map(toTarget(flag)) } : {}),
+    ...(releasePlans?.[0] ? { releasePlan: toReleasePlan(flag)(releasePlans[0]) } : {}),
+  });
 
-const toReleasePlan = ({ id: planId, name, milestones, activeMilestoneId }: UnleashReleasePlan): ReleasePlan => ({
-  id: planId,
-  name,
-  milestones: milestones.map(
-    ({ id, name, transitionCondition, strategies }): Milestone => ({
-      id,
-      name,
-      ...(id === activeMilestoneId ? { active: true } : {}),
-      ...(transitionCondition ? { transition: toTransition(transitionCondition) } : {}),
-      ...(strategies?.length ? { targets: strategies.map(toTarget) } : {}),
-    }),
-  ),
-});
+const toReleasePlan =
+  (flag: string) =>
+  ({ id: planId, name, milestones, activeMilestoneId }: UnleashReleasePlan): ReleasePlan => ({
+    id: planId,
+    name,
+    milestones: milestones.map(
+      ({ id, name, transitionCondition, strategies }): Milestone => ({
+        id,
+        name,
+        ...(id === activeMilestoneId ? { active: true } : {}),
+        ...(transitionCondition ? { transition: toTransition(transitionCondition) } : {}),
+        ...(strategies?.length ? { targets: strategies.map(toTarget(flag)) } : {}),
+      }),
+    ),
+  });
 
 // TODO: take `transitionConditionSchema` directly once the spec uses it on a plan milestone instead of an empty object.
 const toTransition = (condition: object): Transition => {
@@ -145,14 +149,17 @@ const toTransition = (condition: object): Transition => {
 };
 
 // The reverse of the release plan's toStrategy, so a target can be edited and released again.
-const toTarget = (s: UnleashStrategy): Target & { rollout: number; stickiness: string } => ({
-  name: s.title || s.name,
-  rollout: Number(s.parameters?.rollout ?? 100),
-  stickiness: s.parameters?.stickiness ?? 'default',
-  ...(s.constraints?.length ? { constraints: s.constraints.map(toConstraint) } : {}),
-  ...(s.segments?.length ? { segments: s.segments } : {}),
-  ...(s.variants?.length ? { values: s.variants.map(toValue) } : {}),
-});
+const toTarget =
+  (flag: string) =>
+  (s: UnleashStrategy): Target & { rollout: number; stickiness: string; rolloutGroup: string } => ({
+    name: s.title || s.name,
+    rollout: Number(s.parameters?.rollout ?? 100),
+    stickiness: s.parameters?.stickiness ?? 'default',
+    rolloutGroup: s.parameters?.groupId ?? flag,
+    ...(s.constraints?.length ? { constraints: s.constraints.map(toConstraint) } : {}),
+    ...(s.segments?.length ? { segments: s.segments } : {}),
+    ...(s.variants?.length ? { values: s.variants.map(toValue) } : {}),
+  });
 
 // A variable weight is what Unleash resolved, not what was asked for, so only a fixed one comes back as a share.
 const toValue = ({ name, payload, weight, weightType }: UnleashVariant): Value => ({

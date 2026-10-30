@@ -82,7 +82,13 @@ export const target = z.strictObject({
     .string()
     .optional()
     .describe(
-      'What keeps a user in the rollout and in their value: default, userId, sessionId, random, or a field with stickiness from a context fields search. default when left out; the default of the project is on its inspect. Changing it moves users',
+      'What keeps a user in the rollout and in their value: default, userId, sessionId, random, or a field with stickiness from a context fields search. default when left out; the default of the project is on its inspect. Changing it on a live target reshuffles who is in and, in a running experiment, who gets which value',
+    ),
+  rolloutGroup: z
+    .string()
+    .optional()
+    .describe(
+      'Which draw decides who falls inside the rollout; the flag name when left out, or the one of a target to share with, as inspecting its flag shows it. Targets with the same rollout group and stickiness pick the same users at the same percentage, whether they are in one flag or in different flags. Changing it on a live target reshuffles who is in and, in a running experiment, who gets which value; do so only to reshuffle on purpose',
     ),
 });
 

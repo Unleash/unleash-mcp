@@ -21,13 +21,13 @@ const users = { targeted: '1', outsideRollout: '9', targetedBySdkOnly: '2', unta
 const userIn = (...values: string[]) => ({ field: 'userId', operator: 'IN' as const, values });
 const beta = userIn(users.targeted, users.outsideRollout);
 const paused = { name: 'Paused', result: 'disabled' };
-const sessionOutsideRollout = 'b';
+const sessionOutsideRollout = 'b'; // Outside the 50% of the shared draw as well, by Unleash's hash.
 const everyone = { name: 'Everyone', result: 'matched', matchedBy: {} };
 const bySession = (missedBy: object) => ({ name: 'By session', result: 'missed', missedBy });
 const nobodyYet = (stickiness: string) => ({
   name: 'Nobody yet',
   result: 'missed',
-  missedBy: { rollout: 0, stickiness },
+  missedBy: { rollout: 0, stickiness, rolloutGroup: flag },
 });
 const sdkOnlyMissed = { result: 'missed', missedBy: { constraints: [userIn(users.targetedBySdkOnly)] } };
 const sdkOnlyUnknown = {
@@ -101,7 +101,7 @@ before(async () => {
   await addTarget(flag, 'production', {
     name: 'flexibleRollout',
     title: 'By session',
-    parameters: { rollout: '50', stickiness: 'sessionId', groupId: flag },
+    parameters: { rollout: '50', stickiness: 'sessionId', groupId: 'mcp-other-draw' },
   });
   await addTarget(flag, 'production', {
     name: 'flexibleRollout',
@@ -146,6 +146,7 @@ test('the feature is on for a context a target matches, with the value it serves
               constraints: [beta],
               rollout: 80,
               stickiness: 'userId',
+              rolloutGroup: flag,
             },
           },
           paused,
@@ -205,7 +206,7 @@ test('the feature is off for a context no target matches, a disabled one aside, 
         environment,
         result: 'disabled',
         targets: [
-          { name: 'Beta', result: 'missed', missedBy: { rollout: 80, stickiness: 'userId' } },
+          { name: 'Beta', result: 'missed', missedBy: { rollout: 80, stickiness: 'userId', rolloutGroup: flag } },
           paused,
           sdkOnlyMissed,
         ],
@@ -271,8 +272,14 @@ test('a rollout under 100 names the field it groups contexts by, or that field a
   });
   assert.deepEqual(output, {
     results: [
-      evaluated(bySession({ rollout: 50, stickiness: 'sessionId' }), nobodyYet('userId')),
-      evaluated(bySession({ rollout: 50, stickiness: 'sessionId' }), nobodyYet('sessionId')),
+      evaluated(
+        bySession({ rollout: 50, stickiness: 'sessionId', rolloutGroup: 'mcp-other-draw' }),
+        nobodyYet('userId'),
+      ),
+      evaluated(
+        bySession({ rollout: 50, stickiness: 'sessionId', rolloutGroup: 'mcp-other-draw' }),
+        nobodyYet('sessionId'),
+      ),
       evaluated(bySession({ stickiness: 'sessionId' }), nobodyYet('random')),
     ],
   });

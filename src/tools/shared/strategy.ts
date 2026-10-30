@@ -6,21 +6,31 @@ export const rolloutOf = (target: Target): number => target.rollout ?? 100;
 /** What keeps a user in the target's rollout and in their value, Unleash's `default` when the target leaves it out. */
 export const stickinessOf = (target: Target): string => target.stickiness ?? 'default';
 
-/** A target as the tools report it back: with the rollout and stickiness it was written with. */
-export const withDefaults = <T extends Target>(target: T) => ({
-  ...target,
-  rollout: rolloutOf(target),
-  stickiness: stickinessOf(target),
-});
+/** The draw a target's rollout picks from, the flag's name when the target leaves it out. */
+export const rolloutGroupOf = (flag: string, target: Target): string => target.rolloutGroup ?? flag;
+
+/** A target as the tools report it back: with the rollout, stickiness and rollout group it was written with. */
+export const withDefaults =
+  (flag: string) =>
+  <T extends Target>(target: T) => ({
+    ...target,
+    rollout: rolloutOf(target),
+    stickiness: stickinessOf(target),
+    rolloutGroup: rolloutGroupOf(flag, target),
+  });
 
 /**
- * Turns an agent-facing target into the Unleash strategy that serves it. `groupId` keys the rollout's stickiness.
+ * Turns an agent-facing target into the Unleash strategy that serves it. `groupId`, the rollout group, keys the hash with the stickiness.
  * Unleash requires the stickiness on each variant too, so they get the target's.
  */
-export const toStrategy = (groupId: string, target: Target) => ({
+export const toStrategy = (flag: string, target: Target) => ({
   name: 'flexibleRollout',
   title: target.name,
-  parameters: { rollout: String(rolloutOf(target)), stickiness: stickinessOf(target), groupId },
+  parameters: {
+    rollout: String(rolloutOf(target)),
+    stickiness: stickinessOf(target),
+    groupId: rolloutGroupOf(flag, target),
+  },
   constraints: (target.constraints ?? []).map(toUnleashConstraint),
   segments: target.segments ?? [],
   variants: toVariants(target.values ?? [], stickinessOf(target)),

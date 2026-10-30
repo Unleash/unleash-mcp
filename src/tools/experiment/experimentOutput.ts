@@ -4,7 +4,7 @@ import { type Failed, failed } from '../shared/failed.ts';
 import { rolledOutFlag as flag } from '../shared/rollout/flag.ts';
 import { target } from '../shared/target.ts';
 
-const targets = z.array(target.required({ rollout: true, stickiness: true, values: true }));
+const targets = z.array(target.required({ rollout: true, stickiness: true, rolloutGroup: true, values: true }));
 
 const split = z.object({
   kind: z.literal('split'),

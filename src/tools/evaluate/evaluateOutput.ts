@@ -22,6 +22,12 @@ const conditions = z.object({
     .describe(
       'The context field the rollout groups contexts by, so the same value always lands on the same side of it. random: a new draw on every call, so the result can change. Alone in missedBy when the context lacks the field',
     ),
+  rolloutGroup: z
+    .string()
+    .optional()
+    .describe(
+      'The draw the rollout picks from; the flag name unless set otherwise. Targets sharing it and the stickiness put the same user on the same side of the same percentage',
+    ),
 });
 
 const named = { name: z.string().optional() };
