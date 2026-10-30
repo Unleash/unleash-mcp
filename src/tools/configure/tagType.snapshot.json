@@ -1,16 +1,16 @@
 [
   {
-    "hash": "c1x_51Q9Yle0wQBkeelsTPvnk98fzxdPPclkKFLDuYY",
+    "hash": "AhVbIh5jVfZfJJWCPdcEnSmA_jk_BP3er2w25wx3AFk",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/tag-types/mcp-type",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -29,7 +29,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCB0YWctdHlwZSIsImRldGFpbHMiOlt7Im1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCB0YWctdHlwZSJ9XX0=",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"Could not find tag-type\",\"details\":[{\"message\":\"Could not find tag-type\"}]}",
           "trailers": {}
         },
         {
@@ -52,17 +52,17 @@
     }
   },
   {
-    "hash": "E6QNSoUDHO_PpBQAXBDCXQnOMqPoe5Qq7atneCI4dfc",
+    "hash": "zqJyUSrTPSJgOn_jwiBK4FRwsFsafeWF_0MaKgB7hEc",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/tag-types/mcp-updatable-type",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -81,7 +81,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCB0YWctdHlwZSIsImRldGFpbHMiOlt7Im1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCB0YWctdHlwZSJ9XX0=",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"Could not find tag-type\",\"details\":[{\"message\":\"Could not find tag-type\"}]}",
           "trailers": {}
         },
         {
@@ -104,17 +104,17 @@
     }
   },
   {
-    "hash": "f2es_cvmJVrwPXNzYRw0Xtkt0AbprkBI3Qmu32tDxA8",
+    "hash": "cEWHAL6YrFsm2VEjsJvrxyE-3tzo7JJnTmwsPd36VKs",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/tag-types/mcp-deletable-type",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -133,7 +133,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCB0YWctdHlwZSIsImRldGFpbHMiOlt7Im1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCB0YWctdHlwZSJ9XX0=",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"Could not find tag-type\",\"details\":[{\"message\":\"Could not find tag-type\"}]}",
           "trailers": {}
         },
         {
@@ -165,7 +165,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCB0YWctdHlwZSIsImRldGFpbHMiOlt7Im1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCB0YWctdHlwZSJ9XX0=",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"Could not find tag-type\",\"details\":[{\"message\":\"Could not find tag-type\"}]}",
           "trailers": {}
         }
       ],
@@ -173,19 +173,19 @@
     }
   },
   {
-    "hash": "uKa3CT_LpzCCbgWZwkrBJzlqFBNv7KJIcGz5qjJ9faY",
+    "hash": "xpfHqhNd4c_AhtDvpSW03WDk1ntyfQBPLreEWt4htOw",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/tag-types",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "52",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcp-updatable-type\",\"description\":\"Before\"}"
       },
@@ -205,7 +205,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLXVwZGF0YWJsZS10eXBlIiwiZGVzY3JpcHRpb24iOiJCZWZvcmUifQ==",
+          "body": "{\"name\":\"mcp-updatable-type\",\"description\":\"Before\"}",
           "trailers": {}
         }
       ],
@@ -213,19 +213,19 @@
     }
   },
   {
-    "hash": "B0W_SBuFbRz29r-q9U2iRV6BKut-EcwkKS1j7KUS-Ag",
+    "hash": "tkn0SZSMQWXn1x94Rl9fBEPAzPchbS7Hnd3Reji0wsg",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/tag-types",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "52",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcp-deletable-type\",\"description\":\"Before\"}"
       },
@@ -245,7 +245,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLWRlbGV0YWJsZS10eXBlIiwiZGVzY3JpcHRpb24iOiJCZWZvcmUifQ==",
+          "body": "{\"name\":\"mcp-deletable-type\",\"description\":\"Before\"}",
           "trailers": {}
         }
       ],
@@ -253,19 +253,19 @@
     }
   },
   {
-    "hash": "5bOcn8JQMbfPdFwBZ6QN0r5c1lX384_ctPAHol66DvM",
+    "hash": "pVjESs6ejz5_V1Iclo0O2j_Xu-NGhjCe60ZUiBSYexw",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/tag-types",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "60",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcp-type\",\"description\":\"Which team owns the flag\"}"
       },
@@ -285,7 +285,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLXR5cGUiLCJkZXNjcmlwdGlvbiI6IldoaWNoIHRlYW0gb3ducyB0aGUgZmxhZyJ9",
+          "body": "{\"name\":\"mcp-type\",\"description\":\"Which team owns the flag\"}",
           "trailers": {}
         }
       ],
@@ -293,19 +293,19 @@
     }
   },
   {
-    "hash": "fgFLtRc0USvmaHztudHfA5E78QkHQmKtNTCNRDy8_vU",
+    "hash": "zgZz3o0utIzIzNsumvozL9Ufe2tl4H0JhGLk0c9-_3c",
     "snapshot": {
       "request": {
         "method": "PUT",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/tag-types/mcp-updatable-type",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "23",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"description\":\"After\"}"
       },

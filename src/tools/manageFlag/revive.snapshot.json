@@ -1,16 +1,16 @@
 [
   {
-    "hash": "2fM3JLXZrYtwzv2aR2CfKfCUfczbuuy3NipO3xKZ-A0",
+    "hash": "g_cCDN2rjnpEho95EMR8PqfmFwb46p4RHgnv7GddyBs",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-revived-flag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -29,13 +29,13 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3AtcmV2aXZlZC1mbGFnXCIgaW4gcHJvamVjdCBcIm1jcC1zZXJ2ZXJcIi4iLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiVGhlcmUncyBubyBmZWF0dXJlIG5hbWVkIFwibWNwLXJldml2ZWQtZmxhZ1wiIGluIHByb2plY3QgXCJtY3Atc2VydmVyXCIuIn1dfQ==",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-revived-flag\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-revived-flag\\\" in project \\\"mcp-server\\\".\"}]}",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "1360",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -44,10 +44,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G6wEAORarnp9t/rkRUbw4cRf7h3o5KglUsCM79RNsVdMIOK1cCwNcA2w17ZIwHW+NAookKf4L6A8snSbHT31JmE27ZxC8BkkaAXczzOMOBA4SFv+vIHGCgwSlvqRaHxSwY3blBgkM1gUwHWYCjE4UgG3YjBOo6EeZ03nlSnXtzlQBscZlJqxUh+pgPv5m0GmRFjoXcJRGi/YUb/FHHZpN8xAhs8wVJzGXlZUnERb8JvtGfzcZNrFHYWmS9gDA9xZvAo+8p5jRRiVUKhAnK2ib8NwQWjdaIXyjjIwKBWTSiZR/GEKTyo44Cuum/Wq4frTWjhhnBQLrcwP2Dr79AjuDDGAWxvL3/IaK23L6eolMIgD9vQ5J3Dwv9a5uOWyz7jDivmfBKjlZZdkg+Am+E6urdXkW6n1xgSPSgSxWSMKRCltazhqgZsQrLA8eMG9X2u19o/KA8nvhgeZap7u5gc93DCoR/fQmLvAgPZTiDWsdJjJVwqvYkc1DvRiDOX25LxZKZa/pPp4Y54B5WI8KXbkjz4RuDOUij2Bg1IEVWBQKXk8Ch8r9gT0pDHrH3DDIMXx+iBoSnyvZAF3hm2h/ND8MYDj0kbOPaU4xEqhqdM1jX743LYNZIPhrbDEWyTVrrkhLiQp0pqLVeBaoSFhuV+tUSnhLVktuV0pq2xoP3SOD/P3zQ0=",
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-revived-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:27:05.903Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-09T07:27:05.903Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T07:27:07.312Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         }
       ],
@@ -55,17 +54,17 @@
     }
   },
   {
-    "hash": "vJ2SO201kjLlR8_vlHGWp1H7Cq76VIwrCX-tfz9XyIU",
+    "hash": "9xSoNuuv1alVOikgZCdMBTS_C-uVI1oyJyCqJsCpoOM",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-revived-flag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -84,7 +83,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBmZWF0dXJlIGZsYWcgZm91bmQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiTm8gZmVhdHVyZSBmbGFnIGZvdW5kIn1dfQ==",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"No feature flag found\",\"details\":[{\"message\":\"No feature flag found\"}]}",
           "trailers": {}
         },
         {
@@ -122,17 +121,17 @@
     }
   },
   {
-    "hash": "re8hnsS76OQ1q_QHhCWUF98WkQvZ5fUSJgm-XVBu4Nc",
+    "hash": "ggLmGaAVD5er0Cx6awn7R7SGqcgLcZg-BS_kWBdd60Q",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/archive/mcp-revived-flag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -172,19 +171,19 @@
     }
   },
   {
-    "hash": "fEIbOGakBscFior-IsNf2HMo5IRZQVRKpMdgSZvVB8E",
+    "hash": "NzS6lKNmKBwPNUAUnlo9VdBV3Y6S7szrHmgLYXdbuQw",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "27",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcp-revived-flag\"}"
       },
@@ -203,7 +202,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLXJldml2ZWQtZmxhZyIsImRlc2NyaXB0aW9uIjpudWxsLCJ0eXBlIjoicmVsZWFzZSIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTI2VDEzOjM3OjQzLjY1N1oiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
+          "body": "{\"name\":\"mcp-revived-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:27:05.903Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],
@@ -211,19 +210,19 @@
     }
   },
   {
-    "hash": "eHVI2j9QKAubOyXs5Anm8sBskiw1eTZqIp9CWbc1Jtw",
+    "hash": "yOUjVKDAFxh5i3QnfIBgAyTuEIJzkLzE43r5zVeFhQ4",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/revive",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "33",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"features\":[\"mcp-revived-flag\"]}"
       },

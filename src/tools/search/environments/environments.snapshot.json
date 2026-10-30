@@ -1,16 +1,16 @@
 [
   {
-    "hash": "rePTT8nq2uODBipc3qSd-a0np__IHpUHEq2MSv_Ae0c",
+    "hash": "I8LKSQ_E7SbxD2D5tVUDd3tMpZTe4ejGSfLU53714Lw",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/environments/mcp-deprecated-production",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -29,7 +29,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCBlbnZpcm9ubWVudCB3aXRoIG5hbWU6IG1jcC1kZXByZWNhdGVkLXByb2R1Y3Rpb24iLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiQ291bGQgbm90IGZpbmQgZW52aXJvbm1lbnQgd2l0aCBuYW1lOiBtY3AtZGVwcmVjYXRlZC1wcm9kdWN0aW9uIn1dfQ==",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"Could not find environment with name: mcp-deprecated-production\",\"details\":[{\"message\":\"Could not find environment with name: mcp-deprecated-production\"}]}",
           "trailers": {}
         },
         {
@@ -52,19 +52,19 @@
     }
   },
   {
-    "hash": "OnwHDahMdweSaVFnWDzG5h_TWw6FSxvmcvbRrkeJ1Qc",
+    "hash": "V5sPfJLPJljsPk-dKg_xQ9h39ufAQucMf-72cV3ywLs",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/environments",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "56",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcp-deprecated-production\",\"type\":\"production\"}"
       },
@@ -84,7 +84,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLWRlcHJlY2F0ZWQtcHJvZHVjdGlvbiIsInR5cGUiOiJwcm9kdWN0aW9uIiwic29ydE9yZGVyIjozMiwiZW5hYmxlZCI6dHJ1ZSwicHJvdGVjdGVkIjpmYWxzZSwicmVxdWlyZWRBcHByb3ZhbHMiOm51bGx9",
+          "body": "{\"name\":\"mcp-deprecated-production\",\"type\":\"production\",\"sortOrder\":32,\"enabled\":true,\"protected\":false,\"requiredApprovals\":null}",
           "trailers": {}
         }
       ],
@@ -92,18 +92,18 @@
     }
   },
   {
-    "hash": "laWmACZt49t1MEMMBxp0rdgf7_R7mInxwkKK28JpTIE",
+    "hash": "EfXbVqSHwH9zvFWpPMevrbuLvYH_kb8i23Gu1xCSPQU",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/environments/mcp-deprecated-production/off",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "0",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -127,17 +127,17 @@
     }
   },
   {
-    "hash": "NnE10Q3oXieGxs5-YFWLyjkxAjQRQOSBl6Vw9ua9Dcs",
+    "hash": "umET_BngRHb20OZZJIiaxGGhKTYid4SZOvjNi0uW1KY",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/environments",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -145,7 +145,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "5754",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -154,10 +154,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G3kWAGSbWlU9tXcGSQTh7u5jFzMgsRecxmb/8/H303XZxvu8KKLhz1iGFkYCReF0ZsND3+wdzgYq5VR6A36x5yKU/pr5vs2bEQbz6vHDjJ/+miXPakbjNnMw/femZjTjEzy6XRczmGPd+7NddP+eV3OZVMzY8nToYLZ97Vq7ihn7ftHBaLp1tW37+iNPhxmXyzS9+9k7rf3Belm6GcEOJm+3r9d7XZ5OhV8oe72ez5O+1O//D2oP/tBp3WZdFAu8wL3aYlIg90L9B7FrMxhOw53l/Rjk3bE/oj3WX34ZL9Nk14l6VonrcCSv3Eq88h6Ljp7Pt8tZ8LCuh7m2TlWpiQGjCxAIkkZdlVYg2Hp19QZOScpdhzHw5up1/rek5ZhtUKqgFY3ALrhpJ10uy+orORHHzgX0BeD7WEEvtUhhb5tbkGwlFLMDhMHfSfVnzntSEiah4iVFrznau8XrPS9yZbIGii+1hVeFCl9erN/16Iv+rORKq0tUAHU1BbVHhJCXQHsQFltyiT6Ji3QjBYk4JtChBVd8Fm6RY/SBj6nBdZ1sgGZEqJ6TSAjOtwJu5zd0Kt5pCqAh2OgU3L4oAc0tt8gkCZQ9s0JKQIUMdAJJHLCJdeCwRXBHoEtN6DLXVDmphzISNyfoNQcMzZeA1bXgE+4EZMjSAEIQisoN0m+jBbRAtODEUyocqvfgBqCXyJJ8EKgSqia+vP4IGWxqGmpJOdritU7z20iABZsDexBxmrGSgB/j7ZN3rWQmB8J+I/cA94kpZIaUk0Cojnx5BrZYLM65Zh0pc20gR2izTreL5FOXDHmqVak3GmIFJCLgeK22h7oeXeWsp80Icqjmrqd+c3sUJSJdZHRYY1SzFdckdpBxAbVO+G481WW5Xc42/wfZQXPXQ7oPefP+m16p3WV01JqoqmKPU99ctyKia3Lq+EEM1RGVau3KfvkP",
+          "body": "{\"version\":1,\"environments\":[{\"name\":\"default\",\"type\":\"production\",\"sortOrder\":1,\"enabled\":false,\"protected\":true,\"requiredApprovals\":null,\"projectCount\":10,\"apiTokenCount\":6,\"enabledToggleCount\":5},{\"name\":\"development\",\"type\":\"development\",\"sortOrder\":2,\"enabled\":true,\"protected\":false,\"requiredApprovals\":1,\"projectCount\":411,\"apiTokenCount\":354,\"enabledToggleCount\":724},{\"name\":\"uxenvironment\",\"type\":\"production\",\"sortOrder\":3,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":235,\"apiTokenCount\":7,\"enabledToggleCount\":50},{\"name\":\"staging\",\"type\":\"test\",\"sortOrder\":4,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":127,\"apiTokenCount\":1,\"enabledToggleCount\":19},{\"name\":\"stage\",\"type\":\"development\",\"sortOrder\":5,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":199,\"apiTokenCount\":4,\"enabledToggleCount\":29},{\"name\":\"UAT\",\"type\":\"preproduction\",\"sortOrder\":6,\"enabled\":true,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":49,\"apiTokenCount\":0,\"enabledToggleCount\":6},{\"name\":\"nuno\",\"type\":\"development\",\"sortOrder\":7,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":194,\"apiTokenCount\":2,\"enabledToggleCount\":11},{\"name\":\"production\",\"type\":\"production\",\"sortOrder\":8,\"enabled\":true,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":405,\"apiTokenCount\":61,\"enabledToggleCount\":325},{\"name\":\"newaa\",\"type\":\"development\",\"sortOrder\":9,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":68,\"apiTokenCount\":1,\"enabledToggleCount\":2},{\"name\":\"productionBrandA\",\"type\":\"production\",\"sortOrder\":10,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":63,\"apiTokenCount\":0,\"enabledToggleCount\":2},{\"name\":\"testnewenvironment\",\"type\":\"development\",\"sortOrder\":11,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":32,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"51d8d0bab759d473\",\"type\":\"development\",\"sortOrder\":12,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":29,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"6f64b5ad8f787756\",\"type\":\"development\",\"sortOrder\":13,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":30,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"8221c589dd6645fb\",\"type\":\"development\",\"sortOrder\":14,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":29,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"3b54e961e66074e6\",\"type\":\"development\",\"sortOrder\":15,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":29,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"8faf783d91e8588e\",\"type\":\"development\",\"sortOrder\":16,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":29,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"91d9862fd04142f7\",\"type\":\"development\",\"sortOrder\":17,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":29,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"dc924a8c9c89e516\",\"type\":\"development\",\"sortOrder\":18,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":29,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"ca626f5b62c4f65e\",\"type\":\"development\",\"sortOrder\":19,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":29,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"1adf1166d37e8f1e\",\"type\":\"development\",\"sortOrder\":20,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":29,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"d17014d539b86c55\",\"type\":\"development\",\"sortOrder\":21,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":29,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"b78d956d1cd6ce95\",\"type\":\"development\",\"sortOrder\":22,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":29,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"109fe6cb9a70b5eb\",\"type\":\"development\",\"sortOrder\":23,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":29,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"10a6851dd4ea2c3d\",\"type\":\"development\",\"sortOrder\":24,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":29,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"3b5954fba8341d8b\",\"type\":\"development\",\"sortOrder\":25,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":29,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"159836a819a9d16e\",\"type\":\"development\",\"sortOrder\":26,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":29,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"b02b444f043e88cf\",\"type\":\"development\",\"sortOrder\":27,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":29,\"apiTokenCount\":0,\"enabledToggleCount\":0},{\"name\":\"melinda-test\",\"type\":\"development\",\"sortOrder\":28,\"enabled\":false,\"protected\":false,\"requiredApprovals\":2,\"projectCount\":14,\"apiTokenCount\":0,\"enabledToggleCount\":1},{\"name\":\"testedge-deprecate-this\",\"type\":\"test\",\"sortOrder\":29,\"enabled\":true,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":80,\"apiTokenCount\":2,\"enabledToggleCount\":4},{\"name\":\"Henningtest\",\"type\":\"development\",\"sortOrder\":30,\"enabled\":true,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":72,\"apiTokenCount\":0,\"enabledToggleCount\":1},{\"name\":\"UX_test\",\"type\":\"preproduction\",\"sortOrder\":31,\"enabled\":true,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":66,\"apiTokenCount\":0,\"enabledToggleCount\":1},{\"name\":\"mcp-deprecated-production\",\"type\":\"production\",\"sortOrder\":32,\"enabled\":false,\"protected\":false,\"requiredApprovals\":null,\"projectCount\":0,\"apiTokenCount\":0,\"enabledToggleCount\":0}]}",
           "trailers": {}
         }
       ],

@@ -1,16 +1,16 @@
 [
   {
-    "hash": "HsVwiwkq4ah4iTHLLGwyFti47ZcLJyoQ-ysULGQIq1M",
+    "hash": "BKY01bXEA0NXHQeiLUeUExce1zOSkBuRq7xum_fUA1Y",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/tags/simple/mcp-unused-tag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -65,19 +65,19 @@
     }
   },
   {
-    "hash": "ZiA9-FP0hQ4Yp2DfR2iJ9zbtAudiluWkgqxJguY762g",
+    "hash": "RchIXtvbfnVvc0CXRRR3WMU9qpiLPtNlLm6EXUtcMxA",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/tags",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "42",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"type\":\"simple\",\"value\":\"mcp-unused-tag\"}"
       },
@@ -97,7 +97,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJ2ZXJzaW9uIjoxLCJ0YWciOnsidHlwZSI6InNpbXBsZSIsInZhbHVlIjoibWNwLXVudXNlZC10YWcifX0=",
+          "body": "{\"version\":1,\"tag\":{\"type\":\"simple\",\"value\":\"mcp-unused-tag\"}}",
           "trailers": {}
         }
       ],

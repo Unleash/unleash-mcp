@@ -1,16 +1,16 @@
 [
   {
-    "hash": "b6TYt2gkSyFllZc5kP79T8-smm77oPohx-O2bc0IafQ",
+    "hash": "ywC0FXtGJxzkqbxi9wzPovYXsV8CSin_uo7kkLqGhR4",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/context/mcpLegalValueField",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -29,7 +29,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCBjb250ZXh0IGZpZWxkIHdpdGggbmFtZSBtY3BMZWdhbFZhbHVlRmllbGQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiQ291bGQgbm90IGZpbmQgY29udGV4dCBmaWVsZCB3aXRoIG5hbWUgbWNwTGVnYWxWYWx1ZUZpZWxkIn1dfQ==",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"Could not find context field with name mcpLegalValueField\",\"details\":[{\"message\":\"Could not find context field with name mcpLegalValueField\"}]}",
           "trailers": {}
         },
         {
@@ -52,17 +52,17 @@
     }
   },
   {
-    "hash": "8YsjkW4NnB-dDlNbzzQRInLePvfOIDhWwMq89lF-oCs",
+    "hash": "gtbTGwJ6NJNvXvVcGIOQody_O4rL7F7CRoLAc6tmra0",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/context/mcpProjectLegalValueField",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -81,7 +81,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCBjb250ZXh0IGZpZWxkIHdpdGggbmFtZSBtY3BQcm9qZWN0TGVnYWxWYWx1ZUZpZWxkIiwiZGV0YWlscyI6W3sibWVzc2FnZSI6IkNvdWxkIG5vdCBmaW5kIGNvbnRleHQgZmllbGQgd2l0aCBuYW1lIG1jcFByb2plY3RMZWdhbFZhbHVlRmllbGQifV19",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"Could not find context field with name mcpProjectLegalValueField\",\"details\":[{\"message\":\"Could not find context field with name mcpProjectLegalValueField\"}]}",
           "trailers": {}
         },
         {
@@ -104,19 +104,19 @@
     }
   },
   {
-    "hash": "xn1Hntb4qOeO2fxyJiqeEnNypaD5fj8KS5F_x-3Hl0w",
+    "hash": "xXGf8hle0C8JAp_YglVtxWvbzZa8nQ1uQsknYCv79LA",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/context",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "29",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcpLegalValueField\"}"
       },
@@ -136,7 +136,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwTGVnYWxWYWx1ZUZpZWxkIiwiZGVzY3JpcHRpb24iOm51bGwsInN0aWNraW5lc3MiOmZhbHNlLCJzb3J0T3JkZXIiOjAsImxlZ2FsVmFsdWVzIjpbXSwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yM1QxMzoxMjo0Ny4yMjNaIn0=",
+          "body": "{\"name\":\"mcpLegalValueField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-10-30T07:26:52.231Z\"}",
           "trailers": {}
         }
       ],
@@ -144,19 +144,19 @@
     }
   },
   {
-    "hash": "_bvh8KkWPvjKPRe4gWqnnoD-9P34uF_oksZymManob8",
+    "hash": "UZVRqTwGsbwB5R4MQBibrd-OdzpOq2JfdIe0y2sal9w",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/context",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "59",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcpProjectLegalValueField\",\"project\":\"mcp-server\"}"
       },
@@ -176,7 +176,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwUHJvamVjdExlZ2FsVmFsdWVGaWVsZCIsImRlc2NyaXB0aW9uIjpudWxsLCJzdGlja2luZXNzIjpmYWxzZSwic29ydE9yZGVyIjowLCJsZWdhbFZhbHVlcyI6W10sImNyZWF0ZWRBdCI6IjIwMjYtMTAtMjNUMTM6MTI6NDcuNDQ3WiIsInByb2plY3QiOiJtY3Atc2VydmVyIn0=",
+          "body": "{\"name\":\"mcpProjectLegalValueField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-10-30T07:26:52.846Z\",\"project\":\"mcp-server\"}",
           "trailers": {}
         }
       ],
@@ -184,19 +184,19 @@
     }
   },
   {
-    "hash": "1SoMijA0b8lMmm1gfZigeMXRWSsS9FyOtmNLW0bUOGM",
+    "hash": "gOepgLVyFEVAGL5m-Q6UbTUglBSOTMDwqevgCUw92Co",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/context/mcpLegalValueField/legal-values",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "49",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"value\":\"gold\",\"description\":\"Paying customers\"}"
       },
@@ -221,19 +221,19 @@
     }
   },
   {
-    "hash": "Zk18xcb9TKwfByi-OtDH9g1eeVCyYDpOHKsHdPh3nkg",
+    "hash": "XTp-Dqs5VOPc80Dct60T5B1M7iv2IzTjU8BLHyh3uZM",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/context/mcpLegalValueField/legal-values",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "18",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"value\":\"silver\"}"
       },
@@ -258,17 +258,17 @@
     }
   },
   {
-    "hash": "w67NYuZPtBvsf029H-xN_7CJpIDWKoQBqylABHyO1zc",
+    "hash": "alNuaqYkxvVw8StNlcESweSY0Y5sNQamF6hB7823uIY",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/context/mcpLegalValueField/legal-values/silver",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -293,19 +293,19 @@
     }
   },
   {
-    "hash": "k0MT9MpE-w8ojCN4yuc4518tLcbpqw7-n_-TE9Rlwbc",
+    "hash": "9ryQORgt1HZ6b11MeWATph_qmalp6EFI3QPKyaPtJzY",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/context/mcpProjectLegalValueField/legal-values",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "16",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"value\":\"gold\"}"
       },
@@ -330,19 +330,19 @@
     }
   },
   {
-    "hash": "FS_W5-OORhPg7uaP7xCTQvHNgFQKSNHUNN_YKenib8Q",
+    "hash": "XQRLb85x_w5vv399030xM0GXHS-aTkaUoURqduFUdrQ",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/context/mcpProjectLegalValueField/legal-values",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "18",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"value\":\"silver\"}"
       },
@@ -367,17 +367,17 @@
     }
   },
   {
-    "hash": "GuaT4g8u1k-1VxWhvARw8yOQOoGmPhM5I6d-i3XnV7M",
+    "hash": "hSBNWQUIRCJSolI0dtQprtM5sSr7fNhfqSGJiUJGTX4",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/context/mcpProjectLegalValueField/legal-values/silver",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },

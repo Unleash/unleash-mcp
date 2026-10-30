@@ -1,16 +1,16 @@
 [
   {
-    "hash": "ikLeskJYtZkRgnFjFGwX1EX5oIsg83Fdl-342mcT6Xo",
+    "hash": "fewRLYWw5JQ8hU49vbRFHZw5gTLHot2gFwaxbZvJcAc",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-checkout-experiment",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -29,7 +29,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3AtY2hlY2tvdXQtZXhwZXJpbWVudFwiIGluIHByb2plY3QgXCJtY3Atc2VydmVyXCIuIiwiZGV0YWlscyI6W3sibWVzc2FnZSI6IlRoZXJlJ3Mgbm8gZmVhdHVyZSBuYW1lZCBcIm1jcC1jaGVja291dC1leHBlcmltZW50XCIgaW4gcHJvamVjdCBcIm1jcC1zZXJ2ZXJcIi4ifV19",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-checkout-experiment\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-checkout-experiment\\\" in project \\\"mcp-server\\\".\"}]}",
           "trailers": {}
         },
         {
@@ -46,13 +46,13 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3AtY2hlY2tvdXQtZXhwZXJpbWVudFwiIGluIHByb2plY3QgXCJtY3Atc2VydmVyXCIuIiwiZGV0YWlscyI6W3sibWVzc2FnZSI6IlRoZXJlJ3Mgbm8gZmVhdHVyZSBuYW1lZCBcIm1jcC1jaGVja291dC1leHBlcmltZW50XCIgaW4gcHJvamVjdCBcIm1jcC1zZXJ2ZXJcIi4ifV19",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-checkout-experiment\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-checkout-experiment\\\" in project \\\"mcp-server\\\".\"}]}",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "1772",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -61,16 +61,15 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G7AFAMT/X7N3tb8/yQoziI2Q0ivK03AGcQ48f3fommIDgJF+Ji0tOul0a8BIoMbSgTXIHuw3oBnPdK7ZOEqw313dWgTwAiPvZZifF4h2Jhi0Lf++mSJDINjMH4nifYaJawgCzQwOcTCcVhI4owwjBeJyteGzg6BP5yXx2+QowSiBzMkyTZ5UowxQ8GEJYVkZApselK230fRboCs7PIK9qmBYIqclQGA/ifthGikFMvth7yPl7JV3tGvgefQnO6NGf4pNGIEFveLyIPOW9IGw/RagihXmAr/4uuy5g8E8HIqN2Q8uKxdHCIAEiUmOT8WglBJqIzaBTBNm9b9DezUp4B0MZPm6Ld+8fvnmxpcn9+9/efHx0+OXz+QzLV9DgD0HgsHjY0pnSyQIUOZMmNGGTNtvgUSBbKZ3wUZdSXakabXJjeWGDa0u6cIvkS2Q/JLufEG5bjXSbCnbPM1vUWK80WTATMtJHMsjy5bbrFs8gjo4iLAfrc9B0AzKlI4pAQbYIBFt3n8xufsMAyVVW5SyUPpT2ZqqNFV7XUr1A1OdD85gLuAzq1o78EvBz57JFbzsKULAz3aizynA4D/zIZvdbkr22LJNB1gAP77sru8dadepvtKkektNX6qOVFVTQ22rKulU29iOKq0GWdqmqQZNuq2Vlo1utLubb9fqmrudiNNyLd2esAnwGVL5lEVLsnLQVZVODzQwuVd+JPYzPY4uR0G7KmSH1ZZxA8ToJwqGV53gRxrOhkAwF8hsJ4LBMhHNEFjFeji5j2wnUlco4Ku66gc2geDjXhGwhFo8KEelNSfr3/oJhe73tgE=",
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":true,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[{\"name\":\"flexibleRollout\",\"constraints\":[],\"variants\":[{\"name\":\"control\",\"weight\":500,\"stickiness\":\"default\",\"weightType\":\"fix\"},{\"name\":\"treatment\",\"weight\":500,\"stickiness\":\"default\",\"weightType\":\"variable\"}],\"parameters\":{\"groupId\":\"mcp-checkout-experiment\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"segments\":[],\"sortOrder\":0,\"id\":\"01M65V8PFNVYS9ZFATXS5676DT\",\"title\":\"Everyone\",\"disabled\":false}],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-checkout-experiment\",\"favorite\":false,\"impressionData\":true,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:26:54.484Z\",\"createdBy\":{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"type\":\"experiment\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-09T07:26:54.484Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T07:26:54.622Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "1773",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -79,16 +78,15 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G7EFAMT/X7N3tb8/yQoziI2Q0ivK03AGcQ48f3ficmIBQKQ/JzVx7EWvtQHHBFr7PLAN0oNVQBmnNtfs4CSH/ZKytYjSC4y8lmF+XiDamWDQtvz7ZooMgWAzfySK9xkmriEINDM4ycGMNmQSOKMMIwXictXgs4OkT+cl8dvkKMEogczJMk2edMMUkPFhCWFZGQKnHhStN1L3W6AtOziCvCpjWCKnJUDgQImrYRopBTL7Ye8j5eyWY7Rr4HnkJzsDRn+KTUhDoo7MzdcNmDehD4TttwBXDDAX+MbXSc8dDObhUJzMvn1ZufiHAFCQqOT4QAxKKaHWbxPINIFW+ju0F5MC3sFAlq/b8s3rl29ufHly//6XFx8/PX75TD7T8jUE2HMgGDw+pnS2RIIAZyBIt22/BRIFspneBRt1RdiRptUmN5YcNri8pFV+iXRJFZTsVjnNlpzNU/wWWcYbzgaExUmZM/2RZQvDaSUBt3sEcXAQoj9coAOh6ZEpHVMCTGKDRLh7/9nk7jMMlFRtUcpC6U9la6rSVO11KdUPTLU8OIO5gE+vau3ALwU/eyZX8LKnCAE/24k+pwCD/8yHbHa7Kdljyzb9wQLw8Wl3fe9Iu071lSbVW2r6UnWkqpoaaltVSafaxnZUaTXI0jZNNWjSba20bHSj3d18u1bX3O1EnJZr6faETYDPkEqlLFyTlbQQvJVODzQwuVd+JPYzPY4uR0G5KmSHFJcxA8TwGgXC+57gRxrOhkAwF8hsJ4LBPhGVENjGujO5j2wnUpcu4NO66gc2geDjXpFkCcV4QI4Ka07Wv/UTCtXvbQM=",
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[{\"name\":\"flexibleRollout\",\"constraints\":[],\"variants\":[{\"name\":\"control\",\"weight\":500,\"stickiness\":\"default\",\"weightType\":\"fix\"},{\"name\":\"treatment\",\"weight\":500,\"stickiness\":\"default\",\"weightType\":\"variable\"}],\"parameters\":{\"groupId\":\"mcp-checkout-experiment\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"segments\":[],\"sortOrder\":0,\"id\":\"01M65V8PFNVYS9ZFATXS5676DT\",\"title\":\"Everyone\",\"disabled\":false}],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-checkout-experiment\",\"favorite\":false,\"impressionData\":true,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:26:54.484Z\",\"createdBy\":{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"type\":\"experiment\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-09T07:26:54.484Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T07:26:54.622Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "1773",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -97,10 +95,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G7EFAMT/X7N3tb8/yQoziI2Q0ivK03AGcQ48f3ficmIBQKQ/JzVx7EWvtQHHBFr7PLAN0oNVQBmnNtfs4CSH/ZKytYjSC4y8lmF+XiDamWDQtvz7ZooMgWAzfySK9xkmriEINDM4ycGMNmQSOKMMIwXictXgs4OkT+cl8dvkKMEogczJMk2edMMUkPFhCWFZGQKnHhStN1L3W6AtOziCvCpjWCKnJUDgQImrYRopBTL7Ye8j5eyWY7Rr4HnkJzsDRn+KTUhDoo7MzdcNmDehD4TttwBXDDAX+MbXSc8dDObhUJzMvn1ZufiHAFCQqOT4QAxKKaHWbxPINIFW+ju0F5MC3sFAlq/b8s3rl29ufHly//6XFx8/PX75TD7T8jUE2HMgGDw+pnS2RIIAZyBIt22/BRIFspneBRt1RdiRptUmN5YcNri8pFV+iXRJFZTsVjnNlpzNU/wWWcYbzgaExUmZM/2RZQvDaSUBt3sEcXAQoj9coAOh6ZEpHVMCTGKDRLh7/9nk7jMMlFRtUcpC6U9la6rSVO11KdUPTLU8OIO5gE+vau3ALwU/eyZX8LKnCAE/24k+pwCD/8yHbHa7Kdljyzb9wQLw8Wl3fe9Iu071lSbVW2r6UnWkqpoaaltVSafaxnZUaTXI0jZNNWjSba20bHSj3d18u1bX3O1EnJZr6faETYDPkEqlLFyTlbQQvJVODzQwuVd+JPYzPY4uR0G5KmSHFJcxA8TwGgXC+57gRxrOhkAwF8hsJ4LBPhGVENjGujO5j2wnUpcu4NO66gc2geDjXpFkCcV4QI4Ka07Wv/UTCtXvbQM=",
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[{\"name\":\"flexibleRollout\",\"constraints\":[],\"variants\":[{\"name\":\"control\",\"weight\":500,\"stickiness\":\"default\",\"weightType\":\"fix\"},{\"name\":\"treatment\",\"weight\":500,\"stickiness\":\"default\",\"weightType\":\"variable\"}],\"parameters\":{\"groupId\":\"mcp-checkout-experiment\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"segments\":[],\"sortOrder\":0,\"id\":\"01M65V8PFNVYS9ZFATXS5676DT\",\"title\":\"Everyone\",\"disabled\":false}],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-checkout-experiment\",\"favorite\":false,\"impressionData\":true,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:26:54.484Z\",\"createdBy\":{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"type\":\"experiment\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-09T07:26:54.484Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T07:26:54.622Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         }
       ],
@@ -108,17 +105,17 @@
     }
   },
   {
-    "hash": "PCYGrvBl2NE9QQgarX1KlUcN7876SDRIWuVyLbfs-00",
+    "hash": "vW5h5sI_i4pHYS9-xhqt-_A9rFEz0xayXcB_xYHQ_Dc",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-checkout-experiment",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -137,7 +134,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBmZWF0dXJlIGZsYWcgZm91bmQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiTm8gZmVhdHVyZSBmbGFnIGZvdW5kIn1dfQ==",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"No feature flag found\",\"details\":[{\"message\":\"No feature flag found\"}]}",
           "trailers": {}
         },
         {
@@ -160,17 +157,17 @@
     }
   },
   {
-    "hash": "D4vlX1QK0M-0eyv2G7RuCQI4YTS4tAty3oD62gyS_LM",
+    "hash": "5TxoiufUy7m74A-pa2RahxwV0xUh_xoeii_9x_Pfjiw",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/archive/mcp-checkout-experiment",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -210,17 +207,17 @@
     }
   },
   {
-    "hash": "Z33xUUfJs9kqghQI9hhOrW2nL22ngIVS3xVsdKYE15Q",
+    "hash": "MoaT536Kuj1P5XrK7F6lJWCuzno5OiLzsmW9wF5OYJM",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/ui-config",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -228,7 +225,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "5112",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -237,16 +234,15 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "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",
+          "body": "{\"environment\":\"Enterprise\",\"flags\":{\"OIDC\":true,\"EEA\":true,\"RE\":true,\"UG\":true,\"SE\":false,\"CO\":true,\"UNLEASH_CLOUD\":true,\"C\":true,\"P\":true,\"anonymiseEventLog\":false,\"enableLicense\":false,\"sessionTimeouts\":true,\"responseTimeWithAppNameKillSwitch\":false,\"maintenanceMode\":false,\"messageBanner\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"strictSchemaValidation\":false,\"personalAccessTokensKillSwitch\":false,\"migrationLock\":true,\"demo\":false,\"onboardingIntroTourAdvancedTopics\":false,\"interactiveDemoKillSwitch\":false,\"filterInvalidClientMetrics\":false,\"disableMetrics\":false,\"celebrateUnleash\":false,\"feedbackPosting\":true,\"encryptEmails\":false,\"extendedUsageMetrics\":{\"name\":\"maxResults\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"3600000\"},\"feature_enabled\":true,\"featureEnabled\":true},\"outdatedSdksBanner\":true,\"feedbackComments\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"usePromiseTokenCache\":true,\"disableUpdateMaxRevisionId\":false,\"disablePublishUnannouncedEvents\":false,\"responseTimeMetricsFix\":true,\"disableShowContextFieldSelectionValues\":false,\"manyStrategiesPagination\":true,\"enableLegacyVariants\":false,\"extendedMetrics\":true,\"removeUnsafeInlineStyleSrc\":false,\"projectRoleAssignment\":false,\"webhookDomainLogging\":false,\"productivityReportEmail\":true,\"productivityReportUnsubscribers\":false,\"tokenExpiryNotifications\":true,\"showUserDeviceCount\":{\"name\":\"warnAbove\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"2\"},\"feature_enabled\":true,\"featureEnabled\":true},\"deltaApi\":true,\"cacheFeatureSerialization\":true,\"uniqueSdkTracking\":true,\"consumptionModel\":true,\"impactViews\":true,\"disableImpactMetrics\":false,\"flightRecorderSdk\":true,\"flightRecorderAdminEvents\":false,\"flightRecorderFrontend\":{\"name\":\"url\",\"enabled\":true,\"payload\":{\"type\":\"string\",\"value\":\"http://flight-recorder.sandbox.getunleash.io/frontend-events\"},\"feature_enabled\":true,\"featureEnabled\":true},\"regexConstraintOperator\":true,\"ipConstraintOperator\":true,\"userTokenWithClientApiLoggingKillSwitch\":false,\"multiMetricChart\":true,\"logRocketEnabled\":true,\"hubspotChatEnabled\":true,\"learningLab\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":true,\"featureEnabled\":true},\"serviceNowIntegration\":true,\"recordSdkFlavorMetrics\":false,\"secureAccountTokenStorage\":true,\"searchDocsWidget\":true,\"semverBuildMetadata\":false,\"auditEventUserAgent\":true,\"helpMenuRelocationHint\":false,\"githubIntegration\":true,\"slackAppAuthV2\":false,\"integrationParamKvpEditor\":true,\"perFlagLifetime\":true,\"payloadSchemas\":true,\"singlePageStrategyForm\":false,\"feedbackModule\":true,\"feedbackModuleDisplaySurvey\":false,\"feedbackModuleSubmitResponses\":true,\"playgroundFeatureEvaluation\":true,\"signals\":true,\"automatedActions\":true,\"killScheduledChangeRequestCache\":false,\"estimateTrafficDataCost\":true,\"streaming\":{\"name\":\"disabled\",\"enabled\":true},\"denyStreamingForNonEdge\":true,\"consumptionModelUI\":true,\"fetchMode\":{\"name\":\"streaming\",\"enabled\":true,\"feature_enabled\":true,\"featureEnabled\":true},\"oidcPkceSupport\":true,\"enterpriseEdgeTokensList\":true,\"impactMetricsFlagPage\":true,\"disableScimAdminGroupGuard\":false,\"elasticEventSync\":true,\"uxTweakSurveys\":true,\"loginHistoryUserAgent\":true,\"remoteMcpHostedClients\":false,\"remoteMcpV2\":true,\"dashboardV2\":false,\"samlIssuerMismatchLogging\":true,\"oidcGroupSyncIdToken\":false,\"changeRequestSubmitRedirect\":true},\"billing\":\"subscription\",\"slogan\":\"getunleash.io - All rights reserved\",\"name\":\"Unleash\",\"links\":[{\"value\":\"Documentation\",\"icon\":\"library_books\",\"href\":\"https://docs.getunleash.io/docs\",\"title\":\"User documentation\"},{\"value\":\"GitHub\",\"icon\":\"c_github\",\"href\":\"https://github.com/Unleash/unleash\",\"title\":\"Source code on GitHub\"}],\"oidcConfiguredThroughEnv\":false,\"samlConfiguredThroughEnv\":false,\"version\":\"8.3.1\",\"emailEnabled\":true,\"unleashUrl\":\"https://sandbox.getunleash.io/enterprise\",\"logRocketAppId\":\"1knhci/unleash-sandbox\",\"hubspotPortalId\":\"19521761\",\"baseUriPath\":\"/enterprise\",\"authenticationType\":\"hosted\",\"frontendApiOrigins\":[\"*\"],\"versionInfo\":{\"current\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.1+27403.4298c9ee05\"},\"latest\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.1\"},\"isLatest\":true,\"instanceId\":\"902e2e68-ab1d-4e35-9cd0-896618db603d\"},\"prometheusAPIAvailable\":true,\"impactMetrics\":\"full\",\"resourceLimits\":{\"segmentValues\":1000,\"strategySegments\":5,\"signalEndpoints\":5,\"actionSetActions\":10,\"actionSetsPerProject\":5,\"actionSetFilters\":5,\"actionSetFilterValues\":25,\"signalTokensPerEndpoint\":5,\"featureEnvironmentStrategies\":30,\"constraintValues\":1000,\"constraints\":30,\"environments\":50,\"projects\":500,\"apiTokens\":2000,\"segments\":300,\"featureFlags\":50000,\"releaseTemplates\":50,\"readOnlyUsers\":10},\"disablePasswordAuth\":false,\"maintenanceMode\":false,\"feedbackUriPath\":\"https://sandbox.getunleash.io/nuno/feedback\",\"maxSessionsCount\":1,\"sessionKeepAliveIntervalSeconds\":60,\"unleashContext\":{\"properties\":{\"clientId\":\"enterprise\",\"plan\":\"Enterprise\",\"billing\":\"subscription\",\"awsRegion\":\"eu-north-1\",\"version\":\"8.3.1+27403.4298c9ee05\",\"releaseSegment\":\"enterprise\"},\"userId\":248},\"storiesPageEnabled\":true}",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "5112",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -255,16 +251,15 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "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",
+          "body": "{\"environment\":\"Enterprise\",\"flags\":{\"OIDC\":true,\"EEA\":true,\"RE\":true,\"UG\":true,\"SE\":false,\"CO\":true,\"UNLEASH_CLOUD\":true,\"C\":true,\"P\":true,\"anonymiseEventLog\":false,\"enableLicense\":false,\"sessionTimeouts\":true,\"responseTimeWithAppNameKillSwitch\":false,\"maintenanceMode\":false,\"messageBanner\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"strictSchemaValidation\":false,\"personalAccessTokensKillSwitch\":false,\"migrationLock\":true,\"demo\":false,\"onboardingIntroTourAdvancedTopics\":false,\"interactiveDemoKillSwitch\":false,\"filterInvalidClientMetrics\":false,\"disableMetrics\":false,\"celebrateUnleash\":false,\"feedbackPosting\":true,\"encryptEmails\":false,\"extendedUsageMetrics\":{\"name\":\"maxResults\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"3600000\"},\"feature_enabled\":true,\"featureEnabled\":true},\"outdatedSdksBanner\":true,\"feedbackComments\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"usePromiseTokenCache\":true,\"disableUpdateMaxRevisionId\":false,\"disablePublishUnannouncedEvents\":false,\"responseTimeMetricsFix\":true,\"disableShowContextFieldSelectionValues\":false,\"manyStrategiesPagination\":true,\"enableLegacyVariants\":false,\"extendedMetrics\":true,\"removeUnsafeInlineStyleSrc\":false,\"projectRoleAssignment\":false,\"webhookDomainLogging\":false,\"productivityReportEmail\":true,\"productivityReportUnsubscribers\":false,\"tokenExpiryNotifications\":true,\"showUserDeviceCount\":{\"name\":\"warnAbove\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"2\"},\"feature_enabled\":true,\"featureEnabled\":true},\"deltaApi\":true,\"cacheFeatureSerialization\":true,\"uniqueSdkTracking\":true,\"consumptionModel\":true,\"impactViews\":true,\"disableImpactMetrics\":false,\"flightRecorderSdk\":true,\"flightRecorderAdminEvents\":false,\"flightRecorderFrontend\":{\"name\":\"url\",\"enabled\":true,\"payload\":{\"type\":\"string\",\"value\":\"http://flight-recorder.sandbox.getunleash.io/frontend-events\"},\"feature_enabled\":true,\"featureEnabled\":true},\"regexConstraintOperator\":true,\"ipConstraintOperator\":true,\"userTokenWithClientApiLoggingKillSwitch\":false,\"multiMetricChart\":true,\"logRocketEnabled\":true,\"hubspotChatEnabled\":true,\"learningLab\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":true,\"featureEnabled\":true},\"serviceNowIntegration\":true,\"recordSdkFlavorMetrics\":false,\"secureAccountTokenStorage\":true,\"searchDocsWidget\":true,\"semverBuildMetadata\":false,\"auditEventUserAgent\":true,\"helpMenuRelocationHint\":false,\"githubIntegration\":true,\"slackAppAuthV2\":false,\"integrationParamKvpEditor\":true,\"perFlagLifetime\":true,\"payloadSchemas\":true,\"singlePageStrategyForm\":false,\"feedbackModule\":true,\"feedbackModuleDisplaySurvey\":false,\"feedbackModuleSubmitResponses\":true,\"playgroundFeatureEvaluation\":true,\"signals\":true,\"automatedActions\":true,\"killScheduledChangeRequestCache\":false,\"estimateTrafficDataCost\":true,\"streaming\":{\"name\":\"disabled\",\"enabled\":true},\"denyStreamingForNonEdge\":true,\"consumptionModelUI\":true,\"fetchMode\":{\"name\":\"streaming\",\"enabled\":true,\"feature_enabled\":true,\"featureEnabled\":true},\"oidcPkceSupport\":true,\"enterpriseEdgeTokensList\":true,\"impactMetricsFlagPage\":true,\"disableScimAdminGroupGuard\":false,\"elasticEventSync\":true,\"uxTweakSurveys\":true,\"loginHistoryUserAgent\":true,\"remoteMcpHostedClients\":false,\"remoteMcpV2\":true,\"dashboardV2\":false,\"samlIssuerMismatchLogging\":true,\"oidcGroupSyncIdToken\":false,\"changeRequestSubmitRedirect\":true},\"billing\":\"subscription\",\"slogan\":\"getunleash.io - All rights reserved\",\"name\":\"Unleash\",\"links\":[{\"value\":\"Documentation\",\"icon\":\"library_books\",\"href\":\"https://docs.getunleash.io/docs\",\"title\":\"User documentation\"},{\"value\":\"GitHub\",\"icon\":\"c_github\",\"href\":\"https://github.com/Unleash/unleash\",\"title\":\"Source code on GitHub\"}],\"oidcConfiguredThroughEnv\":false,\"samlConfiguredThroughEnv\":false,\"version\":\"8.3.1\",\"emailEnabled\":true,\"unleashUrl\":\"https://sandbox.getunleash.io/enterprise\",\"logRocketAppId\":\"1knhci/unleash-sandbox\",\"hubspotPortalId\":\"19521761\",\"baseUriPath\":\"/enterprise\",\"authenticationType\":\"hosted\",\"frontendApiOrigins\":[\"*\"],\"versionInfo\":{\"current\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.1+27403.4298c9ee05\"},\"latest\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.1\"},\"isLatest\":true,\"instanceId\":\"902e2e68-ab1d-4e35-9cd0-896618db603d\"},\"prometheusAPIAvailable\":true,\"impactMetrics\":\"full\",\"resourceLimits\":{\"segmentValues\":1000,\"strategySegments\":5,\"signalEndpoints\":5,\"actionSetActions\":10,\"actionSetsPerProject\":5,\"actionSetFilters\":5,\"actionSetFilterValues\":25,\"signalTokensPerEndpoint\":5,\"featureEnvironmentStrategies\":30,\"constraintValues\":1000,\"constraints\":30,\"environments\":50,\"projects\":500,\"apiTokens\":2000,\"segments\":300,\"featureFlags\":50000,\"releaseTemplates\":50,\"readOnlyUsers\":10},\"disablePasswordAuth\":false,\"maintenanceMode\":false,\"feedbackUriPath\":\"https://sandbox.getunleash.io/nuno/feedback\",\"maxSessionsCount\":1,\"sessionKeepAliveIntervalSeconds\":60,\"unleashContext\":{\"properties\":{\"clientId\":\"enterprise\",\"plan\":\"Enterprise\",\"billing\":\"subscription\",\"awsRegion\":\"eu-north-1\",\"version\":\"8.3.1+27403.4298c9ee05\",\"releaseSegment\":\"enterprise\"},\"userId\":248},\"storiesPageEnabled\":true}",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "5112",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -273,10 +268,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "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",
+          "body": "{\"environment\":\"Enterprise\",\"flags\":{\"OIDC\":true,\"EEA\":true,\"RE\":true,\"UG\":true,\"SE\":false,\"CO\":true,\"UNLEASH_CLOUD\":true,\"C\":true,\"P\":true,\"anonymiseEventLog\":false,\"enableLicense\":false,\"sessionTimeouts\":true,\"responseTimeWithAppNameKillSwitch\":false,\"maintenanceMode\":false,\"messageBanner\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"strictSchemaValidation\":false,\"personalAccessTokensKillSwitch\":false,\"migrationLock\":true,\"demo\":false,\"onboardingIntroTourAdvancedTopics\":false,\"interactiveDemoKillSwitch\":false,\"filterInvalidClientMetrics\":false,\"disableMetrics\":false,\"celebrateUnleash\":false,\"feedbackPosting\":true,\"encryptEmails\":false,\"extendedUsageMetrics\":{\"name\":\"maxResults\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"3600000\"},\"feature_enabled\":true,\"featureEnabled\":true},\"outdatedSdksBanner\":true,\"feedbackComments\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"usePromiseTokenCache\":true,\"disableUpdateMaxRevisionId\":false,\"disablePublishUnannouncedEvents\":false,\"responseTimeMetricsFix\":true,\"disableShowContextFieldSelectionValues\":false,\"manyStrategiesPagination\":true,\"enableLegacyVariants\":false,\"extendedMetrics\":true,\"removeUnsafeInlineStyleSrc\":false,\"projectRoleAssignment\":false,\"webhookDomainLogging\":false,\"productivityReportEmail\":true,\"productivityReportUnsubscribers\":false,\"tokenExpiryNotifications\":true,\"showUserDeviceCount\":{\"name\":\"warnAbove\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"2\"},\"feature_enabled\":true,\"featureEnabled\":true},\"deltaApi\":true,\"cacheFeatureSerialization\":true,\"uniqueSdkTracking\":true,\"consumptionModel\":true,\"impactViews\":true,\"disableImpactMetrics\":false,\"flightRecorderSdk\":true,\"flightRecorderAdminEvents\":false,\"flightRecorderFrontend\":{\"name\":\"url\",\"enabled\":true,\"payload\":{\"type\":\"string\",\"value\":\"http://flight-recorder.sandbox.getunleash.io/frontend-events\"},\"feature_enabled\":true,\"featureEnabled\":true},\"regexConstraintOperator\":true,\"ipConstraintOperator\":true,\"userTokenWithClientApiLoggingKillSwitch\":false,\"multiMetricChart\":true,\"logRocketEnabled\":true,\"hubspotChatEnabled\":true,\"learningLab\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":true,\"featureEnabled\":true},\"serviceNowIntegration\":true,\"recordSdkFlavorMetrics\":false,\"secureAccountTokenStorage\":true,\"searchDocsWidget\":true,\"semverBuildMetadata\":false,\"auditEventUserAgent\":true,\"helpMenuRelocationHint\":false,\"githubIntegration\":true,\"slackAppAuthV2\":false,\"integrationParamKvpEditor\":true,\"perFlagLifetime\":true,\"payloadSchemas\":true,\"singlePageStrategyForm\":false,\"feedbackModule\":true,\"feedbackModuleDisplaySurvey\":false,\"feedbackModuleSubmitResponses\":true,\"playgroundFeatureEvaluation\":true,\"signals\":true,\"automatedActions\":true,\"killScheduledChangeRequestCache\":false,\"estimateTrafficDataCost\":true,\"streaming\":{\"name\":\"disabled\",\"enabled\":true},\"denyStreamingForNonEdge\":true,\"consumptionModelUI\":true,\"fetchMode\":{\"name\":\"streaming\",\"enabled\":true,\"feature_enabled\":true,\"featureEnabled\":true},\"oidcPkceSupport\":true,\"enterpriseEdgeTokensList\":true,\"impactMetricsFlagPage\":true,\"disableScimAdminGroupGuard\":false,\"elasticEventSync\":true,\"uxTweakSurveys\":true,\"loginHistoryUserAgent\":true,\"remoteMcpHostedClients\":false,\"remoteMcpV2\":true,\"dashboardV2\":false,\"samlIssuerMismatchLogging\":true,\"oidcGroupSyncIdToken\":false,\"changeRequestSubmitRedirect\":true},\"billing\":\"subscription\",\"slogan\":\"getunleash.io - All rights reserved\",\"name\":\"Unleash\",\"links\":[{\"value\":\"Documentation\",\"icon\":\"library_books\",\"href\":\"https://docs.getunleash.io/docs\",\"title\":\"User documentation\"},{\"value\":\"GitHub\",\"icon\":\"c_github\",\"href\":\"https://github.com/Unleash/unleash\",\"title\":\"Source code on GitHub\"}],\"oidcConfiguredThroughEnv\":false,\"samlConfiguredThroughEnv\":false,\"version\":\"8.3.1\",\"emailEnabled\":true,\"unleashUrl\":\"https://sandbox.getunleash.io/enterprise\",\"logRocketAppId\":\"1knhci/unleash-sandbox\",\"hubspotPortalId\":\"19521761\",\"baseUriPath\":\"/enterprise\",\"authenticationType\":\"hosted\",\"frontendApiOrigins\":[\"*\"],\"versionInfo\":{\"current\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.1+27403.4298c9ee05\"},\"latest\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.1\"},\"isLatest\":true,\"instanceId\":\"902e2e68-ab1d-4e35-9cd0-896618db603d\"},\"prometheusAPIAvailable\":true,\"impactMetrics\":\"full\",\"resourceLimits\":{\"segmentValues\":1000,\"strategySegments\":5,\"signalEndpoints\":5,\"actionSetActions\":10,\"actionSetsPerProject\":5,\"actionSetFilters\":5,\"actionSetFilterValues\":25,\"signalTokensPerEndpoint\":5,\"featureEnvironmentStrategies\":30,\"constraintValues\":1000,\"constraints\":30,\"environments\":50,\"projects\":500,\"apiTokens\":2000,\"segments\":300,\"featureFlags\":50000,\"releaseTemplates\":50,\"readOnlyUsers\":10},\"disablePasswordAuth\":false,\"maintenanceMode\":false,\"feedbackUriPath\":\"https://sandbox.getunleash.io/nuno/feedback\",\"maxSessionsCount\":1,\"sessionKeepAliveIntervalSeconds\":60,\"unleashContext\":{\"properties\":{\"clientId\":\"enterprise\",\"plan\":\"Enterprise\",\"billing\":\"subscription\",\"awsRegion\":\"eu-north-1\",\"version\":\"8.3.1+27403.4298c9ee05\",\"releaseSegment\":\"enterprise\"},\"userId\":248},\"storiesPageEnabled\":true}",
           "trailers": {}
         }
       ],
@@ -284,17 +278,17 @@
     }
   },
   {
-    "hash": "_jJqT0bsXrUqt8WSp25X4grEJSQ-H24k8SLZY40jAXs",
+    "hash": "q4ukEMq0eIU9K34eh2Kf4cvZsXlQF6AUjpsqOyxqoHM",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/change-requests/config",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -313,7 +307,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "W3siZW52aXJvbm1lbnQiOiJkZXZlbG9wbWVudCIsInR5cGUiOiJkZXZlbG9wbWVudCIsInJlcXVpcmVkQXBwcm92YWxzIjpudWxsLCJjaGFuZ2VSZXF1ZXN0RW5hYmxlZCI6ZmFsc2V9LHsiZW52aXJvbm1lbnQiOiJwcm9kdWN0aW9uIiwidHlwZSI6InByb2R1Y3Rpb24iLCJyZXF1aXJlZEFwcHJvdmFscyI6MSwiY2hhbmdlUmVxdWVzdEVuYWJsZWQiOnRydWV9XQ==",
+          "body": "[{\"environment\":\"development\",\"type\":\"development\",\"requiredApprovals\":null,\"changeRequestEnabled\":false},{\"environment\":\"production\",\"type\":\"production\",\"requiredApprovals\":1,\"changeRequestEnabled\":true}]",
           "trailers": {}
         },
         {
@@ -330,7 +324,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "W3siZW52aXJvbm1lbnQiOiJkZXZlbG9wbWVudCIsInR5cGUiOiJkZXZlbG9wbWVudCIsInJlcXVpcmVkQXBwcm92YWxzIjpudWxsLCJjaGFuZ2VSZXF1ZXN0RW5hYmxlZCI6ZmFsc2V9LHsiZW52aXJvbm1lbnQiOiJwcm9kdWN0aW9uIiwidHlwZSI6InByb2R1Y3Rpb24iLCJyZXF1aXJlZEFwcHJvdmFscyI6MSwiY2hhbmdlUmVxdWVzdEVuYWJsZWQiOnRydWV9XQ==",
+          "body": "[{\"environment\":\"development\",\"type\":\"development\",\"requiredApprovals\":null,\"changeRequestEnabled\":false},{\"environment\":\"production\",\"type\":\"production\",\"requiredApprovals\":1,\"changeRequestEnabled\":true}]",
           "trailers": {}
         },
         {
@@ -347,7 +341,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "W3siZW52aXJvbm1lbnQiOiJkZXZlbG9wbWVudCIsInR5cGUiOiJkZXZlbG9wbWVudCIsInJlcXVpcmVkQXBwcm92YWxzIjpudWxsLCJjaGFuZ2VSZXF1ZXN0RW5hYmxlZCI6ZmFsc2V9LHsiZW52aXJvbm1lbnQiOiJwcm9kdWN0aW9uIiwidHlwZSI6InByb2R1Y3Rpb24iLCJyZXF1aXJlZEFwcHJvdmFscyI6MSwiY2hhbmdlUmVxdWVzdEVuYWJsZWQiOnRydWV9XQ==",
+          "body": "[{\"environment\":\"development\",\"type\":\"development\",\"requiredApprovals\":null,\"changeRequestEnabled\":false},{\"environment\":\"production\",\"type\":\"production\",\"requiredApprovals\":1,\"changeRequestEnabled\":true}]",
           "trailers": {}
         }
       ],
@@ -355,19 +349,19 @@
     }
   },
   {
-    "hash": "BpVr61p0H8euHUqU1os1UcwRZ4y9_okRJnJfRubka8I",
+    "hash": "erUNakMaIFmtg6zF-Wqha9oUw9OL7fSvBV7Sc0wTRak",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "76",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcp-checkout-experiment\",\"type\":\"experiment\",\"impressionData\":true}"
       },
@@ -386,7 +380,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLWNoZWNrb3V0LWV4cGVyaW1lbnQiLCJkZXNjcmlwdGlvbiI6bnVsbCwidHlwZSI6ImV4cGVyaW1lbnQiLCJwcm9qZWN0IjoibWNwLXNlcnZlciIsInN0YWxlIjpmYWxzZSwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yOFQxNjozMTozNi4wMDJaIiwiaW1wcmVzc2lvbkRhdGEiOnRydWUsImFyY2hpdmVkIjpmYWxzZX0=",
+          "body": "{\"name\":\"mcp-checkout-experiment\",\"description\":null,\"type\":\"experiment\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:26:54.484Z\",\"impressionData\":true,\"archived\":false}",
           "trailers": {}
         }
       ],
@@ -394,19 +388,19 @@
     }
   },
   {
-    "hash": "tJmhDa3vGUGNV7ADIoE7RwBN9ITW-2usvYWXodheuAg",
+    "hash": "hWB5Dpjk1PUBV4XGt9a8-WkezL1bk-OjnABUeOynUUU",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-checkout-experiment/environments/development/strategies",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "334",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"mcp-checkout-experiment\"},\"constraints\":[],\"segments\":[],\"variants\":[{\"name\":\"control\",\"weight\":500,\"weightType\":\"fix\",\"stickiness\":\"default\"},{\"name\":\"treatment\",\"weight\":500,\"weightType\":\"variable\",\"stickiness\":\"default\"}]}"
       },
@@ -425,7 +419,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJpZCI6IjAxTTYxTk1LTjlWRkFBVkpTVEVLSDBIODBNIiwibmFtZSI6ImZsZXhpYmxlUm9sbG91dCIsImNvbnN0cmFpbnRzIjpbXSwicGFyYW1ldGVycyI6eyJncm91cElkIjoibWNwLWNoZWNrb3V0LWV4cGVyaW1lbnQiLCJyb2xsb3V0IjoiMTAwIiwic3RpY2tpbmVzcyI6ImRlZmF1bHQifSwidmFyaWFudHMiOlt7Im5hbWUiOiJjb250cm9sIiwid2VpZ2h0Ijo1MDAsInN0aWNraW5lc3MiOiJkZWZhdWx0Iiwid2VpZ2h0VHlwZSI6ImZpeCJ9LHsibmFtZSI6InRyZWF0bWVudCIsIndlaWdodCI6NTAwLCJzdGlja2luZXNzIjoiZGVmYXVsdCIsIndlaWdodFR5cGUiOiJ2YXJpYWJsZSJ9XSwic2VnbWVudHMiOltdLCJ0aXRsZSI6IkV2ZXJ5b25lIiwiZGlzYWJsZWQiOmZhbHNlLCJzb3J0T3JkZXIiOjB9",
+          "body": "{\"id\":\"01M65V8PFNVYS9ZFATXS5676DT\",\"name\":\"flexibleRollout\",\"constraints\":[],\"parameters\":{\"groupId\":\"mcp-checkout-experiment\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"variants\":[{\"name\":\"control\",\"weight\":500,\"stickiness\":\"default\",\"weightType\":\"fix\"},{\"name\":\"treatment\",\"weight\":500,\"stickiness\":\"default\",\"weightType\":\"variable\"}],\"segments\":[],\"title\":\"Everyone\",\"disabled\":false,\"sortOrder\":0}",
           "trailers": {}
         }
       ],
@@ -433,18 +427,18 @@
     }
   },
   {
-    "hash": "kBh2D19ayRHs8L_RRLlQ6dXkbAluwE-fsIujVjOdvzg",
+    "hash": "e8GnDL3uJaUcWZbJ4hYtwvmJ8jmkMWYVmgP-hppH3mY",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-checkout-experiment/environments/development/on",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "0",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -469,18 +463,18 @@
     }
   },
   {
-    "hash": "_I7vX8ciT3roVExf6o7zO1EqrBWt7j8Uj7bC1MoyWFE",
+    "hash": "GhIzCSSylGGMBBzhhUnsYxPG46UyUiKgc5FhkcFJ8Qk",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-checkout-experiment/environments/development/off",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "0",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -505,19 +499,19 @@
     }
   },
   {
-    "hash": "fCr5-3ShWBWZDFGXGhVAzQ8INEKsEuX329pY2cFKHUo",
+    "hash": "zOYjtfR-jxgUXkHg-OolBiCy68C_i31aer9GJhygqE8",
     "snapshot": {
       "request": {
         "method": "PUT",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-checkout-experiment/environments/development/strategies/01M61NMKN9VFAAVJSTEKH0H80M",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-checkout-experiment/environments/development/strategies/01M65V8PFNVYS9ZFATXS5676DT",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "334",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"mcp-checkout-experiment\"},\"constraints\":[],\"segments\":[],\"variants\":[{\"name\":\"control\",\"weight\":500,\"weightType\":\"fix\",\"stickiness\":\"default\"},{\"name\":\"treatment\",\"weight\":500,\"weightType\":\"variable\",\"stickiness\":\"default\"}]}"
       },
@@ -536,7 +530,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJpZCI6IjAxTTYxTk1LTjlWRkFBVkpTVEVLSDBIODBNIiwibmFtZSI6ImZsZXhpYmxlUm9sbG91dCIsInRpdGxlIjoiRXZlcnlvbmUiLCJkaXNhYmxlZCI6ZmFsc2UsImNvbnN0cmFpbnRzIjpbXSwicGFyYW1ldGVycyI6eyJncm91cElkIjoibWNwLWNoZWNrb3V0LWV4cGVyaW1lbnQiLCJyb2xsb3V0IjoiMTAwIiwic3RpY2tpbmVzcyI6ImRlZmF1bHQifSwidmFyaWFudHMiOlt7Im5hbWUiOiJjb250cm9sIiwid2VpZ2h0Ijo1MDAsInN0aWNraW5lc3MiOiJkZWZhdWx0Iiwid2VpZ2h0VHlwZSI6ImZpeCJ9LHsibmFtZSI6InRyZWF0bWVudCIsIndlaWdodCI6NTAwLCJzdGlja2luZXNzIjoiZGVmYXVsdCIsIndlaWdodFR5cGUiOiJ2YXJpYWJsZSJ9XSwic29ydE9yZGVyIjowLCJzZWdtZW50cyI6W119",
+          "body": "{\"id\":\"01M65V8PFNVYS9ZFATXS5676DT\",\"name\":\"flexibleRollout\",\"title\":\"Everyone\",\"disabled\":false,\"constraints\":[],\"parameters\":{\"groupId\":\"mcp-checkout-experiment\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"variants\":[{\"name\":\"control\",\"weight\":500,\"stickiness\":\"default\",\"weightType\":\"fix\"},{\"name\":\"treatment\",\"weight\":500,\"stickiness\":\"default\",\"weightType\":\"variable\"}],\"sortOrder\":0,\"segments\":[]}",
           "trailers": {}
         }
       ],
@@ -544,19 +538,19 @@
     }
   },
   {
-    "hash": "cHpdInlaG-JCMrf2DtTFgzVqbBfdC43I3F590PXq9Cw",
+    "hash": "GEmSKiOyiZnCtnbzDDPpQWomzH1sNd6zeTDELroQT6o",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/environments/production/change-requests",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "497",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "[{\"feature\":\"mcp-checkout-experiment\",\"action\":\"addStrategy\",\"payload\":{\"name\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"mcp-checkout-experiment\"},\"constraints\":[],\"segments\":[],\"variants\":[{\"name\":\"control\",\"weight\":500,\"weightType\":\"fix\",\"stickiness\":\"default\"},{\"name\":\"treatment\",\"weight\":500,\"weightType\":\"variable\",\"stickiness\":\"default\"}]}},{\"feature\":\"mcp-checkout-experiment\",\"action\":\"updateEnabled\",\"payload\":{\"enabled\":true}}]"
       },
@@ -564,7 +558,7 @@
         {
           "statusCode": 201,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "1379",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -573,10 +567,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G2IFAMTvbaanq9+3nZPIUlomrV9rGdAEC3YlnjR2Z+pU9AhF/RdlTg2NZdF5nk0RSMd5tcW3RqRArVGFW53TxEMvP8XJCvaTjB27hbOgomsaA3W6FxBenrGf5ChK/PDrR8dF1zQwWOqDcKOA1gUPg4Pzz9c1hgveJ1BhcIXhIQiHcc2SxAuJMIhoXhD74hq0+TeVdW9wniR6PggIe3dwKjbTsIiHgTvwJJ/jHoQz1TXRbjdFvmDlmLI/LC+7GwYrve3KoeqlHFiaoSg7KataGmnbsspt2TbcSdWXY15w01RjL31bl33e9E1vn6bHdXnPPo6iMdyLjydsBmNU+PBzBaHMyzYr8qzsPxUtVQVV7f3+QfMDBmiGoJ+3eJXNYVyz1Ou34VyznwQAoHMMRnzhglvOgqo67w0YzCcJ56tlldeeh71YGKx8vQ9sQbeQibMhjeeyqfgrYTc2gwu7+wRb+1Ejq0zXFQGOOePKh7Dfh3OFM9O/vpB4HbzAIMl0EK8J9PO3QVx/OELs9sYYvMawh0FGklSgJs8NkrpxcV5SAoF1sJzz6XrVInZX2MzTyLElsk11oN6VYS/YfhuQTQC6xUfi9n9vfYyLQOxCKPIc2y42g0wiNXaw/CE+tfp7+239DlMV4+dvgyieC14EMyUcuZOUVUB4Ffm/opU/uYMk5cNqFzhd9RTK2wY=",
+          "body": "{\"id\":1765,\"title\":\"Change request #1765\",\"environment\":\"production\",\"minApprovals\":1,\"project\":\"mcp-server\",\"createdBy\":{\"id\":248,\"username\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"createdAt\":\"2026-10-30T07:26:59.077Z\",\"features\":[{\"name\":\"mcp-checkout-experiment\",\"changes\":[{\"id\":3431,\"action\":\"updateEnabled\",\"payload\":{\"enabled\":true},\"createdAt\":\"2026-10-30T07:26:59.077Z\",\"createdBy\":{\"id\":248,\"username\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"}},{\"id\":3430,\"action\":\"addStrategy\",\"payload\":{\"name\":\"flexibleRollout\",\"title\":\"Everyone\",\"segments\":[],\"variants\":[{\"name\":\"control\",\"weight\":500,\"stickiness\":\"default\",\"weightType\":\"fix\"},{\"name\":\"treatment\",\"weight\":500,\"stickiness\":\"default\",\"weightType\":\"variable\"}],\"parameters\":{\"groupId\":\"mcp-checkout-experiment\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[]},\"createdAt\":\"2026-10-30T07:26:59.077Z\",\"createdBy\":{\"id\":248,\"username\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"}}]}],\"segments\":[],\"approvals\":[],\"rejections\":[],\"comments\":[],\"state\":\"Draft\",\"stateTimestamps\":{\"Draft\":\"2026-10-30T07:26:59.077Z\"}}",
           "trailers": {}
         }
       ],
@@ -584,19 +577,19 @@
     }
   },
   {
-    "hash": "f7z-l3uSUZgz8beYM0A7xuC5UYjFfBRTAf896gsN5k8",
+    "hash": "-UYq_Om4Yl6dancvjka1FQrtSEgePXd21EVjp9Zv7Nc",
     "snapshot": {
       "request": {
         "method": "PUT",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/change-requests/1755/state",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/change-requests/1765/state",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "21",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"state\":\"In review\"}"
       },
@@ -604,7 +597,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "1422",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -613,10 +606,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G40FAMTvl2qnq99PsicUq7TMtn6tZSRmFWQb9AC7a/4vh35Cp/4XHY6tR2PRHM/btMHm8zjrWycSUBklXDp1yQ4/P2QbFug3Io47w2hQ1lSVQjRxLSC8vGc7yMJL/fDri6usqSooTDVAOFFAa5yFwsbY59Pk3Y7XAZQpHGG4C8Kmn5IgficeChXNQ6JfHEGbf1NetgrbIN7yRkBYm42JopPoVmKhYDY8yGe/BuE+xinQcjl43nFk37I/HC+77DotrW7yrmgl71iqLssbyYtSKqnrvEh1XlfcSNHmfZpxVRV9K21d5m1atVWrn4bHZf5AP/YSvXvgHw+YFXpv8OjnEYQ8zeskS5O8/ZTVVGRU1LftXfUDCmhaoJ9nvMrapp+S1uvX3TYmPwkAQKcq9PjCCbeMBhVl2iowmE8StpPmKK8td2vRUJj4uHasQWfIg7Oh6Lcym/grYRdnhQu7+QRr/TF6jjIcLwQ45owrH9x67bYRwUz/eif+6KxAIciwERsD6Odvhbr+UEL89kbvbPRuDYWOJKlAVZoqhGj6lbESAgisg/XUT8fJCsccMKvVSNoS3a5uYN6Vbi2YfyuQjQk64yNxJ3+vY4zzQByFkKUptl2aFTqJ5NnA8ofE1Mrf82/vD5iqGD9/K3jRjbMqmCmh5IEQOQoI7+3Cy87IHvL4J7OREHkz+eaQV57/Z2JhldqEjTa3aX33A/MM",
+          "body": "{\"id\":1765,\"title\":\"Change request #1765\",\"environment\":\"production\",\"minApprovals\":1,\"project\":\"mcp-server\",\"createdBy\":{\"id\":248,\"username\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"createdAt\":\"2026-10-30T07:26:59.077Z\",\"features\":[{\"name\":\"mcp-checkout-experiment\",\"changes\":[{\"id\":3431,\"action\":\"updateEnabled\",\"payload\":{\"enabled\":true},\"createdAt\":\"2026-10-30T07:26:59.077Z\",\"createdBy\":{\"id\":248,\"username\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"}},{\"id\":3430,\"action\":\"addStrategy\",\"payload\":{\"name\":\"flexibleRollout\",\"title\":\"Everyone\",\"segments\":[],\"variants\":[{\"name\":\"control\",\"weight\":500,\"stickiness\":\"default\",\"weightType\":\"fix\"},{\"name\":\"treatment\",\"weight\":500,\"stickiness\":\"default\",\"weightType\":\"variable\"}],\"parameters\":{\"groupId\":\"mcp-checkout-experiment\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[]},\"createdAt\":\"2026-10-30T07:26:59.077Z\",\"createdBy\":{\"id\":248,\"username\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"}}]}],\"segments\":[],\"approvals\":[],\"rejections\":[],\"comments\":[],\"state\":\"In review\",\"stateTimestamps\":{\"Draft\":\"2026-10-30T07:26:59.077Z\",\"In review\":\"2026-10-30T07:26:59.701Z\"}}",
           "trailers": {}
         }
       ],
@@ -624,19 +616,19 @@
     }
   },
   {
-    "hash": "6pdhwx5P_lcg5CDly-2LxCPGOhuCJF29NvoTnTjZx_4",
+    "hash": "RrSi7-UZEXtKg_tUPzOkEqk-nKwC2RIK6EVqKpOrX2A",
     "snapshot": {
       "request": {
         "method": "PUT",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/change-requests/1755/state",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/change-requests/1765/state",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "21",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"state\":\"Cancelled\"}"
       },
@@ -644,7 +636,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "1765",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -653,10 +645,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G7QFAMT/lmqnq+cl2ROKKWpmW7/W8iX+KkzUBrC75v9y5ocndOp/0eGcrW1rP2/TBhsT4/BbJxJQGSVcOnXJDj8/ZBsW6DcihjvDO1hVFYVA8qlnWLy8o7HjVeD64adXV6oqCghMNWFxooDWTyMEBj8+n+cw7aiPsErgCMNDWAztnEUOOw4QqGhewu7FEXbzb9J5LbCNHEYaGBa9H3xil6XpnkcI+IE6/hx6WNylNEe7XneBdpQotOwPx8uum8Zx7SrdmJp1Q1w0SlesTc4Fl6U20umyoIpNrVupqChMW3Nd5rqWRV3U7ml8nOsH7nHgFKYH4XGHRaANBod+nmChpS4zJTNdf1KlNcqa8rbeFD8ggGYa9ucZr7IwtHPWev3itE3ZTwIA0GkCLb5wwj3vYE0uawEC80mL7ewo8euRmp4dBGY69hM52DP4wcHYFLa8mPgrYZcWgQu3+gQ59zEFStwdLwQ45owTH6a+n7YJwUz/esfhOI0MgcjdwGOKsD9/C9T1hxLitzfaaUxh6iHQkSQVbCGlQEy+vfcjxwgL1sF62qfjbEXWH7CI1UjaEt1e3cC8E03PWH4LkE0U9oyPxB3+vYsxPgCxEwslJbadWQQ6iRTIw/KHxNTc38tv7w8QVbF+/hYIbPhpVMFMCSVeTJRIMUVjy31WAnn5Jz9wTDTMvmlQaZuNTHWrzWabV4H+J+xt3o+rwDvP+9UKZbn5gWUB",
+          "body": "{\"id\":1765,\"title\":\"Change request #1765\",\"environment\":\"production\",\"minApprovals\":1,\"project\":\"mcp-server\",\"createdBy\":{\"id\":248,\"username\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"createdAt\":\"2026-10-30T07:26:59.077Z\",\"features\":[{\"name\":\"mcp-checkout-experiment\",\"changes\":[{\"id\":3431,\"action\":\"updateEnabled\",\"payload\":{\"enabled\":true},\"createdAt\":\"2026-10-30T07:26:59.077Z\",\"createdBy\":{\"id\":248,\"username\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"}},{\"id\":3430,\"action\":\"addStrategy\",\"payload\":{\"name\":\"flexibleRollout\",\"title\":\"Everyone\",\"segments\":[],\"variants\":[{\"name\":\"control\",\"weight\":500,\"stickiness\":\"default\",\"weightType\":\"fix\"},{\"name\":\"treatment\",\"weight\":500,\"stickiness\":\"default\",\"weightType\":\"variable\"}],\"parameters\":{\"groupId\":\"mcp-checkout-experiment\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[]},\"createdAt\":\"2026-10-30T07:26:59.077Z\",\"createdBy\":{\"id\":248,\"username\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"}}]},{\"name\":\"mcp-archived-flag\",\"changes\":[{\"id\":3432,\"action\":\"archiveFeature\",\"payload\":[],\"createdAt\":\"2026-10-30T07:27:00.315Z\",\"createdBy\":{\"id\":248,\"username\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"}}]}],\"segments\":[],\"approvals\":[],\"rejections\":[],\"comments\":[],\"state\":\"Cancelled\",\"stateTimestamps\":{\"Cancelled\":\"2026-10-30T07:27:00.357Z\",\"Draft\":\"2026-10-30T07:26:59.077Z\",\"In review\":\"2026-10-30T07:26:59.701Z\"}}",
           "trailers": {}
         }
       ],

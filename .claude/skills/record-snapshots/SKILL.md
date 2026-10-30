@@ -10,3 +10,8 @@ description: Re-record the Unleash HTTP snapshots that tests replay. Use after a
 3. Run `pnpm test:record`. It runs the tests against the real Unleash and rewrites the `*.snapshot.json` files next to them.
 4. Review the snapshot diff: no tokens or secrets, no unrelated churn.
 5. Run `pnpm test` to confirm the replay passes and stays subsecond.
+
+## When a recording goes wrong
+
+- The sandbox can answer `502 Bad Gateway` when every file records at once. A snapshot holding a 5xx response is wrong even if the test passed; re-record that file on its own: `UNLEASH_SNAPSHOT_MODE=record node --env-file=.env --test <file>`.
+- `project.test.ts` changes the change request settings of `mcp-server` while it runs. A file recorded alongside it can see its writes answered as a change request; re-record that file on its own too.
