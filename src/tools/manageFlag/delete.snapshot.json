@@ -204,7 +204,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcp-deleted-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:27:01.602Z\",\"impressionData\":false,\"archived\":false}",
+          "body": "{\"name\":\"mcp-deleted-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T09:12:07.012Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],

@@ -136,7 +136,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcpLegalValueField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-10-30T07:26:52.231Z\"}",
+          "body": "{\"name\":\"mcpLegalValueField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-10-30T09:11:56.497Z\"}",
           "trailers": {}
         }
       ],
@@ -176,7 +176,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcpProjectLegalValueField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-10-30T07:26:52.846Z\",\"project\":\"mcp-server\"}",
+          "body": "{\"name\":\"mcpProjectLegalValueField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-10-30T09:11:57.150Z\",\"project\":\"mcp-server\"}",
           "trailers": {}
         }
       ],

@@ -363,7 +363,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcpContextField\",\"description\":\"Created by the MCP server tests\",\"stickiness\":true,\"sortOrder\":0,\"legalValues\":[{\"value\":\"gold\",\"description\":\"Paying customers\"},{\"value\":\"free\"}],\"createdAt\":\"2026-10-30T07:26:53.716Z\"}",
+          "body": "{\"name\":\"mcpContextField\",\"description\":\"Created by the MCP server tests\",\"stickiness\":true,\"sortOrder\":0,\"legalValues\":[{\"value\":\"gold\",\"description\":\"Paying customers\"},{\"value\":\"free\"}],\"createdAt\":\"2026-10-30T09:11:58.302Z\"}",
           "trailers": {}
         }
       ],
@@ -403,7 +403,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcpUpdatableContextField\",\"description\":null,\"stickiness\":true,\"sortOrder\":0,\"legalValues\":[{\"value\":\"gold\"}],\"createdAt\":\"2026-10-30T07:26:54.077Z\"}",
+          "body": "{\"name\":\"mcpUpdatableContextField\",\"description\":null,\"stickiness\":true,\"sortOrder\":0,\"legalValues\":[{\"value\":\"gold\"}],\"createdAt\":\"2026-10-30T09:11:58.793Z\"}",
           "trailers": {}
         }
       ],
@@ -480,7 +480,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcpDeletableContextField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-10-30T07:26:54.631Z\"}",
+          "body": "{\"name\":\"mcpDeletableContextField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-10-30T09:11:59.554Z\"}",
           "trailers": {}
         }
       ],
@@ -520,7 +520,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcpProjectContextField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-10-30T07:26:55.575Z\",\"project\":\"mcp-server\"}",
+          "body": "{\"name\":\"mcpProjectContextField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-10-30T09:11:59.768Z\",\"project\":\"mcp-server\"}",
           "trailers": {}
         }
       ],
@@ -560,7 +560,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcpUpdatableProjectContextField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-10-30T07:26:55.916Z\",\"project\":\"mcp-server\"}",
+          "body": "{\"name\":\"mcpUpdatableProjectContextField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-10-30T09:12:00.563Z\",\"project\":\"mcp-server\"}",
           "trailers": {}
         }
       ],
@@ -637,7 +637,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcpDeletableProjectContextField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-10-30T07:26:56.786Z\",\"project\":\"mcp-server\"}",
+          "body": "{\"name\":\"mcpDeletableProjectContextField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-10-30T09:12:01.602Z\",\"project\":\"mcp-server\"}",
           "trailers": {}
         }
       ],
