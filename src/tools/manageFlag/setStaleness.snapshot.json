@@ -1,16 +1,16 @@
 [
   {
-    "hash": "tvNN6a7vQMTIUKSpHayNZ_Kd-tpNkPU1ov9C6l0bMto",
+    "hash": "iDV__HHBnUN5wJVND-HDvCFtCSs0tQ5YvXN_70nKpNY",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-stale-flag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -29,13 +29,13 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3Atc3RhbGUtZmxhZ1wiIGluIHByb2plY3QgXCJtY3Atc2VydmVyXCIuIiwiZGV0YWlscyI6W3sibWVzc2FnZSI6IlRoZXJlJ3Mgbm8gZmVhdHVyZSBuYW1lZCBcIm1jcC1zdGFsZS1mbGFnXCIgaW4gcHJvamVjdCBcIm1jcC1zZXJ2ZXJcIi4ifV19",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-stale-flag\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-stale-flag\\\" in project \\\"mcp-server\\\".\"}]}",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "1194",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -44,10 +44,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G10EAGR/ua/TdV5md0/UoMJnxU/uKUnlDZUHGbGpm2Kv+AJP/I2NY2EBrgH23jLM9nkUUCBR3AWUJ5bq6fDwQmZazk6CvIaecwncr2tYcWFwELb8eQuvAgoCJvnEvD4VcOtpCAqCGawicAOGxAouOYErFaxbqZDL3dJ+aYvyLhJHcFpBkojC48wJ3K8/CiIHxsTvA6698YQDj6cYaZZ6qxyk9Qxdzduay4aKFbYFf9Tw4vcsCQbOhoAjKECdQavAkPcCBUGU6ZkCYfeJ2gutBKEtxziecQQFS2TASTxlBVHiNzM9FXCgS91mVZnpw+eqdsa6psoPuvsJU3ufXYK7hpnAVZ3bb3mDwqfp6ugVKJgXHPlLDOBgEtmTK4ox4hkKxk8SwM3DFmzJ6I78UFfWtuz7um0PHXlsDJlDhWgQ69r2ncbW4IHIGqvJG+191TaVf5we1voePYwscbsXH45wq0AuuaEAd0CB5qdw0G7li529ML2eB5Z54Zcrpd2jdVZaRryk+MNG3wHMrxvm9WSQ2IJAK5nAXcNp4ngz/DOB07Wl+prCvMzClMl2wit2n9v3xJY63RvLukdu+kp3rE3NDbetNiXptsGOjdW+rLBpjLds21rbsrGNpfRHnBp/bm8B",
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-stale-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":true,\"createdAt\":\"2026-10-30T07:27:06.111Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-09T07:27:06.111Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T07:27:06.287Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         }
       ],
@@ -55,17 +54,17 @@
     }
   },
   {
-    "hash": "c0EivLmaNdjB4QIeaaLROYfd-eqXfE6Ga1-aqthNIVk",
+    "hash": "hGUyGI_OnCfiCPF8yhENQ1_pbHYC4j5gT8xPPZFMmCI",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-stale-flag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -84,7 +83,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBmZWF0dXJlIGZsYWcgZm91bmQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiTm8gZmVhdHVyZSBmbGFnIGZvdW5kIn1dfQ==",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"No feature flag found\",\"details\":[{\"message\":\"No feature flag found\"}]}",
           "trailers": {}
         },
         {
@@ -107,17 +106,17 @@
     }
   },
   {
-    "hash": "qWTALQ5NHNcYnPtG52ptkCd_kj-AJMF59WuSmGqP0Nw",
+    "hash": "oRFUxs3U1XFkQ_c8vUOzjtoidbYP6jGDHa4DT2lSQ3o",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/archive/mcp-stale-flag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -157,19 +156,19 @@
     }
   },
   {
-    "hash": "hrL5jgEUtokbOhnu3sKcQUVYK8tw1kdRzZhgazK5cQk",
+    "hash": "dGjEOOO8pjJyVJ1mKLp0QvUIbidC3O9cta5Owv6Z6S0",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "25",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcp-stale-flag\"}"
       },
@@ -188,7 +187,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLXN0YWxlLWZsYWciLCJkZXNjcmlwdGlvbiI6bnVsbCwidHlwZSI6InJlbGVhc2UiLCJwcm9qZWN0IjoibWNwLXNlcnZlciIsInN0YWxlIjpmYWxzZSwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yOVQxNDozODo1MS45MjdaIiwiaW1wcmVzc2lvbkRhdGEiOmZhbHNlLCJhcmNoaXZlZCI6ZmFsc2V9",
+          "body": "{\"name\":\"mcp-stale-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:27:06.111Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],
@@ -196,19 +195,19 @@
     }
   },
   {
-    "hash": "5f1kusD5ZjM5n4pCmy41Xchl-Dcwcx7DpN9G93ICEYg",
+    "hash": "2JmyU4VFz4Q5qkB0sNaX0jElzwZMcPBpI2zffrzPh_I",
     "snapshot": {
       "request": {
         "method": "PATCH",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-stale-flag",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "47",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "[{\"op\":\"replace\",\"path\":\"/stale\",\"value\":true}]"
       },
@@ -227,7 +226,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLXN0YWxlLWZsYWciLCJkZXNjcmlwdGlvbiI6bnVsbCwidHlwZSI6InJlbGVhc2UiLCJwcm9qZWN0IjoibWNwLXNlcnZlciIsInN0YWxlIjp0cnVlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTI5VDE0OjM4OjUxLjkyN1oiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
+          "body": "{\"name\":\"mcp-stale-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-server\",\"stale\":true,\"createdAt\":\"2026-10-30T07:27:06.111Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],

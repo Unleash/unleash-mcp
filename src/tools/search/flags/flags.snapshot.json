@@ -1,16 +1,16 @@
 [
   {
-    "hash": "B4F8wk9dXpABT-CF55fowXmwy_3OjQ_t34GzQhT8BAg",
+    "hash": "IXmvCM26c2ZMU6e7fosZy_y0448FJMS8EUZqfTzxKQs",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-searched-first",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -29,13 +29,13 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3Atc2VhcmNoZWQtZmlyc3RcIiBpbiBwcm9qZWN0IFwibWNwLXNlcnZlclwiLiIsImRldGFpbHMiOlt7Im1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3Atc2VhcmNoZWQtZmlyc3RcIiBpbiBwcm9qZWN0IFwibWNwLXNlcnZlclwiLiJ9XX0=",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-searched-first\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-searched-first\\\" in project \\\"mcp-server\\\".\"}]}",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "1186",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -44,10 +44,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G6EEAMT/ppZVu/POdsUGQBGHXOX8F750mkNhgA2prVyUnrim2Cu+UhVG4gtU8eu3yANXLHU0oIEM8G9A84lNdY6DB18XMmupZ7fE5AmR9yLMjxMG6hkGZcs/r+chQcBTTB+Yh8cJZth4L1DM4CIH05CPLHDgCLMSGMaVkw5TpufFMaQ3wXGAUQIxBUrcdhxhfvwSCOyZIr/1NESNkRpuNxTcLu4iACJ+hrq6cZjeRO4L7Ar4JdTeTi6VNnbzpgsxQYB5lDHXKenPKBGRjGtVQE644PdB3CBo9rvClgMEYiLPMClsWKBS/MPsHicYqJUq5nI1V/VHmZmsNLJa1KX8jq2dTw4wJ3QORpbQv+UVJd7E4+wFBLqeWv4UPAyuU5qiWS7bQFtKFH6UAHT7skuunFals00mq6pgu86Koi6dpVw7XUsiTZRl1bpUVGiqnat0pZzVylpZ5NI+jPczdcfdD5zCeCfcb3ERSIfzWbnpvJ/HXZfsNQS8Py7BHcL7iW1i97JrOHU9Px9clABqV2KtvBDVQ5FjfNewPVjPMCfERC3DoPNAGgKNkZth9yFRy7Su1ItVWX3HRcB3w82DEqO3d5kjzAmbyOG7+kOEQ9g0JQslTL/lwLO3nf3/b/ZqMyQa9BYHzF9bKifXutF5ljmurGZFTaZqlddSaV3WiiopOVea8lVFdqVq4rVeO8mVUmU5xF+XCw==",
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-searched-first\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":true,\"createdAt\":\"2026-10-30T07:27:54.426Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T07:27:54.620Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         }
       ],
@@ -55,17 +54,17 @@
     }
   },
   {
-    "hash": "mr0EOVa7soOAlKFETGuwZI7BKMa3x-ObeR1PDD_yp5I",
+    "hash": "LAZn2x2ZUK56m0SP2wRvCz-j1_bCFRvkaCuM81UnUYQ",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-searched-first",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -84,7 +83,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBmZWF0dXJlIGZsYWcgZm91bmQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiTm8gZmVhdHVyZSBmbGFnIGZvdW5kIn1dfQ==",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"No feature flag found\",\"details\":[{\"message\":\"No feature flag found\"}]}",
           "trailers": {}
         },
         {
@@ -107,17 +106,17 @@
     }
   },
   {
-    "hash": "ahE2Nfj4RCXiun1TQ4hAayWDBV3evkPKwIc32NyeCw8",
+    "hash": "HqbrZsTxtdVfbGvyLcbudFyPNisU0W2esH03irOEekY",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/archive/mcp-searched-first",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -157,17 +156,17 @@
     }
   },
   {
-    "hash": "oI49-dpRlvjdElzh1Eqvrf7RvAI-HnL6fLm6mu8s0f4",
+    "hash": "Nn7uYJBg3NJl7OxHhlWdUo4hQJ2T9jyML6H0NZscQlo",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-searched-second",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -186,13 +185,13 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3Atc2VhcmNoZWQtc2Vjb25kXCIgaW4gcHJvamVjdCBcIm1jcC1zZXJ2ZXJcIi4iLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiVGhlcmUncyBubyBmZWF0dXJlIG5hbWVkIFwibWNwLXNlYXJjaGVkLXNlY29uZFwiIGluIHByb2plY3QgXCJtY3Atc2VydmVyXCIuIn1dfQ==",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-searched-second\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-searched-second\\\" in project \\\"mcp-server\\\".\"}]}",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "1206",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -201,16 +200,15 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G7UEAMT/ppZVu/Pu7Iq9FaCIQ65y/gtfsiYPsCG1lYvSI6eKVbECJX4Pz8UKvMfVfoLG31t8NKCBFLAZ0Hxi0zn10MO9M4bVgmchWfqElWsB5vsJIw0Mg7TlnzfwGCHQU4jvmcdHEWbc9L1AMoOHHExNfWCBAweYRGCcZkE8zJZeFyYfX3vHHkYJhOgpctNygPn+U8BzzxT4TU/jqjlQzc2GvNvFXwRAVM/QVDuN3W/I+4BdAj+FNthZpaKzWyZi1yBAPUaZx03GU4rEJOtqFVAzMORAqBwEM3/Fb9lDIETqTaK54p9m9yjCQCUqX8pkqaoPMjVpYWR1k6fVN2ztfHyAOaF1MLIA/y0vKfImHBfPIdAO1PBH38Pgb4xzMKtV42lLkfyvEoBf33bFpdOqcLZOZVnmbNdpnleFs5RppytJpInStFwXinJNlXOlLpWzWlkr80zaB+Feqm67e56jn277ew0uAvHgIYR2DQLKH0+43cr7mW1k96KtObYDPxtdOD20WiYlJmHibMihNwH28j19W7M92J5hTgiRGoZBNYIsBIolt2b3PlLDj4heU8lNUlbfcBHo27H7UGrqJV/WAHPCJrC/a3/IBTA2Xcl8TL9hz4s3rf3/b/FyM0YaQzAJmL+2UE6uda2zNHVcWs2K6lRVKquk0rqoFJVScqY0ZUlJNlEV8VqvneRSqaJo0s/LBQ==",
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-searched-second\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:27:54.841Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-09T07:27:54.841Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T07:27:55.299Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "1445",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -219,10 +217,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G6QFAMT/ppZVu/POdsXeClDEIce/8CVrDoUBdFlt5aL00OXEHgCedM/2AJyLThsLLKG5OLANUmBfQHlk6dTt8TCeEgOFwglTwQtInosw3y8w0sAwGFv+eQOPCQKeYnrPPN5NMOPivcAwg30cTAoLC5xxhMkExulskc5mRe+OU0ivg+MAowRiCpS469k0ngEvvJu8n5YEgY8eVKnH6PopMJWdkGQREoa5wIu0pj11MBjs3C3iZrcdiB6EQFC9h4HMMgjE1NujfuQY3R7Z0uITVoHIXVQGdVb8xH+WTKB3MMjkyzJX6sGz5y8ffviinlcPP8g3zx40dxsIpD55hsE9TgQBTo6EaclHXn8KBPZMkd94Gp1LjNRyt1BwMmMVgcHbNzrop5EORH9RV66ibJfq1XSUDA/6KYoINZ5pBKysrAw/oERoebc1AzN7h+UW3v1CsOgPxxzIAsirxEfjn8zuboKBylS5ldlWNR9kbvLKyOawzJtveDR+7wzmgjdDVuC/5SUlXuL55jkE+oE6/hg8DP6mNEez23WBjilR+DME6O3D7rh2WlXOtrms65LtPi/LpnKWCu10I4k0UZ7X+0pRqalxrta1clYra2VZSHs73szVNXczcArTtXCzwyqQzhjCwu6CQKNTFqWm8unMNrF70bec+oEfji56D6+2WU10bAmWV7zwUYk5vm/ZnlnPMBeIiTqGweYLjRDYG3o4u/eJOjaXHehVKjvM6uYbVgHfj0eGgMl3uCE1qSyxOP/SdwpQbG4ly2P+Gw68edPb//82L5cx0ZiC5YD5ayvl5F63ushzx7XVrKjNVaOKRiqtq0ZRLSUXSlOR1WQz1RDv9d5JrpWqqmX7ua4=",
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":true,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[{\"name\":\"flexibleRollout\",\"constraints\":[],\"variants\":[],\"parameters\":{\"groupId\":\"mcp-searched-second\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"segments\":[328],\"sortOrder\":0,\"id\":\"01M65VAJ16JQGYDRCPJAAM2YX6\",\"title\":\"Beta\",\"disabled\":false}],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-searched-second\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:27:54.841Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-09T07:27:54.841Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T07:27:55.299Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         }
       ],
@@ -230,17 +227,17 @@
     }
   },
   {
-    "hash": "qLq5ZFGsdHoqBxBsVzuF89bTqS1vHngc4sHW0LsnRtQ",
+    "hash": "GhEmKjzthEkwr0VAvSMWCUP_1V-0apY562KtS1lng2I",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-searched-second",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -259,7 +256,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBmZWF0dXJlIGZsYWcgZm91bmQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiTm8gZmVhdHVyZSBmbGFnIGZvdW5kIn1dfQ==",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"No feature flag found\",\"details\":[{\"message\":\"No feature flag found\"}]}",
           "trailers": {}
         },
         {
@@ -282,17 +279,17 @@
     }
   },
   {
-    "hash": "7-kJBcHrTOBr6DzBy3e1amRMzUdHqAhynKN0F0TwH9s",
+    "hash": "a_cFx7k6S6rn8_MtxydO3qSt-2Y-neGAiFIBBszdWb8",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/archive/mcp-searched-second",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -332,17 +329,17 @@
     }
   },
   {
-    "hash": "3dDO2xb48ffs8cyDTpIwyJ_mie2P5eLeqRlBmT0pnbE",
+    "hash": "uDqra8sYf5nwIYEcvi3kzta6wbGlenWRB2EA9Jo1Yaw",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-searched-archived",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -361,7 +358,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3Atc2VhcmNoZWQtYXJjaGl2ZWRcIiBpbiBwcm9qZWN0IFwibWNwLXNlcnZlclwiLiIsImRldGFpbHMiOlt7Im1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3Atc2VhcmNoZWQtYXJjaGl2ZWRcIiBpbiBwcm9qZWN0IFwibWNwLXNlcnZlclwiLiJ9XX0=",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-searched-archived\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-searched-archived\\\" in project \\\"mcp-server\\\".\"}]}",
           "trailers": {}
         },
         {
@@ -378,7 +375,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCBmZWF0dXJlIGZsYWcgd2l0aCBuYW1lIG1jcC1zZWFyY2hlZC1hcmNoaXZlZCIsImRldGFpbHMiOlt7Im1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCBmZWF0dXJlIGZsYWcgd2l0aCBuYW1lIG1jcC1zZWFyY2hlZC1hcmNoaXZlZCJ9XX0=",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"Could not find feature flag with name mcp-searched-archived\",\"details\":[{\"message\":\"Could not find feature flag with name mcp-searched-archived\"}]}",
           "trailers": {}
         }
       ],
@@ -386,17 +383,17 @@
     }
   },
   {
-    "hash": "uZYTz9wDK07tI8bvQAz_tM51xd_s-vZX1NkYwkiN6pQ",
+    "hash": "hDAAwl-MqTAI4xzn7ME7-son_DBArNBdly8IG9n7X_I",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-searched-archived",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -415,7 +412,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBmZWF0dXJlIGZsYWcgZm91bmQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiTm8gZmVhdHVyZSBmbGFnIGZvdW5kIn1dfQ==",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"No feature flag found\",\"details\":[{\"message\":\"No feature flag found\"}]}",
           "trailers": {}
         },
         {
@@ -453,17 +450,17 @@
     }
   },
   {
-    "hash": "424FhcU3vvwkSTLk2jboKSJUlpGAGz0lNSpLVT0Eofc",
+    "hash": "KncWWwF-i4GHLcMkXIBzmX4PT9-YCxB2_E9oa224O98",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/archive/mcp-searched-archived",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -503,19 +500,19 @@
     }
   },
   {
-    "hash": "iUIqpQ1TYImzorifWmq5snnrcRx0wi6QuZDSVbA_RD8",
+    "hash": "DQWmlQ8nWjArQH4m8R2HQcbFc950L8qj7ltF0IVhPHY",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "50",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcp-searched-first\",\"type\":\"kill-switch\"}"
       },
@@ -534,7 +531,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLXNlYXJjaGVkLWZpcnN0IiwiZGVzY3JpcHRpb24iOm51bGwsInR5cGUiOiJraWxsLXN3aXRjaCIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTI5VDE0OjQ3OjE4Ljk3MVoiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
+          "body": "{\"name\":\"mcp-searched-first\",\"description\":null,\"type\":\"kill-switch\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:27:54.426Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],
@@ -542,19 +539,19 @@
     }
   },
   {
-    "hash": "u1ydLa8XFV8cZsMgyO93KSirwlJNM2KKO5XigAkAqzE",
+    "hash": "hluz2fyxBuU0cekhcRUufIZcRfv7WQ0v97gPS-OIp64",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/features/mcp-searched-first/tags",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "38",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"type\":\"simple\",\"value\":\"mcp-search\"}"
       },
@@ -574,7 +571,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJ0eXBlIjoic2ltcGxlIiwidmFsdWUiOiJtY3Atc2VhcmNoIn0=",
+          "body": "{\"type\":\"simple\",\"value\":\"mcp-search\"}",
           "trailers": {}
         }
       ],
@@ -582,19 +579,19 @@
     }
   },
   {
-    "hash": "iUA9-q-sH5i0K9OJ9vOxCh8EQPXwdEvYpCni63JpWw8",
+    "hash": "Vx7VF3ELqhsFaOm1OgbOiAp7w4CggviVJq_6CaTIu5I",
     "snapshot": {
       "request": {
         "method": "PATCH",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-searched-first",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "47",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "[{\"op\":\"replace\",\"path\":\"/stale\",\"value\":true}]"
       },
@@ -613,7 +610,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLXNlYXJjaGVkLWZpcnN0IiwiZGVzY3JpcHRpb24iOm51bGwsInR5cGUiOiJraWxsLXN3aXRjaCIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMjYtMTAtMjlUMTQ6NDc6MTguOTcxWiIsImltcHJlc3Npb25EYXRhIjpmYWxzZSwiYXJjaGl2ZWQiOmZhbHNlfQ==",
+          "body": "{\"name\":\"mcp-searched-first\",\"description\":null,\"type\":\"kill-switch\",\"project\":\"mcp-server\",\"stale\":true,\"createdAt\":\"2026-10-30T07:27:54.426Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],
@@ -621,19 +618,19 @@
     }
   },
   {
-    "hash": "QLtnOaxU1ZvwkAJbsUTwbBB1d1ZH8W_7w_c_FBJ9a6I",
+    "hash": "a92-o5EETbo48vm6oNQp_Hc6rxleO6VFKbbk4R2awbo",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "30",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcp-searched-second\"}"
       },
@@ -652,7 +649,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLXNlYXJjaGVkLXNlY29uZCIsImRlc2NyaXB0aW9uIjpudWxsLCJ0eXBlIjoicmVsZWFzZSIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTI5VDE0OjQ3OjE5LjY0OVoiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
+          "body": "{\"name\":\"mcp-searched-second\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:27:54.841Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],
@@ -660,19 +657,19 @@
     }
   },
   {
-    "hash": "GMvDPsLsJA6lVHaxJCn7kZHtbEy3PgLuMR6eUSdYd3U",
+    "hash": "j71MCP1PBk7ChV0yJ2UCRWTx2GewyLC2jct_ykIyWuQ",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "32",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcp-searched-archived\"}"
       },
@@ -691,7 +688,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLXNlYXJjaGVkLWFyY2hpdmVkIiwiZGVzY3JpcHRpb24iOm51bGwsInR5cGUiOiJyZWxlYXNlIiwicHJvamVjdCI6Im1jcC1zZXJ2ZXIiLCJzdGFsZSI6ZmFsc2UsImNyZWF0ZWRBdCI6IjIwMjYtMTAtMjlUMTQ6NDc6MTkuNzU3WiIsImltcHJlc3Npb25EYXRhIjpmYWxzZSwiYXJjaGl2ZWQiOmZhbHNlfQ==",
+          "body": "{\"name\":\"mcp-searched-archived\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:27:54.987Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],
@@ -699,17 +696,17 @@
     }
   },
   {
-    "hash": "yMJw0u0eucTNfLW8bVWBzvIUUubbkO0CAU-ll7EqgYg",
+    "hash": "udAcwTt3ojp0WmNy_fqzfToOMC9EQvNvgEnDMKmiU1w",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/segments",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -717,7 +714,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "39943",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -726,16 +723,15 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "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",
+          "body": "{\"segments\":[{\"id\":163,\"name\":\"<3 segment\",\"description\":\"project segment for <3\",\"project\":\"3\",\"constraints\":[{\"values\":[\"blue\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"app_version\",\"caseInsensitive\":false}],\"createdBy\":\"thomas2@email.com\",\"createdAt\":\"2026-10-14T07:39:54.905Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":112,\"name\":\"a\",\"description\":\"\",\"project\":\"gff-4aa0ca550ca7\",\"constraints\":[{\"values\":[\"gff1\",\"gff2\",\"gff3\",\"gff4\",\"gff5\",\"gff6\",\"gff7\",\"gff8\",\"gff9\",\"gff10\",\"gff11\",\"gff12\",\"gff13\",\"gff14\",\"gff15\",\"gff16\",\"gff17\",\"gff18\",\"gff19\",\"gff20\",\"gff21\",\"gff22\",\"gff23\",\"gff24\",\"gff25\",\"gff26\",\"gff27\",\"gff28\",\"gff29\",\"gff30\",\"gff31\",\"gff32\",\"gff33\",\"gff34\",\"gff35\",\"gff36\",\"gff37\",\"gff38\",\"gff39\",\"gff40\",\"gff41\",\"gff42\",\"gff43\",\"gff44\",\"gff45\",\"gff46\",\"gff47\",\"gff48\",\"gff49\",\"gff50\",\"gff51\",\"gff52\",\"gff53\",\"gff54\",\"gff55\",\"gff56\",\"gff57\",\"gff58\",\"gff59\",\"gff60\",\"gff61\",\"gff62\",\"gff63\",\"gff64\",\"gff65\",\"gff66\",\"gff67\",\"gff68\",\"gff69\",\"gff70\",\"gff71\",\"gff72\",\"gff73\",\"gff74\",\"gff75\",\"gff76\",\"gff77\",\"gff78\",\"gff79\",\"gff80\",\"gff81\",\"gff82\",\"gff83\",\"gff84\",\"gff85\",\"gff86\",\"gff87\",\"gff88\",\"gff89\",\"gff90\",\"gff91\",\"gff92\",\"gff93\",\"gff94\",\"gff95\",\"gff96\",\"gff97\",\"gff98\",\"gff99\",\"gff100\",\"gff101\",\"gff102\",\"gff103\",\"gff104\",\"gff105\",\"gff106\",\"gff107\",\"gff108\",\"gff109\",\"gff110\",\"gff111\",\"gff112\",\"gff113\",\"gff114\",\"gff115\",\"gff116\",\"gff117\",\"gff118\",\"gff119\",\"gff120\",\"gff121\",\"gff122\",\"gff123\",\"gff124\",\"gff125\",\"gff126\",\"gff127\",\"gff128\",\"gff129\",\"gff130\",\"gff131\",\"gff132\",\"gff133\",\"gff134\",\"gff135\",\"gff136\",\"gff137\",\"gff138\",\"gff139\",\"gff140\",\"gff141\",\"gff142\",\"gff143\",\"gff144\",\"gff145\",\"gff146\",\"gff147\",\"gff148\",\"gff149\",\"gff150\",\"gff151\",\"gff152\",\"gff153\",\"gff154\",\"gff155\",\"gff156\",\"gff157\",\"gff158\",\"gff159\",\"gff160\",\"gff161\",\"gff162\",\"gff163\",\"gff164\",\"gff165\",\"gff166\",\"gff167\",\"gff168\",\"gff169\",\"gff170\",\"gff171\",\"gff172\",\"gff173\",\"gff174\",\"gff175\",\"gff176\",\"gff177\",\"gff178\",\"gff179\",\"gff180\",\"gff181\",\"gff182\",\"gff183\",\"gff184\",\"gff185\",\"gff186\",\"gff187\",\"gff188\",\"gff189\",\"gff190\",\"gff191\",\"gff192\",\"gff193\",\"gff194\",\"gff195\",\"gff196\",\"gff197\",\"gff198\",\"gff199\",\"gff200\",\"gff201\",\"gff202\",\"gff203\",\"gff204\",\"gff205\",\"gff206\",\"gff207\",\"gff208\",\"gff209\",\"gff210\",\"gff211\",\"gff212\",\"gff213\",\"gff214\",\"gff215\",\"gff216\",\"gff217\",\"gff218\",\"gff219\",\"gff220\",\"gff221\",\"gff222\",\"gff223\",\"gff224\",\"gff225\",\"gff226\",\"gff227\",\"gff228\",\"gff229\",\"gff230\",\"gff231\",\"gff232\",\"gff233\",\"gff234\",\"gff235\",\"gff236\",\"gff237\",\"gff238\",\"gff239\",\"gff240\",\"gff241\",\"gff242\",\"gff243\",\"gff244\",\"gff245\",\"gff246\",\"gff247\",\"gff248\",\"gff249\",\"gff250\",\"gff251\",\"gff252\",\"gff253\",\"gff254\",\"gff255\",\"gff256\",\"gff257\",\"gff258\",\"gff259\",\"gff260\",\"gff261\",\"gff262\",\"gff263\",\"gff264\",\"gff265\",\"gff266\",\"gff267\",\"gff268\",\"gff269\",\"gff270\",\"gff271\",\"gff272\",\"gff273\",\"gff274\",\"gff275\",\"gff276\",\"gff277\",\"gff278\",\"gff279\",\"gff280\",\"gff281\",\"gff282\",\"gff283\",\"gff284\",\"gff285\",\"gff286\",\"gff287\",\"gff288\",\"gff289\",\"gff290\",\"gff291\",\"gff292\",\"gff293\",\"gff294\",\"gff295\",\"gff296\",\"gff297\",\"gff298\",\"gff299\",\"gff300\",\"gff301\",\"gff302\",\"gff303\",\"gff304\",\"gff305\",\"gff306\",\"gff307\",\"gff308\",\"gff309\",\"gff310\",\"gff311\",\"gff312\",\"gff313\",\"gff314\",\"gff315\",\"gff316\",\"gff317\",\"gff318\",\"gff319\",\"gff320\",\"gff321\",\"gff322\",\"gff323\",\"gff324\",\"gff325\",\"gff326\",\"gff327\",\"gff328\",\"gff329\",\"gff330\",\"gff331\",\"gff332\",\"gff333\",\"gff334\",\"gff335\",\"gff336\",\"gff337\",\"gff338\",\"gff339\",\"gff340\",\"gff341\",\"gff342\",\"gff343\",\"gff344\",\"gff345\",\"gff346\",\"gff347\",\"gff348\",\"gff349\",\"gff350\",\"gff351\",\"gff352\",\"gff353\",\"gff354\",\"gff355\",\"gff356\",\"gff357\",\"gff358\",\"gff359\",\"gff360\",\"gff361\",\"gff362\",\"gff363\",\"gff364\",\"gff365\",\"gff366\",\"gff367\",\"gff368\",\"gff369\",\"gff370\",\"gff371\",\"gff372\",\"gff373\",\"gff374\",\"gff375\",\"gff376\",\"gff377\",\"gff378\",\"gff379\",\"gff380\",\"gff381\",\"gff382\",\"gff383\",\"gff384\",\"gff385\",\"gff386\",\"gff387\",\"gff388\",\"gff389\",\"gff390\",\"gff391\",\"gff392\",\"gff393\",\"gff394\",\"gff395\",\"gff396\",\"gff397\",\"gff398\",\"gff399\",\"gff400\",\"gff401\",\"gff402\",\"gff403\",\"gff404\",\"gff405\",\"gff406\",\"gff407\",\"gff408\",\"gff409\",\"gff410\",\"gff411\",\"gff412\",\"gff413\",\"gff414\",\"gff415\",\"gff416\",\"gff417\",\"gff418\",\"gff419\",\"gff420\",\"gff421\",\"gff422\",\"gff423\",\"gff424\",\"gff425\",\"gff426\",\"gff427\",\"gff428\",\"gff429\",\"gff430\",\"gff431\",\"gff432\",\"gff433\",\"gff434\",\"gff435\",\"gff436\",\"gff437\",\"gff438\",\"gff439\",\"gff440\",\"gff441\",\"gff442\",\"gff443\",\"gff444\",\"gff445\",\"gff446\",\"gff447\",\"gff448\",\"gff449\",\"gff450\",\"gff451\",\"gff452\",\"gff453\",\"gff454\",\"gff455\",\"gff456\",\"gff457\",\"gff458\",\"gff459\",\"gff460\",\"gff461\",\"gff462\",\"gff463\",\"gff464\",\"gff465\",\"gff466\",\"gff467\",\"gff468\",\"gff469\",\"gff470\",\"gff471\",\"gff472\",\"gff473\",\"gff474\",\"gff475\",\"gff476\",\"gff477\",\"gff478\",\"gff479\",\"gff480\",\"gff481\",\"gff482\",\"gff483\",\"gff484\",\"gff485\",\"gff486\",\"gff487\",\"gff488\",\"gff489\",\"gff490\",\"gff491\",\"gff492\",\"gff493\",\"gff494\",\"gff495\",\"gff496\",\"gff497\",\"gff498\",\"gff499\",\"gff500\",\"gff501\",\"gff502\",\"gff503\",\"gff504\",\"gff505\",\"gff506\",\"gff507\",\"gff508\",\"gff509\",\"gff510\",\"gff511\",\"gff512\",\"gff513\",\"gff514\",\"gff515\",\"gff516\",\"gff517\",\"gff518\",\"gff519\",\"gff520\",\"gff521\",\"gff522\",\"gff523\",\"gff524\",\"gff525\",\"gff526\",\"gff527\",\"gff528\",\"gff529\",\"gff530\",\"gff531\",\"gff532\",\"gff533\",\"gff534\",\"gff535\",\"gff536\",\"gff537\",\"gff538\",\"gff539\",\"gff540\",\"gff541\",\"gff542\",\"gff543\",\"gff544\",\"gff545\",\"gff546\",\"gff547\",\"gff548\",\"gff549\",\"gff550\",\"gff551\",\"gff552\",\"gff553\",\"gff554\",\"gff555\",\"gff556\",\"gff557\",\"gff558\",\"gff559\",\"gff560\",\"gff561\",\"gff562\",\"gff563\",\"gff564\",\"gff565\",\"gff566\",\"gff567\",\"gff568\",\"gff569\",\"gff570\",\"gff571\",\"gff572\",\"gff573\",\"gff574\",\"gff575\",\"gff576\",\"gff577\",\"gff578\",\"gff579\",\"gff580\",\"gff581\",\"gff582\",\"gff583\",\"gff584\",\"gff585\",\"gff586\",\"gff587\",\"gff588\",\"gff589\",\"gff590\",\"gff591\",\"gff592\",\"gff593\",\"gff594\",\"gff595\",\"gff596\",\"gff597\",\"gff598\",\"gff599\",\"gff600\",\"gff601\",\"gff602\",\"gff603\",\"gff604\",\"gff605\",\"gff606\",\"gff607\",\"gff608\",\"gff609\",\"gff610\",\"gff611\",\"gff612\",\"gff613\",\"gff614\",\"gff615\",\"gff616\",\"gff617\",\"gff618\",\"gff619\",\"gff620\",\"gff621\",\"gff622\",\"gff623\",\"gff624\",\"gff625\",\"gff626\",\"gff627\",\"gff628\",\"gff629\",\"gff630\",\"gff631\",\"gff632\",\"gff633\",\"gff634\",\"gff635\",\"gff636\",\"gff637\",\"gff638\",\"gff639\",\"gff640\",\"gff641\",\"gff642\",\"gff643\",\"gff644\",\"gff645\",\"gff646\",\"gff647\",\"gff648\",\"gff649\",\"gff650\",\"gff651\",\"gff652\",\"gff653\",\"gff654\",\"gff655\",\"gff656\",\"gff657\",\"gff658\",\"gff659\",\"gff660\",\"gff661\",\"gff662\",\"gff663\",\"gff664\",\"gff665\",\"gff666\",\"gff667\",\"gff668\",\"gff669\",\"gff670\",\"gff671\",\"gff672\",\"gff673\",\"gff674\",\"gff675\",\"gff676\",\"gff677\",\"gff678\",\"gff679\",\"gff680\",\"gff681\",\"gff682\",\"gff683\",\"gff684\",\"gff685\",\"gff686\",\"gff687\",\"gff688\",\"gff689\",\"gff690\",\"gff691\",\"gff692\",\"gff693\",\"gff694\",\"gff695\",\"gff696\",\"gff697\",\"gff698\",\"gff699\",\"gff700\",\"gff701\",\"gff702\",\"gff703\",\"gff704\",\"gff705\",\"gff706\",\"gff707\",\"gff708\",\"gff709\",\"gff710\",\"gff711\",\"gff712\",\"gff713\",\"gff714\",\"gff715\",\"gff716\",\"gff717\",\"gff718\",\"gff719\",\"gff720\",\"gff721\",\"gff722\",\"gff723\",\"gff724\",\"gff725\",\"gff726\",\"gff727\",\"gff728\",\"gff729\",\"gff730\",\"gff731\",\"gff732\",\"gff733\",\"gff734\",\"gff735\",\"gff736\",\"gff737\",\"gff738\",\"gff739\",\"gff740\",\"gff741\",\"gff742\",\"gff743\",\"gff744\",\"gff745\",\"gff746\",\"gff747\",\"gff748\",\"gff749\",\"gff750\",\"gff751\",\"gff752\",\"gff753\",\"gff754\",\"gff755\",\"gff756\",\"gff757\",\"gff758\",\"gff759\",\"gff760\",\"gff761\",\"gff762\",\"gff763\",\"gff764\",\"gff765\",\"gff766\",\"gff767\",\"gff768\",\"gff769\",\"gff770\",\"gff771\",\"gff772\",\"gff773\",\"gff774\",\"gff775\",\"gff776\",\"gff777\",\"gff778\",\"gff779\",\"gff780\",\"gff781\",\"gff782\",\"gff783\",\"gff784\",\"gff785\",\"gff786\",\"gff787\",\"gff788\",\"gff789\",\"gff790\",\"gff791\",\"gff792\",\"gff793\",\"gff794\",\"gff795\",\"gff796\",\"gff797\",\"gff798\",\"gff799\",\"gff800\",\"gff801\",\"gff802\",\"gff803\",\"gff804\",\"gff805\",\"gff806\",\"gff807\",\"gff808\",\"gff809\",\"gff810\",\"gff811\",\"gff812\",\"gff813\",\"gff814\",\"gff815\",\"gff816\",\"gff817\",\"gff818\",\"gff819\",\"gff820\",\"gff821\",\"gff822\",\"gff823\",\"gff824\",\"gff825\",\"gff826\",\"gff827\",\"gff828\",\"gff829\",\"gff830\",\"gff831\",\"gff832\",\"gff833\",\"gff834\",\"gff835\",\"gff836\",\"gff837\",\"gff838\",\"gff839\",\"gff840\",\"gff841\",\"gff842\",\"gff843\",\"gff844\",\"gff845\",\"gff846\",\"gff847\",\"gff848\",\"gff849\",\"gff850\",\"gff851\",\"gff852\",\"gff853\",\"gff854\",\"gff855\",\"gff856\",\"gff857\",\"gff858\",\"gff859\",\"gff860\",\"gff861\",\"gff862\",\"gff863\",\"gff864\",\"gff865\",\"gff866\",\"gff867\",\"gff868\",\"gff869\",\"gff870\",\"gff871\",\"gff872\",\"gff873\",\"gff874\",\"gff875\",\"gff876\",\"gff877\",\"gff878\",\"gff879\",\"gff880\",\"gff881\",\"gff882\",\"gff883\",\"gff884\",\"gff885\",\"gff886\",\"gff887\",\"gff888\",\"gff889\",\"gff890\",\"gff891\",\"gff892\",\"gff893\",\"gff894\",\"gff895\",\"gff896\",\"gff897\",\"gff898\",\"gff899\",\"gff900\",\"gff901\",\"gff902\",\"gff903\",\"gff904\",\"gff905\",\"gff906\",\"gff907\",\"gff908\",\"gff909\",\"gff910\",\"gff911\",\"gff912\",\"gff913\",\"gff914\",\"gff915\",\"gff916\",\"gff917\",\"gff918\",\"gff919\",\"gff920\",\"gff921\",\"gff922\",\"gff923\",\"gff924\",\"gff925\",\"gff926\",\"gff927\",\"gff928\",\"gff929\",\"gff930\",\"gff931\",\"gff932\",\"gff933\",\"gff934\",\"gff935\",\"gff936\",\"gff937\",\"gff938\",\"gff939\",\"gff940\",\"gff941\",\"gff942\",\"gff943\",\"gff944\",\"gff945\",\"gff946\",\"gff947\",\"gff948\",\"gff949\",\"gff950\",\"gff951\",\"gff952\",\"gff953\",\"gff954\",\"gff955\",\"gff956\",\"gff957\",\"gff958\",\"gff959\",\"gff960\",\"gff961\",\"gff962\",\"gff963\",\"gff964\",\"gff965\",\"gff966\",\"gff967\",\"gff968\",\"gff969\",\"gff970\",\"gff971\",\"gff972\",\"gff973\",\"gff974\",\"gff975\",\"gff976\",\"gff977\",\"gff978\",\"gff979\",\"gff980\",\"gff981\",\"gff982\",\"gff983\",\"gff984\",\"gff985\",\"gff986\",\"gff987\",\"gff988\",\"gff989\",\"gff990\",\"gff991\",\"gff992\",\"gff993\",\"gff994\",\"gff995\",\"gff996\",\"gff997\",\"gff998\",\"gff999\",\"gff1000\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"companyId\",\"caseInsensitive\":false}],\"createdBy\":\"gaston@getunleash.io\",\"createdAt\":\"2025-05-14T10:28:53.604Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":146,\"name\":\"aaaa: project-segment (private)\",\"description\":\"A project-scoped segment for a private project.\",\"project\":\"private-project-1\",\"constraints\":[{\"values\":[\"blocket\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2026-02-16T14:34:55.581Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":145,\"name\":\"aaaa: project-segment (public)\",\"description\":\"A project-scoped segment for an open project.\",\"project\":\"breakheart\",\"constraints\":[{\"values\":[\"blue\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2026-02-16T14:33:39.197Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":119,\"name\":\"aabbb\",\"description\":\"x\",\"constraints\":[{\"values\":[\"bern\",\"bratislava\",\"berlin\",\"krakow\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"city\",\"caseInsensitive\":false}],\"createdBy\":\"czech.tymoteusz@gmail.com\",\"createdAt\":\"2025-07-30T08:39:08.710Z\",\"usedInProjects\":3,\"usedInFeatures\":3},{\"id\":117,\"name\":\"abbbbb\",\"description\":\"\",\"constraints\":[{\"values\":[\"test\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"czech.tymoteusz@gmail.com\",\"createdAt\":\"2025-07-30T08:37:24.277Z\",\"usedInProjects\":4,\"usedInFeatures\":4},{\"id\":63,\"name\":\"Agment\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2023-12-06T09:15:46.446Z\",\"usedInProjects\":6,\"usedInFeatures\":6},{\"id\":123,\"name\":\"A lot of value\",\"description\":\"Hello\",\"constraints\":[],\"createdBy\":\"ivar@getunleash.io\",\"createdAt\":\"2025-09-12T06:50:24.911Z\",\"usedInProjects\":2,\"usedInFeatures\":2},{\"id\":66,\"name\":\"asd13\",\"description\":\"\",\"constraints\":[{\"values\":[\"123\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false},{\"values\":[\"412412\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"fredrik.oseberg@getunleash.io\",\"createdAt\":\"2023-12-20T14:09:24.140Z\",\"usedInProjects\":5,\"usedInFeatures\":6},{\"id\":37,\"name\":\"bar.com\",\"description\":\"\",\"project\":\"MateuszWorkspace\",\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-08-07T08:06:26.734Z\",\"usedInProjects\":1,\"usedInFeatures\":6},{\"id\":76,\"name\":\"Beta User IDs\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-05-16T12:21:55.912Z\",\"usedInProjects\":6,\"usedInFeatures\":8},{\"id\":34,\"name\":\"beta users\",\"description\":\"\",\"project\":\"MateuszWorkspace\",\"constraints\":[{\"values\":[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"12\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-08-07T08:02:47.419Z\",\"usedInProjects\":1,\"usedInFeatures\":9},{\"id\":38,\"name\":\"beta-users\",\"description\":\"\",\"project\":\"MateuszWorkspace\",\"constraints\":[{\"values\":[\"1\",\"2\",\"3\",\"4\",\"5\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-08-07T08:12:02.988Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":24,\"name\":\"branch\",\"description\":\"\",\"project\":\"Sebastian\",\"constraints\":[],\"createdBy\":\"sebastian@getunleash.io\",\"createdAt\":\"2023-06-15T14:28:41.886Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":25,\"name\":\"brandA\",\"description\":\"\",\"project\":\"Sebastian\",\"constraints\":[{\"values\":[\"A\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"sebastian@getunleash.io\",\"createdAt\":\"2023-06-15T14:28:53.857Z\",\"usedInProjects\":1,\"usedInFeatures\":2},{\"id\":26,\"name\":\"brandB\",\"description\":\"\",\"project\":\"Sebastian\",\"constraints\":[{\"values\":[\"B\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"sebastian@getunleash.io\",\"createdAt\":\"2023-06-15T14:29:00.670Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":27,\"name\":\"brandC\",\"description\":\"\",\"project\":\"Sebastian\",\"constraints\":[{\"values\":[\"C\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"sebastian@getunleash.io\",\"createdAt\":\"2023-06-15T14:29:08.250Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":8,\"name\":\"Conduit Dev Team\",\"description\":\"All the member of development team\",\"constraints\":[{\"values\":[\"12\",\"34\",\"44\",\"46\",\"78\",\"23456\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false},{\"values\":[\"conduit\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false},{\"values\":[\"demo2\",\"sbaa0001\",\"pro\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"clientId\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2022-12-29T09:56:30.218Z\",\"usedInProjects\":15,\"usedInFeatures\":21},{\"id\":162,\"name\":\"Customers with failed payments\",\"description\":\"All customers with failed payments in stripe will be added to this segment.\",\"constraints\":[{\"values\":[\"nuno\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"clientId\",\"caseInsensitive\":false}],\"createdBy\":\"nuno@getunleash.io\",\"createdAt\":\"2026-09-09T08:54:55.590Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":46,\"name\":\"Davers users\",\"description\":\"\",\"project\":\"davidstestproject\",\"constraints\":[{\"values\":[\"1\",\"2\",\"3\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false},{\"values\":[\"verymuch\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"david@getunleash.io\",\"createdAt\":\"2023-10-18T07:40:15.854Z\",\"usedInProjects\":15,\"usedInFeatures\":20},{\"id\":96,\"name\":\"defaultsegment\",\"description\":\"\",\"project\":\"defaultprojecttest\",\"constraints\":[{\"values\":[\"customer z\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"createdBy\":\"elise@getunleash.io\",\"createdAt\":\"2025-01-06T11:08:28.287Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":115,\"name\":\"Default segment to edit\",\"description\":\"\",\"project\":\"default\",\"constraints\":[{\"values\":[\"d\",\"g\",\"h\",\"i\",\"j\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"a\",\"caseInsensitive\":false}],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2025-07-03T11:11:32.014Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":110,\"name\":\"defaultTest\",\"description\":\"\",\"constraints\":[{\"values\":[\"1\",\"2\",\"3\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"createdBy\":\"sebastian@getunleash.io\",\"createdAt\":\"2025-03-19T08:51:08.885Z\",\"usedInProjects\":4,\"usedInFeatures\":4},{\"id\":62,\"name\":\"definitely-do-not-delete\",\"description\":\"\",\"project\":\"DavidTest\",\"constraints\":[{\"values\":[\"1\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"david@getunleash.io\",\"createdAt\":\"2023-12-06T09:14:31.944Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":51,\"name\":\"deletable\",\"description\":\"\",\"constraints\":[{\"values\":[\"45\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"age\",\"caseInsensitive\":false}],\"createdBy\":\"jaanus@getunleash.ai\",\"createdAt\":\"2023-10-31T11:14:47.198Z\",\"usedInProjects\":7,\"usedInFeatures\":7},{\"id\":99,\"name\":\"delta_segment\",\"description\":\"\",\"project\":\"deltasbug\",\"constraints\":[],\"createdBy\":\"mateusz+viewer@getunleash.io\",\"createdAt\":\"2025-02-14T19:04:27.789Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":108,\"name\":\"delta_segment2\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"fredrik.oseberg@getunleash.io\",\"createdAt\":\"2025-03-11T12:02:49.602Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":74,\"name\":\"email list\",\"description\":\"\",\"project\":\"MateuszWorkspace\",\"constraints\":[{\"values\":[\"gmail.com\"],\"inverted\":false,\"operator\":\"STR_ENDS_WITH\",\"contextName\":\"email\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-03-05T10:13:38.493Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":90,\"name\":\"enable_all\",\"description\":\"\",\"constraints\":[{\"values\":[\"demo2\"],\"inverted\":true,\"operator\":\"IN\",\"contextName\":\"clientId\",\"caseInsensitive\":false},{\"values\":[\"playground\"],\"inverted\":false,\"operator\":\"NOT_IN\",\"contextName\":\"environment\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-11-14T10:20:50.261Z\",\"usedInProjects\":2,\"usedInFeatures\":2},{\"id\":89,\"name\":\"Enterprise Customers\",\"description\":\"\",\"project\":\"unleash\",\"constraints\":[],\"createdBy\":\"anniken.ostdahl@getunleash.io\",\"createdAt\":\"2024-11-07T09:33:54.195Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":47,\"name\":\"exclsionList\",\"description\":\"\",\"constraints\":[{\"values\":[\"123\",\"234\",\"345\"],\"inverted\":true,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"sebastian@getunleash.io\",\"createdAt\":\"2023-10-18T14:23:02.277Z\",\"usedInProjects\":4,\"usedInFeatures\":4},{\"id\":81,\"name\":\"far\",\"description\":\"\",\"project\":\"UX-Project\",\"constraints\":[],\"createdBy\":\"jaanus@getunleash.io\",\"createdAt\":\"2024-08-16T10:51:59.996Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":73,\"name\":\"fdasfdsa\",\"description\":\"\",\"project\":\"gard\",\"constraints\":[{\"values\":[\"fdsafdasfads\",\"fdsafdasfdasfdasfdsa\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"clientId\",\"caseInsensitive\":false}],\"createdBy\":\"gard_unleash@gurters.com\",\"createdAt\":\"2024-02-28T16:22:24.605Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":16,\"name\":\"fixed\",\"description\":\"aaax\",\"project\":\"gaston\",\"constraints\":[{\"values\":[\"aaa\",\"bbb\",\"c\"],\"inverted\":true,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"gaston@getunleash.ai\",\"createdAt\":\"2023-03-17T14:05:30.337Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":31,\"name\":\"gfdfg\",\"description\":\"\",\"project\":\"crvid\",\"constraints\":[{\"values\":[\"test\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"jaanus@getunleash.ai\",\"createdAt\":\"2023-07-03T08:51:54.428Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":54,\"name\":\"global2\",\"description\":\"\",\"constraints\":[{\"values\":[\"berlin\",\"bern\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"city\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-11-02T07:26:18.173Z\",\"usedInProjects\":5,\"usedInFeatures\":6},{\"id\":53,\"name\":\"globalsegment\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-11-02T07:26:11.068Z\",\"usedInProjects\":1,\"usedInFeatures\":2},{\"id\":67,\"name\":\"heartman-cr-segment\",\"description\":\"Testing a cr error I'm seeing locally: error: insert into \\\"change_request_events\\\" (\\\"action\\\", \\\"change_request_id\\\", \\\"created_by\\\", \\\"feature\\\", \\\"payload\\\") values ($1, $2, $3, $4, $5) - null value in column \\\"feature\\\" of relation \\\"change_request_events\\\" violates not-null constraint\",\"project\":\"breakheart\",\"constraints\":[],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2024-02-05T04:16:08.777Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":13,\"name\":\"heartment\",\"description\":\"for testing\",\"constraints\":[{\"values\":[\"gold\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userLevel\",\"caseInsensitive\":false}],\"createdBy\":\"thomas@getunleash.ai\",\"createdAt\":\"2023-01-26T11:56:44.826Z\",\"usedInProjects\":10,\"usedInFeatures\":20},{\"id\":95,\"name\":\"hello\",\"description\":\"\",\"project\":\"unleash-docs\",\"constraints\":[{\"values\":[\"123\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"melinda.fekete@getunleash.io\",\"createdAt\":\"2024-12-12T13:29:30.638Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":72,\"name\":\"hmm\",\"description\":\"\",\"project\":\"gard\",\"constraints\":[{\"values\":[\"money\",\"fa\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"gard_unleash@gurters.com\",\"createdAt\":\"2024-02-28T15:48:02.682Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":139,\"name\":\"impact-metrics-segment-test\",\"description\":\"\",\"project\":\"impact-metrics\",\"constraints\":[{\"values\":[\"blocket\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2026-02-06T09:32:38.624Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":128,\"name\":\"impact-segment\",\"description\":\"\",\"project\":\"impact-metrics\",\"constraints\":[{\"values\":[\"test\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2025-12-16T15:00:25.128Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":35,\"name\":\"internal-users\",\"description\":\"A bunch of ids modifed\",\"project\":\"MateuszWorkspace\",\"constraints\":[{\"values\":[\"100\",\"102\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false},{\"values\":[\"bar.com\",\"foo.com\"],\"inverted\":false,\"operator\":\"STR_ENDS_WITH\",\"contextName\":\"email\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-08-07T08:03:13.280Z\",\"usedInProjects\":2,\"usedInFeatures\":7},{\"id\":28,\"name\":\"Internet\",\"description\":\"\",\"project\":\"Sebastian\",\"constraints\":[{\"values\":[\"internet\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"channel\",\"caseInsensitive\":false}],\"createdBy\":\"sebastian@getunleash.io\",\"createdAt\":\"2023-06-15T14:29:24.296Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":78,\"name\":\"local-segment-archive\",\"description\":\"x\",\"project\":\"bran-new-project-overflow-test-85aa1b78da40\",\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-08-15T07:57:23.898Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":161,\"name\":\"Locked customers\",\"description\":\"Customers we lock due to missing payments.\",\"constraints\":[{\"values\":[\"nuno\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"clientId\",\"caseInsensitive\":false}],\"createdBy\":\"nuno@getunleash.io\",\"createdAt\":\"2026-09-09T08:48:02.541Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":33,\"name\":\"MateuszSegment123\",\"description\":\"\",\"project\":\"MateuszWorkspace\",\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false},{\"values\":[\"a\",\"b\",\"c\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-07-31T10:32:24.634Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":272,\"name\":\"mcp-cr-batch\",\"description\":null,\"constraints\":[],\"createdBy\":\"mcp-limited-token\",\"createdAt\":\"2026-10-24T09:03:03.084Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":270,\"name\":\"mcp-cr-global-renamed\",\"description\":null,\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"createdBy\":\"mcp-limited-token\",\"createdAt\":\"2026-10-24T09:01:24.639Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":271,\"name\":\"mcp-cr-test\",\"description\":\"Users with an @getunleash.io email\",\"project\":\"mcp-server\",\"constraints\":[{\"values\":[\"@getunleash.io\"],\"inverted\":false,\"operator\":\"STR_ENDS_WITH\",\"contextName\":\"email\",\"caseInsensitive\":false}],\"createdBy\":\"mcp-limited-token\",\"createdAt\":\"2026-10-24T09:02:59.731Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":165,\"name\":\"mcp-v2-beta\",\"description\":null,\"project\":\"mateuszai\",\"constraints\":[{\"values\":[\"u1\",\"u2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2026-10-19T12:29:43.297Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":94,\"name\":\"Melinda test segment\",\"description\":\"\",\"project\":\"unleash-docs\",\"constraints\":[{\"values\":[\"Enterprise\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"plan\",\"caseInsensitive\":false},{\"values\":[\"hello\"],\"inverted\":false,\"operator\":\"STR_CONTAINS\",\"contextName\":\"companyId\",\"caseInsensitive\":false}],\"createdBy\":\"melinda.fekete@getunleash.io\",\"createdAt\":\"2024-12-12T09:34:05.440Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":29,\"name\":\"mobile\",\"description\":\"\",\"project\":\"Sebastian\",\"constraints\":[{\"values\":[\"mobile\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"channel\",\"caseInsensitive\":false}],\"createdBy\":\"sebastian@getunleash.io\",\"createdAt\":\"2023-06-15T14:29:30.040Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":109,\"name\":\"most probably true\",\"description\":\"Segment that should always be true\",\"constraints\":[{\"values\":[\"0195a930-68b0-7080-b97d-747437e026e4\"],\"inverted\":true,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false},{\"value\":\"7.0.7\",\"values\":[],\"inverted\":false,\"operator\":\"SEMVER_EQ\",\"contextName\":\"app_version\",\"caseInsensitive\":false}],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2025-03-18T12:18:09.612Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":87,\"name\":\"My Developers\",\"description\":\"\",\"constraints\":[{\"values\":[\"1\",\"2\",\"3\",\"4\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false},{\"values\":[\"berlin\",\"bratislava\",\"krakow\",\"paris\",\"porto\",\"lisbon\",\"madrid\",\"london\",\"oslo\",\"rome\",\"prague\",\"stockholm\",\"bern\",\"copenhagen\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"city\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-10-28T11:23:57.600Z\",\"usedInProjects\":3,\"usedInFeatures\":4},{\"id\":133,\"name\":\"my-friend-list\",\"description\":\"\",\"constraints\":[{\"values\":[\"1\",\"2\",\"3\",\"4\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"jaanus@getunleash.io\",\"createdAt\":\"2026-01-07T10:33:01.979Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":82,\"name\":\"my-project-segment\",\"description\":\"\",\"project\":\"archive-test\",\"constraints\":[{\"values\":[\"finn\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"fredrik.oseberg@getunleash.io\",\"createdAt\":\"2024-08-20T13:49:12.792Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":111,\"name\":\"mysegment\",\"description\":\"\",\"project\":\"bug-bug\",\"constraints\":[],\"createdBy\":\"jaanus@getunleash.io\",\"createdAt\":\"2025-04-23T07:37:59.149Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":7,\"name\":\"new\",\"description\":\"\",\"constraints\":[{\"values\":[\"app\"],\"inverted\":true,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"jaanus@getunleash.ai\",\"createdAt\":\"2022-12-28T13:15:46.782Z\",\"usedInProjects\":5,\"usedInFeatures\":10},{\"id\":164,\"name\":\"new!\",\"description\":\"\",\"project\":\"3\",\"constraints\":[],\"createdBy\":\"thomas2@email.com\",\"createdAt\":\"2026-10-14T07:40:59.499Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":4,\"name\":\"new for test\",\"description\":\"\",\"constraints\":[{\"values\":[\"aa\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"nicolae@getunleash.ai\",\"createdAt\":\"2022-11-08T09:42:16.079Z\",\"usedInProjects\":2,\"usedInFeatures\":2},{\"id\":134,\"name\":\"new-project-segment\",\"description\":\"\",\"project\":\"henning-test\",\"constraints\":[{\"values\":[\"ws\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"henning-test-context-field-1\",\"caseInsensitive\":false}],\"createdBy\":\"henning.sillerud@getunleash.io\",\"createdAt\":\"2026-01-12T09:08:34.985Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":92,\"name\":\"new-segment-name\",\"description\":\"\",\"project\":\"heartman-takes-to-the-skies\",\"constraints\":[],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2024-11-27T10:41:53.176Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":150,\"name\":\"nice-people__development\",\"description\":\"Very nice people!\",\"constraints\":[{\"values\":[\"italy\",\"south africa\",\"argentina\",\"greece\",\"USA\"],\"operator\":\"IN\",\"contextName\":\"user_country\"}],\"createdBy\":\"gaston@getunleash.io\",\"createdAt\":\"2026-04-22T10:04:58.595Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":58,\"name\":\"N-test-to-delete\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"nicolae@getunleash.io\",\"createdAt\":\"2023-12-06T09:07:40.704Z\",\"usedInProjects\":2,\"usedInFeatures\":2},{\"id\":17,\"name\":\"pro-customers\",\"description\":\"\",\"project\":\"CopyHostedDX\",\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-03-28T09:32:45.507Z\",\"usedInProjects\":1,\"usedInFeatures\":2},{\"id\":127,\"name\":\"project-segment\",\"description\":\"\",\"project\":\"henning-test\",\"constraints\":[{\"values\":[\"sadf\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false},{\"values\":[\"unleash\"],\"inverted\":false,\"operator\":\"STR_CONTAINS\",\"contextName\":\"appName\",\"caseInsensitive\":true}],\"createdBy\":\"henning.sillerud@getunleash.io\",\"createdAt\":\"2025-12-03T11:18:24.049Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":130,\"name\":\"project-segment-breakheart\",\"description\":\"A project segment (with project context) originally defined in 'breakheart'\",\"constraints\":[{\"values\":[\"a\",\"b\",\"c\",\"d\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"project-field\",\"caseInsensitive\":false}],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2025-12-19T13:20:46.815Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":18,\"name\":\"ProxyNewInstances\",\"description\":\"\",\"project\":\"CopyHostedDX\",\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-03-28T09:34:47.708Z\",\"usedInProjects\":1,\"usedInFeatures\":2},{\"id\":57,\"name\":\"remove_me_now1\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-12-06T09:06:00.439Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":88,\"name\":\"seggg?\",\"description\":\"\",\"project\":\"change-request-notifications\",\"constraints\":[{\"values\":[\"krakow\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"city\",\"caseInsensitive\":false}],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2024-10-28T13:08:52.157Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":84,\"name\":\"seg-in-move\",\"description\":\"\",\"project\":\"migration\",\"constraints\":[{\"values\":[\"playground\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"tymek@getunleash.io\",\"createdAt\":\"2024-09-24T08:48:23.806Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":1,\"name\":\"Segment 1\",\"description\":\"\",\"constraints\":[{\"values\":[\"111111\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"nicolae@getunleash.ai\",\"createdAt\":\"2022-07-28T14:41:02.687Z\",\"usedInProjects\":7,\"usedInFeatures\":7},{\"id\":131,\"name\":\"segment-a\",\"description\":\"\",\"project\":\"edison\",\"constraints\":[{\"values\":[\"2021\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"year\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2026-01-05T21:30:33.648Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":132,\"name\":\"segment-b\",\"description\":\"\",\"project\":\"edison\",\"constraints\":[{\"values\":[\"android\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"channel\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2026-01-05T21:30:46.605Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":105,\"name\":\"segment_to_delete\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"fredrik.oseberg@getunleash.io\",\"createdAt\":\"2025-03-11T12:01:21.517Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":116,\"name\":\"Segment to delete\",\"description\":\"\",\"project\":\"default\",\"constraints\":[{\"values\":[\"beta\",\"gold\",\"bronze\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountType\",\"caseInsensitive\":false}],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2025-07-03T11:11:55.026Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":106,\"name\":\"segment_to_delete2\",\"description\":\"x\",\"constraints\":[],\"createdBy\":\"fredrik.oseberg@getunleash.io\",\"createdAt\":\"2025-03-11T12:02:12.909Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":80,\"name\":\"share-segment\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-08-15T10:00:50.506Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":14,\"name\":\"test\",\"description\":\"\",\"constraints\":[{\"values\":[\"beta\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountType\",\"caseInsensitive\":false}],\"createdBy\":\"nicolae@getunleash.ai\",\"createdAt\":\"2023-02-03T10:48:05.212Z\",\"usedInProjects\":2,\"usedInFeatures\":2},{\"id\":129,\"name\":\"test1111\",\"description\":\"delete me\",\"constraints\":[],\"createdBy\":\"henning.sillerud@getunleash.io\",\"createdAt\":\"2025-12-18T14:11:14.408Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":97,\"name\":\"test-delta\",\"description\":\"2\",\"project\":\"alvin\",\"constraints\":[{\"values\":[\"finn\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"jaanus@getunleash.io\",\"createdAt\":\"2025-01-21T09:24:18.703Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":6,\"name\":\"testers\",\"description\":\"\",\"constraints\":[{\"values\":[\"123\",\"234\",\"345\",\"1\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false},{\"values\":[\"sebastian@getunleash.io\",\"eucc0020\",\"aero\",\"metal\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"email\",\"caseInsensitive\":false}],\"createdBy\":\"sebastian@getunleash.ai\",\"createdAt\":\"2022-12-02T13:20:38.724Z\",\"usedInProjects\":6,\"usedInFeatures\":8},{\"id\":83,\"name\":\"test-events\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"jaanus@getunleash.io\",\"createdAt\":\"2024-08-21T11:04:10.934Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":68,\"name\":\"testGard\",\"description\":\"\",\"project\":\"gard\",\"constraints\":[{\"values\":[\"bar\",\"foo\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false},{\"values\":[\"bar\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"gard@getunleash.io\",\"createdAt\":\"2024-02-28T14:46:12.582Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":120,\"name\":\"testsegment\",\"description\":\"\",\"constraints\":[{\"values\":[\"7\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false},{\"values\":[\"7\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"app_version\",\"caseInsensitive\":false}],\"createdBy\":\"simon@getunleash.io\",\"createdAt\":\"2025-08-29T12:03:33.612Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":65,\"name\":\"test-segment\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"simon@getunleash.io\",\"createdAt\":\"2023-12-06T09:21:41.248Z\",\"usedInProjects\":2,\"usedInFeatures\":2},{\"id\":114,\"name\":\"test-segment-bug\",\"description\":\"\",\"constraints\":[{\"values\":[\"blocket\",\"finn\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false},{\"values\":[\"Commercial\",\"Retail\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"type\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2025-06-17T12:47:37.542Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":44,\"name\":\"test-segment-ionut\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"support-ionut@getunleash.ai\",\"createdAt\":\"2023-08-22T12:52:30.823Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":107,\"name\":\"test_segments\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"fredrik.oseberg@getunleash.io\",\"createdAt\":\"2025-03-11T12:02:31.403Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":122,\"name\":\"thisone\",\"description\":\"\",\"project\":\"api\",\"constraints\":[{\"values\":[\"ccc\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"gaston@getunleash.io\",\"createdAt\":\"2025-09-03T09:25:16.415Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":93,\"name\":\"unleash-e2e-09410284292938065unleash-e2e-09410284292938065\",\"description\":\"\",\"project\":\"heartman-takes-to-the-skies\",\"constraints\":[],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2024-11-27T10:42:02.890Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":125,\"name\":\"UX financial services\",\"description\":\"\",\"project\":\"financial-services-5ea31883a08a\",\"constraints\":[{\"values\":[\"CS team\",\"UX team\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"UX_local_financialservices\",\"caseInsensitive\":false}],\"createdBy\":\"elise@getunleash.io\",\"createdAt\":\"2025-11-20T08:37:41.505Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":160,\"name\":\"UXTEST\",\"description\":\"\",\"project\":\"testprojectux\",\"constraints\":[{\"values\":[\"ios\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"anniken.ostdahl@getunleash.io\",\"createdAt\":\"2026-09-03T17:36:50.694Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":3,\"name\":\"UX user group\",\"description\":\"UX customers\",\"constraints\":[{\"values\":[\"@google\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"email\",\"caseInsensitive\":false}],\"createdBy\":\"elise@getunleash.ai\",\"createdAt\":\"2022-08-11T07:42:38.341Z\",\"usedInProjects\":9,\"usedInFeatures\":14},{\"id\":85,\"name\":\"variant.a.segment\",\"description\":\"\",\"project\":\"personaldashboard\",\"constraints\":[{\"values\":[\"1\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-10-17T07:58:55.994Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":86,\"name\":\"variant.b.segment\",\"description\":\"\",\"project\":\"personaldashboard\",\"constraints\":[{\"values\":[\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-10-17T08:01:42.022Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":77,\"name\":\"VIPUsers\",\"description\":\"\",\"project\":\"changerequestdemo-ad8188e4248d\",\"constraints\":[{\"values\":[\"1\",\"2\",\"3\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-06-24T09:51:42.027Z\",\"usedInProjects\":7,\"usedInFeatures\":9},{\"id\":71,\"name\":\"whatIsThis\",\"description\":\"\",\"project\":\"gard\",\"constraints\":[{\"values\":[\"bar\",\"foo\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"gard@getunleash.io\",\"createdAt\":\"2024-02-28T15:25:01.163Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":121,\"name\":\"Whee\",\"description\":\"\",\"project\":\"simonsproject\",\"constraints\":[{\"values\":[\"blocket\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"simon@getunleash.io\",\"createdAt\":\"2025-08-29T12:57:16.195Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":144,\"name\":\"www\",\"description\":\"\",\"project\":\"gaston\",\"constraints\":[{\"values\":[\"ios\",\"android\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"channel\",\"caseInsensitive\":false}],\"createdBy\":\"gaston@getunleash.io\",\"createdAt\":\"2026-02-11T17:43:47.168Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":159,\"name\":\"xas1\",\"description\":\"xxx\",\"project\":\"gaston-editor\",\"constraints\":[],\"createdBy\":\"gaston@getunleash.io\",\"createdAt\":\"2026-05-06T12:59:57.587Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":52,\"name\":\"X segment\",\"description\":\"\",\"constraints\":[{\"values\":[\"oda\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"socaciunicolae@gmail.com\",\"createdAt\":\"2023-11-01T13:42:47.283Z\",\"usedInProjects\":3,\"usedInFeatures\":6},{\"id\":142,\"name\":\"xyz\",\"description\":\"\",\"project\":\"gaston\",\"constraints\":[{\"values\":[\"eg\",\"pro\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"clientId\",\"caseInsensitive\":false}],\"createdBy\":\"gaston@getunleash.io\",\"createdAt\":\"2026-02-11T17:42:47.992Z\",\"usedInProjects\":0,\"usedInFeatures\":0}]}",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "40133",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -744,10 +740,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "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",
+          "body": "{\"segments\":[{\"id\":163,\"name\":\"<3 segment\",\"description\":\"project segment for <3\",\"project\":\"3\",\"constraints\":[{\"values\":[\"blue\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"app_version\",\"caseInsensitive\":false}],\"createdBy\":\"thomas2@email.com\",\"createdAt\":\"2026-10-14T07:39:54.905Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":112,\"name\":\"a\",\"description\":\"\",\"project\":\"gff-4aa0ca550ca7\",\"constraints\":[{\"values\":[\"gff1\",\"gff2\",\"gff3\",\"gff4\",\"gff5\",\"gff6\",\"gff7\",\"gff8\",\"gff9\",\"gff10\",\"gff11\",\"gff12\",\"gff13\",\"gff14\",\"gff15\",\"gff16\",\"gff17\",\"gff18\",\"gff19\",\"gff20\",\"gff21\",\"gff22\",\"gff23\",\"gff24\",\"gff25\",\"gff26\",\"gff27\",\"gff28\",\"gff29\",\"gff30\",\"gff31\",\"gff32\",\"gff33\",\"gff34\",\"gff35\",\"gff36\",\"gff37\",\"gff38\",\"gff39\",\"gff40\",\"gff41\",\"gff42\",\"gff43\",\"gff44\",\"gff45\",\"gff46\",\"gff47\",\"gff48\",\"gff49\",\"gff50\",\"gff51\",\"gff52\",\"gff53\",\"gff54\",\"gff55\",\"gff56\",\"gff57\",\"gff58\",\"gff59\",\"gff60\",\"gff61\",\"gff62\",\"gff63\",\"gff64\",\"gff65\",\"gff66\",\"gff67\",\"gff68\",\"gff69\",\"gff70\",\"gff71\",\"gff72\",\"gff73\",\"gff74\",\"gff75\",\"gff76\",\"gff77\",\"gff78\",\"gff79\",\"gff80\",\"gff81\",\"gff82\",\"gff83\",\"gff84\",\"gff85\",\"gff86\",\"gff87\",\"gff88\",\"gff89\",\"gff90\",\"gff91\",\"gff92\",\"gff93\",\"gff94\",\"gff95\",\"gff96\",\"gff97\",\"gff98\",\"gff99\",\"gff100\",\"gff101\",\"gff102\",\"gff103\",\"gff104\",\"gff105\",\"gff106\",\"gff107\",\"gff108\",\"gff109\",\"gff110\",\"gff111\",\"gff112\",\"gff113\",\"gff114\",\"gff115\",\"gff116\",\"gff117\",\"gff118\",\"gff119\",\"gff120\",\"gff121\",\"gff122\",\"gff123\",\"gff124\",\"gff125\",\"gff126\",\"gff127\",\"gff128\",\"gff129\",\"gff130\",\"gff131\",\"gff132\",\"gff133\",\"gff134\",\"gff135\",\"gff136\",\"gff137\",\"gff138\",\"gff139\",\"gff140\",\"gff141\",\"gff142\",\"gff143\",\"gff144\",\"gff145\",\"gff146\",\"gff147\",\"gff148\",\"gff149\",\"gff150\",\"gff151\",\"gff152\",\"gff153\",\"gff154\",\"gff155\",\"gff156\",\"gff157\",\"gff158\",\"gff159\",\"gff160\",\"gff161\",\"gff162\",\"gff163\",\"gff164\",\"gff165\",\"gff166\",\"gff167\",\"gff168\",\"gff169\",\"gff170\",\"gff171\",\"gff172\",\"gff173\",\"gff174\",\"gff175\",\"gff176\",\"gff177\",\"gff178\",\"gff179\",\"gff180\",\"gff181\",\"gff182\",\"gff183\",\"gff184\",\"gff185\",\"gff186\",\"gff187\",\"gff188\",\"gff189\",\"gff190\",\"gff191\",\"gff192\",\"gff193\",\"gff194\",\"gff195\",\"gff196\",\"gff197\",\"gff198\",\"gff199\",\"gff200\",\"gff201\",\"gff202\",\"gff203\",\"gff204\",\"gff205\",\"gff206\",\"gff207\",\"gff208\",\"gff209\",\"gff210\",\"gff211\",\"gff212\",\"gff213\",\"gff214\",\"gff215\",\"gff216\",\"gff217\",\"gff218\",\"gff219\",\"gff220\",\"gff221\",\"gff222\",\"gff223\",\"gff224\",\"gff225\",\"gff226\",\"gff227\",\"gff228\",\"gff229\",\"gff230\",\"gff231\",\"gff232\",\"gff233\",\"gff234\",\"gff235\",\"gff236\",\"gff237\",\"gff238\",\"gff239\",\"gff240\",\"gff241\",\"gff242\",\"gff243\",\"gff244\",\"gff245\",\"gff246\",\"gff247\",\"gff248\",\"gff249\",\"gff250\",\"gff251\",\"gff252\",\"gff253\",\"gff254\",\"gff255\",\"gff256\",\"gff257\",\"gff258\",\"gff259\",\"gff260\",\"gff261\",\"gff262\",\"gff263\",\"gff264\",\"gff265\",\"gff266\",\"gff267\",\"gff268\",\"gff269\",\"gff270\",\"gff271\",\"gff272\",\"gff273\",\"gff274\",\"gff275\",\"gff276\",\"gff277\",\"gff278\",\"gff279\",\"gff280\",\"gff281\",\"gff282\",\"gff283\",\"gff284\",\"gff285\",\"gff286\",\"gff287\",\"gff288\",\"gff289\",\"gff290\",\"gff291\",\"gff292\",\"gff293\",\"gff294\",\"gff295\",\"gff296\",\"gff297\",\"gff298\",\"gff299\",\"gff300\",\"gff301\",\"gff302\",\"gff303\",\"gff304\",\"gff305\",\"gff306\",\"gff307\",\"gff308\",\"gff309\",\"gff310\",\"gff311\",\"gff312\",\"gff313\",\"gff314\",\"gff315\",\"gff316\",\"gff317\",\"gff318\",\"gff319\",\"gff320\",\"gff321\",\"gff322\",\"gff323\",\"gff324\",\"gff325\",\"gff326\",\"gff327\",\"gff328\",\"gff329\",\"gff330\",\"gff331\",\"gff332\",\"gff333\",\"gff334\",\"gff335\",\"gff336\",\"gff337\",\"gff338\",\"gff339\",\"gff340\",\"gff341\",\"gff342\",\"gff343\",\"gff344\",\"gff345\",\"gff346\",\"gff347\",\"gff348\",\"gff349\",\"gff350\",\"gff351\",\"gff352\",\"gff353\",\"gff354\",\"gff355\",\"gff356\",\"gff357\",\"gff358\",\"gff359\",\"gff360\",\"gff361\",\"gff362\",\"gff363\",\"gff364\",\"gff365\",\"gff366\",\"gff367\",\"gff368\",\"gff369\",\"gff370\",\"gff371\",\"gff372\",\"gff373\",\"gff374\",\"gff375\",\"gff376\",\"gff377\",\"gff378\",\"gff379\",\"gff380\",\"gff381\",\"gff382\",\"gff383\",\"gff384\",\"gff385\",\"gff386\",\"gff387\",\"gff388\",\"gff389\",\"gff390\",\"gff391\",\"gff392\",\"gff393\",\"gff394\",\"gff395\",\"gff396\",\"gff397\",\"gff398\",\"gff399\",\"gff400\",\"gff401\",\"gff402\",\"gff403\",\"gff404\",\"gff405\",\"gff406\",\"gff407\",\"gff408\",\"gff409\",\"gff410\",\"gff411\",\"gff412\",\"gff413\",\"gff414\",\"gff415\",\"gff416\",\"gff417\",\"gff418\",\"gff419\",\"gff420\",\"gff421\",\"gff422\",\"gff423\",\"gff424\",\"gff425\",\"gff426\",\"gff427\",\"gff428\",\"gff429\",\"gff430\",\"gff431\",\"gff432\",\"gff433\",\"gff434\",\"gff435\",\"gff436\",\"gff437\",\"gff438\",\"gff439\",\"gff440\",\"gff441\",\"gff442\",\"gff443\",\"gff444\",\"gff445\",\"gff446\",\"gff447\",\"gff448\",\"gff449\",\"gff450\",\"gff451\",\"gff452\",\"gff453\",\"gff454\",\"gff455\",\"gff456\",\"gff457\",\"gff458\",\"gff459\",\"gff460\",\"gff461\",\"gff462\",\"gff463\",\"gff464\",\"gff465\",\"gff466\",\"gff467\",\"gff468\",\"gff469\",\"gff470\",\"gff471\",\"gff472\",\"gff473\",\"gff474\",\"gff475\",\"gff476\",\"gff477\",\"gff478\",\"gff479\",\"gff480\",\"gff481\",\"gff482\",\"gff483\",\"gff484\",\"gff485\",\"gff486\",\"gff487\",\"gff488\",\"gff489\",\"gff490\",\"gff491\",\"gff492\",\"gff493\",\"gff494\",\"gff495\",\"gff496\",\"gff497\",\"gff498\",\"gff499\",\"gff500\",\"gff501\",\"gff502\",\"gff503\",\"gff504\",\"gff505\",\"gff506\",\"gff507\",\"gff508\",\"gff509\",\"gff510\",\"gff511\",\"gff512\",\"gff513\",\"gff514\",\"gff515\",\"gff516\",\"gff517\",\"gff518\",\"gff519\",\"gff520\",\"gff521\",\"gff522\",\"gff523\",\"gff524\",\"gff525\",\"gff526\",\"gff527\",\"gff528\",\"gff529\",\"gff530\",\"gff531\",\"gff532\",\"gff533\",\"gff534\",\"gff535\",\"gff536\",\"gff537\",\"gff538\",\"gff539\",\"gff540\",\"gff541\",\"gff542\",\"gff543\",\"gff544\",\"gff545\",\"gff546\",\"gff547\",\"gff548\",\"gff549\",\"gff550\",\"gff551\",\"gff552\",\"gff553\",\"gff554\",\"gff555\",\"gff556\",\"gff557\",\"gff558\",\"gff559\",\"gff560\",\"gff561\",\"gff562\",\"gff563\",\"gff564\",\"gff565\",\"gff566\",\"gff567\",\"gff568\",\"gff569\",\"gff570\",\"gff571\",\"gff572\",\"gff573\",\"gff574\",\"gff575\",\"gff576\",\"gff577\",\"gff578\",\"gff579\",\"gff580\",\"gff581\",\"gff582\",\"gff583\",\"gff584\",\"gff585\",\"gff586\",\"gff587\",\"gff588\",\"gff589\",\"gff590\",\"gff591\",\"gff592\",\"gff593\",\"gff594\",\"gff595\",\"gff596\",\"gff597\",\"gff598\",\"gff599\",\"gff600\",\"gff601\",\"gff602\",\"gff603\",\"gff604\",\"gff605\",\"gff606\",\"gff607\",\"gff608\",\"gff609\",\"gff610\",\"gff611\",\"gff612\",\"gff613\",\"gff614\",\"gff615\",\"gff616\",\"gff617\",\"gff618\",\"gff619\",\"gff620\",\"gff621\",\"gff622\",\"gff623\",\"gff624\",\"gff625\",\"gff626\",\"gff627\",\"gff628\",\"gff629\",\"gff630\",\"gff631\",\"gff632\",\"gff633\",\"gff634\",\"gff635\",\"gff636\",\"gff637\",\"gff638\",\"gff639\",\"gff640\",\"gff641\",\"gff642\",\"gff643\",\"gff644\",\"gff645\",\"gff646\",\"gff647\",\"gff648\",\"gff649\",\"gff650\",\"gff651\",\"gff652\",\"gff653\",\"gff654\",\"gff655\",\"gff656\",\"gff657\",\"gff658\",\"gff659\",\"gff660\",\"gff661\",\"gff662\",\"gff663\",\"gff664\",\"gff665\",\"gff666\",\"gff667\",\"gff668\",\"gff669\",\"gff670\",\"gff671\",\"gff672\",\"gff673\",\"gff674\",\"gff675\",\"gff676\",\"gff677\",\"gff678\",\"gff679\",\"gff680\",\"gff681\",\"gff682\",\"gff683\",\"gff684\",\"gff685\",\"gff686\",\"gff687\",\"gff688\",\"gff689\",\"gff690\",\"gff691\",\"gff692\",\"gff693\",\"gff694\",\"gff695\",\"gff696\",\"gff697\",\"gff698\",\"gff699\",\"gff700\",\"gff701\",\"gff702\",\"gff703\",\"gff704\",\"gff705\",\"gff706\",\"gff707\",\"gff708\",\"gff709\",\"gff710\",\"gff711\",\"gff712\",\"gff713\",\"gff714\",\"gff715\",\"gff716\",\"gff717\",\"gff718\",\"gff719\",\"gff720\",\"gff721\",\"gff722\",\"gff723\",\"gff724\",\"gff725\",\"gff726\",\"gff727\",\"gff728\",\"gff729\",\"gff730\",\"gff731\",\"gff732\",\"gff733\",\"gff734\",\"gff735\",\"gff736\",\"gff737\",\"gff738\",\"gff739\",\"gff740\",\"gff741\",\"gff742\",\"gff743\",\"gff744\",\"gff745\",\"gff746\",\"gff747\",\"gff748\",\"gff749\",\"gff750\",\"gff751\",\"gff752\",\"gff753\",\"gff754\",\"gff755\",\"gff756\",\"gff757\",\"gff758\",\"gff759\",\"gff760\",\"gff761\",\"gff762\",\"gff763\",\"gff764\",\"gff765\",\"gff766\",\"gff767\",\"gff768\",\"gff769\",\"gff770\",\"gff771\",\"gff772\",\"gff773\",\"gff774\",\"gff775\",\"gff776\",\"gff777\",\"gff778\",\"gff779\",\"gff780\",\"gff781\",\"gff782\",\"gff783\",\"gff784\",\"gff785\",\"gff786\",\"gff787\",\"gff788\",\"gff789\",\"gff790\",\"gff791\",\"gff792\",\"gff793\",\"gff794\",\"gff795\",\"gff796\",\"gff797\",\"gff798\",\"gff799\",\"gff800\",\"gff801\",\"gff802\",\"gff803\",\"gff804\",\"gff805\",\"gff806\",\"gff807\",\"gff808\",\"gff809\",\"gff810\",\"gff811\",\"gff812\",\"gff813\",\"gff814\",\"gff815\",\"gff816\",\"gff817\",\"gff818\",\"gff819\",\"gff820\",\"gff821\",\"gff822\",\"gff823\",\"gff824\",\"gff825\",\"gff826\",\"gff827\",\"gff828\",\"gff829\",\"gff830\",\"gff831\",\"gff832\",\"gff833\",\"gff834\",\"gff835\",\"gff836\",\"gff837\",\"gff838\",\"gff839\",\"gff840\",\"gff841\",\"gff842\",\"gff843\",\"gff844\",\"gff845\",\"gff846\",\"gff847\",\"gff848\",\"gff849\",\"gff850\",\"gff851\",\"gff852\",\"gff853\",\"gff854\",\"gff855\",\"gff856\",\"gff857\",\"gff858\",\"gff859\",\"gff860\",\"gff861\",\"gff862\",\"gff863\",\"gff864\",\"gff865\",\"gff866\",\"gff867\",\"gff868\",\"gff869\",\"gff870\",\"gff871\",\"gff872\",\"gff873\",\"gff874\",\"gff875\",\"gff876\",\"gff877\",\"gff878\",\"gff879\",\"gff880\",\"gff881\",\"gff882\",\"gff883\",\"gff884\",\"gff885\",\"gff886\",\"gff887\",\"gff888\",\"gff889\",\"gff890\",\"gff891\",\"gff892\",\"gff893\",\"gff894\",\"gff895\",\"gff896\",\"gff897\",\"gff898\",\"gff899\",\"gff900\",\"gff901\",\"gff902\",\"gff903\",\"gff904\",\"gff905\",\"gff906\",\"gff907\",\"gff908\",\"gff909\",\"gff910\",\"gff911\",\"gff912\",\"gff913\",\"gff914\",\"gff915\",\"gff916\",\"gff917\",\"gff918\",\"gff919\",\"gff920\",\"gff921\",\"gff922\",\"gff923\",\"gff924\",\"gff925\",\"gff926\",\"gff927\",\"gff928\",\"gff929\",\"gff930\",\"gff931\",\"gff932\",\"gff933\",\"gff934\",\"gff935\",\"gff936\",\"gff937\",\"gff938\",\"gff939\",\"gff940\",\"gff941\",\"gff942\",\"gff943\",\"gff944\",\"gff945\",\"gff946\",\"gff947\",\"gff948\",\"gff949\",\"gff950\",\"gff951\",\"gff952\",\"gff953\",\"gff954\",\"gff955\",\"gff956\",\"gff957\",\"gff958\",\"gff959\",\"gff960\",\"gff961\",\"gff962\",\"gff963\",\"gff964\",\"gff965\",\"gff966\",\"gff967\",\"gff968\",\"gff969\",\"gff970\",\"gff971\",\"gff972\",\"gff973\",\"gff974\",\"gff975\",\"gff976\",\"gff977\",\"gff978\",\"gff979\",\"gff980\",\"gff981\",\"gff982\",\"gff983\",\"gff984\",\"gff985\",\"gff986\",\"gff987\",\"gff988\",\"gff989\",\"gff990\",\"gff991\",\"gff992\",\"gff993\",\"gff994\",\"gff995\",\"gff996\",\"gff997\",\"gff998\",\"gff999\",\"gff1000\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"companyId\",\"caseInsensitive\":false}],\"createdBy\":\"gaston@getunleash.io\",\"createdAt\":\"2025-05-14T10:28:53.604Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":146,\"name\":\"aaaa: project-segment (private)\",\"description\":\"A project-scoped segment for a private project.\",\"project\":\"private-project-1\",\"constraints\":[{\"values\":[\"blocket\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2026-02-16T14:34:55.581Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":145,\"name\":\"aaaa: project-segment (public)\",\"description\":\"A project-scoped segment for an open project.\",\"project\":\"breakheart\",\"constraints\":[{\"values\":[\"blue\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2026-02-16T14:33:39.197Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":119,\"name\":\"aabbb\",\"description\":\"x\",\"constraints\":[{\"values\":[\"bern\",\"bratislava\",\"berlin\",\"krakow\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"city\",\"caseInsensitive\":false}],\"createdBy\":\"czech.tymoteusz@gmail.com\",\"createdAt\":\"2025-07-30T08:39:08.710Z\",\"usedInProjects\":3,\"usedInFeatures\":3},{\"id\":117,\"name\":\"abbbbb\",\"description\":\"\",\"constraints\":[{\"values\":[\"test\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"czech.tymoteusz@gmail.com\",\"createdAt\":\"2025-07-30T08:37:24.277Z\",\"usedInProjects\":4,\"usedInFeatures\":4},{\"id\":63,\"name\":\"Agment\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2023-12-06T09:15:46.446Z\",\"usedInProjects\":6,\"usedInFeatures\":6},{\"id\":123,\"name\":\"A lot of value\",\"description\":\"Hello\",\"constraints\":[],\"createdBy\":\"ivar@getunleash.io\",\"createdAt\":\"2025-09-12T06:50:24.911Z\",\"usedInProjects\":2,\"usedInFeatures\":2},{\"id\":66,\"name\":\"asd13\",\"description\":\"\",\"constraints\":[{\"values\":[\"123\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false},{\"values\":[\"412412\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"fredrik.oseberg@getunleash.io\",\"createdAt\":\"2023-12-20T14:09:24.140Z\",\"usedInProjects\":5,\"usedInFeatures\":6},{\"id\":37,\"name\":\"bar.com\",\"description\":\"\",\"project\":\"MateuszWorkspace\",\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-08-07T08:06:26.734Z\",\"usedInProjects\":1,\"usedInFeatures\":6},{\"id\":76,\"name\":\"Beta User IDs\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-05-16T12:21:55.912Z\",\"usedInProjects\":6,\"usedInFeatures\":8},{\"id\":34,\"name\":\"beta users\",\"description\":\"\",\"project\":\"MateuszWorkspace\",\"constraints\":[{\"values\":[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"12\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-08-07T08:02:47.419Z\",\"usedInProjects\":1,\"usedInFeatures\":9},{\"id\":38,\"name\":\"beta-users\",\"description\":\"\",\"project\":\"MateuszWorkspace\",\"constraints\":[{\"values\":[\"1\",\"2\",\"3\",\"4\",\"5\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-08-07T08:12:02.988Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":24,\"name\":\"branch\",\"description\":\"\",\"project\":\"Sebastian\",\"constraints\":[],\"createdBy\":\"sebastian@getunleash.io\",\"createdAt\":\"2023-06-15T14:28:41.886Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":25,\"name\":\"brandA\",\"description\":\"\",\"project\":\"Sebastian\",\"constraints\":[{\"values\":[\"A\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"sebastian@getunleash.io\",\"createdAt\":\"2023-06-15T14:28:53.857Z\",\"usedInProjects\":1,\"usedInFeatures\":2},{\"id\":26,\"name\":\"brandB\",\"description\":\"\",\"project\":\"Sebastian\",\"constraints\":[{\"values\":[\"B\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"sebastian@getunleash.io\",\"createdAt\":\"2023-06-15T14:29:00.670Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":27,\"name\":\"brandC\",\"description\":\"\",\"project\":\"Sebastian\",\"constraints\":[{\"values\":[\"C\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"sebastian@getunleash.io\",\"createdAt\":\"2023-06-15T14:29:08.250Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":8,\"name\":\"Conduit Dev Team\",\"description\":\"All the member of development team\",\"constraints\":[{\"values\":[\"12\",\"34\",\"44\",\"46\",\"78\",\"23456\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false},{\"values\":[\"conduit\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false},{\"values\":[\"demo2\",\"sbaa0001\",\"pro\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"clientId\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2022-12-29T09:56:30.218Z\",\"usedInProjects\":15,\"usedInFeatures\":21},{\"id\":162,\"name\":\"Customers with failed payments\",\"description\":\"All customers with failed payments in stripe will be added to this segment.\",\"constraints\":[{\"values\":[\"nuno\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"clientId\",\"caseInsensitive\":false}],\"createdBy\":\"nuno@getunleash.io\",\"createdAt\":\"2026-09-09T08:54:55.590Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":46,\"name\":\"Davers users\",\"description\":\"\",\"project\":\"davidstestproject\",\"constraints\":[{\"values\":[\"1\",\"2\",\"3\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false},{\"values\":[\"verymuch\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"david@getunleash.io\",\"createdAt\":\"2023-10-18T07:40:15.854Z\",\"usedInProjects\":15,\"usedInFeatures\":20},{\"id\":96,\"name\":\"defaultsegment\",\"description\":\"\",\"project\":\"defaultprojecttest\",\"constraints\":[{\"values\":[\"customer z\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"createdBy\":\"elise@getunleash.io\",\"createdAt\":\"2025-01-06T11:08:28.287Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":115,\"name\":\"Default segment to edit\",\"description\":\"\",\"project\":\"default\",\"constraints\":[{\"values\":[\"d\",\"g\",\"h\",\"i\",\"j\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"a\",\"caseInsensitive\":false}],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2025-07-03T11:11:32.014Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":110,\"name\":\"defaultTest\",\"description\":\"\",\"constraints\":[{\"values\":[\"1\",\"2\",\"3\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"createdBy\":\"sebastian@getunleash.io\",\"createdAt\":\"2025-03-19T08:51:08.885Z\",\"usedInProjects\":4,\"usedInFeatures\":4},{\"id\":62,\"name\":\"definitely-do-not-delete\",\"description\":\"\",\"project\":\"DavidTest\",\"constraints\":[{\"values\":[\"1\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"david@getunleash.io\",\"createdAt\":\"2023-12-06T09:14:31.944Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":51,\"name\":\"deletable\",\"description\":\"\",\"constraints\":[{\"values\":[\"45\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"age\",\"caseInsensitive\":false}],\"createdBy\":\"jaanus@getunleash.ai\",\"createdAt\":\"2023-10-31T11:14:47.198Z\",\"usedInProjects\":7,\"usedInFeatures\":7},{\"id\":99,\"name\":\"delta_segment\",\"description\":\"\",\"project\":\"deltasbug\",\"constraints\":[],\"createdBy\":\"mateusz+viewer@getunleash.io\",\"createdAt\":\"2025-02-14T19:04:27.789Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":108,\"name\":\"delta_segment2\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"fredrik.oseberg@getunleash.io\",\"createdAt\":\"2025-03-11T12:02:49.602Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":74,\"name\":\"email list\",\"description\":\"\",\"project\":\"MateuszWorkspace\",\"constraints\":[{\"values\":[\"gmail.com\"],\"inverted\":false,\"operator\":\"STR_ENDS_WITH\",\"contextName\":\"email\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-03-05T10:13:38.493Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":90,\"name\":\"enable_all\",\"description\":\"\",\"constraints\":[{\"values\":[\"demo2\"],\"inverted\":true,\"operator\":\"IN\",\"contextName\":\"clientId\",\"caseInsensitive\":false},{\"values\":[\"playground\"],\"inverted\":false,\"operator\":\"NOT_IN\",\"contextName\":\"environment\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-11-14T10:20:50.261Z\",\"usedInProjects\":2,\"usedInFeatures\":2},{\"id\":89,\"name\":\"Enterprise Customers\",\"description\":\"\",\"project\":\"unleash\",\"constraints\":[],\"createdBy\":\"anniken.ostdahl@getunleash.io\",\"createdAt\":\"2024-11-07T09:33:54.195Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":47,\"name\":\"exclsionList\",\"description\":\"\",\"constraints\":[{\"values\":[\"123\",\"234\",\"345\"],\"inverted\":true,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"sebastian@getunleash.io\",\"createdAt\":\"2023-10-18T14:23:02.277Z\",\"usedInProjects\":4,\"usedInFeatures\":4},{\"id\":81,\"name\":\"far\",\"description\":\"\",\"project\":\"UX-Project\",\"constraints\":[],\"createdBy\":\"jaanus@getunleash.io\",\"createdAt\":\"2024-08-16T10:51:59.996Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":73,\"name\":\"fdasfdsa\",\"description\":\"\",\"project\":\"gard\",\"constraints\":[{\"values\":[\"fdsafdasfads\",\"fdsafdasfdasfdasfdsa\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"clientId\",\"caseInsensitive\":false}],\"createdBy\":\"gard_unleash@gurters.com\",\"createdAt\":\"2024-02-28T16:22:24.605Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":16,\"name\":\"fixed\",\"description\":\"aaax\",\"project\":\"gaston\",\"constraints\":[{\"values\":[\"aaa\",\"bbb\",\"c\"],\"inverted\":true,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"gaston@getunleash.ai\",\"createdAt\":\"2023-03-17T14:05:30.337Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":31,\"name\":\"gfdfg\",\"description\":\"\",\"project\":\"crvid\",\"constraints\":[{\"values\":[\"test\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"jaanus@getunleash.ai\",\"createdAt\":\"2023-07-03T08:51:54.428Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":54,\"name\":\"global2\",\"description\":\"\",\"constraints\":[{\"values\":[\"berlin\",\"bern\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"city\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-11-02T07:26:18.173Z\",\"usedInProjects\":5,\"usedInFeatures\":6},{\"id\":53,\"name\":\"globalsegment\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-11-02T07:26:11.068Z\",\"usedInProjects\":1,\"usedInFeatures\":2},{\"id\":67,\"name\":\"heartman-cr-segment\",\"description\":\"Testing a cr error I'm seeing locally: error: insert into \\\"change_request_events\\\" (\\\"action\\\", \\\"change_request_id\\\", \\\"created_by\\\", \\\"feature\\\", \\\"payload\\\") values ($1, $2, $3, $4, $5) - null value in column \\\"feature\\\" of relation \\\"change_request_events\\\" violates not-null constraint\",\"project\":\"breakheart\",\"constraints\":[],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2024-02-05T04:16:08.777Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":13,\"name\":\"heartment\",\"description\":\"for testing\",\"constraints\":[{\"values\":[\"gold\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userLevel\",\"caseInsensitive\":false}],\"createdBy\":\"thomas@getunleash.ai\",\"createdAt\":\"2023-01-26T11:56:44.826Z\",\"usedInProjects\":10,\"usedInFeatures\":20},{\"id\":95,\"name\":\"hello\",\"description\":\"\",\"project\":\"unleash-docs\",\"constraints\":[{\"values\":[\"123\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"melinda.fekete@getunleash.io\",\"createdAt\":\"2024-12-12T13:29:30.638Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":72,\"name\":\"hmm\",\"description\":\"\",\"project\":\"gard\",\"constraints\":[{\"values\":[\"money\",\"fa\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"gard_unleash@gurters.com\",\"createdAt\":\"2024-02-28T15:48:02.682Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":139,\"name\":\"impact-metrics-segment-test\",\"description\":\"\",\"project\":\"impact-metrics\",\"constraints\":[{\"values\":[\"blocket\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2026-02-06T09:32:38.624Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":128,\"name\":\"impact-segment\",\"description\":\"\",\"project\":\"impact-metrics\",\"constraints\":[{\"values\":[\"test\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2025-12-16T15:00:25.128Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":35,\"name\":\"internal-users\",\"description\":\"A bunch of ids modifed\",\"project\":\"MateuszWorkspace\",\"constraints\":[{\"values\":[\"100\",\"102\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false},{\"values\":[\"bar.com\",\"foo.com\"],\"inverted\":false,\"operator\":\"STR_ENDS_WITH\",\"contextName\":\"email\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-08-07T08:03:13.280Z\",\"usedInProjects\":2,\"usedInFeatures\":7},{\"id\":28,\"name\":\"Internet\",\"description\":\"\",\"project\":\"Sebastian\",\"constraints\":[{\"values\":[\"internet\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"channel\",\"caseInsensitive\":false}],\"createdBy\":\"sebastian@getunleash.io\",\"createdAt\":\"2023-06-15T14:29:24.296Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":78,\"name\":\"local-segment-archive\",\"description\":\"x\",\"project\":\"bran-new-project-overflow-test-85aa1b78da40\",\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-08-15T07:57:23.898Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":161,\"name\":\"Locked customers\",\"description\":\"Customers we lock due to missing payments.\",\"constraints\":[{\"values\":[\"nuno\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"clientId\",\"caseInsensitive\":false}],\"createdBy\":\"nuno@getunleash.io\",\"createdAt\":\"2026-09-09T08:48:02.541Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":33,\"name\":\"MateuszSegment123\",\"description\":\"\",\"project\":\"MateuszWorkspace\",\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false},{\"values\":[\"a\",\"b\",\"c\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-07-31T10:32:24.634Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":272,\"name\":\"mcp-cr-batch\",\"description\":null,\"constraints\":[],\"createdBy\":\"mcp-limited-token\",\"createdAt\":\"2026-10-24T09:03:03.084Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":270,\"name\":\"mcp-cr-global-renamed\",\"description\":null,\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"createdBy\":\"mcp-limited-token\",\"createdAt\":\"2026-10-24T09:01:24.639Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":271,\"name\":\"mcp-cr-test\",\"description\":\"Users with an @getunleash.io email\",\"project\":\"mcp-server\",\"constraints\":[{\"values\":[\"@getunleash.io\"],\"inverted\":false,\"operator\":\"STR_ENDS_WITH\",\"contextName\":\"email\",\"caseInsensitive\":false}],\"createdBy\":\"mcp-limited-token\",\"createdAt\":\"2026-10-24T09:02:59.731Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":328,\"name\":\"mcp-searched-segment\",\"description\":null,\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2026-10-30T07:27:55.555Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":165,\"name\":\"mcp-v2-beta\",\"description\":null,\"project\":\"mateuszai\",\"constraints\":[{\"values\":[\"u1\",\"u2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2026-10-19T12:29:43.297Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":94,\"name\":\"Melinda test segment\",\"description\":\"\",\"project\":\"unleash-docs\",\"constraints\":[{\"values\":[\"Enterprise\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"plan\",\"caseInsensitive\":false},{\"values\":[\"hello\"],\"inverted\":false,\"operator\":\"STR_CONTAINS\",\"contextName\":\"companyId\",\"caseInsensitive\":false}],\"createdBy\":\"melinda.fekete@getunleash.io\",\"createdAt\":\"2024-12-12T09:34:05.440Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":29,\"name\":\"mobile\",\"description\":\"\",\"project\":\"Sebastian\",\"constraints\":[{\"values\":[\"mobile\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"channel\",\"caseInsensitive\":false}],\"createdBy\":\"sebastian@getunleash.io\",\"createdAt\":\"2023-06-15T14:29:30.040Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":109,\"name\":\"most probably true\",\"description\":\"Segment that should always be true\",\"constraints\":[{\"values\":[\"0195a930-68b0-7080-b97d-747437e026e4\"],\"inverted\":true,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false},{\"value\":\"7.0.7\",\"values\":[],\"inverted\":false,\"operator\":\"SEMVER_EQ\",\"contextName\":\"app_version\",\"caseInsensitive\":false}],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2025-03-18T12:18:09.612Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":87,\"name\":\"My Developers\",\"description\":\"\",\"constraints\":[{\"values\":[\"1\",\"2\",\"3\",\"4\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false},{\"values\":[\"berlin\",\"bratislava\",\"krakow\",\"paris\",\"porto\",\"lisbon\",\"madrid\",\"london\",\"oslo\",\"rome\",\"prague\",\"stockholm\",\"bern\",\"copenhagen\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"city\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-10-28T11:23:57.600Z\",\"usedInProjects\":3,\"usedInFeatures\":4},{\"id\":133,\"name\":\"my-friend-list\",\"description\":\"\",\"constraints\":[{\"values\":[\"1\",\"2\",\"3\",\"4\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"jaanus@getunleash.io\",\"createdAt\":\"2026-01-07T10:33:01.979Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":82,\"name\":\"my-project-segment\",\"description\":\"\",\"project\":\"archive-test\",\"constraints\":[{\"values\":[\"finn\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"fredrik.oseberg@getunleash.io\",\"createdAt\":\"2024-08-20T13:49:12.792Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":111,\"name\":\"mysegment\",\"description\":\"\",\"project\":\"bug-bug\",\"constraints\":[],\"createdBy\":\"jaanus@getunleash.io\",\"createdAt\":\"2025-04-23T07:37:59.149Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":7,\"name\":\"new\",\"description\":\"\",\"constraints\":[{\"values\":[\"app\"],\"inverted\":true,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"jaanus@getunleash.ai\",\"createdAt\":\"2022-12-28T13:15:46.782Z\",\"usedInProjects\":5,\"usedInFeatures\":10},{\"id\":164,\"name\":\"new!\",\"description\":\"\",\"project\":\"3\",\"constraints\":[],\"createdBy\":\"thomas2@email.com\",\"createdAt\":\"2026-10-14T07:40:59.499Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":4,\"name\":\"new for test\",\"description\":\"\",\"constraints\":[{\"values\":[\"aa\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"nicolae@getunleash.ai\",\"createdAt\":\"2022-11-08T09:42:16.079Z\",\"usedInProjects\":2,\"usedInFeatures\":2},{\"id\":134,\"name\":\"new-project-segment\",\"description\":\"\",\"project\":\"henning-test\",\"constraints\":[{\"values\":[\"ws\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"henning-test-context-field-1\",\"caseInsensitive\":false}],\"createdBy\":\"henning.sillerud@getunleash.io\",\"createdAt\":\"2026-01-12T09:08:34.985Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":92,\"name\":\"new-segment-name\",\"description\":\"\",\"project\":\"heartman-takes-to-the-skies\",\"constraints\":[],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2024-11-27T10:41:53.176Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":150,\"name\":\"nice-people__development\",\"description\":\"Very nice people!\",\"constraints\":[{\"values\":[\"italy\",\"south africa\",\"argentina\",\"greece\",\"USA\"],\"operator\":\"IN\",\"contextName\":\"user_country\"}],\"createdBy\":\"gaston@getunleash.io\",\"createdAt\":\"2026-04-22T10:04:58.595Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":58,\"name\":\"N-test-to-delete\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"nicolae@getunleash.io\",\"createdAt\":\"2023-12-06T09:07:40.704Z\",\"usedInProjects\":2,\"usedInFeatures\":2},{\"id\":17,\"name\":\"pro-customers\",\"description\":\"\",\"project\":\"CopyHostedDX\",\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-03-28T09:32:45.507Z\",\"usedInProjects\":1,\"usedInFeatures\":2},{\"id\":127,\"name\":\"project-segment\",\"description\":\"\",\"project\":\"henning-test\",\"constraints\":[{\"values\":[\"sadf\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false},{\"values\":[\"unleash\"],\"inverted\":false,\"operator\":\"STR_CONTAINS\",\"contextName\":\"appName\",\"caseInsensitive\":true}],\"createdBy\":\"henning.sillerud@getunleash.io\",\"createdAt\":\"2025-12-03T11:18:24.049Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":130,\"name\":\"project-segment-breakheart\",\"description\":\"A project segment (with project context) originally defined in 'breakheart'\",\"constraints\":[{\"values\":[\"a\",\"b\",\"c\",\"d\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"project-field\",\"caseInsensitive\":false}],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2025-12-19T13:20:46.815Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":18,\"name\":\"ProxyNewInstances\",\"description\":\"\",\"project\":\"CopyHostedDX\",\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-03-28T09:34:47.708Z\",\"usedInProjects\":1,\"usedInFeatures\":2},{\"id\":57,\"name\":\"remove_me_now1\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2023-12-06T09:06:00.439Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":88,\"name\":\"seggg?\",\"description\":\"\",\"project\":\"change-request-notifications\",\"constraints\":[{\"values\":[\"krakow\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"city\",\"caseInsensitive\":false}],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2024-10-28T13:08:52.157Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":84,\"name\":\"seg-in-move\",\"description\":\"\",\"project\":\"migration\",\"constraints\":[{\"values\":[\"playground\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"tymek@getunleash.io\",\"createdAt\":\"2024-09-24T08:48:23.806Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":1,\"name\":\"Segment 1\",\"description\":\"\",\"constraints\":[{\"values\":[\"111111\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false}],\"createdBy\":\"nicolae@getunleash.ai\",\"createdAt\":\"2022-07-28T14:41:02.687Z\",\"usedInProjects\":7,\"usedInFeatures\":7},{\"id\":131,\"name\":\"segment-a\",\"description\":\"\",\"project\":\"edison\",\"constraints\":[{\"values\":[\"2021\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"year\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2026-01-05T21:30:33.648Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":132,\"name\":\"segment-b\",\"description\":\"\",\"project\":\"edison\",\"constraints\":[{\"values\":[\"android\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"channel\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2026-01-05T21:30:46.605Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":105,\"name\":\"segment_to_delete\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"fredrik.oseberg@getunleash.io\",\"createdAt\":\"2025-03-11T12:01:21.517Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":116,\"name\":\"Segment to delete\",\"description\":\"\",\"project\":\"default\",\"constraints\":[{\"values\":[\"beta\",\"gold\",\"bronze\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountType\",\"caseInsensitive\":false}],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2025-07-03T11:11:55.026Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":106,\"name\":\"segment_to_delete2\",\"description\":\"x\",\"constraints\":[],\"createdBy\":\"fredrik.oseberg@getunleash.io\",\"createdAt\":\"2025-03-11T12:02:12.909Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":80,\"name\":\"share-segment\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-08-15T10:00:50.506Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":14,\"name\":\"test\",\"description\":\"\",\"constraints\":[{\"values\":[\"beta\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountType\",\"caseInsensitive\":false}],\"createdBy\":\"nicolae@getunleash.ai\",\"createdAt\":\"2023-02-03T10:48:05.212Z\",\"usedInProjects\":2,\"usedInFeatures\":2},{\"id\":129,\"name\":\"test1111\",\"description\":\"delete me\",\"constraints\":[],\"createdBy\":\"henning.sillerud@getunleash.io\",\"createdAt\":\"2025-12-18T14:11:14.408Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":97,\"name\":\"test-delta\",\"description\":\"2\",\"project\":\"alvin\",\"constraints\":[{\"values\":[\"finn\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"jaanus@getunleash.io\",\"createdAt\":\"2025-01-21T09:24:18.703Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":6,\"name\":\"testers\",\"description\":\"\",\"constraints\":[{\"values\":[\"123\",\"234\",\"345\",\"1\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false},{\"values\":[\"sebastian@getunleash.io\",\"eucc0020\",\"aero\",\"metal\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"email\",\"caseInsensitive\":false}],\"createdBy\":\"sebastian@getunleash.ai\",\"createdAt\":\"2022-12-02T13:20:38.724Z\",\"usedInProjects\":6,\"usedInFeatures\":8},{\"id\":83,\"name\":\"test-events\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"jaanus@getunleash.io\",\"createdAt\":\"2024-08-21T11:04:10.934Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":68,\"name\":\"testGard\",\"description\":\"\",\"project\":\"gard\",\"constraints\":[{\"values\":[\"bar\",\"foo\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false},{\"values\":[\"bar\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"gard@getunleash.io\",\"createdAt\":\"2024-02-28T14:46:12.582Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":120,\"name\":\"testsegment\",\"description\":\"\",\"constraints\":[{\"values\":[\"7\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"accountId\",\"caseInsensitive\":false},{\"values\":[\"7\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"app_version\",\"caseInsensitive\":false}],\"createdBy\":\"simon@getunleash.io\",\"createdAt\":\"2025-08-29T12:03:33.612Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":65,\"name\":\"test-segment\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"simon@getunleash.io\",\"createdAt\":\"2023-12-06T09:21:41.248Z\",\"usedInProjects\":2,\"usedInFeatures\":2},{\"id\":114,\"name\":\"test-segment-bug\",\"description\":\"\",\"constraints\":[{\"values\":[\"blocket\",\"finn\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false},{\"values\":[\"Commercial\",\"Retail\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"type\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2025-06-17T12:47:37.542Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":44,\"name\":\"test-segment-ionut\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"support-ionut@getunleash.ai\",\"createdAt\":\"2023-08-22T12:52:30.823Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":107,\"name\":\"test_segments\",\"description\":\"\",\"constraints\":[],\"createdBy\":\"fredrik.oseberg@getunleash.io\",\"createdAt\":\"2025-03-11T12:02:31.403Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":122,\"name\":\"thisone\",\"description\":\"\",\"project\":\"api\",\"constraints\":[{\"values\":[\"ccc\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"gaston@getunleash.io\",\"createdAt\":\"2025-09-03T09:25:16.415Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":93,\"name\":\"unleash-e2e-09410284292938065unleash-e2e-09410284292938065\",\"description\":\"\",\"project\":\"heartman-takes-to-the-skies\",\"constraints\":[],\"createdBy\":\"thomas@getunleash.io\",\"createdAt\":\"2024-11-27T10:42:02.890Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":125,\"name\":\"UX financial services\",\"description\":\"\",\"project\":\"financial-services-5ea31883a08a\",\"constraints\":[{\"values\":[\"CS team\",\"UX team\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"UX_local_financialservices\",\"caseInsensitive\":false}],\"createdBy\":\"elise@getunleash.io\",\"createdAt\":\"2025-11-20T08:37:41.505Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":160,\"name\":\"UXTEST\",\"description\":\"\",\"project\":\"testprojectux\",\"constraints\":[{\"values\":[\"ios\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"anniken.ostdahl@getunleash.io\",\"createdAt\":\"2026-09-03T17:36:50.694Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":3,\"name\":\"UX user group\",\"description\":\"UX customers\",\"constraints\":[{\"values\":[\"@google\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"email\",\"caseInsensitive\":false}],\"createdBy\":\"elise@getunleash.ai\",\"createdAt\":\"2022-08-11T07:42:38.341Z\",\"usedInProjects\":9,\"usedInFeatures\":14},{\"id\":85,\"name\":\"variant.a.segment\",\"description\":\"\",\"project\":\"personaldashboard\",\"constraints\":[{\"values\":[\"1\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-10-17T07:58:55.994Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":86,\"name\":\"variant.b.segment\",\"description\":\"\",\"project\":\"personaldashboard\",\"constraints\":[{\"values\":[\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-10-17T08:01:42.022Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":77,\"name\":\"VIPUsers\",\"description\":\"\",\"project\":\"changerequestdemo-ad8188e4248d\",\"constraints\":[{\"values\":[\"1\",\"2\",\"3\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2024-06-24T09:51:42.027Z\",\"usedInProjects\":7,\"usedInFeatures\":9},{\"id\":71,\"name\":\"whatIsThis\",\"description\":\"\",\"project\":\"gard\",\"constraints\":[{\"values\":[\"bar\",\"foo\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"gard@getunleash.io\",\"createdAt\":\"2024-02-28T15:25:01.163Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":121,\"name\":\"Whee\",\"description\":\"\",\"project\":\"simonsproject\",\"constraints\":[{\"values\":[\"blocket\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"brand\",\"caseInsensitive\":false}],\"createdBy\":\"simon@getunleash.io\",\"createdAt\":\"2025-08-29T12:57:16.195Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":144,\"name\":\"www\",\"description\":\"\",\"project\":\"gaston\",\"constraints\":[{\"values\":[\"ios\",\"android\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"channel\",\"caseInsensitive\":false}],\"createdBy\":\"gaston@getunleash.io\",\"createdAt\":\"2026-02-11T17:43:47.168Z\",\"usedInProjects\":0,\"usedInFeatures\":0},{\"id\":159,\"name\":\"xas1\",\"description\":\"xxx\",\"project\":\"gaston-editor\",\"constraints\":[],\"createdBy\":\"gaston@getunleash.io\",\"createdAt\":\"2026-05-06T12:59:57.587Z\",\"usedInProjects\":1,\"usedInFeatures\":1},{\"id\":52,\"name\":\"X segment\",\"description\":\"\",\"constraints\":[{\"values\":[\"oda\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"appName\",\"caseInsensitive\":false}],\"createdBy\":\"socaciunicolae@gmail.com\",\"createdAt\":\"2023-11-01T13:42:47.283Z\",\"usedInProjects\":3,\"usedInFeatures\":6},{\"id\":142,\"name\":\"xyz\",\"description\":\"\",\"project\":\"gaston\",\"constraints\":[{\"values\":[\"eg\",\"pro\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"clientId\",\"caseInsensitive\":false}],\"createdBy\":\"gaston@getunleash.io\",\"createdAt\":\"2026-02-11T17:42:47.992Z\",\"usedInProjects\":0,\"usedInFeatures\":0}]}",
           "trailers": {}
         }
       ],
@@ -755,19 +750,19 @@
     }
   },
   {
-    "hash": "Va26Q-jv9Otk_PPxjJ7nGr6sOopo9VnuYZpXbHxQLBk",
+    "hash": "HFo62353wpJE56AQmqqtphjXNBrVj6vHoDkzJ9AaDs8",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/segments",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "48",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcp-searched-segment\",\"constraints\":[]}"
       },
@@ -778,7 +773,7 @@
             "content-length": "151",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "location": "segments/305",
+            "location": "segments/328",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "vary": "Accept-Encoding",
@@ -787,7 +782,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJpZCI6MzA1LCJuYW1lIjoibWNwLXNlYXJjaGVkLXNlZ21lbnQiLCJkZXNjcmlwdGlvbiI6bnVsbCwiY29uc3RyYWludHMiOltdLCJjcmVhdGVkQnkiOiJtYXRldXN6QGdldHVubGVhc2guYWkiLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTI5VDE0OjQ3OjIwLjA0NVoifQ==",
+          "body": "{\"id\":328,\"name\":\"mcp-searched-segment\",\"description\":null,\"constraints\":[],\"createdBy\":\"mateusz@getunleash.ai\",\"createdAt\":\"2026-10-30T07:27:55.555Z\"}",
           "trailers": {}
         }
       ],
@@ -795,17 +790,17 @@
     }
   },
   {
-    "hash": "Z33xUUfJs9kqghQI9hhOrW2nL22ngIVS3xVsdKYE15Q",
+    "hash": "MoaT536Kuj1P5XrK7F6lJWCuzno5OiLzsmW9wF5OYJM",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/ui-config",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -813,7 +808,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "5224",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -822,10 +817,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "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",
+          "body": "{\"environment\":\"Enterprise\",\"flags\":{\"OIDC\":true,\"EEA\":true,\"RE\":true,\"UG\":true,\"SE\":false,\"CO\":true,\"UNLEASH_CLOUD\":true,\"C\":true,\"P\":true,\"anonymiseEventLog\":false,\"enableLicense\":false,\"sessionTimeouts\":true,\"responseTimeWithAppNameKillSwitch\":false,\"maintenanceMode\":false,\"messageBanner\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"strictSchemaValidation\":false,\"personalAccessTokensKillSwitch\":false,\"migrationLock\":true,\"demo\":false,\"onboardingIntroTourAdvancedTopics\":false,\"interactiveDemoKillSwitch\":false,\"filterInvalidClientMetrics\":false,\"disableMetrics\":false,\"celebrateUnleash\":false,\"feedbackPosting\":true,\"encryptEmails\":false,\"extendedUsageMetrics\":{\"name\":\"maxResults\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"3600000\"},\"feature_enabled\":true,\"featureEnabled\":true},\"outdatedSdksBanner\":true,\"feedbackComments\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"usePromiseTokenCache\":true,\"disableUpdateMaxRevisionId\":false,\"disablePublishUnannouncedEvents\":false,\"responseTimeMetricsFix\":true,\"disableShowContextFieldSelectionValues\":false,\"manyStrategiesPagination\":true,\"enableLegacyVariants\":false,\"extendedMetrics\":true,\"removeUnsafeInlineStyleSrc\":false,\"projectRoleAssignment\":false,\"webhookDomainLogging\":false,\"productivityReportEmail\":true,\"productivityReportUnsubscribers\":false,\"tokenExpiryNotifications\":true,\"showUserDeviceCount\":{\"name\":\"warnAbove\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"2\"},\"feature_enabled\":true,\"featureEnabled\":true},\"deltaApi\":true,\"cacheFeatureSerialization\":true,\"uniqueSdkTracking\":true,\"consumptionModel\":true,\"impactViews\":true,\"disableImpactMetrics\":false,\"flightRecorderSdk\":true,\"flightRecorderAdminEvents\":false,\"flightRecorderFrontend\":{\"name\":\"url\",\"enabled\":true,\"payload\":{\"type\":\"string\",\"value\":\"http://flight-recorder.sandbox.getunleash.io/frontend-events\"},\"feature_enabled\":true,\"featureEnabled\":true},\"regexConstraintOperator\":true,\"ipConstraintOperator\":true,\"userTokenWithClientApiLoggingKillSwitch\":false,\"multiMetricChart\":true,\"logRocketEnabled\":true,\"hubspotChatEnabled\":true,\"learningLab\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":true,\"featureEnabled\":true},\"serviceNowIntegration\":true,\"recordSdkFlavorMetrics\":false,\"secureAccountTokenStorage\":true,\"searchDocsWidget\":true,\"semverBuildMetadata\":false,\"auditEventUserAgent\":true,\"helpMenuRelocationHint\":false,\"githubIntegration\":true,\"slackAppAuthV2\":false,\"integrationParamKvpEditor\":true,\"perFlagLifetime\":true,\"payloadSchemas\":true,\"singlePageStrategyForm\":false,\"feedbackModule\":true,\"feedbackModuleDisplaySurvey\":false,\"feedbackModuleSubmitResponses\":true,\"playgroundFeatureEvaluation\":true,\"signals\":true,\"automatedActions\":true,\"killScheduledChangeRequestCache\":false,\"estimateTrafficDataCost\":true,\"streaming\":{\"name\":\"disabled\",\"enabled\":true},\"denyStreamingForNonEdge\":true,\"consumptionModelUI\":true,\"fetchMode\":{\"name\":\"streaming\",\"enabled\":true,\"feature_enabled\":true,\"featureEnabled\":true},\"oidcPkceSupport\":true,\"enterpriseEdgeTokensList\":true,\"impactMetricsFlagPage\":true,\"disableScimAdminGroupGuard\":false,\"elasticEventSync\":true,\"uxTweakSurveys\":true,\"loginHistoryUserAgent\":true,\"remoteMcpHostedClients\":false,\"remoteMcpV2\":true,\"dashboardV2\":false,\"samlIssuerMismatchLogging\":true,\"oidcGroupSyncIdToken\":false,\"changeRequestSubmitRedirect\":true},\"billing\":\"subscription\",\"slogan\":\"getunleash.io - All rights reserved\",\"name\":\"Unleash\",\"links\":[{\"value\":\"Documentation\",\"icon\":\"library_books\",\"href\":\"https://docs.getunleash.io/docs\",\"title\":\"User documentation\"},{\"value\":\"GitHub\",\"icon\":\"c_github\",\"href\":\"https://github.com/Unleash/unleash\",\"title\":\"Source code on GitHub\"}],\"oidcConfiguredThroughEnv\":false,\"samlConfiguredThroughEnv\":false,\"version\":\"8.3.1\",\"emailEnabled\":true,\"unleashUrl\":\"https://sandbox.getunleash.io/enterprise\",\"logRocketAppId\":\"1knhci/unleash-sandbox\",\"hubspotPortalId\":\"19521761\",\"baseUriPath\":\"/enterprise\",\"authenticationType\":\"hosted\",\"frontendApiOrigins\":[\"*\"],\"versionInfo\":{\"current\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.1+27403.4298c9ee05\"},\"latest\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.1\"},\"isLatest\":true,\"instanceId\":\"902e2e68-ab1d-4e35-9cd0-896618db603d\"},\"prometheusAPIAvailable\":true,\"impactMetrics\":\"full\",\"resourceLimits\":{\"segmentValues\":1000,\"strategySegments\":5,\"signalEndpoints\":5,\"actionSetActions\":10,\"actionSetsPerProject\":5,\"actionSetFilters\":5,\"actionSetFilterValues\":25,\"signalTokensPerEndpoint\":5,\"featureEnvironmentStrategies\":30,\"constraintValues\":1000,\"constraints\":30,\"environments\":50,\"projects\":500,\"apiTokens\":2000,\"segments\":300,\"featureFlags\":50000,\"releaseTemplates\":50,\"readOnlyUsers\":10},\"disablePasswordAuth\":false,\"maintenanceMode\":false,\"feedbackUriPath\":\"https://sandbox.getunleash.io/nuno/feedback\",\"maxSessionsCount\":1,\"sessionKeepAliveIntervalSeconds\":60,\"unleashContext\":{\"properties\":{\"clientId\":\"enterprise\",\"plan\":\"Enterprise\",\"billing\":\"subscription\",\"awsRegion\":\"eu-north-1\",\"version\":\"8.3.1+27403.4298c9ee05\",\"releaseSegment\":\"enterprise\"},\"email\":\"mateusz@getunleash.ai\",\"hashedEmail\":\"e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c\",\"userId\":17},\"storiesPageEnabled\":true}",
           "trailers": {}
         }
       ],
@@ -833,17 +827,17 @@
     }
   },
   {
-    "hash": "_jJqT0bsXrUqt8WSp25X4grEJSQ-H24k8SLZY40jAXs",
+    "hash": "q4ukEMq0eIU9K34eh2Kf4cvZsXlQF6AUjpsqOyxqoHM",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/change-requests/config",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -862,7 +856,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "W3siZW52aXJvbm1lbnQiOiJkZXZlbG9wbWVudCIsInR5cGUiOiJkZXZlbG9wbWVudCIsInJlcXVpcmVkQXBwcm92YWxzIjpudWxsLCJjaGFuZ2VSZXF1ZXN0RW5hYmxlZCI6ZmFsc2V9LHsiZW52aXJvbm1lbnQiOiJwcm9kdWN0aW9uIiwidHlwZSI6InByb2R1Y3Rpb24iLCJyZXF1aXJlZEFwcHJvdmFscyI6MSwiY2hhbmdlUmVxdWVzdEVuYWJsZWQiOnRydWV9XQ==",
+          "body": "[{\"environment\":\"development\",\"type\":\"development\",\"requiredApprovals\":null,\"changeRequestEnabled\":false},{\"environment\":\"production\",\"type\":\"production\",\"requiredApprovals\":1,\"changeRequestEnabled\":true}]",
           "trailers": {}
         }
       ],
@@ -870,21 +864,21 @@
     }
   },
   {
-    "hash": "YPlloyORWYCmpC6-h67Ef9bFuCIYeT1i3aWoh4T8n8w",
+    "hash": "BKa2atROAQ7OH6y1sujJQIQituoC18F7x1DL9rwqAMQ",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-searched-second/environments/development/strategies",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "175",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
-        "body": "{\"name\":\"flexibleRollout\",\"title\":\"Beta\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"mcp-searched-second\"},\"constraints\":[],\"segments\":[305],\"variants\":[]}"
+        "body": "{\"name\":\"flexibleRollout\",\"title\":\"Beta\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"mcp-searched-second\"},\"constraints\":[],\"segments\":[328],\"variants\":[]}"
       },
       "responses": [
         {
@@ -901,7 +895,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJpZCI6IjAxTTY0MjJESktNRVRYMks3RVQxUEpEOUE5IiwibmFtZSI6ImZsZXhpYmxlUm9sbG91dCIsImNvbnN0cmFpbnRzIjpbXSwicGFyYW1ldGVycyI6eyJncm91cElkIjoibWNwLXNlYXJjaGVkLXNlY29uZCIsInJvbGxvdXQiOiIxMDAiLCJzdGlja2luZXNzIjoiZGVmYXVsdCJ9LCJ2YXJpYW50cyI6W10sInNlZ21lbnRzIjpbMzA1XSwidGl0bGUiOiJCZXRhIiwiZGlzYWJsZWQiOmZhbHNlLCJzb3J0T3JkZXIiOjB9",
+          "body": "{\"id\":\"01M65VAJ16JQGYDRCPJAAM2YX6\",\"name\":\"flexibleRollout\",\"constraints\":[],\"parameters\":{\"groupId\":\"mcp-searched-second\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"variants\":[],\"segments\":[328],\"title\":\"Beta\",\"disabled\":false,\"sortOrder\":0}",
           "trailers": {}
         }
       ],
@@ -909,18 +903,18 @@
     }
   },
   {
-    "hash": "xaxTekWbuztxT6s2eHx9ZXDSfYA1c5-M3d9tRkPf1Ko",
+    "hash": "KvAL3SZ-GfP4e9dVWj3UWNuaOUjg94NypgWeaGCotyo",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-searched-second/environments/development/on",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "0",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -945,17 +939,17 @@
     }
   },
   {
-    "hash": "bGjiFfhRy3xHkM9nvQSAkX8Zt4tddlsHgqAMn1OdBGM",
+    "hash": "awspHblq_YNJYVmct_F4WIqwIiYc9rQdZz-_uFjKKec",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/features?project=IS%3Amcp-server&query=MCP-SEARCHED&offset=0&limit=1",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -974,7 +968,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJmZWF0dXJlcyI6W3sidHlwZSI6ImtpbGwtc3dpdGNoIiwiZGVzY3JpcHRpb24iOm51bGwsInByb2plY3QiOiJtY3Atc2VydmVyIiwiZmF2b3JpdGUiOmZhbHNlLCJuYW1lIjoibWNwLXNlYXJjaGVkLWZpcnN0IiwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yOVQxNDo0NzoxOC45NzFaIiwic3RhbGUiOnRydWUsImFyY2hpdmVkQXQiOm51bGwsImltcHJlc3Npb25EYXRhIjpmYWxzZSwiZGVwZW5kZW5jeVR5cGUiOm51bGwsImVudmlyb25tZW50cyI6W3sibmFtZSI6ImRldmVsb3BtZW50IiwiZW5hYmxlZCI6ZmFsc2UsInR5cGUiOiJkZXZlbG9wbWVudCIsInNvcnRPcmRlciI6MiwidmFyaWFudENvdW50IjowLCJsYXN0U2VlbkF0IjpudWxsLCJoYXNTdHJhdGVnaWVzIjpmYWxzZSwiaGFzRW5hYmxlZFN0cmF0ZWdpZXMiOmZhbHNlLCJ5ZXMiOjAsIm5vIjowLCJjaGFuZ2VSZXF1ZXN0SWRzIjpbXX0seyJuYW1lIjoicHJvZHVjdGlvbiIsImVuYWJsZWQiOmZhbHNlLCJ0eXBlIjoicHJvZHVjdGlvbiIsInNvcnRPcmRlciI6OCwidmFyaWFudENvdW50IjowLCJsYXN0U2VlbkF0IjpudWxsLCJoYXNTdHJhdGVnaWVzIjpmYWxzZSwiaGFzRW5hYmxlZFN0cmF0ZWdpZXMiOmZhbHNlLCJ5ZXMiOjAsIm5vIjowLCJjaGFuZ2VSZXF1ZXN0SWRzIjpbXX1dLCJzZWdtZW50cyI6W10sImNyZWF0ZWRCeSI6eyJpZCI6MTcsIm5hbWUiOiJNYXRldXN6IEsiLCJpbWFnZVVybCI6Imh0dHBzOi8vZ3JhdmF0YXIuY29tL2F2YXRhci9lOGQzMjdkY2Y0MTg4NmVjYjQ2Njk3ZGNhNTNkMzkxYWEzYWE0NDhiNzJhNjNhOWRkODM4MmRjMzJjYzE2NTFjP3M9NDImZD1yZXRybyZyPWcifSwibGlmZWN5Y2xlIjp7InN0YWdlIjoiaW5pdGlhbCIsImVudGVyZWRTdGFnZUF0IjoiMjAyNi0xMC0yOVQxNDo0NzoxOS4wNzhaIn0sInRhZ3MiOlt7InR5cGUiOiJzaW1wbGUiLCJjb2xvciI6IiNGRkZGRkYiLCJ2YWx1ZSI6Im1jcC1zZWFyY2gifV19XSwidG90YWwiOjJ9",
+          "body": "{\"features\":[{\"type\":\"kill-switch\",\"description\":null,\"project\":\"mcp-server\",\"favorite\":false,\"name\":\"mcp-searched-first\",\"createdAt\":\"2026-10-30T07:27:54.426Z\",\"stale\":true,\"archivedAt\":null,\"impressionData\":false,\"dependencyType\":null,\"environments\":[{\"name\":\"development\",\"enabled\":false,\"type\":\"development\",\"sortOrder\":2,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]},{\"name\":\"production\",\"enabled\":false,\"type\":\"production\",\"sortOrder\":8,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]}],\"segments\":[],\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T07:27:54.620Z\"},\"tags\":[{\"type\":\"simple\",\"color\":\"#FFFFFF\",\"value\":\"mcp-search\"}]}],\"total\":2}",
           "trailers": {}
         }
       ],
@@ -982,17 +976,17 @@
     }
   },
   {
-    "hash": "V1VRb99r32AS0CrcbE2qWNj1Q2Bi0CWk2R8tD4bl8d0",
+    "hash": "W6n_NYpKotTeQRWNqBB7V1zj60IhS1_1ASm_8F_TSPw",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/features?project=IS%3Amcp-server&query=mcp-searched&offset=1&limit=1",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -1011,7 +1005,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJmZWF0dXJlcyI6W3sidHlwZSI6InJlbGVhc2UiLCJkZXNjcmlwdGlvbiI6bnVsbCwicHJvamVjdCI6Im1jcC1zZXJ2ZXIiLCJmYXZvcml0ZSI6ZmFsc2UsIm5hbWUiOiJtY3Atc2VhcmNoZWQtc2Vjb25kIiwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yOVQxNDo0NzoxOS42NDlaIiwic3RhbGUiOmZhbHNlLCJhcmNoaXZlZEF0IjpudWxsLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImRlcGVuZGVuY3lUeXBlIjpudWxsLCJlbnZpcm9ubWVudHMiOlt7Im5hbWUiOiJkZXZlbG9wbWVudCIsImVuYWJsZWQiOnRydWUsInR5cGUiOiJkZXZlbG9wbWVudCIsInNvcnRPcmRlciI6MiwidmFyaWFudENvdW50IjowLCJsYXN0U2VlbkF0IjpudWxsLCJoYXNTdHJhdGVnaWVzIjp0cnVlLCJoYXNFbmFibGVkU3RyYXRlZ2llcyI6dHJ1ZSwieWVzIjowLCJubyI6MCwiY2hhbmdlUmVxdWVzdElkcyI6W119LHsibmFtZSI6InByb2R1Y3Rpb24iLCJlbmFibGVkIjpmYWxzZSwidHlwZSI6InByb2R1Y3Rpb24iLCJzb3J0T3JkZXIiOjgsInZhcmlhbnRDb3VudCI6MCwibGFzdFNlZW5BdCI6bnVsbCwiaGFzU3RyYXRlZ2llcyI6ZmFsc2UsImhhc0VuYWJsZWRTdHJhdGVnaWVzIjpmYWxzZSwieWVzIjowLCJubyI6MCwiY2hhbmdlUmVxdWVzdElkcyI6W119XSwic2VnbWVudHMiOlsibWNwLXNlYXJjaGVkLXNlZ21lbnQiXSwiY3JlYXRlZEJ5Ijp7ImlkIjoxNywibmFtZSI6Ik1hdGV1c3ogSyIsImltYWdlVXJsIjoiaHR0cHM6Ly9ncmF2YXRhci5jb20vYXZhdGFyL2U4ZDMyN2RjZjQxODg2ZWNiNDY2OTdkY2E1M2QzOTFhYTNhYTQ0OGI3MmE2M2E5ZGQ4MzgyZGMzMmNjMTY1MWM/cz00MiZkPXJldHJvJnI9ZyJ9LCJsaWZlY3ljbGUiOnsic3RhZ2UiOiJpbml0aWFsIiwiZW50ZXJlZFN0YWdlQXQiOiIyMDI2LTEwLTI5VDE0OjQ3OjIwLjA4OVoifX1dLCJ0b3RhbCI6Mn0=",
+          "body": "{\"features\":[{\"type\":\"release\",\"description\":null,\"project\":\"mcp-server\",\"favorite\":false,\"name\":\"mcp-searched-second\",\"createdAt\":\"2026-10-30T07:27:54.841Z\",\"stale\":false,\"archivedAt\":null,\"impressionData\":false,\"dependencyType\":null,\"environments\":[{\"name\":\"development\",\"enabled\":true,\"type\":\"development\",\"sortOrder\":2,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":true,\"hasEnabledStrategies\":true,\"yes\":0,\"no\":0,\"changeRequestIds\":[]},{\"name\":\"production\",\"enabled\":false,\"type\":\"production\",\"sortOrder\":8,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]}],\"segments\":[\"mcp-searched-segment\"],\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T07:27:55.299Z\"}}],\"total\":2}",
           "trailers": {}
         }
       ],
@@ -1019,17 +1013,17 @@
     }
   },
   {
-    "hash": "Vtc8V2m94Go4H3WCyq-Yq27K2XSvMtXPyrKvDocklpE",
+    "hash": "mJhAu2dsAG6xG3rjA3pdonn2nxIVaxhdzikP4-zAWVE",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/features?project=IS%3Amcp-server&query=mcp-searched&lifecycle=IS_ANY_OF%3Aarchived&offset=0&limit=20",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -1048,7 +1042,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJmZWF0dXJlcyI6W3sidHlwZSI6InJlbGVhc2UiLCJkZXNjcmlwdGlvbiI6bnVsbCwicHJvamVjdCI6Im1jcC1zZXJ2ZXIiLCJmYXZvcml0ZSI6ZmFsc2UsIm5hbWUiOiJtY3Atc2VhcmNoZWQtYXJjaGl2ZWQiLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTI5VDE0OjQ3OjE5Ljc1N1oiLCJzdGFsZSI6ZmFsc2UsImFyY2hpdmVkQXQiOiIyMDI2LTEwLTI5VDE0OjQ3OjIwLjgyMVoiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImRlcGVuZGVuY3lUeXBlIjpudWxsLCJlbnZpcm9ubWVudHMiOlt7Im5hbWUiOiJkZXZlbG9wbWVudCIsImVuYWJsZWQiOmZhbHNlLCJ0eXBlIjoiZGV2ZWxvcG1lbnQiLCJzb3J0T3JkZXIiOjIsInZhcmlhbnRDb3VudCI6MCwibGFzdFNlZW5BdCI6bnVsbCwiaGFzU3RyYXRlZ2llcyI6ZmFsc2UsImhhc0VuYWJsZWRTdHJhdGVnaWVzIjpmYWxzZSwieWVzIjowLCJubyI6MCwiY2hhbmdlUmVxdWVzdElkcyI6W119LHsibmFtZSI6InByb2R1Y3Rpb24iLCJlbmFibGVkIjpmYWxzZSwidHlwZSI6InByb2R1Y3Rpb24iLCJzb3J0T3JkZXIiOjgsInZhcmlhbnRDb3VudCI6MCwibGFzdFNlZW5BdCI6bnVsbCwiaGFzU3RyYXRlZ2llcyI6ZmFsc2UsImhhc0VuYWJsZWRTdHJhdGVnaWVzIjpmYWxzZSwieWVzIjowLCJubyI6MCwiY2hhbmdlUmVxdWVzdElkcyI6W119XSwic2VnbWVudHMiOltdLCJjcmVhdGVkQnkiOnsiaWQiOjE3LCJuYW1lIjoiTWF0ZXVzeiBLIiwiaW1hZ2VVcmwiOiJodHRwczovL2dyYXZhdGFyLmNvbS9hdmF0YXIvZThkMzI3ZGNmNDE4ODZlY2I0NjY5N2RjYTUzZDM5MWFhM2FhNDQ4YjcyYTYzYTlkZDgzODJkYzMyY2MxNjUxYz9zPTQyJmQ9cmV0cm8mcj1nIn0sImxpZmVjeWNsZSI6eyJzdGFnZSI6ImFyY2hpdmVkIiwiZW50ZXJlZFN0YWdlQXQiOiIyMDI2LTEwLTI5VDE0OjQ3OjIxLjA4OFoifX1dLCJ0b3RhbCI6MX0=",
+          "body": "{\"features\":[{\"type\":\"release\",\"description\":null,\"project\":\"mcp-server\",\"favorite\":false,\"name\":\"mcp-searched-archived\",\"createdAt\":\"2026-10-30T07:27:54.987Z\",\"stale\":false,\"archivedAt\":\"2026-10-30T07:27:56.298Z\",\"impressionData\":false,\"dependencyType\":null,\"environments\":[{\"name\":\"development\",\"enabled\":false,\"type\":\"development\",\"sortOrder\":2,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]},{\"name\":\"production\",\"enabled\":false,\"type\":\"production\",\"sortOrder\":8,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]}],\"segments\":[],\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"lifecycle\":{\"stage\":\"archived\",\"enteredStageAt\":\"2026-10-30T07:27:56.638Z\"}}],\"total\":1}",
           "trailers": {}
         }
       ],
@@ -1056,17 +1050,17 @@
     }
   },
   {
-    "hash": "y3ze1aILV1yhgvYuuro5l3FZWnLfZmNTa6qj8KnaVm0",
+    "hash": "AQ9DPhiF41_H54FgdLFM_P9cK1WzfBfcQfD1-sMetaM",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/features?project=IS%3Amcp-server&query=mcp-searched&state=IS_ANY_OF%3Astale&offset=0&limit=20",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -1085,7 +1079,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJmZWF0dXJlcyI6W3sidHlwZSI6ImtpbGwtc3dpdGNoIiwiZGVzY3JpcHRpb24iOm51bGwsInByb2plY3QiOiJtY3Atc2VydmVyIiwiZmF2b3JpdGUiOmZhbHNlLCJuYW1lIjoibWNwLXNlYXJjaGVkLWZpcnN0IiwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yOVQxNDo0NzoxOC45NzFaIiwic3RhbGUiOnRydWUsImFyY2hpdmVkQXQiOm51bGwsImltcHJlc3Npb25EYXRhIjpmYWxzZSwiZGVwZW5kZW5jeVR5cGUiOm51bGwsImVudmlyb25tZW50cyI6W3sibmFtZSI6ImRldmVsb3BtZW50IiwiZW5hYmxlZCI6ZmFsc2UsInR5cGUiOiJkZXZlbG9wbWVudCIsInNvcnRPcmRlciI6MiwidmFyaWFudENvdW50IjowLCJsYXN0U2VlbkF0IjpudWxsLCJoYXNTdHJhdGVnaWVzIjpmYWxzZSwiaGFzRW5hYmxlZFN0cmF0ZWdpZXMiOmZhbHNlLCJ5ZXMiOjAsIm5vIjowLCJjaGFuZ2VSZXF1ZXN0SWRzIjpbXX0seyJuYW1lIjoicHJvZHVjdGlvbiIsImVuYWJsZWQiOmZhbHNlLCJ0eXBlIjoicHJvZHVjdGlvbiIsInNvcnRPcmRlciI6OCwidmFyaWFudENvdW50IjowLCJsYXN0U2VlbkF0IjpudWxsLCJoYXNTdHJhdGVnaWVzIjpmYWxzZSwiaGFzRW5hYmxlZFN0cmF0ZWdpZXMiOmZhbHNlLCJ5ZXMiOjAsIm5vIjowLCJjaGFuZ2VSZXF1ZXN0SWRzIjpbXX1dLCJzZWdtZW50cyI6W10sImNyZWF0ZWRCeSI6eyJpZCI6MTcsIm5hbWUiOiJNYXRldXN6IEsiLCJpbWFnZVVybCI6Imh0dHBzOi8vZ3JhdmF0YXIuY29tL2F2YXRhci9lOGQzMjdkY2Y0MTg4NmVjYjQ2Njk3ZGNhNTNkMzkxYWEzYWE0NDhiNzJhNjNhOWRkODM4MmRjMzJjYzE2NTFjP3M9NDImZD1yZXRybyZyPWcifSwibGlmZWN5Y2xlIjp7InN0YWdlIjoiaW5pdGlhbCIsImVudGVyZWRTdGFnZUF0IjoiMjAyNi0xMC0yOVQxNDo0NzoxOS4wNzhaIn0sInRhZ3MiOlt7InR5cGUiOiJzaW1wbGUiLCJjb2xvciI6IiNGRkZGRkYiLCJ2YWx1ZSI6Im1jcC1zZWFyY2gifV19XSwidG90YWwiOjF9",
+          "body": "{\"features\":[{\"type\":\"kill-switch\",\"description\":null,\"project\":\"mcp-server\",\"favorite\":false,\"name\":\"mcp-searched-first\",\"createdAt\":\"2026-10-30T07:27:54.426Z\",\"stale\":true,\"archivedAt\":null,\"impressionData\":false,\"dependencyType\":null,\"environments\":[{\"name\":\"development\",\"enabled\":false,\"type\":\"development\",\"sortOrder\":2,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]},{\"name\":\"production\",\"enabled\":false,\"type\":\"production\",\"sortOrder\":8,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]}],\"segments\":[],\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T07:27:54.620Z\"},\"tags\":[{\"type\":\"simple\",\"color\":\"#FFFFFF\",\"value\":\"mcp-search\"}]}],\"total\":1}",
           "trailers": {}
         }
       ],
@@ -1093,17 +1087,17 @@
     }
   },
   {
-    "hash": "6Ocp4uRkx8JNVpSALSR-QHNdYGutSdXZwVhKBeNzO_Y",
+    "hash": "s5tokDbovM9hJ9Lh4dcf7_MMqHYaiwEtDCMi1xZ-I64",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/features?project=IS%3Amcp-server&query=mcp-searched&segment=INCLUDE_ANY_OF%3Amcp-searched-segment&offset=0&limit=20",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -1122,7 +1116,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJmZWF0dXJlcyI6W3sidHlwZSI6InJlbGVhc2UiLCJkZXNjcmlwdGlvbiI6bnVsbCwicHJvamVjdCI6Im1jcC1zZXJ2ZXIiLCJmYXZvcml0ZSI6ZmFsc2UsIm5hbWUiOiJtY3Atc2VhcmNoZWQtc2Vjb25kIiwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yOVQxNDo0NzoxOS42NDlaIiwic3RhbGUiOmZhbHNlLCJhcmNoaXZlZEF0IjpudWxsLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImRlcGVuZGVuY3lUeXBlIjpudWxsLCJlbnZpcm9ubWVudHMiOlt7Im5hbWUiOiJkZXZlbG9wbWVudCIsImVuYWJsZWQiOnRydWUsInR5cGUiOiJkZXZlbG9wbWVudCIsInNvcnRPcmRlciI6MiwidmFyaWFudENvdW50IjowLCJsYXN0U2VlbkF0IjpudWxsLCJoYXNTdHJhdGVnaWVzIjp0cnVlLCJoYXNFbmFibGVkU3RyYXRlZ2llcyI6dHJ1ZSwieWVzIjowLCJubyI6MCwiY2hhbmdlUmVxdWVzdElkcyI6W119LHsibmFtZSI6InByb2R1Y3Rpb24iLCJlbmFibGVkIjpmYWxzZSwidHlwZSI6InByb2R1Y3Rpb24iLCJzb3J0T3JkZXIiOjgsInZhcmlhbnRDb3VudCI6MCwibGFzdFNlZW5BdCI6bnVsbCwiaGFzU3RyYXRlZ2llcyI6ZmFsc2UsImhhc0VuYWJsZWRTdHJhdGVnaWVzIjpmYWxzZSwieWVzIjowLCJubyI6MCwiY2hhbmdlUmVxdWVzdElkcyI6W119XSwic2VnbWVudHMiOlsibWNwLXNlYXJjaGVkLXNlZ21lbnQiXSwiY3JlYXRlZEJ5Ijp7ImlkIjoxNywibmFtZSI6Ik1hdGV1c3ogSyIsImltYWdlVXJsIjoiaHR0cHM6Ly9ncmF2YXRhci5jb20vYXZhdGFyL2U4ZDMyN2RjZjQxODg2ZWNiNDY2OTdkY2E1M2QzOTFhYTNhYTQ0OGI3MmE2M2E5ZGQ4MzgyZGMzMmNjMTY1MWM/cz00MiZkPXJldHJvJnI9ZyJ9LCJsaWZlY3ljbGUiOnsic3RhZ2UiOiJpbml0aWFsIiwiZW50ZXJlZFN0YWdlQXQiOiIyMDI2LTEwLTI5VDE0OjQ3OjIwLjA4OVoifX1dLCJ0b3RhbCI6MX0=",
+          "body": "{\"features\":[{\"type\":\"release\",\"description\":null,\"project\":\"mcp-server\",\"favorite\":false,\"name\":\"mcp-searched-second\",\"createdAt\":\"2026-10-30T07:27:54.841Z\",\"stale\":false,\"archivedAt\":null,\"impressionData\":false,\"dependencyType\":null,\"environments\":[{\"name\":\"development\",\"enabled\":true,\"type\":\"development\",\"sortOrder\":2,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":true,\"hasEnabledStrategies\":true,\"yes\":0,\"no\":0,\"changeRequestIds\":[]},{\"name\":\"production\",\"enabled\":false,\"type\":\"production\",\"sortOrder\":8,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]}],\"segments\":[\"mcp-searched-segment\"],\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T07:27:55.299Z\"}}],\"total\":1}",
           "trailers": {}
         }
       ],
@@ -1130,17 +1124,17 @@
     }
   },
   {
-    "hash": "lQEGKqtx0oFpS1F-dNbTy6OXLO6KpwqGRhASlBly62I",
+    "hash": "NPoItf7gk5fzdS81Ne9YmHESV6kpVY12VMLjLnTh8Bc",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/features?project=IS%3Amcp-server&query=mcp-searched&tag=INCLUDE_ALL_OF%3Asimple%3Amcp-search&offset=0&limit=20",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -1159,7 +1153,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJmZWF0dXJlcyI6W3sidHlwZSI6ImtpbGwtc3dpdGNoIiwiZGVzY3JpcHRpb24iOm51bGwsInByb2plY3QiOiJtY3Atc2VydmVyIiwiZmF2b3JpdGUiOmZhbHNlLCJuYW1lIjoibWNwLXNlYXJjaGVkLWZpcnN0IiwiY3JlYXRlZEF0IjoiMjAyNi0xMC0yOVQxNDo0NzoxOC45NzFaIiwic3RhbGUiOnRydWUsImFyY2hpdmVkQXQiOm51bGwsImltcHJlc3Npb25EYXRhIjpmYWxzZSwiZGVwZW5kZW5jeVR5cGUiOm51bGwsImVudmlyb25tZW50cyI6W3sibmFtZSI6ImRldmVsb3BtZW50IiwiZW5hYmxlZCI6ZmFsc2UsInR5cGUiOiJkZXZlbG9wbWVudCIsInNvcnRPcmRlciI6MiwidmFyaWFudENvdW50IjowLCJsYXN0U2VlbkF0IjpudWxsLCJoYXNTdHJhdGVnaWVzIjpmYWxzZSwiaGFzRW5hYmxlZFN0cmF0ZWdpZXMiOmZhbHNlLCJ5ZXMiOjAsIm5vIjowLCJjaGFuZ2VSZXF1ZXN0SWRzIjpbXX0seyJuYW1lIjoicHJvZHVjdGlvbiIsImVuYWJsZWQiOmZhbHNlLCJ0eXBlIjoicHJvZHVjdGlvbiIsInNvcnRPcmRlciI6OCwidmFyaWFudENvdW50IjowLCJsYXN0U2VlbkF0IjpudWxsLCJoYXNTdHJhdGVnaWVzIjpmYWxzZSwiaGFzRW5hYmxlZFN0cmF0ZWdpZXMiOmZhbHNlLCJ5ZXMiOjAsIm5vIjowLCJjaGFuZ2VSZXF1ZXN0SWRzIjpbXX1dLCJzZWdtZW50cyI6W10sImNyZWF0ZWRCeSI6eyJpZCI6MTcsIm5hbWUiOiJNYXRldXN6IEsiLCJpbWFnZVVybCI6Imh0dHBzOi8vZ3JhdmF0YXIuY29tL2F2YXRhci9lOGQzMjdkY2Y0MTg4NmVjYjQ2Njk3ZGNhNTNkMzkxYWEzYWE0NDhiNzJhNjNhOWRkODM4MmRjMzJjYzE2NTFjP3M9NDImZD1yZXRybyZyPWcifSwibGlmZWN5Y2xlIjp7InN0YWdlIjoiaW5pdGlhbCIsImVudGVyZWRTdGFnZUF0IjoiMjAyNi0xMC0yOVQxNDo0NzoxOS4wNzhaIn0sInRhZ3MiOlt7InR5cGUiOiJzaW1wbGUiLCJjb2xvciI6IiNGRkZGRkYiLCJ2YWx1ZSI6Im1jcC1zZWFyY2gifV19XSwidG90YWwiOjF9",
+          "body": "{\"features\":[{\"type\":\"kill-switch\",\"description\":null,\"project\":\"mcp-server\",\"favorite\":false,\"name\":\"mcp-searched-first\",\"createdAt\":\"2026-10-30T07:27:54.426Z\",\"stale\":true,\"archivedAt\":null,\"impressionData\":false,\"dependencyType\":null,\"environments\":[{\"name\":\"development\",\"enabled\":false,\"type\":\"development\",\"sortOrder\":2,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]},{\"name\":\"production\",\"enabled\":false,\"type\":\"production\",\"sortOrder\":8,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]}],\"segments\":[],\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T07:27:54.620Z\"},\"tags\":[{\"type\":\"simple\",\"color\":\"#FFFFFF\",\"value\":\"mcp-search\"}]}],\"total\":1}",
           "trailers": {}
         }
       ],
@@ -1167,17 +1161,17 @@
     }
   },
   {
-    "hash": "LRu4dDvrBZiAHyJbMbc2CuuyzX12N1RsGlRlb9s9hSQ",
+    "hash": "9v2R7EP5H2VLPGy6SHeuDWYIYWOFLJ4eXmIFJ2_Y64o",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/features?project=IS%3Amcp-server&query=mcp-searched&createdBy=IS_NONE_OF%3A17&offset=0&limit=20",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -1196,7 +1190,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJmZWF0dXJlcyI6W10sInRvdGFsIjowfQ==",
+          "body": "{\"features\":[],\"total\":0}",
           "trailers": {}
         }
       ],
@@ -1204,17 +1198,17 @@
     }
   },
   {
-    "hash": "gJJKUjlfOSpdURNO3ZGIgDFGWubGi-rVUrxi-B4RJoQ",
+    "hash": "YhIJNvbuwr6lr7-XG5nWfUcKcLAFi5nN1-vhtw448Qk",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/features?project=IS%3Amcp-server&query=mcp-searched&createdAt=IS_ON_OR_AFTER%3A2026-10-01&offset=0&limit=20",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -1222,7 +1216,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "1883",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -1231,10 +1225,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G1oHAMSvvaZfv57nJF9IukOdlF7XsCoTDt3A2l1/fyqYRjzvJzjW9OBYYhGKQL5l9LxY8YIVsISLejWpgNfcWg+DsE8kLLfVzd9OSb5E6xyYn5eQ8z3D4P/sfZZOZ7ETFBx//vJe5iXAhGPvFVIUVmGws/sscTzhCAUFeJiBfGKFQDsWXKNoJ3bZMMckUKA3vzS7+wIDvdFNtt1kuv+0rUzVmm2X9+32BxSSkGcYiceskARCPgjWNNxNHpGQcjpjxbDnn9wC05veg8/IxgZF+7wdB4ECTQPj+kMvpkNwJS1R3kbHEUYrEMXfJMjD5TgIzEbBU5KPzMFY/ETpo0QSHmdOJZwoPVbZJ2Ccc+pQCMttxU4URv7AtO715y7B/Py9KkeoHI+J8xJKW65ZP7bbSr8VEo8fhvmNDuyDc5hLzA5m28LpXl6T8HG6OHgJhXlHI3+OHgaTyD6ZohgjnZBQ/KED0PwPFdy5UrfODtW26xq2R1XT9K2zVJeu7LdEJVFVdUetpqak3rmu7LSzpbZ229RbezfdrvQNdzuyxOVGvD1iVfDzwPbceoa5RBIaGQZzmGUmDwUOwpHdR6GR7wsMyq/v803b/cCqIDSGIJOWWmtDYeqCAgaHTy4OFFah244qASsQEFB/WWTPlDhy6SkFxu3EPm+qHkHwiU4YLx6vwlA0APYwTL1fgduJFzKivyIcJ+pNvun6H1jX3wqyCHkYvQI=",
+          "body": "{\"features\":[{\"type\":\"kill-switch\",\"description\":null,\"project\":\"mcp-server\",\"favorite\":false,\"name\":\"mcp-searched-first\",\"createdAt\":\"2026-10-30T07:27:54.426Z\",\"stale\":true,\"archivedAt\":null,\"impressionData\":false,\"dependencyType\":null,\"environments\":[{\"name\":\"development\",\"enabled\":false,\"type\":\"development\",\"sortOrder\":2,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]},{\"name\":\"production\",\"enabled\":false,\"type\":\"production\",\"sortOrder\":8,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]}],\"segments\":[],\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T07:27:54.620Z\"},\"tags\":[{\"type\":\"simple\",\"color\":\"#FFFFFF\",\"value\":\"mcp-search\"}]},{\"type\":\"release\",\"description\":null,\"project\":\"mcp-server\",\"favorite\":false,\"name\":\"mcp-searched-second\",\"createdAt\":\"2026-10-30T07:27:54.841Z\",\"stale\":false,\"archivedAt\":null,\"impressionData\":false,\"dependencyType\":null,\"environments\":[{\"name\":\"development\",\"enabled\":true,\"type\":\"development\",\"sortOrder\":2,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":true,\"hasEnabledStrategies\":true,\"yes\":0,\"no\":0,\"changeRequestIds\":[]},{\"name\":\"production\",\"enabled\":false,\"type\":\"production\",\"sortOrder\":8,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]}],\"segments\":[\"mcp-searched-segment\"],\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T07:27:55.299Z\"}}],\"total\":2}",
           "trailers": {}
         }
       ],
@@ -1242,17 +1235,17 @@
     }
   },
   {
-    "hash": "9q3wTFsZqBd3AmiNJih8d6AUCw6y2R-Nlz3k9tJPos0",
+    "hash": "YmzzkOndkAyL9m5becmYo7aNfFWLreiDmScUuCcmlvk",
     "snapshot": {
       "request": {
         "method": "DELETE",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/segments/305",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/segments/328",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },

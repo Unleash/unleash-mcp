@@ -1,16 +1,16 @@
 [
   {
-    "hash": "6PSiTihIgDtQdjP_M4UYlethqxoV6D023S3cgHG7fKo",
+    "hash": "-qYuxNMpONG2WccuoCOsKFB0gdOveIJkBbRUMSUq564",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/tags/simple/mcp-searched-tag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -50,19 +50,19 @@
     }
   },
   {
-    "hash": "KZM40yBRhY8R1KzRXwvlo3L0N72P8wlIFUqd33WjR2E",
+    "hash": "XRqm8wBqapVuSC4WlxEF6h6Vewo3uuUa3Qu2VQ8N_kc",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/tags",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "44",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"type\":\"simple\",\"value\":\"mcp-searched-tag\"}"
       },
@@ -82,7 +82,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJ2ZXJzaW9uIjoxLCJ0YWciOnsidHlwZSI6InNpbXBsZSIsInZhbHVlIjoibWNwLXNlYXJjaGVkLXRhZyJ9fQ==",
+          "body": "{\"version\":1,\"tag\":{\"type\":\"simple\",\"value\":\"mcp-searched-tag\"}}",
           "trailers": {}
         }
       ],
@@ -90,17 +90,17 @@
     }
   },
   {
-    "hash": "RHotzWctXvk308w-2TfQkDwd3a4OxBsJL3Bv-aBkcys",
+    "hash": "nWRVU6K34smak80bWRZve-PyRyZiDXpadEqJE-djsZQ",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/tags",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -108,7 +108,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "3636",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -117,10 +117,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "GxIOAMT/d65P2Z7oSYdALSDdNK+wkyY9eW+GPwi7qAitXqG+X+2nPlZHRUfFqIyPAybJwuy+fxcoIasK36nTRCajzc5bAsOGN7pT7b49U826LSUoWM2e7pRsGlIzxX0+zaqW6vzqQ6qZ8rRSBy3MJiJTXJ5WQ2jB2+XI+492fdyQwu9/iQu+EBQeNU2tnWel61VCLHywHg8v4aUlR0LIQ9C6CZGZ9ZfXxQ9QIajwgftpP+2B+l7OFTy/8BXi5sDskM0F4TH2G+gwgvh24d1ef/HggM0ZFkeDW4YMhqMRHXpF68/nc6mzBAW/RRgSgQsXYsyDG2LRggK4+sLpOze3SBM25BBsDLPs+194R+BSZy4srBdNuXIQBPSYlhYk9E56WhV3SdzEh8N0tYQk9S/NRHh7eqN9Vh6CwEJZfS1LdUgyYxEkqBCSa8J23f5MITFJ9kzNjaWIMKs2MVgdhYXBZy3AEryOS1C3Fra5ZZyLQs9gKacYMwGPkovNSsSky064QUZJNhhMD9S7Tv5TIjkCizz4MJ2kHaUOAzPLLErDKRj0W5cUNy74ymGAuEFc0CVYCGwoOuSPOxgrQymk9xD4pdXBVI6gs1ZkzLdUcETsnFJSrsa4zdUhUqjahBBLgj6lFGl41m4zvDVhnRYk4Wl1WoV2a/Efp4kVU1tQaNk0AXT26yqGPoX8oWOUdvUKihre+lDnwrWg0F0TZGv1Obiqaw0stLakuNFN3LwOCu1Rk5agYRPdnF0oaV8ILLxgnqGqmxiW/TthFisXz42/LPIcWPK0ekkktVU94H7bbWKYk8ntgPFIMPL0ZZVWwTk9wC1iqI948vXXx6QOLG6Ddn6mePgSLtclXM64cvL1zS/mk0ClwyLgHG7+N78Sc7B3+ywLG6oc6EP0SWgqlv+9icHAuI0O8+T/p3943vz3T8httA+iwzw5+fr2OGlIebkCLJAFCxOllBSLKliZEjjauIdCvO5y3wkQzGXwsZTXd4oaRcTRMaTQRfMiLmmjPP/R6qzRleeGMsFaviYvxdLSUBOoGJRFGxNSFjslkZaDg36DMyiToY+Q1YJCHTw/AA==",
+          "body": "{\"version\":1,\"tags\":[{\"type\":\"simple\",\"value\":\"new\"},{\"type\":\"simple\",\"value\":\"rserw\"},{\"type\":\"simple\",\"value\":\"mateusz\"},{\"type\":\"UX\",\"value\":\"New\"},{\"type\":\"UX\",\"value\":\"longtagname\"},{\"type\":\"group\",\"value\":\"test\"},{\"type\":\"simple\",\"value\":\"to_delete\"},{\"type\":\"simple\",\"value\":\"export\"},{\"type\":\"simple\",\"value\":\"import\"},{\"type\":\"simple\",\"value\":\"test\"},{\"type\":\"group\",\"value\":\"3.3.2\"},{\"type\":\"group\",\"value\":\"v3.3.2\"},{\"type\":\"simple\",\"value\":\"rwar\"},{\"type\":\"simple\",\"value\":\"slack\"},{\"type\":\"group\",\"value\":\"slack\"},{\"type\":\"simple\",\"value\":\"admin\"},{\"type\":\"simple\",\"value\":\"123\"},{\"type\":\"simple\",\"value\":\"aadfsada\"},{\"type\":\"simple\",\"value\":\"dsat4566\"},{\"type\":\"simple\",\"value\":\"transaction\"},{\"type\":\"stage\",\"value\":\"beta\"},{\"type\":\"simple\",\"value\":\"tes\"},{\"type\":\"simple\",\"value\":\"best-tag\"},{\"type\":\"simple\",\"value\":\"FARO\"},{\"type\":\"stage\",\"value\":\"alpha\"},{\"type\":\"group\",\"value\":\"unleash-cloud\"},{\"type\":\"simple\",\"value\":\"exported\"},{\"type\":\"simple\",\"value\":\"billing\"},{\"type\":\"simple\",\"value\":\"newtags\"},{\"type\":\"simple\",\"value\":\"newtag55\"},{\"type\":\"simple\",\"value\":\"internet\"},{\"type\":\"simple\",\"value\":\"brandA\"},{\"type\":\"simple\",\"value\":\"branch\"},{\"type\":\"simple\",\"value\":\"easter\"},{\"type\":\"simple\",\"value\":\"demotag\"},{\"type\":\"test\",\"value\":\"a value\"},{\"type\":\"simple\",\"value\":\"\\\"a b c\\\"\"},{\"type\":\"slack\",\"value\":\"prod-tracking\"},{\"type\":\"slack\",\"value\":\"gaston-test\"},{\"type\":\"test\",\"value\":\"asdfdsafdsaf\"},{\"type\":\"test\",\"value\":\"deferred\"},{\"type\":\"UX\",\"value\":\"chart\"},{\"type\":\"simple\",\"value\":\"test space tags\"},{\"type\":\"simple\",\"value\":\"new2\"},{\"type\":\"simple\",\"value\":\"next\"},{\"type\":\"release\",\"value\":\"5.8.0\"},{\"type\":\"simple\",\"value\":\"ab:cd\"},{\"type\":\"simple\",\"value\":\"ab@cd\"},{\"type\":\"group\",\"value\":\"verylongnameaverylongnameaverylongnamea\"},{\"type\":\"simple\",\"value\":\"datadog\"},{\"type\":\"simple\",\"value\":\"deprecated\"},{\"type\":\"deprecated\",\"value\":\"mobile\"},{\"type\":\"deprecated\",\"value\":\"web\"},{\"type\":\"tagname\",\"value\":\"thetag\"},{\"type\":\"tagname\",\"value\":\"more-tag\"},{\"type\":\"simple\",\"value\":\"test2\"},{\"type\":\"simple\",\"value\":\"https://sandbox.getunleash.io/enterprise/tag-types\"},{\"type\":\"simple\",\"value\":\"jira\"},{\"type\":\"release\",\"value\":\"6.1.0\"},{\"type\":\"tagman\",\"value\":\"migration-tag-1\"},{\"type\":\"simple\",\"value\":\"delete\"},{\"type\":\"simple\",\"value\":\"simon\"},{\"type\":\"tagman\",\"value\":\"very-long-tag-name-to-add\"},{\"type\":\"datadog\",\"value\":\"value\"},{\"type\":\"UX\",\"value\":\"improvement\"},{\"type\":\"simple\",\"value\":\"test_gff\"},{\"type\":\"simple\",\"value\":\"new_value\"},{\"type\":\"simple\",\"value\":\"new_Value1\"},{\"type\":\"broken\",\"value\":\"value1\"},{\"type\":\"broken\",\"value\":\"value2\"},{\"type\":\"AI\",\"value\":\"all-human\"},{\"type\":\"AI\",\"value\":\"🤖 mostly-human\"},{\"type\":\"AI\",\"value\":\"🤝🤖 half-half\"},{\"type\":\"AI\",\"value\":\"🤖👤 mostly-ai\"},{\"type\":\"AI\",\"value\":\"🤖 all-ai\"},{\"type\":\"AI\",\"value\":\"👤 all-human\"},{\"type\":\"simple\",\"value\":\"htag\"},{\"type\":\"slack\",\"value\":\"engineering-eg\"},{\"type\":\"simple\",\"value\":\"probably-ok ✨\"},{\"type\":\"simple\",\"value\":\"definitely-not-ok 💀\"},{\"type\":\"migration-status\",\"value\":\"probably-ok ✨\"},{\"type\":\"migration-status\",\"value\":\"definitely-not-ok 💀\"},{\"type\":\"test\",\"value\":\"te\"},{\"type\":\"simple\",\"value\":\"bla\"},{\"type\":\"UX\",\"value\":\"Release\"},{\"type\":\"stage\",\"value\":\"anothertag\"},{\"type\":\"role\",\"value\":\"survey\"},{\"type\":\"simple\",\"value\":\"mcp-inspect\"},{\"type\":\"simple\",\"value\":\"mcp-search\"},{\"type\":\"simple\",\"value\":\"mcp-created\"},{\"type\":\"simple\",\"value\":\"mcp-defined\"},{\"type\":\"simple\",\"value\":\"mcp-redefined\"},{\"type\":\"simple\",\"value\":\"mcp-a\"},{\"type\":\"simple\",\"value\":\"mcp-b\"},{\"type\":\"release\",\"value\":\"8.2\"},{\"type\":\"simple\",\"value\":\"mcp-searched-tag\"}]}",
           "trailers": {}
         }
       ],
@@ -128,17 +127,17 @@
     }
   },
   {
-    "hash": "uDT7mwCduJsjsgvB8UJYeeAUBqcoqSOOnmdxfhLrMlE",
+    "hash": "Ul39fsq5O86xzfwamJyD3UceivYt9f162dAYlwRZUD0",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/tags/simple",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -146,7 +145,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "2032",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -155,10 +154,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G+8HAGTf/VLZ/6KPWN3QIqdtPlD7mhyB0NNkZ/WEmv94y1NOswAjvACvm+B81qxFzZo1K/uUSEizQLI1N1QxuP8BT+CWWOEK+r69hFGzAoIRw+hpBbJwBCPgPZ+WUIHNr1LCCEqawaaCkfBMXq4vUGjCS6EX+2YoJyFtl9PcWS8Gg5XR58MEhPh27mfoz3OOOrtGNltgfn+z1bZDjmhCRoPOkBtG6XR7PY/7X34YLD0PYNcTMydXxFIVjMJz/PTg8gzkPkcOMub83gHAmZY0S2AQt77bNegXGeCVmsfSHMDs61iBkIXyS8pQYQNN/wwYqEA/A1JnIZaAHWoKgsXSAjHMC0cF1UibYWV8g0FBY/n3fqUAl8YskhBiYfVzLOJ4VK8zlkbZeS0imZQ5Ice1xNZbZevjfMJUF4yqsnAVIpImvl7BOU6Qk6JOz8tbFIbArqTZG1NoGLfLmwqZ4oT8uvNWocoXVZsFf5+/3g1b2n6d8kW1tFK1WfD/87EnxKHyaVC3QrtqUrIjLVj/HUhIpd+FA8mxttCuygg9NvEkIF02xcAl+kCmKhjB5mUD",
+          "body": "{\"version\":1,\"tags\":[{\"type\":\"simple\",\"value\":\"new\"},{\"type\":\"simple\",\"value\":\"rserw\"},{\"type\":\"simple\",\"value\":\"mateusz\"},{\"type\":\"simple\",\"value\":\"to_delete\"},{\"type\":\"simple\",\"value\":\"export\"},{\"type\":\"simple\",\"value\":\"import\"},{\"type\":\"simple\",\"value\":\"test\"},{\"type\":\"simple\",\"value\":\"rwar\"},{\"type\":\"simple\",\"value\":\"slack\"},{\"type\":\"simple\",\"value\":\"admin\"},{\"type\":\"simple\",\"value\":\"123\"},{\"type\":\"simple\",\"value\":\"aadfsada\"},{\"type\":\"simple\",\"value\":\"dsat4566\"},{\"type\":\"simple\",\"value\":\"transaction\"},{\"type\":\"simple\",\"value\":\"tes\"},{\"type\":\"simple\",\"value\":\"best-tag\"},{\"type\":\"simple\",\"value\":\"FARO\"},{\"type\":\"simple\",\"value\":\"exported\"},{\"type\":\"simple\",\"value\":\"billing\"},{\"type\":\"simple\",\"value\":\"newtags\"},{\"type\":\"simple\",\"value\":\"newtag55\"},{\"type\":\"simple\",\"value\":\"internet\"},{\"type\":\"simple\",\"value\":\"brandA\"},{\"type\":\"simple\",\"value\":\"branch\"},{\"type\":\"simple\",\"value\":\"easter\"},{\"type\":\"simple\",\"value\":\"demotag\"},{\"type\":\"simple\",\"value\":\"\\\"a b c\\\"\"},{\"type\":\"simple\",\"value\":\"test space tags\"},{\"type\":\"simple\",\"value\":\"new2\"},{\"type\":\"simple\",\"value\":\"next\"},{\"type\":\"simple\",\"value\":\"ab:cd\"},{\"type\":\"simple\",\"value\":\"ab@cd\"},{\"type\":\"simple\",\"value\":\"datadog\"},{\"type\":\"simple\",\"value\":\"deprecated\"},{\"type\":\"simple\",\"value\":\"test2\"},{\"type\":\"simple\",\"value\":\"https://sandbox.getunleash.io/enterprise/tag-types\"},{\"type\":\"simple\",\"value\":\"jira\"},{\"type\":\"simple\",\"value\":\"delete\"},{\"type\":\"simple\",\"value\":\"simon\"},{\"type\":\"simple\",\"value\":\"test_gff\"},{\"type\":\"simple\",\"value\":\"new_value\"},{\"type\":\"simple\",\"value\":\"new_Value1\"},{\"type\":\"simple\",\"value\":\"htag\"},{\"type\":\"simple\",\"value\":\"probably-ok ✨\"},{\"type\":\"simple\",\"value\":\"definitely-not-ok 💀\"},{\"type\":\"simple\",\"value\":\"bla\"},{\"type\":\"simple\",\"value\":\"mcp-inspect\"},{\"type\":\"simple\",\"value\":\"mcp-search\"},{\"type\":\"simple\",\"value\":\"mcp-created\"},{\"type\":\"simple\",\"value\":\"mcp-defined\"},{\"type\":\"simple\",\"value\":\"mcp-redefined\"},{\"type\":\"simple\",\"value\":\"mcp-a\"},{\"type\":\"simple\",\"value\":\"mcp-b\"},{\"type\":\"simple\",\"value\":\"mcp-searched-tag\"}]}",
           "trailers": {}
         }
       ],

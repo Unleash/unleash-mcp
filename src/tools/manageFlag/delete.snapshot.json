@@ -1,16 +1,16 @@
 [
   {
-    "hash": "Uz8ZmXSZSw2Q8LxLiDyzDROMbN5d0YkrVAEFY4own3k",
+    "hash": "iUMTrlxnMLJfbpJwR5v45oMFnPecjTFuVo2_Fw9VE7o",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-deleted-flag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -29,7 +29,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3AtZGVsZXRlZC1mbGFnXCIgaW4gcHJvamVjdCBcIm1jcC1zZXJ2ZXJcIi4iLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiVGhlcmUncyBubyBmZWF0dXJlIG5hbWVkIFwibWNwLWRlbGV0ZWQtZmxhZ1wiIGluIHByb2plY3QgXCJtY3Atc2VydmVyXCIuIn1dfQ==",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-deleted-flag\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-deleted-flag\\\" in project \\\"mcp-server\\\".\"}]}",
           "trailers": {}
         },
         {
@@ -46,7 +46,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3AtZGVsZXRlZC1mbGFnXCIgaW4gcHJvamVjdCBcIm1jcC1zZXJ2ZXJcIi4iLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiVGhlcmUncyBubyBmZWF0dXJlIG5hbWVkIFwibWNwLWRlbGV0ZWQtZmxhZ1wiIGluIHByb2plY3QgXCJtY3Atc2VydmVyXCIuIn1dfQ==",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-deleted-flag\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-deleted-flag\\\" in project \\\"mcp-server\\\".\"}]}",
           "trailers": {}
         }
       ],
@@ -54,17 +54,17 @@
     }
   },
   {
-    "hash": "JaH3bP-CNJlg7_N0gKtRaa3eeEpNzCez7NShQWaeT7U",
+    "hash": "QFkNbolyouWD-8fK9oGraImVX1Tl61bRMxc_nyUE04g",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-deleted-flag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -83,7 +83,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBmZWF0dXJlIGZsYWcgZm91bmQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiTm8gZmVhdHVyZSBmbGFnIGZvdW5kIn1dfQ==",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"No feature flag found\",\"details\":[{\"message\":\"No feature flag found\"}]}",
           "trailers": {}
         },
         {
@@ -115,7 +115,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBmZWF0dXJlIGZsYWcgZm91bmQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiTm8gZmVhdHVyZSBmbGFnIGZvdW5kIn1dfQ==",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"No feature flag found\",\"details\":[{\"message\":\"No feature flag found\"}]}",
           "trailers": {}
         }
       ],
@@ -123,17 +123,17 @@
     }
   },
   {
-    "hash": "Uh4V1AzuV0rlclXo75qdsZzB5Nri8mSIcUdgRolq-Vs",
+    "hash": "FbL14CCC4VDmdRNOOTwaMBcyIn9_59PAua-8pD_5aio",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/archive/mcp-deleted-flag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -173,19 +173,19 @@
     }
   },
   {
-    "hash": "ZMATt0pHt2SO8SNXhA8WbSMFuBG_8V_wZkZ-szj043o",
+    "hash": "u-pSduAzLDkGiJAZcPE01lB1F1FfrFr8i8TtYL2wHpQ",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "27",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcp-deleted-flag\"}"
       },
@@ -204,7 +204,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLWRlbGV0ZWQtZmxhZyIsImRlc2NyaXB0aW9uIjpudWxsLCJ0eXBlIjoicmVsZWFzZSIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTI2VDEzOjQ1OjU5LjU0OFoiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
+          "body": "{\"name\":\"mcp-deleted-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:27:01.602Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],
@@ -212,19 +212,19 @@
     }
   },
   {
-    "hash": "BeKnusBszyBgVpXH2UI9K4ySHxs7-8NNwxX8989zUBQ",
+    "hash": "XsE26BkOeyH2jcEtxNMQ3CPW2H-AuQ2mb46BMwharhc",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/delete",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "33",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"features\":[\"mcp-deleted-flag\"]}"
       },

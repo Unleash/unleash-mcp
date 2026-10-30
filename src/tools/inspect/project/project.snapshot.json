@@ -1,18 +1,18 @@
 [
   {
-    "hash": "CeLI5ICLGoP29QHX8wO9yqndvdavjqK6hcWBtAvitE4",
+    "hash": "GfuJVeA7a2AukF733su2x826O4A2w30rW1Q5Hdp7ChY",
     "snapshot": {
       "request": {
         "method": "PUT",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/settings",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "109",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"featureNaming\":{\"pattern\":\"^mcp-[a-z-]+$\",\"example\":\"mcp-flag\",\"description\":\"mcp, dash, lowercase words\"}}"
       },
@@ -37,17 +37,17 @@
     }
   },
   {
-    "hash": "YlRiiUslISDkzfwVWa61d-WbqL7fdvxAM6ItEOW-4x0",
+    "hash": "BaMIi73Fx4Vd_SRqLu4EufVTzQJnlVfu1JQxsnfT8Gc",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/overview",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -55,7 +55,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "827",
+            "content-length": "859",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -66,7 +66,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJzdGF0cyI6eyJhdmdUaW1lVG9Qcm9kQ3VycmVudFdpbmRvdyI6MCwiY3JlYXRlZEN1cnJlbnRXaW5kb3ciOjMsImNyZWF0ZWRQYXN0V2luZG93IjowLCJhcmNoaXZlZEN1cnJlbnRXaW5kb3ciOjAsImFyY2hpdmVkUGFzdFdpbmRvdyI6MCwicHJvamVjdEFjdGl2aXR5Q3VycmVudFdpbmRvdyI6MTI3OCwicHJvamVjdEFjdGl2aXR5UGFzdFdpbmRvdyI6MCwicHJvamVjdE1lbWJlcnNBZGRlZEN1cnJlbnRXaW5kb3ciOjN9LCJuYW1lIjoibWNwLXNlcnZlciIsImRlc2NyaXB0aW9uIjoiIiwibW9kZSI6Im9wZW4iLCJmZWF0dXJlTGltaXQiOm51bGwsImZlYXR1cmVOYW1pbmciOnsicGF0dGVybiI6Il5tY3AtW2Etei1dKyQiLCJleGFtcGxlIjoibWNwLWZsYWciLCJkZXNjcmlwdGlvbiI6Im1jcCwgZGFzaCwgbG93ZXJjYXNlIHdvcmRzIn0sImxpbmtUZW1wbGF0ZXMiOltdLCJkZWZhdWx0U3RpY2tpbmVzcyI6ImRlZmF1bHQiLCJoZWFsdGgiOjEwMCwidGVjaG5pY2FsRGVidCI6MCwiZmF2b3JpdGUiOmZhbHNlLCJ1cGRhdGVkQXQiOiIyMDI2LTEwLTIzVDEzOjA4OjE3Ljk5NFoiLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTIwVDA4OjExOjUxLjMxM1oiLCJvbmJvYXJkaW5nU3RhdHVzIjp7InN0YXR1cyI6ImZpcnN0LWZsYWctY3JlYXRlZCIsImZlYXR1cmUiOiJtY3AtZGV0YWlsZWQtZmxhZyJ9LCJlbnZpcm9ubWVudHMiOlt7ImVudmlyb25tZW50IjoiZGV2ZWxvcG1lbnQifSx7ImVudmlyb25tZW50IjoicHJvZHVjdGlvbiJ9XSwiZmVhdHVyZVR5cGVDb3VudHMiOlt7InR5cGUiOiJyZWxlYXNlIiwiY291bnQiOjJ9XSwibWVtYmVycyI6MywidmVyc2lvbiI6MX0=",
+          "body": "{\"stats\":{\"avgTimeToProdCurrentWindow\":0,\"createdCurrentWindow\":3,\"createdPastWindow\":0,\"archivedCurrentWindow\":1,\"archivedPastWindow\":0,\"projectActivityCurrentWindow\":2817,\"projectActivityPastWindow\":0,\"projectMembersAddedCurrentWindow\":3},\"name\":\"mcp-server\",\"description\":\"\",\"mode\":\"open\",\"featureLimit\":null,\"featureNaming\":{\"pattern\":\"^mcp-[a-z-]+$\",\"example\":\"mcp-flag\",\"description\":\"mcp, dash, lowercase words\"},\"linkTemplates\":[],\"defaultStickiness\":\"default\",\"health\":67,\"technicalDebt\":33,\"favorite\":false,\"updatedAt\":\"2026-10-30T07:16:53.076Z\",\"createdAt\":\"2026-10-20T08:11:51.313Z\",\"onboardingStatus\":{\"status\":\"first-flag-created\",\"feature\":\"mcp-detailed-flag\"},\"environments\":[{\"environment\":\"development\"},{\"environment\":\"production\"}],\"featureTypeCounts\":[{\"type\":\"experiment\",\"count\":1},{\"type\":\"release\",\"count\":5}],\"members\":3,\"version\":1}",
           "trailers": {}
         }
       ],
@@ -74,17 +74,17 @@
     }
   },
   {
-    "hash": "S7Q55G1h_sK48H-cYscHuMRdRRVZ2ZNLb9kTvmz3rvQ",
+    "hash": "CUTDPujKlCR3QJR82prCvqaA2IOt_dHUSwz888vRhNg",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/unknown/overview",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -103,7 +103,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBwcm9qZWN0IGZvdW5kIiwiZGV0YWlscyI6W3sibWVzc2FnZSI6Ik5vIHByb2plY3QgZm91bmQifV19",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"No project found\",\"details\":[{\"message\":\"No project found\"}]}",
           "trailers": {}
         }
       ],

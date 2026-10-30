@@ -1,24 +1,24 @@
 [
   {
-    "hash": "VBnChX2QpCCDtXopig49NLOFlWo5CVu9AFaGTmp2usA",
+    "hash": "TwA3zySGRjPap1E4eR5RURMySTmgncvLJ8M4ZTEp9WA",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-creator-flag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
       "responses": [
         {
-          "statusCode": 404,
+          "statusCode": 200,
           "headers": {
-            "content-length": "208",
+            "content-length": "1365",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -29,13 +29,13 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3AtY3JlYXRvci1mbGFnXCIgaW4gcHJvamVjdCBcIm1jcC1zZXJ2ZXJcIi4iLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiVGhlcmUncyBubyBmZWF0dXJlIG5hbWVkIFwibWNwLWNyZWF0b3ItZmxhZ1wiIGluIHByb2plY3QgXCJtY3Atc2VydmVyXCIuIn1dfQ==",
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-creator-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:27:11.627Z\",\"createdBy\":{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-09T07:27:11.627Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T07:27:12.401Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "1366",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -44,10 +44,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G2UEAGR/ua/TdV5md0/UQoXPip/cU5LKGyoPGLHJW2JTnMBI/358PlwC/WDzPrKwzjuPAgpkgF1AeWKpng4PL2Sq4+wk1Gvo0Ytgf13DSouAhbDlz1tkTaDAU0yfRNanCex66r2CYAa7GOxAPoqCS4lgSwXrVnrS5W7pvLiF9C6wBLCoIKZAScZZIthffxQE8UJR3ntae4uRBhlPKfAs/1YBZHqGueZtzV1D7QrbgD9KLm7PIrevbCEbPI2ggHfOV8tH+QtKRKPLDxVYOyq6G6YFobb1ooQzCaAgJvIm8ZKHhZ8msIAltllVZqg/V9qitg3mZYk/Yer2s0uw1zAzWKwN9Df5eZmTcJa2E1lBwbzQKF+CBwtTSnu0RTEGOqNE4bMESPOyRd+zGO6w10awJ2n6CjtBXUsjbYu6ZGwb6kQbdGVFTaOdEdPWaMrGNIYfx4c13uOHQVLY7oWHI9wqSJc+osRnoED70zpwt8rFLi4Jv54HSfMiL1eOFKAxK5GLmDx36NhdIH6Wfl5PBpXNC7XKEew1nEYJN+SvuCMA/arz65LeUJLTeHX0CtvniWGNHbuhroxpxfV12x46dtRo1oeKSBPVtek7pFbTgdlog+w0Ole1TeVS9Of2Fg==",
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-creator-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:28:02.158Z\",\"createdBy\":{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-09T07:28:02.158Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"archived\",\"enteredStageAt\":\"2026-10-30T07:28:02.318Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         }
       ],
@@ -55,36 +54,34 @@
     }
   },
   {
-    "hash": "zidDiJMGn4KUS8nknCph0cqrzKCup5UoYGaqDL0tlCo",
+    "hash": "m8bT6mRX3hMV4KuiVaZtn-SXmULz9eA0C2MN0KzDr7U",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-creator-flag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
       "responses": [
         {
-          "statusCode": 404,
+          "statusCode": 202,
           "headers": {
-            "content-length": "106",
             "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBmZWF0dXJlIGZsYWcgZm91bmQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiTm8gZmVhdHVyZSBmbGFnIGZvdW5kIn1dfQ==",
+          "body": "",
           "trailers": {}
         },
         {
@@ -107,17 +104,17 @@
     }
   },
   {
-    "hash": "CsthbG3ISvtlKYovsD8k8CrumLUHpizd6vn5nXSCYrU",
+    "hash": "661XJWRrsI7T4QDRUIAtbxFmeNhqcJEdbMIYZIv9LLk",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/archive/mcp-creator-flag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -157,19 +154,19 @@
     }
   },
   {
-    "hash": "rvdOoA0uET5pNiX85O9Yj8mC19kGv-D9W82Tl2RMM3o",
+    "hash": "s7nuMFCoMgCoc41jnfG4SflrqUmx9Vz4kMrCkEF8THo",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "27",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcp-creator-flag\"}"
       },
@@ -188,7 +185,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLWNyZWF0b3ItZmxhZyIsImRlc2NyaXB0aW9uIjpudWxsLCJ0eXBlIjoicmVsZWFzZSIsInByb2plY3QiOiJtY3Atc2VydmVyIiwic3RhbGUiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTIzVDEzOjIzOjUyLjAwMloiLCJpbXByZXNzaW9uRGF0YSI6ZmFsc2UsImFyY2hpdmVkIjpmYWxzZX0=",
+          "body": "{\"name\":\"mcp-creator-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:28:02.158Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],
@@ -196,17 +193,17 @@
     }
   },
   {
-    "hash": "Kv9ndHzha7ErVrZfx8u06LycJ0bF69e-vyntqqMQUMY",
+    "hash": "eE-hIqRUWUR2Rl5yG32_XaCa4QJ1lJG6bp2-HQlPJdA",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/flag-creators?q=mateusz%40getunleash.ai&offset=0&limit=20",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -225,7 +222,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJmbGFnQ3JlYXRvcnMiOlt7ImlkIjoxNywibmFtZSI6Ik1hdGV1c3ogSyJ9XSwidG90YWwiOjF9",
+          "body": "{\"flagCreators\":[{\"id\":17,\"name\":\"Mateusz K\"}],\"total\":1}",
           "trailers": {}
         }
       ],

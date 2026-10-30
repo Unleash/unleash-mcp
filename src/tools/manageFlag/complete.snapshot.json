@@ -1,16 +1,16 @@
 [
   {
-    "hash": "J-XKVLvotFEb4yXeuiezm95OJEcDwoe1ZTsRzVbeDGE",
+    "hash": "cfHXiPxtrLefDPYYNNLQjmlhnvjwjaNyQZPJIQPwoOE",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-completed-flag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -29,13 +29,13 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3AtY29tcGxldGVkLWZsYWdcIiBpbiBwcm9qZWN0IFwibWNwLXNlcnZlclwiLiIsImRldGFpbHMiOlt7Im1lc3NhZ2UiOiJUaGVyZSdzIG5vIGZlYXR1cmUgbmFtZWQgXCJtY3AtY29tcGxldGVkLWZsYWdcIiBpbiBwcm9qZWN0IFwibWNwLXNlcnZlclwiLiJ9XX0=",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-completed-flag\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-completed-flag\\\" in project \\\"mcp-server\\\".\"}]}",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "1380",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -44,10 +44,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G8AEAGRbKr6+PXW8SGPAg9CxX3vLSHF9weNAGWviZmIpJhDxWjgWFuBaQPkETajOJ0YBBdLm7oHeX+xVT4eHl8hMO2cnkT7DzLYM/ucZRhwYPKQt/7yBRwEFEbN8ZB6fCPhxG6OCZAadCPwaY2YFR87gCwXj1DLkOFtaLk9J3ibiBN4oyJJQuOs5g//5W0HiyJj5XcRx1p1xzd0WE63ir8pBVM9QVT+NNW4o2sF2wG+lD2FeQB6kxTpiBwqQxxCLsGQ8R0EgWXqqgJr9Qs6DqkEQ69sypx0nUJAFo0k0VfxspicCHkxh6oUuFsZ+0pXXhdf6rtPFD1ja+vQI/gw9gdeN79/yGoW3+XTjJSjoB+z4c4rg4b/InP1y2SXcoWD6KQF4uNolO7KmobAutXM1h7as61VDAStLdqURLWJZurYxWFtcETnrDAVrQtB1pcOj/KA0d+hBYknTnfSgg6sCORKEoK6BAuFPJNpe5cPMQZhe9WuWfuAXI+XTQ5tFYTAFExciDr0IMMnTYr/mcAyRwZ8hC3YMHqiEMd8v2wweNjwLKHg9uZ7po2DHDiRA37haNT/gqiD242br1BQ1YN4M/gzbzOnymXsCb0rHyjPFfuiFaSHThkdmfm7bEjtqTGsdmxa5arVp2NiSK65rYwsydYUNW2dCobGqbHDs6tK4onKVo/KPIkb6fb0C",
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-completed-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:27:00.493Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-09T07:27:00.493Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"completed\",\"status\":\"kept\",\"enteredStageAt\":\"2026-10-30T07:27:00.963Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         }
       ],
@@ -55,17 +54,17 @@
     }
   },
   {
-    "hash": "2mw9vEUig4hR93Jy61yOcMDXOU_tr8Sd-aINSwHYKsY",
+    "hash": "DisF1vBB89LsGq88tRMjmIMMPdriorvPnfWBY2KgVJE",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-completed-flag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -84,7 +83,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJObyBmZWF0dXJlIGZsYWcgZm91bmQiLCJkZXRhaWxzIjpbeyJtZXNzYWdlIjoiTm8gZmVhdHVyZSBmbGFnIGZvdW5kIn1dfQ==",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"No feature flag found\",\"details\":[{\"message\":\"No feature flag found\"}]}",
           "trailers": {}
         },
         {
@@ -107,17 +106,17 @@
     }
   },
   {
-    "hash": "6xqVh7mEBaR0hZ2LyEcKLdyh5PCQUOEnzamuAzuPWB8",
+    "hash": "BeN46PP22TIqilCq1UQPlvhvvzs3dKNJrAtSF5zptSs",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/archive/mcp-completed-flag",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -157,19 +156,19 @@
     }
   },
   {
-    "hash": "z-3NHE_4WglfzdwujbPDmhxVHJgUHOxTa6E-pqoIbuA",
+    "hash": "rHWrXcI5vOyicYTduccPfeTcJiY0AzjNRjxaAL0xUoU",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "29",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcp-completed-flag\"}"
       },
@@ -188,7 +187,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLWNvbXBsZXRlZC1mbGFnIiwiZGVzY3JpcHRpb24iOm51bGwsInR5cGUiOiJyZWxlYXNlIiwicHJvamVjdCI6Im1jcC1zZXJ2ZXIiLCJzdGFsZSI6ZmFsc2UsImNyZWF0ZWRBdCI6IjIwMjYtMTAtMjNUMTU6MTA6MTEuODEwWiIsImltcHJlc3Npb25EYXRhIjpmYWxzZSwiYXJjaGl2ZWQiOmZhbHNlfQ==",
+          "body": "{\"name\":\"mcp-completed-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T07:27:00.493Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],
@@ -196,19 +195,19 @@
     }
   },
   {
-    "hash": "_Z8E5Hs43Wr8GalFuH13xhwELRmpPp1uI7DzL85IV6M",
+    "hash": "9hZX2rU3Wfxxk4HGOL3ZnjOabsePd3nAgRuWONYQgsg",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-completed-flag/lifecycle/complete",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "17",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"status\":\"kept\"}"
       },

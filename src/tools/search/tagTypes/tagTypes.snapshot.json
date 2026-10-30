@@ -1,16 +1,16 @@
 [
   {
-    "hash": "bC5XJms-vcdyWB--xLdXDwoxp7SoZypkQ6nTobDFW0E",
+    "hash": "RM0edRX9idX3aywZPGRuLK3CnKOKSzi_vMH8iEosl2U",
     "snapshot": {
       "request": {
         "method": "DELETE",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/tag-types/mcp-searched-type",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -29,7 +29,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoiTm90Rm91bmRFcnJvciIsIm1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCB0YWctdHlwZSIsImRldGFpbHMiOlt7Im1lc3NhZ2UiOiJDb3VsZCBub3QgZmluZCB0YWctdHlwZSJ9XX0=",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"Could not find tag-type\",\"details\":[{\"message\":\"Could not find tag-type\"}]}",
           "trailers": {}
         },
         {
@@ -52,19 +52,19 @@
     }
   },
   {
-    "hash": "csxOyZPY1fkKG1hM1smKW-iqzkhBvh2J3xpcmChI5l4",
+    "hash": "k5bi2efvMumIGcYEu-2RbOchxNQYadHRkcUcTr5QUYs",
     "snapshot": {
       "request": {
         "method": "POST",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/tag-types",
         "headers": {
           "content-type": "application/json",
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "content-length": "101",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": "{\"name\":\"mcp-searched-type\",\"description\":\"Created by the MCP server tests\",\"icon\":null,\"color\":null}"
       },
@@ -84,7 +84,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "eyJuYW1lIjoibWNwLXNlYXJjaGVkLXR5cGUiLCJkZXNjcmlwdGlvbiI6IkNyZWF0ZWQgYnkgdGhlIE1DUCBzZXJ2ZXIgdGVzdHMiLCJpY29uIjpudWxsLCJjb2xvciI6bnVsbH0=",
+          "body": "{\"name\":\"mcp-searched-type\",\"description\":\"Created by the MCP server tests\",\"icon\":null,\"color\":null}",
           "trailers": {}
         }
       ],
@@ -92,17 +92,17 @@
     }
   },
   {
-    "hash": "WX3OdCzrI8ZC4fjY-z-Cska8ho0sba4zNansphYvw8k",
+    "hash": "Lm26B9hFknLxBv1d0948iNZWTschtkneY4QJJMjNFjc",
     "snapshot": {
       "request": {
         "method": "GET",
         "url": "https://sandbox.getunleash.io/enterprise/api/admin/tag-types",
         "headers": {
+          "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
           "sec-fetch-mode": "cors",
-          "user-agent": "node",
-          "accept-encoding": "br, gzip, deflate, zstd"
+          "user-agent": "node"
         },
         "body": ""
       },
@@ -110,7 +110,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-encoding": "br",
+            "content-length": "2371",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -119,10 +119,9 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "x-permitted-cross-domain-policies": "none"
           },
-          "body": "G0IJAGSzmb2+GuULgb7lV0mulKLDwsutsRlLKW3imq6fJgugyNS/afT/L5siinbjAJvOJrwGGsJsQOfDE9M1qH6aB4z7dgNcFwkq2Y93Mwuufzygp4lxjaJkGRM0v6KvmPX8Egxw5uxJGb5PIIZOMfZnM2OCP71+Htd4NgxtvSgxwSxar9uFK6+4rhK8EjbP/NsY/nOvguvlU0J8h8iOSfr1ex5Gz/D/AbDOKIHfa3edKSqEgY92f+VcT9Gq3ZfdBqYEtmEzaz+9J2UzRkSKjvtV1dY1sByOsigRQbdFpFGYGlhs/S+GE/uGc1L8pMERmy6O+pPhTnxw1J9AyUIEhPDMYRnnP5OSMcGDBgiNEH6yGL4cJDlnsgg/QIuO7XLTFgVO2xLJY5Z4cnwSNnxcNE6zG4c7GEanHEdvIQwwTxBeqjpDo6RrFoXVoi396Su+XbsQ4eoW0sGta/QWzBRtD9ttV8E0hUUtfLkYuru/HEmBYHBk4f4zAi9iHoHTN4qCc1O1fSpKeiX+jO0ik2LiuziTakivvGOSIw/R4HGGkp0I+BzWMvuJ/rSdVaPx49KbZ9RCP0bqT7B5BnE5Q4cQ4S5cRQi5IbhXUGSW7prvi+UNJ0yLm7Y3pGSCFRvbOAf70/1ByQqQMaDnxBs1D2OP9ONAkUHYK2iAK70f+Jq9gmhkmlwStJ/adbu6dYVoYMKAO7kvsIf9oMFaxwJh3C02QKK9BQT3EfHTYGGRtwYla1BCniIiVIOugwqweoXnmz/Kon+UbIWbKRKht1PsbgFgcpxwz7+aDSn/mfiPDzcq/3KGpS/KqigrYaOhe9Alez96+3H5N6TMUz9/LXQHNqnezY8awm9pfokeGV7t3oJwvOYIyqK6ZnIXncjyX08=",
+          "body": "{\"version\":1,\"tagTypes\":[{\"name\":\"stage\",\"description\":\"Communicate feature stage\",\"icon\":\"\",\"color\":\"#ff6472\",\"valueCount\":3,\"usedInProjects\":8},{\"name\":\"release\",\"description\":\"Define which release it is part of\",\"icon\":null,\"color\":\"#96D2FA\",\"valueCount\":3,\"usedInProjects\":7},{\"name\":\"deprecated\",\"description\":\"\",\"icon\":null,\"color\":\"#D93644\",\"valueCount\":2,\"usedInProjects\":2},{\"name\":\"test\",\"description\":\"\",\"icon\":null,\"color\":\"#FFFFFF\",\"valueCount\":4,\"usedInProjects\":1},{\"name\":\"broken\",\"description\":\"broken\",\"icon\":null,\"color\":\"#D93644\",\"valueCount\":2,\"usedInProjects\":1},{\"name\":\"slack\",\"description\":\"Slack tag used by the slack-addon to specify the slack channel.\",\"icon\":\"S\",\"color\":\"#68A611\",\"valueCount\":3,\"usedInProjects\":2},{\"name\":\"simple\",\"description\":\"Used to simplify filtering of features\",\"icon\":\"#\",\"color\":\"#FFFFFF\",\"valueCount\":53,\"usedInProjects\":36},{\"name\":\"UX\",\"description\":\"For ux grouping\",\"icon\":null,\"color\":\"#BEBBF3\",\"valueCount\":5,\"usedInProjects\":14},{\"name\":\"role\",\"description\":\"What a flag is used for\",\"icon\":null,\"color\":null,\"valueCount\":1,\"usedInProjects\":2},{\"name\":\"migration-status\",\"description\":\"Created by ld-to-unleash\",\"icon\":null,\"color\":null,\"valueCount\":2,\"usedInProjects\":1},{\"name\":\"tagman\",\"description\":\"migration\\n\",\"icon\":null,\"color\":\"#FFFFFF\",\"valueCount\":2,\"usedInProjects\":2},{\"name\":\"AI\",\"description\":\"Track AI impact for your organization\",\"icon\":null,\"color\":\"#B0D182\",\"valueCount\":6,\"usedInProjects\":4},{\"name\":\"datadog\",\"description\":\"All Datadog tags added to a specific feature are sent to datadog event stream.\",\"icon\":\"D\",\"color\":\"#FFC46F\",\"valueCount\":1,\"usedInProjects\":2},{\"name\":\"group\",\"description\":\"For grouping toggles that go into a release\",\"icon\":null,\"color\":\"#B0D182\",\"valueCount\":6,\"usedInProjects\":10},{\"name\":\"tagname\",\"description\":\"\",\"icon\":null,\"color\":\"#FFFFFF\",\"valueCount\":2,\"usedInProjects\":3},{\"name\":\"new_test_tag\",\"description\":\"testing tags\",\"icon\":null,\"color\":\"#BEBBF3\",\"valueCount\":0,\"usedInProjects\":0},{\"name\":\"update_me_now\",\"description\":\"desc123123\",\"icon\":null,\"color\":\"#FFFFFF\",\"valueCount\":0,\"usedInProjects\":0},{\"name\":\"HenningTag\",\"description\":\"\",\"icon\":null,\"color\":\"#FFFFFF\",\"valueCount\":0,\"usedInProjects\":0},{\"name\":\"mcp-searched-type\",\"description\":\"Created by the MCP server tests\",\"icon\":null,\"color\":null,\"valueCount\":0,\"usedInProjects\":0}]}",
           "trailers": {}
         }
       ],
