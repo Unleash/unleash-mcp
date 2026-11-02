@@ -466,3 +466,7 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 ## 2026-11-02 — Snapshots record in a stable order
 
 - A snapshot's entries are sorted by request after recording, since undici writes them as the responses arrive and a tool's parallel requests leave that to the network; `pnpm test:record` runs one test file at a time, since files recorded together saw each other's flags and settings in their bodies. Together they keep a re-recording's diff to the ids and timestamps Unleash assigns. Rejected: masking those timestamps and renumbering the ids, which a spike showed removes most of the remaining diff at the price of snapshots that no longer show what Unleash sent; a re-recording is checked by replaying it, not by reading its diff.
+
+## 2026-11-02 — Lists a call takes are capped
+
+- Every top-level list a tool takes (`queries`, `changes`, `operations`) is capped at 10, what one agent turn needs: without a cap one call could flood Unleash, which must stay light. Rejected: caps sized to a flags search page (20 to 50), too big in requests, output tokens.

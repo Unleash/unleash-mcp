@@ -304,7 +304,11 @@ const change = z.union([
 ]);
 
 export const configureInput = z.strictObject({
-  changes: z.array(change).min(1).describe('Applied in the order given; one result per change'),
+  changes: z
+    .array(change)
+    .min(1)
+    .max(10)
+    .describe('Applied in the order given, at most 10 per call; one result per change'),
 });
 
 export type ConfigureInput = z.infer<typeof configureInput>;

@@ -128,7 +128,11 @@ const operation = z.discriminatedUnion('action', [
 ]);
 
 export const manageFlagInput = z.strictObject({
-  operations: z.array(operation).min(1).describe('Applied in the order given; one result per operation'),
+  operations: z
+    .array(operation)
+    .min(1)
+    .max(10)
+    .describe('Applied in the order given, at most 10 per call; one result per operation'),
 });
 
 export type ManageFlagInput = z.infer<typeof manageFlagInput>;

@@ -13,7 +13,11 @@ const query = z.object({
 });
 
 export const evaluateInput = {
-  queries: z.array(query).min(1).describe('Run together; one result per query, in the order asked'),
+  queries: z
+    .array(query)
+    .min(1)
+    .max(10)
+    .describe('Run together, at most 10 per call; one result per query, in the order asked'),
 };
 
 export type EvaluateInput = z.infer<z.ZodObject<typeof evaluateInput>>;

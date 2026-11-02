@@ -48,7 +48,11 @@ const segment = z
 const query = z.discriminatedUnion('kind', [project, flag, contextField, segment]);
 
 export const inspectInput = {
-  queries: z.array(query).min(1).describe('Run together; one result per query, in the order asked'),
+  queries: z
+    .array(query)
+    .min(1)
+    .max(10)
+    .describe('Run together, at most 10 per call; one result per query, in the order asked'),
 };
 
 export type InspectInput = z.infer<z.ZodObject<typeof inspectInput>>;
