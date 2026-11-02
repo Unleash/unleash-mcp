@@ -12,9 +12,8 @@ on:
         required: false
         type: string
         default: latest
-permissions:
-  contents: write
-  id-token: write
+# Each job takes the permissions it needs.
+permissions: {}
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -32,6 +31,9 @@ jobs:
 
   release:
     needs: check
+    permissions:
+      contents: write
+      id-token: write
     uses: Unleash/.github/.github/workflows/npm-release.yml@v4.0.2
     with:
       version: ${{ github.event.inputs.version }}
@@ -45,6 +47,8 @@ jobs:
     # the steps below are simplified because we are already publishing to npm
     runs-on: ubuntu-latest
     needs: release # publish to npm first
+    permissions:
+      contents: read
     # Only a `latest` release reaches the MCP Registry, so prereleases stay off it.
     if: ${{ github.event.inputs.tag == 'latest' }}
     steps:
@@ -53,8 +57,13 @@ jobs:
         with:
           ref: refs/tags/v${{ github.event.inputs.version }}
       - name: Install MCP Publisher
+        env:
+          VERSION: 1.8.7
+          SHA256: 00b21004149a4ce66f0782508ae4a2bce67d1bea395a8da0bd8028159fb59579
         run: |
-          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+          curl -sSfL "https://github.com/modelcontextprotocol/registry/releases/download/v$VERSION/mcp-publisher_linux_amd64.tar.gz" -o mcp-publisher.tar.gz
+          echo "$SHA256  mcp-publisher.tar.gz" | sha256sum -c -
+          tar xzf mcp-publisher.tar.gz mcp-publisher
       - name: Align server.json version
         run: |
           PKG_VERSION=$(jq -r '.version' package.json)
