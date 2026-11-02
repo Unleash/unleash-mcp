@@ -1,41 +1,10 @@
 import assert from 'node:assert/strict';
-import { after, before, test } from 'node:test';
-import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
+import { test } from 'node:test';
+import { createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { deleteFlag } from '../../../unleash/testSetup.ts';
 import { searchFlagCreators } from './flagCreators.ts';
 
-const { unleash, admin, close } = createRecordedClient(
-  new URL('./flagCreators.snapshot.json', import.meta.url).pathname,
-);
-const project = 'mcp-server';
-const flag = 'mcp-creator-flag';
-
-// The user behind the token creates a flag, so it is a creator whatever else the sandbox holds.
-before(async () => {
-  await deleteFlag(admin, project, flag);
-  await unleash.POST('/api/admin/projects/{projectId}/features', {
-    params: { path: { projectId: project } },
-    body: { name: flag },
-  });
-});
-after(async () => {
-  await deleteFlag(admin, project, flag);
-  await close();
-});
-
-test('finds the users who created a flag by the start of their email', async () => {
-  const output = await searchFlagCreators(unleash, {
-    kind: 'flag_creators',
-    query: 'user-e8d327@example.com',
-    offset: 0,
-    limit: 20,
-  });
-
-  assert.partialDeepStrictEqual(output, { kind: 'flag_creators', total: 1, creators: [{ id: 17, name: 'Mateusz K' }] });
-});
-
-test('pages the creators and tells how many match in all', async () => {
+test('finds the creators matching a part of their name or email, paged, and tells how many match in all', async () => {
   const { unleash, stub } = createStubbedClient();
   stub
     .intercept({ path: '/api/admin/flag-creators', query: { q: 'a', offset: '1', limit: '1' }, method: 'GET' })

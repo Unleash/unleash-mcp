@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -7,7 +8,7 @@ import { join } from 'node:path';
 
 /** Rewrites a snapshot undici just recorded into the checked-in form. */
 export const decodeBodies = (snapshotPath: string): void =>
-  writeEntries(snapshotPath, sorted(transcoded(readEntries(snapshotPath), 'base64', 'utf8')));
+  writeEntries(snapshotPath, sorted(masked(transcoded(readEntries(snapshotPath), 'base64', 'utf8'))));
 
 /** The checked-in snapshot with its bodies encoded back for undici to replay, in a file of its own that `remove` deletes. */
 export const encodedCopyOf = (snapshotPath: string): { path: string; remove: () => void } => {
@@ -34,6 +35,20 @@ export const transcoded = (entries: Entry[], from: BufferEncoding, to: BufferEnc
       responses: snapshot.responses.map((r) => ({ ...r, body: Buffer.from(r.body, from).toString(to) })),
     },
   }));
+
+const email = /[\w.+-]+@[\w-]+(\.[\w-]+)+/g;
+
+export const masked = (entries: Entry[]): Entry[] =>
+  entries.map(({ hash, snapshot }) => ({
+    hash,
+    snapshot: {
+      ...snapshot,
+      responses: snapshot.responses.map((r) => ({ ...r, body: r.body.replace(email, pseudonym) })),
+    },
+  }));
+
+const pseudonym = (address: string): string =>
+  `user-${createHash('sha256').update(address).digest('hex').slice(0, 6)}@example.com`;
 
 // undici writes the entries in the order the responses arrived, which a tool's parallel requests leave to the network;
 // an order the requests decide keeps a re-recording's diff to what matters.

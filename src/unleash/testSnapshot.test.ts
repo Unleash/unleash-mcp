@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { sorted, transcoded } from './testSnapshot.ts';
+import { masked, sorted, transcoded } from './testSnapshot.ts';
 
 const entry = (body: string, stamped?: { timestamp: string }) => [
   {
@@ -21,6 +21,17 @@ const writtenByUndici = entry('eyJuYW1lIjoiZmxhZyJ9', { timestamp: '2026-10-30T0
 test('round-trips bodies between the checked-in text and the base64 undici reads, dropping the recording timestamp', () => {
   assert.deepEqual(transcoded(checkedIn, 'utf8', 'base64'), readByUndici);
   assert.deepEqual(transcoded(writtenByUndici, 'base64', 'utf8'), checkedIn);
+});
+
+test('replaces the email addresses Unleash answers with by a pseudonym per address', () => {
+  const recorded = entry('{"createdBy":"ada@example.org","members":["ada@example.org","bob@example.org"]}');
+
+  const [{ snapshot }] = masked(recorded);
+
+  assert.equal(
+    snapshot.responses[0]?.body,
+    '{"createdBy":"user-cfe00d@example.com","members":["user-cfe00d@example.com","user-686b5e@example.com"]}',
+  );
 });
 
 const request = (method: string, url: string, body?: string) => ({
