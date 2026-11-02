@@ -1,143 +1,5 @@
 [
   {
-    "hash": "V1KcCMU3tExAqFajMHdJ8vQGFgyPvH24GMVDApn8oUU",
-    "snapshot": {
-      "request": {
-        "method": "GET",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-flag",
-        "headers": {
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": ""
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "1833",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":true,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[{\"name\":\"flexibleRollout\",\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"variants\":[{\"name\":\"blue\",\"weight\":300,\"payload\":{\"type\":\"string\",\"value\":\"#00f\"},\"stickiness\":\"userId\",\"weightType\":\"fix\"},{\"name\":\"green\",\"weight\":700,\"stickiness\":\"userId\",\"weightType\":\"variable\"}],\"parameters\":{\"groupId\":\"mcp-other-draw\",\"rollout\":\"50\",\"stickiness\":\"userId\"},\"segments\":[],\"sortOrder\":0,\"id\":\"01M6617EDQCMM669Y28A1MYS5P\",\"title\":\"Beta testers\",\"disabled\":false}],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-inspected-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T09:11:00.266Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T09:11:00.877Z\"},\"links\":[{\"id\":\"01M6617C5H24BRR3NXNXT442ZZ\",\"url\":\"https://example.com/mcp-inspect\",\"title\":\"Spec\",\"feature\":\"mcp-inspected-flag\"}],\"collaborators\":{\"users\":[{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
-          "trailers": {}
-        },
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "1371",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-inspected-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T09:12:03.472Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[{\"feature\":\"mcp-inspected-parent\",\"enabled\":true,\"variants\":[]}],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T09:12:04.136Z\"},\"links\":[{\"id\":\"01M66199MYF287G7N7H7CMHQCQ\",\"url\":\"https://example.com/mcp-inspect\",\"title\":\"Spec\",\"feature\":\"mcp-inspected-flag\"}],\"collaborators\":{\"users\":[{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
-          "trailers": {}
-        },
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "1896",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":true,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[{\"name\":\"flexibleRollout\",\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"variants\":[{\"name\":\"blue\",\"weight\":300,\"payload\":{\"type\":\"string\",\"value\":\"#00f\"},\"stickiness\":\"userId\",\"weightType\":\"fix\"},{\"name\":\"green\",\"weight\":700,\"stickiness\":\"userId\",\"weightType\":\"variable\"}],\"parameters\":{\"groupId\":\"mcp-other-draw\",\"rollout\":\"50\",\"stickiness\":\"userId\"},\"segments\":[],\"sortOrder\":0,\"id\":\"01M6619BDK4YW1DZPWBB5Q0AXX\",\"title\":\"Beta testers\",\"disabled\":false}],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-inspected-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T09:12:03.472Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[{\"feature\":\"mcp-inspected-parent\",\"enabled\":true,\"variants\":[]}],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T09:12:04.136Z\"},\"links\":[{\"id\":\"01M66199MYF287G7N7H7CMHQCQ\",\"url\":\"https://example.com/mcp-inspect\",\"title\":\"Spec\",\"feature\":\"mcp-inspected-flag\"}],\"collaborators\":{\"users\":[{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
-          "trailers": {}
-        },
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "1896",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":true,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[{\"name\":\"flexibleRollout\",\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"variants\":[{\"name\":\"blue\",\"weight\":300,\"payload\":{\"type\":\"string\",\"value\":\"#00f\"},\"stickiness\":\"userId\",\"weightType\":\"fix\"},{\"name\":\"green\",\"weight\":700,\"stickiness\":\"userId\",\"weightType\":\"variable\"}],\"parameters\":{\"groupId\":\"mcp-other-draw\",\"rollout\":\"50\",\"stickiness\":\"userId\"},\"segments\":[],\"sortOrder\":0,\"id\":\"01M6619BDK4YW1DZPWBB5Q0AXX\",\"title\":\"Beta testers\",\"disabled\":false}],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-inspected-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T09:12:03.472Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[{\"feature\":\"mcp-inspected-parent\",\"enabled\":true,\"variants\":[]}],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T09:12:04.136Z\"},\"links\":[{\"id\":\"01M66199MYF287G7N7H7CMHQCQ\",\"url\":\"https://example.com/mcp-inspect\",\"title\":\"Spec\",\"feature\":\"mcp-inspected-flag\"}],\"collaborators\":{\"users\":[{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "ShYsh832FvGrWNkcRq-dm5MvGlnXHcuTywbvUyK_LBU",
-    "snapshot": {
-      "request": {
-        "method": "DELETE",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-flag",
-        "headers": {
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": ""
-      },
-      "responses": [
-        {
-          "statusCode": 202,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "",
-          "trailers": {}
-        },
-        {
-          "statusCode": 202,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
     "hash": "4VdHRHCUVMpPryywyBHKi46qyKwK5iR5tiekd2_k5eM",
     "snapshot": {
       "request": {
@@ -170,129 +32,6 @@
         },
         {
           "statusCode": 200,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "0zkpfTwdLfdV1wpdbdTiUtItG6agomWVSKMNO_orqMI",
-    "snapshot": {
-      "request": {
-        "method": "GET",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-parent",
-        "headers": {
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": ""
-      },
-      "responses": [
-        {
-          "statusCode": 404,
-          "headers": {
-            "content-length": "216",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-inspected-parent\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-inspected-parent\\\" in project \\\"mcp-server\\\".\"}]}",
-          "trailers": {}
-        },
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "3281",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[{\"id\":\"01M6619DGCM90460RW2CKK4A8B\",\"discriminator\":\"plan\",\"name\":\"mcp-inspect-plan\",\"description\":null,\"featureName\":\"mcp-inspected-parent\",\"environment\":\"development\",\"createdByUserId\":17,\"createdAt\":\"2026-10-30T09:12:09.930Z\",\"activeMilestoneId\":\"01M6619DGEQ9E9W4CJT8RYF87J\",\"releasePlanTemplateId\":\"01M6619CJAV2E0AKJQRH140ZGP\",\"safeguards\":[],\"milestones\":[{\"id\":\"01M6619DGEQ9E9W4CJT8RYF87J\",\"name\":\"Canary\",\"sortOrder\":0,\"startedAt\":\"2026-10-30T09:12:09.930Z\",\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60},\"progressionExecutedAt\":null,\"pausedAt\":null,\"strategies\":[{\"id\":\"01M6619DGFC66P9BCTR3JWEMK2\",\"milestoneId\":\"01M6619DGEQ9E9W4CJT8RYF87J\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"10\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"disabled\":false,\"segments\":[]}],\"releasePlanDefinitionId\":\"01M6619DGCM90460RW2CKK4A8B\"},{\"id\":\"01M6619DGJR0Q3NY4H2BK4Y3PF\",\"name\":\"Half\",\"sortOrder\":1,\"startedAt\":null,\"transitionCondition\":{\"type\":\"exposure\",\"minimumExposures\":5},\"progressionExecutedAt\":null,\"pausedAt\":null,\"strategies\":[{\"id\":\"01M6619DGKCSSGMPTV4PV6029W\",\"milestoneId\":\"01M6619DGJR0Q3NY4H2BK4Y3PF\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"50\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"disabled\":false,\"segments\":[]}],\"releasePlanDefinitionId\":\"01M6619DGCM90460RW2CKK4A8B\"},{\"id\":\"01M6619DGPERQQXHJYXP6NTHCG\",\"name\":\"Everyone\",\"sortOrder\":2,\"startedAt\":null,\"progressionExecutedAt\":null,\"pausedAt\":null,\"strategies\":[{\"id\":\"01M6619DHTWAM5VT7XBD7T120Z\",\"milestoneId\":\"01M6619DGPERQQXHJYXP6NTHCG\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"disabled\":false,\"segments\":[]}],\"releasePlanDefinitionId\":\"01M6619DGCM90460RW2CKK4A8B\"}]}],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-inspected-parent\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T09:12:02.883Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-09T09:12:02.883Z\",\"dependencies\":[],\"children\":[\"mcp-inspected-flag\"],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T09:12:03.141Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
-          "trailers": {}
-        },
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "3261",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[{\"id\":\"01M6619DGCM90460RW2CKK4A8B\",\"discriminator\":\"plan\",\"name\":\"mcp-inspect-plan\",\"description\":null,\"featureName\":\"mcp-inspected-parent\",\"environment\":\"development\",\"createdByUserId\":17,\"createdAt\":\"2026-10-30T09:12:09.930Z\",\"activeMilestoneId\":\"01M6619DGEQ9E9W4CJT8RYF87J\",\"releasePlanTemplateId\":\"01M6619CJAV2E0AKJQRH140ZGP\",\"safeguards\":[],\"milestones\":[{\"id\":\"01M6619DGEQ9E9W4CJT8RYF87J\",\"name\":\"Canary\",\"sortOrder\":0,\"startedAt\":\"2026-10-30T09:12:09.930Z\",\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60},\"progressionExecutedAt\":null,\"pausedAt\":null,\"strategies\":[{\"id\":\"01M6619DGFC66P9BCTR3JWEMK2\",\"milestoneId\":\"01M6619DGEQ9E9W4CJT8RYF87J\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"10\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"disabled\":false,\"segments\":[]}],\"releasePlanDefinitionId\":\"01M6619DGCM90460RW2CKK4A8B\"},{\"id\":\"01M6619DGJR0Q3NY4H2BK4Y3PF\",\"name\":\"Half\",\"sortOrder\":1,\"startedAt\":null,\"transitionCondition\":{\"type\":\"exposure\",\"minimumExposures\":5},\"progressionExecutedAt\":null,\"pausedAt\":null,\"strategies\":[{\"id\":\"01M6619DGKCSSGMPTV4PV6029W\",\"milestoneId\":\"01M6619DGJR0Q3NY4H2BK4Y3PF\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"50\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"disabled\":false,\"segments\":[]}],\"releasePlanDefinitionId\":\"01M6619DGCM90460RW2CKK4A8B\"},{\"id\":\"01M6619DGPERQQXHJYXP6NTHCG\",\"name\":\"Everyone\",\"sortOrder\":2,\"startedAt\":null,\"progressionExecutedAt\":null,\"pausedAt\":null,\"strategies\":[{\"id\":\"01M6619DHTWAM5VT7XBD7T120Z\",\"milestoneId\":\"01M6619DGPERQQXHJYXP6NTHCG\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"disabled\":false,\"segments\":[]}],\"releasePlanDefinitionId\":\"01M6619DGCM90460RW2CKK4A8B\"}]}],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-inspected-parent\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T09:12:02.883Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-09T09:12:02.883Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T09:12:03.141Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "hudtqdypHd7rv3dfC3FvF68RQCKP1-KZtjfkvY6yHIw",
-    "snapshot": {
-      "request": {
-        "method": "DELETE",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-parent",
-        "headers": {
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": ""
-      },
-      "responses": [
-        {
-          "statusCode": 404,
-          "headers": {
-            "content-length": "106",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"name\":\"NotFoundError\",\"message\":\"No feature flag found\",\"details\":[{\"message\":\"No feature flag found\"}]}",
-          "trailers": {}
-        },
-        {
-          "statusCode": 202,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
             "referrer-policy": "no-referrer",
@@ -361,11 +100,11 @@
     }
   },
   {
-    "hash": "6ylrNGweoULTkN8KHiU7rRv32xGwB71-FtloTUVwW7I",
+    "hash": "ShYsh832FvGrWNkcRq-dm5MvGlnXHcuTywbvUyK_LBU",
     "snapshot": {
       "request": {
-        "method": "GET",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates",
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-flag",
         "headers": {
           "accept-encoding": "identity",
           "accept": "*/*",
@@ -377,9 +116,9 @@
       },
       "responses": [
         {
-          "statusCode": 200,
+          "statusCode": 404,
           "headers": {
-            "content-length": "1693",
+            "content-length": "106",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -390,128 +129,11 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174}]",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"No feature flag found\",\"details\":[{\"message\":\"No feature flag found\"}]}",
           "trailers": {}
         },
         {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "2247",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M6619CJAV2E0AKJQRH140ZGP\",\"name\":\"mcp-inspect-plan\",\"createdAt\":\"2026-10-30T09:12:08.989Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":17},{\"id\":\"01M6619GPKXBHHNQ6WPQZTZ9SH\",\"name\":\"mcp-release-plan\",\"createdAt\":\"2026-10-30T09:12:13.264Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":17},{\"id\":\"01M6619MJHWHTVR95XF9KTEY5C\",\"name\":\"mcp-searched-template\",\"createdAt\":\"2026-10-30T09:12:17.230Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":17}]",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "tofZqCC4SIeLUQhKbFr_0eUEl-tqt8SnofM1NA2agwg",
-    "snapshot": {
-      "request": {
-        "method": "POST",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "31",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"name\":\"mcp-inspected-parent\"}"
-      },
-      "responses": [
-        {
-          "statusCode": 201,
-          "headers": {
-            "content-length": "183",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"name\":\"mcp-inspected-parent\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T09:12:02.883Z\",\"impressionData\":false,\"archived\":false}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "X8rY0jTeBphBHZWjDlb1vrY2-3Hw9FDzDoAFCVJ3-oA",
-    "snapshot": {
-      "request": {
-        "method": "POST",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "50",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"name\":\"mcp-inspected-flag\",\"type\":\"kill-switch\"}"
-      },
-      "responses": [
-        {
-          "statusCode": 201,
-          "headers": {
-            "content-length": "185",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"name\":\"mcp-inspected-flag\",\"description\":null,\"type\":\"kill-switch\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T09:12:03.472Z\",\"impressionData\":false,\"archived\":false}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "CcJUdmt5Ez9fhby08JR-q0FFjHCk4jPb1IwiR5_h_Zk",
-    "snapshot": {
-      "request": {
-        "method": "POST",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-flag/dependencies",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "34",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"feature\":\"mcp-inspected-parent\"}"
-      },
-      "responses": [
-        {
-          "statusCode": 200,
+          "statusCode": 202,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
             "referrer-policy": "no-referrer",
@@ -530,30 +152,27 @@
     }
   },
   {
-    "hash": "acdfJYb0XkmkAAvd58iWI-YNpVHb8v84k7p5T81Tjlk",
+    "hash": "hudtqdypHd7rv3dfC3FvF68RQCKP1-KZtjfkvY6yHIw",
     "snapshot": {
       "request": {
-        "method": "POST",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/features/mcp-inspected-flag/tags",
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-parent",
         "headers": {
-          "content-type": "application/json",
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
-          "content-length": "39",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
-        "body": "{\"type\":\"simple\",\"value\":\"mcp-inspect\"}"
+        "body": ""
       },
       "responses": [
         {
-          "statusCode": 201,
+          "statusCode": 404,
           "headers": {
-            "content-length": "39",
+            "content-length": "106",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
-            "location": "mcp-inspected-flag/tags",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
             "vary": "Accept-Encoding",
@@ -562,33 +181,11 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"type\":\"simple\",\"value\":\"mcp-inspect\"}",
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"No feature flag found\",\"details\":[{\"message\":\"No feature flag found\"}]}",
           "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "lKRUNl1PO3GK_a5Rrc5l3XLk3yrlHolfadIanOgpgQU",
-    "snapshot": {
-      "request": {
-        "method": "POST",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-flag/link",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "56",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
         },
-        "body": "{\"url\":\"https://example.com/mcp-inspect\",\"title\":\"Spec\"}"
-      },
-      "responses": [
         {
-          "statusCode": 204,
+          "statusCode": 202,
           "headers": {
             "content-security-policy": "frame-ancestors 'none'",
             "referrer-policy": "no-referrer",
@@ -596,7 +193,8 @@
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
           },
           "body": "",
           "trailers": {}
@@ -606,146 +204,15 @@
     }
   },
   {
-    "hash": "MoaT536Kuj1P5XrK7F6lJWCuzno5OiLzsmW9wF5OYJM",
+    "hash": "IcnZdtwGPtrR135uIukNUCrytfvDEEQ809oLkU-_psU",
     "snapshot": {
       "request": {
-        "method": "GET",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/ui-config",
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M6DV0Y6AR56Z2HNG3T7BA7Y4",
         "headers": {
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": ""
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "5224",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"environment\":\"Enterprise\",\"flags\":{\"OIDC\":true,\"EEA\":true,\"RE\":true,\"UG\":true,\"SE\":false,\"CO\":true,\"UNLEASH_CLOUD\":true,\"C\":true,\"P\":true,\"anonymiseEventLog\":false,\"enableLicense\":false,\"sessionTimeouts\":true,\"responseTimeWithAppNameKillSwitch\":false,\"maintenanceMode\":false,\"messageBanner\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"strictSchemaValidation\":false,\"personalAccessTokensKillSwitch\":false,\"migrationLock\":true,\"demo\":false,\"onboardingIntroTourAdvancedTopics\":false,\"interactiveDemoKillSwitch\":false,\"filterInvalidClientMetrics\":false,\"disableMetrics\":false,\"celebrateUnleash\":false,\"feedbackPosting\":true,\"encryptEmails\":false,\"extendedUsageMetrics\":{\"name\":\"maxResults\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"3600000\"},\"feature_enabled\":true,\"featureEnabled\":true},\"outdatedSdksBanner\":true,\"feedbackComments\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"usePromiseTokenCache\":true,\"disableUpdateMaxRevisionId\":false,\"disablePublishUnannouncedEvents\":false,\"responseTimeMetricsFix\":true,\"disableShowContextFieldSelectionValues\":false,\"manyStrategiesPagination\":true,\"enableLegacyVariants\":false,\"extendedMetrics\":true,\"removeUnsafeInlineStyleSrc\":false,\"projectRoleAssignment\":false,\"webhookDomainLogging\":false,\"productivityReportEmail\":true,\"productivityReportUnsubscribers\":false,\"tokenExpiryNotifications\":true,\"showUserDeviceCount\":{\"name\":\"warnAbove\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"2\"},\"feature_enabled\":true,\"featureEnabled\":true},\"deltaApi\":true,\"cacheFeatureSerialization\":true,\"uniqueSdkTracking\":true,\"consumptionModel\":true,\"impactViews\":true,\"disableImpactMetrics\":false,\"flightRecorderSdk\":true,\"flightRecorderAdminEvents\":false,\"flightRecorderFrontend\":{\"name\":\"url\",\"enabled\":true,\"payload\":{\"type\":\"string\",\"value\":\"http://flight-recorder.sandbox.getunleash.io/frontend-events\"},\"feature_enabled\":true,\"featureEnabled\":true},\"regexConstraintOperator\":true,\"ipConstraintOperator\":true,\"userTokenWithClientApiLoggingKillSwitch\":false,\"multiMetricChart\":true,\"logRocketEnabled\":true,\"hubspotChatEnabled\":true,\"learningLab\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":true,\"featureEnabled\":true},\"serviceNowIntegration\":true,\"recordSdkFlavorMetrics\":false,\"secureAccountTokenStorage\":true,\"searchDocsWidget\":true,\"semverBuildMetadata\":false,\"auditEventUserAgent\":true,\"helpMenuRelocationHint\":false,\"githubIntegration\":true,\"slackAppAuthV2\":false,\"integrationParamKvpEditor\":true,\"perFlagLifetime\":true,\"payloadSchemas\":true,\"singlePageStrategyForm\":false,\"feedbackModule\":true,\"feedbackModuleDisplaySurvey\":false,\"feedbackModuleSubmitResponses\":true,\"playgroundFeatureEvaluation\":true,\"signals\":true,\"automatedActions\":true,\"killScheduledChangeRequestCache\":false,\"estimateTrafficDataCost\":true,\"streaming\":{\"name\":\"disabled\",\"enabled\":true},\"denyStreamingForNonEdge\":true,\"consumptionModelUI\":true,\"fetchMode\":{\"name\":\"streaming\",\"enabled\":true,\"feature_enabled\":true,\"featureEnabled\":true},\"oidcPkceSupport\":true,\"enterpriseEdgeTokensList\":true,\"impactMetricsFlagPage\":true,\"disableScimAdminGroupGuard\":false,\"elasticEventSync\":true,\"uxTweakSurveys\":true,\"loginHistoryUserAgent\":true,\"remoteMcpHostedClients\":false,\"remoteMcpV2\":true,\"dashboardV2\":false,\"samlIssuerMismatchLogging\":true,\"oidcGroupSyncIdToken\":false,\"changeRequestSubmitRedirect\":true},\"billing\":\"subscription\",\"slogan\":\"getunleash.io - All rights reserved\",\"name\":\"Unleash\",\"links\":[{\"value\":\"Documentation\",\"icon\":\"library_books\",\"href\":\"https://docs.getunleash.io/docs\",\"title\":\"User documentation\"},{\"value\":\"GitHub\",\"icon\":\"c_github\",\"href\":\"https://github.com/Unleash/unleash\",\"title\":\"Source code on GitHub\"}],\"oidcConfiguredThroughEnv\":false,\"samlConfiguredThroughEnv\":false,\"version\":\"8.3.1\",\"emailEnabled\":true,\"unleashUrl\":\"https://sandbox.getunleash.io/enterprise\",\"logRocketAppId\":\"1knhci/unleash-sandbox\",\"hubspotPortalId\":\"19521761\",\"baseUriPath\":\"/enterprise\",\"authenticationType\":\"hosted\",\"frontendApiOrigins\":[\"*\"],\"versionInfo\":{\"current\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.1+27407.e814c0a996\"},\"latest\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.1\"},\"isLatest\":true,\"instanceId\":\"902e2e68-ab1d-4e35-9cd0-896618db603d\"},\"prometheusAPIAvailable\":true,\"impactMetrics\":\"full\",\"resourceLimits\":{\"segmentValues\":1000,\"strategySegments\":5,\"signalEndpoints\":5,\"actionSetActions\":10,\"actionSetsPerProject\":5,\"actionSetFilters\":5,\"actionSetFilterValues\":25,\"signalTokensPerEndpoint\":5,\"featureEnvironmentStrategies\":30,\"constraintValues\":1000,\"constraints\":30,\"environments\":50,\"projects\":500,\"apiTokens\":2000,\"segments\":300,\"featureFlags\":50000,\"releaseTemplates\":50,\"readOnlyUsers\":10},\"disablePasswordAuth\":false,\"maintenanceMode\":false,\"feedbackUriPath\":\"https://sandbox.getunleash.io/nuno/feedback\",\"maxSessionsCount\":1,\"sessionKeepAliveIntervalSeconds\":60,\"unleashContext\":{\"properties\":{\"clientId\":\"enterprise\",\"plan\":\"Enterprise\",\"billing\":\"subscription\",\"awsRegion\":\"eu-north-1\",\"version\":\"8.3.1+27407.e814c0a996\",\"releaseSegment\":\"enterprise\"},\"email\":\"user-e8d327@example.com\",\"hashedEmail\":\"e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c\",\"userId\":17},\"storiesPageEnabled\":true}",
-          "trailers": {}
-        },
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "5112",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"environment\":\"Enterprise\",\"flags\":{\"OIDC\":true,\"EEA\":true,\"RE\":true,\"UG\":true,\"SE\":false,\"CO\":true,\"UNLEASH_CLOUD\":true,\"C\":true,\"P\":true,\"anonymiseEventLog\":false,\"enableLicense\":false,\"sessionTimeouts\":true,\"responseTimeWithAppNameKillSwitch\":false,\"maintenanceMode\":false,\"messageBanner\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"strictSchemaValidation\":false,\"personalAccessTokensKillSwitch\":false,\"migrationLock\":true,\"demo\":false,\"onboardingIntroTourAdvancedTopics\":false,\"interactiveDemoKillSwitch\":false,\"filterInvalidClientMetrics\":false,\"disableMetrics\":false,\"celebrateUnleash\":false,\"feedbackPosting\":true,\"encryptEmails\":false,\"extendedUsageMetrics\":{\"name\":\"maxResults\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"3600000\"},\"feature_enabled\":true,\"featureEnabled\":true},\"outdatedSdksBanner\":true,\"feedbackComments\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"usePromiseTokenCache\":true,\"disableUpdateMaxRevisionId\":false,\"disablePublishUnannouncedEvents\":false,\"responseTimeMetricsFix\":true,\"disableShowContextFieldSelectionValues\":false,\"manyStrategiesPagination\":true,\"enableLegacyVariants\":false,\"extendedMetrics\":true,\"removeUnsafeInlineStyleSrc\":false,\"projectRoleAssignment\":false,\"webhookDomainLogging\":false,\"productivityReportEmail\":true,\"productivityReportUnsubscribers\":false,\"tokenExpiryNotifications\":true,\"showUserDeviceCount\":{\"name\":\"warnAbove\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"2\"},\"feature_enabled\":true,\"featureEnabled\":true},\"deltaApi\":true,\"cacheFeatureSerialization\":true,\"uniqueSdkTracking\":true,\"consumptionModel\":true,\"impactViews\":true,\"disableImpactMetrics\":false,\"flightRecorderSdk\":true,\"flightRecorderAdminEvents\":false,\"flightRecorderFrontend\":{\"name\":\"url\",\"enabled\":true,\"payload\":{\"type\":\"string\",\"value\":\"http://flight-recorder.sandbox.getunleash.io/frontend-events\"},\"feature_enabled\":true,\"featureEnabled\":true},\"regexConstraintOperator\":true,\"ipConstraintOperator\":true,\"userTokenWithClientApiLoggingKillSwitch\":false,\"multiMetricChart\":true,\"logRocketEnabled\":true,\"hubspotChatEnabled\":true,\"learningLab\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":true,\"featureEnabled\":true},\"serviceNowIntegration\":true,\"recordSdkFlavorMetrics\":false,\"secureAccountTokenStorage\":true,\"searchDocsWidget\":true,\"semverBuildMetadata\":false,\"auditEventUserAgent\":true,\"helpMenuRelocationHint\":false,\"githubIntegration\":true,\"slackAppAuthV2\":false,\"integrationParamKvpEditor\":true,\"perFlagLifetime\":true,\"payloadSchemas\":true,\"singlePageStrategyForm\":false,\"feedbackModule\":true,\"feedbackModuleDisplaySurvey\":false,\"feedbackModuleSubmitResponses\":true,\"playgroundFeatureEvaluation\":true,\"signals\":true,\"automatedActions\":true,\"killScheduledChangeRequestCache\":false,\"estimateTrafficDataCost\":true,\"streaming\":{\"name\":\"disabled\",\"enabled\":true},\"denyStreamingForNonEdge\":true,\"consumptionModelUI\":true,\"fetchMode\":{\"name\":\"streaming\",\"enabled\":true,\"feature_enabled\":true,\"featureEnabled\":true},\"oidcPkceSupport\":true,\"enterpriseEdgeTokensList\":true,\"impactMetricsFlagPage\":true,\"disableScimAdminGroupGuard\":false,\"elasticEventSync\":true,\"uxTweakSurveys\":true,\"loginHistoryUserAgent\":true,\"remoteMcpHostedClients\":false,\"remoteMcpV2\":true,\"dashboardV2\":false,\"samlIssuerMismatchLogging\":true,\"oidcGroupSyncIdToken\":false,\"changeRequestSubmitRedirect\":true},\"billing\":\"subscription\",\"slogan\":\"getunleash.io - All rights reserved\",\"name\":\"Unleash\",\"links\":[{\"value\":\"Documentation\",\"icon\":\"library_books\",\"href\":\"https://docs.getunleash.io/docs\",\"title\":\"User documentation\"},{\"value\":\"GitHub\",\"icon\":\"c_github\",\"href\":\"https://github.com/Unleash/unleash\",\"title\":\"Source code on GitHub\"}],\"oidcConfiguredThroughEnv\":false,\"samlConfiguredThroughEnv\":false,\"version\":\"8.3.1\",\"emailEnabled\":true,\"unleashUrl\":\"https://sandbox.getunleash.io/enterprise\",\"logRocketAppId\":\"1knhci/unleash-sandbox\",\"hubspotPortalId\":\"19521761\",\"baseUriPath\":\"/enterprise\",\"authenticationType\":\"hosted\",\"frontendApiOrigins\":[\"*\"],\"versionInfo\":{\"current\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.1+27407.e814c0a996\"},\"latest\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.1\"},\"isLatest\":true,\"instanceId\":\"902e2e68-ab1d-4e35-9cd0-896618db603d\"},\"prometheusAPIAvailable\":true,\"impactMetrics\":\"full\",\"resourceLimits\":{\"segmentValues\":1000,\"strategySegments\":5,\"signalEndpoints\":5,\"actionSetActions\":10,\"actionSetsPerProject\":5,\"actionSetFilters\":5,\"actionSetFilterValues\":25,\"signalTokensPerEndpoint\":5,\"featureEnvironmentStrategies\":30,\"constraintValues\":1000,\"constraints\":30,\"environments\":50,\"projects\":500,\"apiTokens\":2000,\"segments\":300,\"featureFlags\":50000,\"releaseTemplates\":50,\"readOnlyUsers\":10},\"disablePasswordAuth\":false,\"maintenanceMode\":false,\"feedbackUriPath\":\"https://sandbox.getunleash.io/nuno/feedback\",\"maxSessionsCount\":1,\"sessionKeepAliveIntervalSeconds\":60,\"unleashContext\":{\"properties\":{\"clientId\":\"enterprise\",\"plan\":\"Enterprise\",\"billing\":\"subscription\",\"awsRegion\":\"eu-north-1\",\"version\":\"8.3.1+27407.e814c0a996\",\"releaseSegment\":\"enterprise\"},\"userId\":248},\"storiesPageEnabled\":true}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "q4ukEMq0eIU9K34eh2Kf4cvZsXlQF6AUjpsqOyxqoHM",
-    "snapshot": {
-      "request": {
-        "method": "GET",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/change-requests/config",
-        "headers": {
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": ""
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "205",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "[{\"environment\":\"development\",\"type\":\"development\",\"requiredApprovals\":null,\"changeRequestEnabled\":false},{\"environment\":\"production\",\"type\":\"production\",\"requiredApprovals\":1,\"changeRequestEnabled\":true}]",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "PZMVJez_68ph356xHfC6SEvvp_6qlCyXaTrzf5t5seo",
-    "snapshot": {
-      "request": {
-        "method": "POST",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-flag/environments/development/strategies",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "459",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"name\":\"flexibleRollout\",\"title\":\"Beta testers\",\"parameters\":{\"rollout\":\"50\",\"stickiness\":\"userId\",\"groupId\":\"mcp-other-draw\"},\"constraints\":[{\"contextName\":\"userId\",\"operator\":\"IN\",\"values\":[\"1\",\"2\"],\"inverted\":false,\"caseInsensitive\":false}],\"segments\":[],\"variants\":[{\"name\":\"blue\",\"payload\":{\"type\":\"string\",\"value\":\"#00f\"},\"weight\":300,\"weightType\":\"fix\",\"stickiness\":\"userId\"},{\"name\":\"green\",\"weight\":0,\"weightType\":\"variable\",\"stickiness\":\"userId\"}]}"
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "526",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"id\":\"01M6619BDK4YW1DZPWBB5Q0AXX\",\"name\":\"flexibleRollout\",\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"parameters\":{\"groupId\":\"mcp-other-draw\",\"rollout\":\"50\",\"stickiness\":\"userId\"},\"variants\":[{\"name\":\"blue\",\"weight\":300,\"payload\":{\"type\":\"string\",\"value\":\"#00f\"},\"stickiness\":\"userId\",\"weightType\":\"fix\"},{\"name\":\"green\",\"weight\":700,\"stickiness\":\"userId\",\"weightType\":\"variable\"}],\"segments\":[],\"title\":\"Beta testers\",\"disabled\":false,\"sortOrder\":0}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "Hiz36u9reNoemXK-BYoeISaYHmuW1zSVDS8JJ2-8o4M",
-    "snapshot": {
-      "request": {
-        "method": "POST",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-flag/environments/development/on",
-        "headers": {
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "0",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
@@ -765,122 +232,6 @@
             "transfer-encoding": "chunked"
           },
           "body": "",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "9vLgjdjc7yH5Kq5t7rZnoAfuaa_SzOftHGcejPusX-8",
-    "snapshot": {
-      "request": {
-        "method": "POST",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "768",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"name\":\"mcp-inspect-plan\",\"milestones\":[{\"name\":\"Canary\",\"sortOrder\":0,\"strategies\":[{\"sortOrder\":0,\"strategyName\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"10\",\"stickiness\":\"default\",\"groupId\":\"mcp-inspected-parent\"}}],\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"name\":\"Half\",\"sortOrder\":1,\"strategies\":[{\"sortOrder\":0,\"strategyName\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"50\",\"stickiness\":\"default\",\"groupId\":\"mcp-inspected-parent\"}}],\"transitionCondition\":{\"type\":\"exposure\",\"minimumExposures\":5}},{\"name\":\"Everyone\",\"sortOrder\":2,\"strategies\":[{\"sortOrder\":0,\"strategyName\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"mcp-inspected-parent\"}}]}]}"
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "1682",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"id\":\"01M6619CJAV2E0AKJQRH140ZGP\",\"name\":\"mcp-inspect-plan\",\"createdAt\":\"2026-10-30T09:12:08.989Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":17,\"milestones\":[{\"id\":\"01M6619CK1GVXVDMMW8M2JNQT4\",\"name\":\"Canary\",\"sortOrder\":0,\"releasePlanDefinitionId\":\"01M6619CJAV2E0AKJQRH140ZGP\",\"strategies\":[{\"id\":\"01M6619CP945TC6TG3WV08AAG0\",\"milestoneId\":\"01M6619CK1GVXVDMMW8M2JNQT4\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"10\",\"stickiness\":\"default\",\"groupId\":\"mcp-inspected-parent\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"id\":\"01M6619CPBBD7ZS00H788ZV0MB\",\"name\":\"Half\",\"sortOrder\":1,\"releasePlanDefinitionId\":\"01M6619CJAV2E0AKJQRH140ZGP\",\"strategies\":[{\"id\":\"01M6619CPFVWCH6VVBMA89XYHF\",\"milestoneId\":\"01M6619CPBBD7ZS00H788ZV0MB\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"50\",\"stickiness\":\"default\",\"groupId\":\"mcp-inspected-parent\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"transitionCondition\":{\"type\":\"exposure\",\"minimumExposures\":5}},{\"id\":\"01M6619CPP4X2YKVEVTFJS6C1T\",\"name\":\"Everyone\",\"sortOrder\":2,\"releasePlanDefinitionId\":\"01M6619CJAV2E0AKJQRH140ZGP\",\"strategies\":[{\"id\":\"01M6619CPQWQVP6ZNZ4MW8H9V3\",\"milestoneId\":\"01M6619CPP4X2YKVEVTFJS6C1T\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"mcp-inspected-parent\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}]}]}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "Hd4_velp9fNLDx00zjC8cAkNolthXmhddlzyX8Xand0",
-    "snapshot": {
-      "request": {
-        "method": "POST",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-parent/environments/development/release-plans",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "43",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"templateId\":\"01M6619CJAV2E0AKJQRH140ZGP\"}"
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "1830",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"id\":\"01M6619DGCM90460RW2CKK4A8B\",\"discriminator\":\"plan\",\"name\":\"mcp-inspect-plan\",\"description\":null,\"featureName\":\"mcp-inspected-parent\",\"environment\":\"development\",\"createdByUserId\":17,\"createdAt\":\"2026-10-30T09:12:09.930Z\",\"activeMilestoneId\":\"01M6619DGEQ9E9W4CJT8RYF87J\",\"releasePlanTemplateId\":\"01M6619CJAV2E0AKJQRH140ZGP\",\"milestones\":[{\"id\":\"01M6619DGEQ9E9W4CJT8RYF87J\",\"name\":\"Canary\",\"sortOrder\":0,\"releasePlanDefinitionId\":\"01M6619DGCM90460RW2CKK4A8B\",\"strategies\":[{\"id\":\"01M6619DGFC66P9BCTR3JWEMK2\",\"milestoneId\":\"01M6619DGEQ9E9W4CJT8RYF87J\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"10\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"id\":\"01M6619DGJR0Q3NY4H2BK4Y3PF\",\"name\":\"Half\",\"sortOrder\":1,\"releasePlanDefinitionId\":\"01M6619DGCM90460RW2CKK4A8B\",\"strategies\":[{\"id\":\"01M6619DGKCSSGMPTV4PV6029W\",\"milestoneId\":\"01M6619DGJR0Q3NY4H2BK4Y3PF\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"50\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"transitionCondition\":{\"type\":\"exposure\",\"minimumExposures\":5}},{\"id\":\"01M6619DGPERQQXHJYXP6NTHCG\",\"name\":\"Everyone\",\"sortOrder\":2,\"releasePlanDefinitionId\":\"01M6619DGCM90460RW2CKK4A8B\",\"strategies\":[{\"id\":\"01M6619DHTWAM5VT7XBD7T120Z\",\"milestoneId\":\"01M6619DGPERQQXHJYXP6NTHCG\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}]}]}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "zn_W2E3bEWX-otIFu4Lod6fb0SVmBWZKg2d8RyRVuT8",
-    "snapshot": {
-      "request": {
-        "method": "POST",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-parent/environments/development/release-plans/01M6619DGCM90460RW2CKK4A8B/milestones/01M6619DGEQ9E9W4CJT8RYF87J/start",
-        "headers": {
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "0",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": ""
-      },
-      "responses": [
-        {
-          "statusCode": 415,
-          "headers": {
-            "content-length": "515",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"id\":\"228a323f-cc79-439e-90b2-78d18e12fe6a\",\"name\":\"ContentTypeError\",\"message\":\"We do not accept the content-type you provided (you didn't provide one). Try using one of the content-types we do accept instead (application/json) and make sure the body is in the corresponding format.\",\"details\":[{\"message\":\"We do not accept the content-type you provided (you didn't provide one). Try using one of the content-types we do accept instead (application/json) and make sure the body is in the corresponding format.\"}]}",
           "trailers": {}
         }
       ],
@@ -918,6 +269,117 @@
             "x-permitted-cross-domain-policies": "none"
           },
           "body": "{\"version\":1,\"tags\":[{\"type\":\"simple\",\"value\":\"mcp-inspect\",\"color\":\"#FFFFFF\"}]}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "bEa1V1hH4wryVi121G3HPydVzJPsnXM9JZrBhog_fDc",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/features/mcp-inspected-parent/tags",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "23",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"version\":1,\"tags\":[]}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "dwznapqPButmZlq7s4gsaI69iLx2ZcJ0MdbAj129Ms4",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/features/mcp-unknown/tags",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "152",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"Could not find feature with name mcp-unknown\",\"details\":[{\"message\":\"Could not find feature with name mcp-unknown\"}]}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "q4ukEMq0eIU9K34eh2Kf4cvZsXlQF6AUjpsqOyxqoHM",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/change-requests/config",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "205",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "[{\"environment\":\"development\",\"type\":\"development\",\"requiredApprovals\":null,\"changeRequestEnabled\":false},{\"environment\":\"production\",\"type\":\"production\",\"requiredApprovals\":1,\"changeRequestEnabled\":true}]",
           "trailers": {}
         }
       ],
@@ -999,11 +461,11 @@
     }
   },
   {
-    "hash": "bEa1V1hH4wryVi121G3HPydVzJPsnXM9JZrBhog_fDc",
+    "hash": "dyH_uY5hevtb77KeHSqoHpemgEyG_9EVQJFkkngKGWc",
     "snapshot": {
       "request": {
         "method": "GET",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/features/mcp-inspected-parent/tags",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/change-requests/pending/mcp-unknown",
         "headers": {
           "accept-encoding": "identity",
           "accept": "*/*",
@@ -1017,7 +479,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "23",
+            "content-length": "2",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -1028,7 +490,166 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"version\":1,\"tags\":[]}",
+          "body": "[]",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "V1KcCMU3tExAqFajMHdJ8vQGFgyPvH24GMVDApn8oUU",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-flag",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "212",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-inspected-flag\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-inspected-flag\\\" in project \\\"mcp-server\\\".\"}]}",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "1295",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-inspected-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-11-02T09:56:34.889Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[{\"feature\":\"mcp-inspected-parent\",\"enabled\":true,\"variants\":[]}],\"children\":[],\"links\":[{\"id\":\"01M6DV0XC8HBYMG4K42M4CA958\",\"url\":\"https://example.com/mcp-inspect\",\"title\":\"Spec\",\"feature\":\"mcp-inspected-flag\"}],\"collaborators\":{\"users\":[{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "1896",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":true,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[{\"name\":\"flexibleRollout\",\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"variants\":[{\"name\":\"blue\",\"weight\":300,\"payload\":{\"type\":\"string\",\"value\":\"#00f\"},\"stickiness\":\"userId\",\"weightType\":\"fix\"},{\"name\":\"green\",\"weight\":700,\"stickiness\":\"userId\",\"weightType\":\"variable\"}],\"parameters\":{\"groupId\":\"mcp-other-draw\",\"rollout\":\"50\",\"stickiness\":\"userId\"},\"segments\":[],\"sortOrder\":0,\"id\":\"01M6DV0XS0C8RQYGMXH8RH069Y\",\"title\":\"Beta testers\",\"disabled\":false}],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-inspected-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-11-02T09:56:34.889Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[{\"feature\":\"mcp-inspected-parent\",\"enabled\":true,\"variants\":[]}],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-02T09:56:35.644Z\"},\"links\":[{\"id\":\"01M6DV0XC8HBYMG4K42M4CA958\",\"url\":\"https://example.com/mcp-inspect\",\"title\":\"Spec\",\"feature\":\"mcp-inspected-flag\"}],\"collaborators\":{\"users\":[{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "1896",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":true,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[{\"name\":\"flexibleRollout\",\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"variants\":[{\"name\":\"blue\",\"weight\":300,\"payload\":{\"type\":\"string\",\"value\":\"#00f\"},\"stickiness\":\"userId\",\"weightType\":\"fix\"},{\"name\":\"green\",\"weight\":700,\"stickiness\":\"userId\",\"weightType\":\"variable\"}],\"parameters\":{\"groupId\":\"mcp-other-draw\",\"rollout\":\"50\",\"stickiness\":\"userId\"},\"segments\":[],\"sortOrder\":0,\"id\":\"01M6DV0XS0C8RQYGMXH8RH069Y\",\"title\":\"Beta testers\",\"disabled\":false}],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-inspected-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-11-02T09:56:34.889Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[{\"feature\":\"mcp-inspected-parent\",\"enabled\":true,\"variants\":[]}],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-02T09:56:35.644Z\"},\"links\":[{\"id\":\"01M6DV0XC8HBYMG4K42M4CA958\",\"url\":\"https://example.com/mcp-inspect\",\"title\":\"Spec\",\"feature\":\"mcp-inspected-flag\"}],\"collaborators\":{\"users\":[{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "0zkpfTwdLfdV1wpdbdTiUtItG6agomWVSKMNO_orqMI",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-parent",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "216",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-inspected-parent\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-inspected-parent\\\" in project \\\"mcp-server\\\".\"}]}",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "3281",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[{\"id\":\"01M6DV0YE1A57GRQC7Y6WR7E6A\",\"discriminator\":\"plan\",\"name\":\"mcp-inspect-plan\",\"description\":null,\"featureName\":\"mcp-inspected-parent\",\"environment\":\"development\",\"createdByUserId\":17,\"createdAt\":\"2026-11-02T09:56:36.364Z\",\"activeMilestoneId\":\"01M6DV0YE3K9R08J5WGMW6Q2C6\",\"releasePlanTemplateId\":\"01M6DV0Y6AR56Z2HNG3T7BA7Y4\",\"safeguards\":[],\"milestones\":[{\"id\":\"01M6DV0YE3K9R08J5WGMW6Q2C6\",\"name\":\"Canary\",\"sortOrder\":0,\"startedAt\":\"2026-11-02T09:56:36.364Z\",\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60},\"progressionExecutedAt\":null,\"pausedAt\":null,\"strategies\":[{\"id\":\"01M6DV0YE5D6PQ1KAGY6Q5SM7M\",\"milestoneId\":\"01M6DV0YE3K9R08J5WGMW6Q2C6\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"10\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"disabled\":false,\"segments\":[]}],\"releasePlanDefinitionId\":\"01M6DV0YE1A57GRQC7Y6WR7E6A\"},{\"id\":\"01M6DV0YE8DGVVH50AQBRCPCNZ\",\"name\":\"Half\",\"sortOrder\":1,\"startedAt\":null,\"transitionCondition\":{\"type\":\"exposure\",\"minimumExposures\":5},\"progressionExecutedAt\":null,\"pausedAt\":null,\"strategies\":[{\"id\":\"01M6DV0YE9CQANVY1VMP0S5YCK\",\"milestoneId\":\"01M6DV0YE8DGVVH50AQBRCPCNZ\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"50\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"disabled\":false,\"segments\":[]}],\"releasePlanDefinitionId\":\"01M6DV0YE1A57GRQC7Y6WR7E6A\"},{\"id\":\"01M6DV0YEBX9QWZNQPP4TC0594\",\"name\":\"Everyone\",\"sortOrder\":2,\"startedAt\":null,\"progressionExecutedAt\":null,\"pausedAt\":null,\"strategies\":[{\"id\":\"01M6DV0YECTP1XMSG3SH9MSDH5\",\"milestoneId\":\"01M6DV0YEBX9QWZNQPP4TC0594\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"disabled\":false,\"segments\":[]}],\"releasePlanDefinitionId\":\"01M6DV0YE1A57GRQC7Y6WR7E6A\"}]}],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-inspected-parent\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-11-02T09:56:34.770Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-12T09:56:34.770Z\",\"dependencies\":[],\"children\":[\"mcp-inspected-flag\"],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-02T09:56:35.644Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "3261",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[{\"id\":\"01M6DV0YE1A57GRQC7Y6WR7E6A\",\"discriminator\":\"plan\",\"name\":\"mcp-inspect-plan\",\"description\":null,\"featureName\":\"mcp-inspected-parent\",\"environment\":\"development\",\"createdByUserId\":17,\"createdAt\":\"2026-11-02T09:56:36.364Z\",\"activeMilestoneId\":\"01M6DV0YE3K9R08J5WGMW6Q2C6\",\"releasePlanTemplateId\":\"01M6DV0Y6AR56Z2HNG3T7BA7Y4\",\"safeguards\":[],\"milestones\":[{\"id\":\"01M6DV0YE3K9R08J5WGMW6Q2C6\",\"name\":\"Canary\",\"sortOrder\":0,\"startedAt\":\"2026-11-02T09:56:36.364Z\",\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60},\"progressionExecutedAt\":null,\"pausedAt\":null,\"strategies\":[{\"id\":\"01M6DV0YE5D6PQ1KAGY6Q5SM7M\",\"milestoneId\":\"01M6DV0YE3K9R08J5WGMW6Q2C6\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"10\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"disabled\":false,\"segments\":[]}],\"releasePlanDefinitionId\":\"01M6DV0YE1A57GRQC7Y6WR7E6A\"},{\"id\":\"01M6DV0YE8DGVVH50AQBRCPCNZ\",\"name\":\"Half\",\"sortOrder\":1,\"startedAt\":null,\"transitionCondition\":{\"type\":\"exposure\",\"minimumExposures\":5},\"progressionExecutedAt\":null,\"pausedAt\":null,\"strategies\":[{\"id\":\"01M6DV0YE9CQANVY1VMP0S5YCK\",\"milestoneId\":\"01M6DV0YE8DGVVH50AQBRCPCNZ\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"50\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"disabled\":false,\"segments\":[]}],\"releasePlanDefinitionId\":\"01M6DV0YE1A57GRQC7Y6WR7E6A\"},{\"id\":\"01M6DV0YEBX9QWZNQPP4TC0594\",\"name\":\"Everyone\",\"sortOrder\":2,\"startedAt\":null,\"progressionExecutedAt\":null,\"pausedAt\":null,\"strategies\":[{\"id\":\"01M6DV0YECTP1XMSG3SH9MSDH5\",\"milestoneId\":\"01M6DV0YEBX9QWZNQPP4TC0594\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"disabled\":false,\"segments\":[]}],\"releasePlanDefinitionId\":\"01M6DV0YE1A57GRQC7Y6WR7E6A\"}]}],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-inspected-parent\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-11-02T09:56:34.770Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-12T09:56:34.770Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-02T09:56:35.644Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         }
       ],
@@ -1073,48 +694,11 @@
     }
   },
   {
-    "hash": "dwznapqPButmZlq7s4gsaI69iLx2ZcJ0MdbAj129Ms4",
+    "hash": "6ylrNGweoULTkN8KHiU7rRv32xGwB71-FtloTUVwW7I",
     "snapshot": {
       "request": {
         "method": "GET",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/features/mcp-unknown/tags",
-        "headers": {
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": ""
-      },
-      "responses": [
-        {
-          "statusCode": 404,
-          "headers": {
-            "content-length": "152",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"name\":\"NotFoundError\",\"message\":\"Could not find feature with name mcp-unknown\",\"details\":[{\"message\":\"Could not find feature with name mcp-unknown\"}]}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "dyH_uY5hevtb77KeHSqoHpemgEyG_9EVQJFkkngKGWc",
-    "snapshot": {
-      "request": {
-        "method": "GET",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/change-requests/pending/mcp-unknown",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates",
         "headers": {
           "accept-encoding": "identity",
           "accept": "*/*",
@@ -1128,7 +712,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "2",
+            "content-length": "1693",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -1139,7 +723,24 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "[]",
+          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174}]",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "1876",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M6DV0Y6AR56Z2HNG3T7BA7Y4\",\"name\":\"mcp-inspect-plan\",\"createdAt\":\"2026-11-02T09:56:36.167Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":17}]",
           "trailers": {}
         }
       ],
@@ -1147,15 +748,225 @@
     }
   },
   {
-    "hash": "2pdzWRzy7KvDp2jReF8yKX3taCb_3haMAYPQ9tmrCGo",
+    "hash": "MoaT536Kuj1P5XrK7F6lJWCuzno5OiLzsmW9wF5OYJM",
     "snapshot": {
       "request": {
-        "method": "DELETE",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M6619CJAV2E0AKJQRH140ZGP",
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/ui-config",
         "headers": {
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "5259",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"environment\":\"Enterprise\",\"flags\":{\"OIDC\":true,\"EEA\":true,\"RE\":true,\"UG\":true,\"SE\":false,\"CO\":true,\"UNLEASH_CLOUD\":true,\"C\":true,\"P\":true,\"anonymiseEventLog\":false,\"enableLicense\":false,\"sessionTimeouts\":false,\"responseTimeWithAppNameKillSwitch\":false,\"maintenanceMode\":false,\"messageBanner\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"strictSchemaValidation\":false,\"personalAccessTokensKillSwitch\":false,\"migrationLock\":true,\"demo\":false,\"onboardingIntroTourAdvancedTopics\":false,\"interactiveDemoKillSwitch\":false,\"filterInvalidClientMetrics\":false,\"disableMetrics\":false,\"celebrateUnleash\":false,\"feedbackPosting\":true,\"encryptEmails\":false,\"extendedUsageMetrics\":{\"name\":\"maxResults\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"3600000\"},\"feature_enabled\":true,\"featureEnabled\":true},\"outdatedSdksBanner\":true,\"feedbackComments\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"usePromiseTokenCache\":true,\"disableUpdateMaxRevisionId\":false,\"disablePublishUnannouncedEvents\":false,\"responseTimeMetricsFix\":true,\"disableShowContextFieldSelectionValues\":false,\"manyStrategiesPagination\":true,\"enableLegacyVariants\":false,\"extendedMetrics\":true,\"removeUnsafeInlineStyleSrc\":false,\"projectRoleAssignment\":false,\"webhookDomainLogging\":false,\"productivityReportEmail\":true,\"productivityReportUnsubscribers\":false,\"tokenExpiryNotifications\":true,\"showUserDeviceCount\":{\"name\":\"warnAbove\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"2\"},\"feature_enabled\":true,\"featureEnabled\":true},\"deltaApi\":true,\"cacheFeatureSerialization\":true,\"uniqueSdkTracking\":true,\"consumptionModel\":true,\"impactViews\":true,\"disableImpactMetrics\":false,\"flightRecorderSdk\":true,\"flightRecorderAdminEvents\":false,\"flightRecorderFrontend\":{\"name\":\"url\",\"enabled\":true,\"payload\":{\"type\":\"string\",\"value\":\"http://flight-recorder.sandbox.getunleash.io/frontend-events\"},\"feature_enabled\":true,\"featureEnabled\":true},\"regexConstraintOperator\":true,\"ipConstraintOperator\":true,\"userTokenWithClientApiLoggingKillSwitch\":false,\"multiMetricChart\":true,\"logRocketEnabled\":true,\"hubspotChatEnabled\":true,\"learningLab\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":true,\"featureEnabled\":true},\"serviceNowIntegration\":true,\"recordSdkFlavorMetrics\":false,\"secureAccountTokenStorage\":true,\"searchDocsWidget\":true,\"semverBuildMetadata\":false,\"auditEventUserAgent\":true,\"helpMenuRelocationHint\":false,\"githubIntegration\":true,\"slackAppAuthV2\":false,\"redactFeatureLabelInMetrics\":false,\"integrationParamKvpEditor\":true,\"perFlagLifetime\":true,\"payloadSchemas\":true,\"singlePageStrategyForm\":false,\"feedbackModule\":true,\"feedbackModuleDisplaySurvey\":false,\"feedbackModuleSubmitResponses\":true,\"playgroundFeatureEvaluation\":true,\"signals\":true,\"automatedActions\":true,\"killScheduledChangeRequestCache\":false,\"estimateTrafficDataCost\":true,\"streaming\":{\"name\":\"disabled\",\"enabled\":true},\"denyStreamingForNonEdge\":true,\"consumptionModelUI\":true,\"fetchMode\":{\"name\":\"streaming\",\"enabled\":true,\"feature_enabled\":true,\"featureEnabled\":true},\"oidcPkceSupport\":true,\"enterpriseEdgeTokensList\":true,\"impactMetricsFlagPage\":true,\"disableScimAdminGroupGuard\":false,\"elasticEventSync\":true,\"uxTweakSurveys\":true,\"loginHistoryUserAgent\":true,\"remoteMcpHostedClients\":true,\"remoteMcpV2\":true,\"dashboardV2\":false,\"samlIssuerMismatchLogging\":true,\"oidcGroupSyncIdToken\":false,\"changeRequestSubmitRedirect\":true},\"billing\":\"subscription\",\"slogan\":\"getunleash.io - All rights reserved\",\"name\":\"Unleash\",\"links\":[{\"value\":\"Documentation\",\"icon\":\"library_books\",\"href\":\"https://docs.getunleash.io/docs\",\"title\":\"User documentation\"},{\"value\":\"GitHub\",\"icon\":\"c_github\",\"href\":\"https://github.com/Unleash/unleash\",\"title\":\"Source code on GitHub\"}],\"oidcConfiguredThroughEnv\":false,\"samlConfiguredThroughEnv\":false,\"version\":\"8.3.1\",\"emailEnabled\":true,\"unleashUrl\":\"https://sandbox.getunleash.io/enterprise\",\"logRocketAppId\":\"1knhci/unleash-sandbox\",\"hubspotPortalId\":\"19521761\",\"baseUriPath\":\"/enterprise\",\"authenticationType\":\"hosted\",\"frontendApiOrigins\":[\"*\"],\"versionInfo\":{\"current\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.1+27443.c82cdb2783\"},\"latest\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.1\"},\"isLatest\":true,\"instanceId\":\"902e2e68-ab1d-4e35-9cd0-896618db603d\"},\"prometheusAPIAvailable\":true,\"impactMetrics\":\"full\",\"resourceLimits\":{\"segmentValues\":1000,\"strategySegments\":5,\"signalEndpoints\":5,\"actionSetActions\":10,\"actionSetsPerProject\":5,\"actionSetFilters\":5,\"actionSetFilterValues\":25,\"signalTokensPerEndpoint\":5,\"featureEnvironmentStrategies\":30,\"constraintValues\":1000,\"constraints\":30,\"environments\":50,\"projects\":500,\"apiTokens\":2000,\"segments\":300,\"featureFlags\":50000,\"releaseTemplates\":50,\"readOnlyUsers\":10},\"disablePasswordAuth\":false,\"maintenanceMode\":false,\"feedbackUriPath\":\"https://sandbox.getunleash.io/nuno/feedback\",\"maxSessionsCount\":1,\"sessionKeepAliveIntervalSeconds\":0,\"unleashContext\":{\"properties\":{\"clientId\":\"enterprise\",\"plan\":\"Enterprise\",\"billing\":\"subscription\",\"awsRegion\":\"eu-north-1\",\"version\":\"8.3.1+27443.c82cdb2783\",\"releaseSegment\":\"enterprise\"},\"email\":\"user-e8d327@example.com\",\"hashedEmail\":\"e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c\",\"userId\":17},\"storiesPageEnabled\":true}",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "5147",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"environment\":\"Enterprise\",\"flags\":{\"OIDC\":true,\"EEA\":true,\"RE\":true,\"UG\":true,\"SE\":false,\"CO\":true,\"UNLEASH_CLOUD\":true,\"C\":true,\"P\":true,\"anonymiseEventLog\":false,\"enableLicense\":false,\"sessionTimeouts\":false,\"responseTimeWithAppNameKillSwitch\":false,\"maintenanceMode\":false,\"messageBanner\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"strictSchemaValidation\":false,\"personalAccessTokensKillSwitch\":false,\"migrationLock\":true,\"demo\":false,\"onboardingIntroTourAdvancedTopics\":false,\"interactiveDemoKillSwitch\":false,\"filterInvalidClientMetrics\":false,\"disableMetrics\":false,\"celebrateUnleash\":false,\"feedbackPosting\":true,\"encryptEmails\":false,\"extendedUsageMetrics\":{\"name\":\"maxResults\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"3600000\"},\"feature_enabled\":true,\"featureEnabled\":true},\"outdatedSdksBanner\":true,\"feedbackComments\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"usePromiseTokenCache\":true,\"disableUpdateMaxRevisionId\":false,\"disablePublishUnannouncedEvents\":false,\"responseTimeMetricsFix\":true,\"disableShowContextFieldSelectionValues\":false,\"manyStrategiesPagination\":true,\"enableLegacyVariants\":false,\"extendedMetrics\":true,\"removeUnsafeInlineStyleSrc\":false,\"projectRoleAssignment\":false,\"webhookDomainLogging\":false,\"productivityReportEmail\":true,\"productivityReportUnsubscribers\":false,\"tokenExpiryNotifications\":true,\"showUserDeviceCount\":{\"name\":\"warnAbove\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"2\"},\"feature_enabled\":true,\"featureEnabled\":true},\"deltaApi\":true,\"cacheFeatureSerialization\":true,\"uniqueSdkTracking\":true,\"consumptionModel\":true,\"impactViews\":true,\"disableImpactMetrics\":false,\"flightRecorderSdk\":true,\"flightRecorderAdminEvents\":false,\"flightRecorderFrontend\":{\"name\":\"url\",\"enabled\":true,\"payload\":{\"type\":\"string\",\"value\":\"http://flight-recorder.sandbox.getunleash.io/frontend-events\"},\"feature_enabled\":true,\"featureEnabled\":true},\"regexConstraintOperator\":true,\"ipConstraintOperator\":true,\"userTokenWithClientApiLoggingKillSwitch\":false,\"multiMetricChart\":true,\"logRocketEnabled\":true,\"hubspotChatEnabled\":true,\"learningLab\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":true,\"featureEnabled\":true},\"serviceNowIntegration\":true,\"recordSdkFlavorMetrics\":false,\"secureAccountTokenStorage\":true,\"searchDocsWidget\":true,\"semverBuildMetadata\":false,\"auditEventUserAgent\":true,\"helpMenuRelocationHint\":false,\"githubIntegration\":true,\"slackAppAuthV2\":false,\"redactFeatureLabelInMetrics\":false,\"integrationParamKvpEditor\":true,\"perFlagLifetime\":true,\"payloadSchemas\":true,\"singlePageStrategyForm\":false,\"feedbackModule\":true,\"feedbackModuleDisplaySurvey\":false,\"feedbackModuleSubmitResponses\":true,\"playgroundFeatureEvaluation\":true,\"signals\":true,\"automatedActions\":true,\"killScheduledChangeRequestCache\":false,\"estimateTrafficDataCost\":true,\"streaming\":{\"name\":\"disabled\",\"enabled\":true},\"denyStreamingForNonEdge\":true,\"consumptionModelUI\":true,\"fetchMode\":{\"name\":\"streaming\",\"enabled\":true,\"feature_enabled\":true,\"featureEnabled\":true},\"oidcPkceSupport\":true,\"enterpriseEdgeTokensList\":true,\"impactMetricsFlagPage\":true,\"disableScimAdminGroupGuard\":false,\"elasticEventSync\":true,\"uxTweakSurveys\":true,\"loginHistoryUserAgent\":true,\"remoteMcpHostedClients\":true,\"remoteMcpV2\":true,\"dashboardV2\":false,\"samlIssuerMismatchLogging\":true,\"oidcGroupSyncIdToken\":false,\"changeRequestSubmitRedirect\":true},\"billing\":\"subscription\",\"slogan\":\"getunleash.io - All rights reserved\",\"name\":\"Unleash\",\"links\":[{\"value\":\"Documentation\",\"icon\":\"library_books\",\"href\":\"https://docs.getunleash.io/docs\",\"title\":\"User documentation\"},{\"value\":\"GitHub\",\"icon\":\"c_github\",\"href\":\"https://github.com/Unleash/unleash\",\"title\":\"Source code on GitHub\"}],\"oidcConfiguredThroughEnv\":false,\"samlConfiguredThroughEnv\":false,\"version\":\"8.3.1\",\"emailEnabled\":true,\"unleashUrl\":\"https://sandbox.getunleash.io/enterprise\",\"logRocketAppId\":\"1knhci/unleash-sandbox\",\"hubspotPortalId\":\"19521761\",\"baseUriPath\":\"/enterprise\",\"authenticationType\":\"hosted\",\"frontendApiOrigins\":[\"*\"],\"versionInfo\":{\"current\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.1+27443.c82cdb2783\"},\"latest\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.1\"},\"isLatest\":true,\"instanceId\":\"902e2e68-ab1d-4e35-9cd0-896618db603d\"},\"prometheusAPIAvailable\":true,\"impactMetrics\":\"full\",\"resourceLimits\":{\"segmentValues\":1000,\"strategySegments\":5,\"signalEndpoints\":5,\"actionSetActions\":10,\"actionSetsPerProject\":5,\"actionSetFilters\":5,\"actionSetFilterValues\":25,\"signalTokensPerEndpoint\":5,\"featureEnvironmentStrategies\":30,\"constraintValues\":1000,\"constraints\":30,\"environments\":50,\"projects\":500,\"apiTokens\":2000,\"segments\":300,\"featureFlags\":50000,\"releaseTemplates\":50,\"readOnlyUsers\":10},\"disablePasswordAuth\":false,\"maintenanceMode\":false,\"feedbackUriPath\":\"https://sandbox.getunleash.io/nuno/feedback\",\"maxSessionsCount\":1,\"sessionKeepAliveIntervalSeconds\":0,\"unleashContext\":{\"properties\":{\"clientId\":\"enterprise\",\"plan\":\"Enterprise\",\"billing\":\"subscription\",\"awsRegion\":\"eu-north-1\",\"version\":\"8.3.1+27443.c82cdb2783\",\"releaseSegment\":\"enterprise\"},\"userId\":248},\"storiesPageEnabled\":true}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "acdfJYb0XkmkAAvd58iWI-YNpVHb8v84k7p5T81Tjlk",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/features/mcp-inspected-flag/tags",
+        "headers": {
+          "content-type": "application/json",
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "39",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": "{\"type\":\"simple\",\"value\":\"mcp-inspect\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "headers": {
+            "content-length": "39",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "location": "mcp-inspected-flag/tags",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"type\":\"simple\",\"value\":\"mcp-inspect\"}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "X8rY0jTeBphBHZWjDlb1vrY2-3Hw9FDzDoAFCVJ3-oA",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
+        "headers": {
+          "content-type": "application/json",
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "50",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": "{\"name\":\"mcp-inspected-flag\",\"type\":\"kill-switch\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "headers": {
+            "content-length": "185",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"name\":\"mcp-inspected-flag\",\"description\":null,\"type\":\"kill-switch\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-11-02T09:56:34.889Z\",\"impressionData\":false,\"archived\":false}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "tofZqCC4SIeLUQhKbFr_0eUEl-tqt8SnofM1NA2agwg",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features",
+        "headers": {
+          "content-type": "application/json",
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "31",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": "{\"name\":\"mcp-inspected-parent\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "headers": {
+            "content-length": "183",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"name\":\"mcp-inspected-parent\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-11-02T09:56:34.770Z\",\"impressionData\":false,\"archived\":false}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "CcJUdmt5Ez9fhby08JR-q0FFjHCk4jPb1IwiR5_h_Zk",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-flag/dependencies",
+        "headers": {
+          "content-type": "application/json",
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "34",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": "{\"feature\":\"mcp-inspected-parent\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "Hiz36u9reNoemXK-BYoeISaYHmuW1zSVDS8JJ2-8o4M",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-flag/environments/development/on",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "0",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
@@ -1175,6 +986,197 @@
             "transfer-encoding": "chunked"
           },
           "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "PZMVJez_68ph356xHfC6SEvvp_6qlCyXaTrzf5t5seo",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-flag/environments/development/strategies",
+        "headers": {
+          "content-type": "application/json",
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "459",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": "{\"name\":\"flexibleRollout\",\"title\":\"Beta testers\",\"parameters\":{\"rollout\":\"50\",\"stickiness\":\"userId\",\"groupId\":\"mcp-other-draw\"},\"constraints\":[{\"contextName\":\"userId\",\"operator\":\"IN\",\"values\":[\"1\",\"2\"],\"inverted\":false,\"caseInsensitive\":false}],\"segments\":[],\"variants\":[{\"name\":\"blue\",\"payload\":{\"type\":\"string\",\"value\":\"#00f\"},\"weight\":300,\"weightType\":\"fix\",\"stickiness\":\"userId\"},{\"name\":\"green\",\"weight\":0,\"weightType\":\"variable\",\"stickiness\":\"userId\"}]}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "526",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"id\":\"01M6DV0XS0C8RQYGMXH8RH069Y\",\"name\":\"flexibleRollout\",\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"parameters\":{\"groupId\":\"mcp-other-draw\",\"rollout\":\"50\",\"stickiness\":\"userId\"},\"variants\":[{\"name\":\"blue\",\"weight\":300,\"payload\":{\"type\":\"string\",\"value\":\"#00f\"},\"stickiness\":\"userId\",\"weightType\":\"fix\"},{\"name\":\"green\",\"weight\":700,\"stickiness\":\"userId\",\"weightType\":\"variable\"}],\"segments\":[],\"title\":\"Beta testers\",\"disabled\":false,\"sortOrder\":0}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "lKRUNl1PO3GK_a5Rrc5l3XLk3yrlHolfadIanOgpgQU",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-flag/link",
+        "headers": {
+          "content-type": "application/json",
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "56",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": "{\"url\":\"https://example.com/mcp-inspect\",\"title\":\"Spec\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 204,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "Pvbu934FzWPRFkgli81r4cCd8cYjy-UtUVjTik5GrNI",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-parent/environments/development/release-plans",
+        "headers": {
+          "content-type": "application/json",
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "43",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": "{\"templateId\":\"01M6DV0Y6AR56Z2HNG3T7BA7Y4\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "1830",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"id\":\"01M6DV0YE1A57GRQC7Y6WR7E6A\",\"discriminator\":\"plan\",\"name\":\"mcp-inspect-plan\",\"description\":null,\"featureName\":\"mcp-inspected-parent\",\"environment\":\"development\",\"createdByUserId\":17,\"createdAt\":\"2026-11-02T09:56:36.364Z\",\"activeMilestoneId\":\"01M6DV0YE3K9R08J5WGMW6Q2C6\",\"releasePlanTemplateId\":\"01M6DV0Y6AR56Z2HNG3T7BA7Y4\",\"milestones\":[{\"id\":\"01M6DV0YE3K9R08J5WGMW6Q2C6\",\"name\":\"Canary\",\"sortOrder\":0,\"releasePlanDefinitionId\":\"01M6DV0YE1A57GRQC7Y6WR7E6A\",\"strategies\":[{\"id\":\"01M6DV0YE5D6PQ1KAGY6Q5SM7M\",\"milestoneId\":\"01M6DV0YE3K9R08J5WGMW6Q2C6\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"10\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"id\":\"01M6DV0YE8DGVVH50AQBRCPCNZ\",\"name\":\"Half\",\"sortOrder\":1,\"releasePlanDefinitionId\":\"01M6DV0YE1A57GRQC7Y6WR7E6A\",\"strategies\":[{\"id\":\"01M6DV0YE9CQANVY1VMP0S5YCK\",\"milestoneId\":\"01M6DV0YE8DGVVH50AQBRCPCNZ\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"50\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"transitionCondition\":{\"type\":\"exposure\",\"minimumExposures\":5}},{\"id\":\"01M6DV0YEBX9QWZNQPP4TC0594\",\"name\":\"Everyone\",\"sortOrder\":2,\"releasePlanDefinitionId\":\"01M6DV0YE1A57GRQC7Y6WR7E6A\",\"strategies\":[{\"id\":\"01M6DV0YECTP1XMSG3SH9MSDH5\",\"milestoneId\":\"01M6DV0YEBX9QWZNQPP4TC0594\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"mcp-inspected-parent\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}]}]}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "mUs-k5EJl1_ew4r7LunDv0hpM0a7Xov0KRW2HCTWLLA",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-inspected-parent/environments/development/release-plans/01M6DV0YE1A57GRQC7Y6WR7E6A/milestones/01M6DV0YE3K9R08J5WGMW6Q2C6/start",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "0",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 415,
+          "headers": {
+            "content-length": "515",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"id\":\"40e79057-a222-479e-a1e3-488729fb8ae3\",\"name\":\"ContentTypeError\",\"message\":\"We do not accept the content-type you provided (you didn't provide one). Try using one of the content-types we do accept instead (application/json) and make sure the body is in the corresponding format.\",\"details\":[{\"message\":\"We do not accept the content-type you provided (you didn't provide one). Try using one of the content-types we do accept instead (application/json) and make sure the body is in the corresponding format.\"}]}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "9vLgjdjc7yH5Kq5t7rZnoAfuaa_SzOftHGcejPusX-8",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates",
+        "headers": {
+          "content-type": "application/json",
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "768",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": "{\"name\":\"mcp-inspect-plan\",\"milestones\":[{\"name\":\"Canary\",\"sortOrder\":0,\"strategies\":[{\"sortOrder\":0,\"strategyName\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"10\",\"stickiness\":\"default\",\"groupId\":\"mcp-inspected-parent\"}}],\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"name\":\"Half\",\"sortOrder\":1,\"strategies\":[{\"sortOrder\":0,\"strategyName\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"50\",\"stickiness\":\"default\",\"groupId\":\"mcp-inspected-parent\"}}],\"transitionCondition\":{\"type\":\"exposure\",\"minimumExposures\":5}},{\"name\":\"Everyone\",\"sortOrder\":2,\"strategies\":[{\"sortOrder\":0,\"strategyName\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"mcp-inspected-parent\"}}]}]}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "1682",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"id\":\"01M6DV0Y6AR56Z2HNG3T7BA7Y4\",\"name\":\"mcp-inspect-plan\",\"createdAt\":\"2026-11-02T09:56:36.167Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":17,\"milestones\":[{\"id\":\"01M6DV0Y6C2T0H6VREFDNYNARS\",\"name\":\"Canary\",\"sortOrder\":0,\"releasePlanDefinitionId\":\"01M6DV0Y6AR56Z2HNG3T7BA7Y4\",\"strategies\":[{\"id\":\"01M6DV0Y6DZ5GKK9BWKFS4PTEJ\",\"milestoneId\":\"01M6DV0Y6C2T0H6VREFDNYNARS\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"10\",\"stickiness\":\"default\",\"groupId\":\"mcp-inspected-parent\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"id\":\"01M6DV0Y6ED1RA10ZK7NMT2RAR\",\"name\":\"Half\",\"sortOrder\":1,\"releasePlanDefinitionId\":\"01M6DV0Y6AR56Z2HNG3T7BA7Y4\",\"strategies\":[{\"id\":\"01M6DV0Y6F8NF11KH606JYESGH\",\"milestoneId\":\"01M6DV0Y6ED1RA10ZK7NMT2RAR\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"50\",\"stickiness\":\"default\",\"groupId\":\"mcp-inspected-parent\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"transitionCondition\":{\"type\":\"exposure\",\"minimumExposures\":5}},{\"id\":\"01M6DV0Y6HA7M2RJGS73GK2174\",\"name\":\"Everyone\",\"sortOrder\":2,\"releasePlanDefinitionId\":\"01M6DV0Y6AR56Z2HNG3T7BA7Y4\",\"strategies\":[{\"id\":\"01M6DV0Y6J2WZSRRSMYNPR1VCZ\",\"milestoneId\":\"01M6DV0Y6HA7M2RJGS73GK2174\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"mcp-inspected-parent\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}]}]}",
           "trailers": {}
         }
       ],

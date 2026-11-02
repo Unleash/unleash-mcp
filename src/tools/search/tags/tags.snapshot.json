@@ -50,46 +50,6 @@
     }
   },
   {
-    "hash": "XRqm8wBqapVuSC4WlxEF6h6Vewo3uuUa3Qu2VQ8N_kc",
-    "snapshot": {
-      "request": {
-        "method": "POST",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/tags",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "44",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"type\":\"simple\",\"value\":\"mcp-searched-tag\"}"
-      },
-      "responses": [
-        {
-          "statusCode": 201,
-          "headers": {
-            "content-length": "64",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "location": "tags/simple/mcp-searched-tag",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"version\":1,\"tag\":{\"type\":\"simple\",\"value\":\"mcp-searched-tag\"}}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
     "hash": "nWRVU6K34smak80bWRZve-PyRyZiDXpadEqJE-djsZQ",
     "snapshot": {
       "request": {
@@ -157,6 +117,46 @@
             "x-permitted-cross-domain-policies": "none"
           },
           "body": "{\"version\":1,\"tags\":[{\"type\":\"simple\",\"value\":\"new\"},{\"type\":\"simple\",\"value\":\"rserw\"},{\"type\":\"simple\",\"value\":\"mateusz\"},{\"type\":\"simple\",\"value\":\"to_delete\"},{\"type\":\"simple\",\"value\":\"export\"},{\"type\":\"simple\",\"value\":\"import\"},{\"type\":\"simple\",\"value\":\"test\"},{\"type\":\"simple\",\"value\":\"rwar\"},{\"type\":\"simple\",\"value\":\"slack\"},{\"type\":\"simple\",\"value\":\"admin\"},{\"type\":\"simple\",\"value\":\"123\"},{\"type\":\"simple\",\"value\":\"aadfsada\"},{\"type\":\"simple\",\"value\":\"dsat4566\"},{\"type\":\"simple\",\"value\":\"transaction\"},{\"type\":\"simple\",\"value\":\"tes\"},{\"type\":\"simple\",\"value\":\"best-tag\"},{\"type\":\"simple\",\"value\":\"FARO\"},{\"type\":\"simple\",\"value\":\"exported\"},{\"type\":\"simple\",\"value\":\"billing\"},{\"type\":\"simple\",\"value\":\"newtags\"},{\"type\":\"simple\",\"value\":\"newtag55\"},{\"type\":\"simple\",\"value\":\"internet\"},{\"type\":\"simple\",\"value\":\"brandA\"},{\"type\":\"simple\",\"value\":\"branch\"},{\"type\":\"simple\",\"value\":\"easter\"},{\"type\":\"simple\",\"value\":\"demotag\"},{\"type\":\"simple\",\"value\":\"\\\"a b c\\\"\"},{\"type\":\"simple\",\"value\":\"test space tags\"},{\"type\":\"simple\",\"value\":\"new2\"},{\"type\":\"simple\",\"value\":\"next\"},{\"type\":\"simple\",\"value\":\"ab:cd\"},{\"type\":\"simple\",\"value\":\"ab@cd\"},{\"type\":\"simple\",\"value\":\"datadog\"},{\"type\":\"simple\",\"value\":\"deprecated\"},{\"type\":\"simple\",\"value\":\"test2\"},{\"type\":\"simple\",\"value\":\"https://sandbox.getunleash.io/enterprise/tag-types\"},{\"type\":\"simple\",\"value\":\"jira\"},{\"type\":\"simple\",\"value\":\"delete\"},{\"type\":\"simple\",\"value\":\"simon\"},{\"type\":\"simple\",\"value\":\"test_gff\"},{\"type\":\"simple\",\"value\":\"new_value\"},{\"type\":\"simple\",\"value\":\"new_Value1\"},{\"type\":\"simple\",\"value\":\"htag\"},{\"type\":\"simple\",\"value\":\"probably-ok ✨\"},{\"type\":\"simple\",\"value\":\"definitely-not-ok 💀\"},{\"type\":\"simple\",\"value\":\"bla\"},{\"type\":\"simple\",\"value\":\"mcp-inspect\"},{\"type\":\"simple\",\"value\":\"mcp-search\"},{\"type\":\"simple\",\"value\":\"mcp-created\"},{\"type\":\"simple\",\"value\":\"mcp-defined\"},{\"type\":\"simple\",\"value\":\"mcp-redefined\"},{\"type\":\"simple\",\"value\":\"mcp-a\"},{\"type\":\"simple\",\"value\":\"mcp-b\"},{\"type\":\"simple\",\"value\":\"mcp-searched-tag\"}]}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "XRqm8wBqapVuSC4WlxEF6h6Vewo3uuUa3Qu2VQ8N_kc",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/tags",
+        "headers": {
+          "content-type": "application/json",
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "44",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": "{\"type\":\"simple\",\"value\":\"mcp-searched-tag\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "headers": {
+            "content-length": "64",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "location": "tags/simple/mcp-searched-tag",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"version\":1,\"tag\":{\"type\":\"simple\",\"value\":\"mcp-searched-tag\"}}",
           "trailers": {}
         }
       ],

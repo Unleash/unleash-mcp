@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { transcoded } from './testSnapshot.ts';
+import { sorted, transcoded } from './testSnapshot.ts';
 
 const entry = (body: string, stamped?: { timestamp: string }) => [
   {
@@ -21,4 +21,17 @@ const writtenByUndici = entry('eyJuYW1lIjoiZmxhZyJ9', { timestamp: '2026-10-30T0
 test('round-trips bodies between the checked-in text and the base64 undici reads, dropping the recording timestamp', () => {
   assert.deepEqual(transcoded(checkedIn, 'utf8', 'base64'), readByUndici);
   assert.deepEqual(transcoded(writtenByUndici, 'base64', 'utf8'), checkedIn);
+});
+
+const request = (method: string, url: string, body?: string) => ({
+  hash: `${method} ${url}`,
+  snapshot: { request: { method, url, body }, responses: [], callCount: 0 },
+});
+
+test('orders entries by request, so a recording does not depend on which response arrived first', () => {
+  const flag = request('GET', 'https://unleash.example/features/a');
+  const project = request('GET', 'https://unleash.example/projects/p');
+  const create = request('POST', 'https://unleash.example/features', '{"name":"a"}');
+
+  assert.deepEqual(sorted([project, create, flag]), [flag, project, create]);
 });

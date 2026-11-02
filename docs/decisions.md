@@ -462,3 +462,7 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 ## 2026-10-30 — docs tool
 
 - `ask` is renamed `docs`: Claude Code didn't invoke `ask`. A client that defers tools shows only the name, and `ask` didn't say it holds the docs. Its sentence says the docs are current, so the agent reads them rather than answering from memory. Supersedes the name in "ask tool" (2026-10-29). Rejected: `answer_unleash_open_questions`, as "open questions" reads as unresolved issues; `search_docs`, too close to `search`.
+
+## 2026-11-02 — Snapshots record in a stable order
+
+- A snapshot's entries are sorted by request after recording, since undici writes them as the responses arrive and a tool's parallel requests leave that to the network; `pnpm test:record` runs one test file at a time, since files recorded together saw each other's flags and settings in their bodies. Together they keep a re-recording's diff to the ids and timestamps Unleash assigns. Rejected: masking those timestamps and renumbering the ids, which a spike showed removes most of the remaining diff at the price of snapshots that no longer show what Unleash sent; a re-recording is checked by replaying it, not by reading its diff.
