@@ -116,9 +116,11 @@ export const createServer = (
   server.registerTool(
     'release',
     {
+      title: 'Manage feature rollouts',
       description: `${outcomes.release} Where the environment requires change requests, the release goes into a change request submitted for review instead of being applied.`,
       inputSchema: releaseInput,
       outputSchema: releaseOutput,
+      annotations: { readOnlyHint: false, destructiveHint: true },
     },
     async (input) => {
       const result = await release(input);
@@ -129,9 +131,11 @@ export const createServer = (
   server.registerTool(
     'experiment',
     {
+      title: 'Run or stop an experiment',
       description: `${outcomes.experiment} Where the environment requires change requests, the experiment goes into a change request submitted for review instead of being applied.`,
       inputSchema: experimentInput,
       outputSchema: experimentOutput,
+      annotations: { readOnlyHint: false, destructiveHint: true },
     },
     async (input) => {
       const result = await experiment(input);
@@ -142,9 +146,11 @@ export const createServer = (
   server.registerTool(
     'kill_switch',
     {
+      title: 'Manage kill switches',
       description: `${outcomes.kill_switch} Where the environment requires change requests, the switch goes into a change request submitted for review instead of being applied.`,
       inputSchema: killSwitchInput,
       outputSchema: killSwitchOutput,
+      annotations: { readOnlyHint: false, destructiveHint: true },
     },
     async (input) => {
       const result = await killSwitch(input);
@@ -156,6 +162,7 @@ export const createServer = (
   server.registerTool(
     'inspect',
     {
+      title: 'See flag, project and segment details',
       description: `${outcomes.inspect} Takes ids as search returns them. One result per query, in the order asked.`,
       inputSchema: inspectInput,
       outputSchema: inspectOutput,
@@ -168,6 +175,7 @@ export const createServer = (
   server.registerTool(
     'search',
     {
+      title: 'Find flags, projects and segments',
       description: `${outcomes.search} One result per query, in the order asked.`,
       inputSchema: searchInput,
       outputSchema: searchOutput,
@@ -179,6 +187,7 @@ export const createServer = (
   server.registerTool(
     'evaluate',
     {
+      title: 'Check whether a user gets a feature',
       description: `${outcomes.evaluate} Takes flag names as search returns them and environments as inspecting the project lists them. One result per query, in the order asked.`,
       inputSchema: evaluateInput,
       outputSchema: evaluateOutput,
@@ -190,9 +199,11 @@ export const createServer = (
   server.registerTool(
     'configure',
     {
+      title: 'Manage projects, segments and context fields',
       description: `${outcomes.configure} Takes ids and names as search returns them; inspect an item first to replace it, since a replace drops what is left out. Applies the changes in order and reports each one.`,
       inputSchema: configureInput,
       outputSchema: configureOutput,
+      annotations: { readOnlyHint: false, destructiveHint: true },
     },
     async (input) => toToolResult(await configure(input)),
   );
@@ -200,9 +211,11 @@ export const createServer = (
   server.registerTool(
     'manage_flag',
     {
+      title: 'Create, change or archive a flag',
       description: `${outcomes.manage_flag} Applies the operations in order and reports each one.`,
       inputSchema: manageFlagInput,
       outputSchema: manageFlagOutput,
+      annotations: { readOnlyHint: false, destructiveHint: true },
     },
     async (input) => toToolResult(await manageFlag(input)),
   );
@@ -210,6 +223,7 @@ export const createServer = (
   server.registerTool(
     'audit',
     {
+      title: 'See what changed in Unleash',
       description: `${outcomes.audit} Takes project ids, flag names, environments and event types as search returns them.`,
       inputSchema: auditInput,
       outputSchema: auditOutput,
@@ -224,6 +238,7 @@ export const createServer = (
   server.registerTool(
     'docs',
     {
+      title: 'Read the Unleash docs',
       description: [
         outcomes.docs,
         'Returns the index of the Unleash docs, a link and summary per page. Read the pages that bear on the question, and the pages they link to, as many as you need to answer; cite the ones you used.',
@@ -244,6 +259,7 @@ export const createServer = (
     server.registerTool(
       'send_feedback',
       {
+        title: 'Send anonymous feedback to Unleash',
         description: `${outcomes.send_feedback} Call it before replying to the user. Not after a successful tool call, unless the user had to correct you or supply what a tool should have. Never to report a failure of send_feedback itself. Don't ask the user whether to send it: the server asks for their consent itself. After a disabled result, don't call it again this session.`,
         inputSchema: sendFeedbackInput,
         outputSchema: sendFeedbackOutput,

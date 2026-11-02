@@ -470,3 +470,7 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 ## 2026-11-02 — Lists a call takes are capped
 
 - Every top-level list a tool takes (`queries`, `changes`, `operations`) is capped at 10, what one agent turn needs: without a cap one call could flood Unleash, which must stay light. Rejected: caps sized to a flags search page (20 to 50), too big in requests, output tokens.
+
+## 2026-11-02 — Tool annotations
+
+- Every tool has a title and the applicable hint, as the Connectors Directory requires. It counts any change to data as destructive, so all five tools that change Unleash are, and Claude prompts before each call. `send_feedback` stays non-destructive: it adds an anonymous report, changes nothing in the user's Unleash, and the server asks for consent itself.

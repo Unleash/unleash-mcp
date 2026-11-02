@@ -293,6 +293,35 @@ test('tools that write list inputs that refuse unknown keys at every level', asy
   await client.close();
 });
 
+test('every tool has a title', async () => {
+  const { unleash: stubbed } = createStubbedClient();
+  const client = await connectClient(stubbed, async () => ({ kind: 'sent' }));
+
+  const { tools } = await client.listTools();
+  const untitled = tools.filter(({ title }) => !title).map(({ name }) => name);
+
+  assert.deepEqual(untitled, []);
+  await client.close();
+});
+
+// Clients run the first list without asking and prompt before the second, so a new tool has to pick one.
+// send_feedback is in neither: it changes nothing of the user's.
+test('clients can tell which tools only read and which change data', async () => {
+  const { unleash: stubbed } = createStubbedClient();
+  const client = await connectClient(stubbed, async () => ({ kind: 'sent' }));
+
+  const { tools } = await client.listTools();
+  const marked = (hint: 'readOnlyHint' | 'destructiveHint') =>
+    tools
+      .filter(({ annotations }) => annotations?.[hint])
+      .map(({ name }) => name)
+      .sort();
+
+  assert.deepEqual(marked('readOnlyHint'), ['audit', 'docs', 'evaluate', 'inspect', 'search']);
+  assert.deepEqual(marked('destructiveHint'), ['configure', 'experiment', 'kill_switch', 'manage_flag', 'release']);
+  await client.close();
+});
+
 const writes = ({ annotations }: Tool): boolean => !annotations?.readOnlyHint;
 
 // The paths of the objects in a tool's input that accept keys they don't list.
