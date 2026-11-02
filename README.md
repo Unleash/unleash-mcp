@@ -15,6 +15,7 @@ An MCP server that lets AI agents work with Unleash the way you'd work in the Un
 | `manage_flag`   | Define flags, set a parent dependency, mark flags completed, archive and revive them. Doesn't delete flags.                                                                                  | "Archive the old-banner flag."                                  |
 | `configure`     | Change context fields and their legal values, segments, tag types and tags, release templates and projects.                                                                                  | "Create a beta-testers segment for userId 1, 2 and 3."          |
 | `audit`         | Read what changed, who changed it and when, over at most 31 days.                                                                                                                            | "What changed in production yesterday?"                         |
+| `docs`          | Answer questions about feature flag practices and Unleash itself from the current Unleash documentation.                                                                                     | "How should I clean up old flags?"                              |
 | `send_feedback` | Report to Unleash where the server fell short. Asks you first, unless `UNLEASH_MCP_SEND_FEEDBACK` decides.                                                                                   | None: the agent calls it on its own.                            |
 
 ## Install locally
@@ -71,13 +72,13 @@ You need Node 24 or later and pnpm.
 
 ## Configure the local server
 
-| Variable                    | Required | Description                                                                                                        |
-| --------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------ |
-| `UNLEASH_BASE_URL`          | Yes      | URL of your Unleash instance, such as `https://sandbox.getunleash.io/enterprise`.                                  |
-| `UNLEASH_PAT`               | Yes      | Personal access token the server calls Unleash with.                                                               |
-| `UNLEASH_MCP_SEND_FEEDBACK` | No       | `true` sends reports without asking, `false` leaves `send_feedback` out. Unset, you are asked on the first report. |
-| `UNLEASH_FEEDBACK_URL`      | No       | Unleash instance that receives `send_feedback` reports. Unset, reports fail.                                       |
-| `UNLEASH_MCP_CONFIG_DIR`    | No       | Directory that keeps your answer, `feedback_consent.json`. Defaults to your platform config directory.             |
+| Variable                    | Required | Description                                                                                                                    |
+| --------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `UNLEASH_BASE_URL`          | Yes      | URL of your Unleash instance, such as `https://sandbox.getunleash.io/enterprise`.                                              |
+| `UNLEASH_PAT`               | Yes      | Personal access token the server calls Unleash with.                                                                           |
+| `UNLEASH_MCP_SEND_FEEDBACK` | No       | `true` sends reports without asking, `false` leaves `send_feedback` out. Unset, you are asked on the first report.             |
+| `UNLEASH_FEEDBACK_URL`      | No       | Unleash instance that receives `send_feedback` reports. Unset, Unleash's instance (https://eu.app.unleash-hosted.com/hosted/). |
+| `UNLEASH_MCP_CONFIG_DIR`    | No       | Directory that keeps your answer, `feedback_consent.json`. Defaults to your platform config directory.                         |
 
 `send_feedback` sends anonymous reports to Unleash when the server fell short: a tool error, a request no tool supports, or a wrong result. A report names the tool, the error and the MCP client the agent runs in. Say yes to help us fix what doesn't work for you.
 

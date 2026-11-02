@@ -69,24 +69,6 @@ test('posts to the feedback instance even when its URL ends in a slash', async (
   assert.deepEqual(output, { kind: 'sent' });
 });
 
-test('fails without asking the user or calling anything when no feedback instance is configured', async () => {
-  const fetch: typeof globalThis.fetch = () => assert.fail('no feedback instance to call');
-
-  const output = await createSendFeedback({
-    fetch,
-    mcpVersion: '2.0.0',
-    feedbackBaseUrl: undefined,
-    consent: () => assert.fail('the user was asked'),
-  })({ issueType: 'tool_error', summary: 'Release failed.' }, { ask });
-
-  assert.deepEqual(output, {
-    kind: 'failed',
-    status: 0,
-    name: 'NotConfigured',
-    reasons: ['No feedback instance is configured: set UNLEASH_FEEDBACK_URL'],
-  });
-});
-
 test('tells the agent feedback is off, without posting, when the user does not consent', async () => {
   const fetch: typeof globalThis.fetch = () => assert.fail('the report was posted');
   let askedIn: string | undefined;
