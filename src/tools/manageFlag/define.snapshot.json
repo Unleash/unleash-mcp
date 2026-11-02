@@ -1,143 +1,5 @@
 [
   {
-    "hash": "HWxa--K5wyOXWf-ayXHHm5LJJWcFbrsYhplnzVFZlJs",
-    "snapshot": {
-      "request": {
-        "method": "GET",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-defined-flag",
-        "headers": {
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": ""
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "1338",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-defined-flag\",\"favorite\":false,\"impressionData\":false,\"description\":\"Degrades checkout and payments gracefully\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T09:11:03.818Z\",\"createdBy\":{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T09:11:04.073Z\"},\"links\":[{\"id\":\"01M6617MPDXQ257AGBBWRA9K64\",\"url\":\"https://example.com/ticket/42\",\"title\":null,\"feature\":\"mcp-defined-flag\"}],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"}]}}",
-          "trailers": {}
-        },
-        {
-          "statusCode": 404,
-          "headers": {
-            "content-length": "208",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-defined-flag\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-defined-flag\\\" in project \\\"mcp-server\\\".\"}]}",
-          "trailers": {}
-        },
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "1275",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-defined-flag\",\"favorite\":false,\"impressionData\":false,\"description\":\"Degrades checkout gracefully\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T09:12:07.477Z\",\"createdBy\":{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[],\"children\":[],\"links\":[{\"id\":\"01M6619BAM5J46MMEXCV93XA4X\",\"url\":\"https://github.com/Unleash/unleash-mcp/pull/1\",\"title\":\"Pull request\",\"feature\":\"mcp-defined-flag\"}],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"}]}}",
-          "trailers": {}
-        },
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "1338",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-defined-flag\",\"favorite\":false,\"impressionData\":false,\"description\":\"Degrades checkout and payments gracefully\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T09:12:07.477Z\",\"createdBy\":{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-10-30T09:12:08.168Z\"},\"links\":[{\"id\":\"01M6619GXW2F5YD9HZH9B8BSB9\",\"url\":\"https://example.com/ticket/42\",\"title\":null,\"feature\":\"mcp-defined-flag\"}],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"}]}}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "4JAp6zZDOIBu9xHO9dvH5fioT4eN4j-eeuF36g6xO6Y",
-    "snapshot": {
-      "request": {
-        "method": "DELETE",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-defined-flag",
-        "headers": {
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": ""
-      },
-      "responses": [
-        {
-          "statusCode": 202,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "",
-          "trailers": {}
-        },
-        {
-          "statusCode": 202,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
     "hash": "IFbmP8hqxhGfcNi7UYYnG5f9FFgVLAcAjvKfBRm0hk0",
     "snapshot": {
       "request": {
@@ -188,6 +50,217 @@
     }
   },
   {
+    "hash": "4JAp6zZDOIBu9xHO9dvH5fioT4eN4j-eeuF36g6xO6Y",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-defined-flag",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "106",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"No feature flag found\",\"details\":[{\"message\":\"No feature flag found\"}]}",
+          "trailers": {}
+        },
+        {
+          "statusCode": 202,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "q6bLv2qdyReKtmAm72MesGvGPKZADtwGin9ymNFF-z8",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-defined-flag/link/01M6DV1BX9MFF6YPJ9HPWCX9H3",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 204,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "0tSiG6w08LR2hDCH5s3leeMYQYN0VNbiBUmBOcIp5FM",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/features/mcp-defined-flag/tags",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "80",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"version\":1,\"tags\":[{\"type\":\"simple\",\"value\":\"mcp-defined\",\"color\":\"#FFFFFF\"}]}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "HWxa--K5wyOXWf-ayXHHm5LJJWcFbrsYhplnzVFZlJs",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-defined-flag",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "208",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-defined-flag\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-defined-flag\\\" in project \\\"mcp-server\\\".\"}]}",
+          "trailers": {}
+        },
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "208",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-defined-flag\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-defined-flag\\\" in project \\\"mcp-server\\\".\"}]}",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "1275",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-defined-flag\",\"favorite\":false,\"impressionData\":false,\"description\":\"Degrades checkout gracefully\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-11-02T09:56:49.999Z\",\"createdBy\":{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[],\"children\":[],\"links\":[{\"id\":\"01M6DV1BX9MFF6YPJ9HPWCX9H3\",\"url\":\"https://github.com/Unleash/unleash-mcp/pull/1\",\"title\":\"Pull request\",\"feature\":\"mcp-defined-flag\"}],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"}]}}",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "1338",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-defined-flag\",\"favorite\":false,\"impressionData\":false,\"description\":\"Degrades checkout and payments gracefully\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-11-02T09:56:49.999Z\",\"createdBy\":{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-02T09:56:50.657Z\"},\"links\":[{\"id\":\"01M6DV1CHFKRHDVB4T8GJH02ZN\",\"url\":\"https://example.com/ticket/42\",\"title\":null,\"feature\":\"mcp-defined-flag\"}],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"}]}}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
     "hash": "K9EC4a0JuFrw2AEUWZzDXIP6RcDV1YVdTrrfgnTe5QY",
     "snapshot": {
       "request": {
@@ -219,7 +292,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcp-defined-flag\",\"description\":\"Degrades checkout gracefully\",\"type\":\"kill-switch\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T09:12:07.477Z\",\"impressionData\":false,\"archived\":false}",
+          "body": "{\"name\":\"mcp-defined-flag\",\"description\":\"Degrades checkout gracefully\",\"type\":\"kill-switch\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-11-02T09:56:49.999Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],
@@ -227,38 +300,35 @@
     }
   },
   {
-    "hash": "FSO-lLRrE48sz1RIjjyNmgwXd3OUdxZElLDf2PNmxsQ",
+    "hash": "TaXr9e2tgKaVBIdAPa6yDgG99ywjWKLXhk9Z7RFkP2c",
     "snapshot": {
       "request": {
-        "method": "PUT",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/features/mcp-defined-flag/tags",
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-defined-flag/link",
         "headers": {
           "content-type": "application/json",
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
-          "content-length": "72",
+          "content-length": "39",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
-        "body": "{\"addedTags\":[{\"type\":\"simple\",\"value\":\"mcp-defined\"}],\"removedTags\":[]}"
+        "body": "{\"url\":\"https://example.com/ticket/42\"}"
       },
       "responses": [
         {
-          "statusCode": 200,
+          "statusCode": 204,
           "headers": {
-            "content-length": "80",
             "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"version\":1,\"tags\":[{\"type\":\"simple\",\"value\":\"mcp-defined\",\"color\":\"#FFFFFF\"}]}",
+          "body": "",
           "trailers": {}
         }
       ],
@@ -302,58 +372,21 @@
     }
   },
   {
-    "hash": "I0fX8JzqbORw1E8ixC_RK0OSlB8UUbsnP10hifDZe9k",
+    "hash": "FSO-lLRrE48sz1RIjjyNmgwXd3OUdxZElLDf2PNmxsQ",
     "snapshot": {
       "request": {
         "method": "PUT",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-defined-flag",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/features/mcp-defined-flag/tags",
         "headers": {
           "content-type": "application/json",
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
-          "content-length": "117",
+          "content-length": "72",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
-        "body": "{\"type\":\"kill-switch\",\"description\":\"Degrades checkout and payments gracefully\",\"stale\":false,\"impressionData\":false}"
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-length": "222",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"name\":\"mcp-defined-flag\",\"description\":\"Degrades checkout and payments gracefully\",\"type\":\"kill-switch\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-10-30T09:12:07.477Z\",\"impressionData\":false,\"archived\":false}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "0tSiG6w08LR2hDCH5s3leeMYQYN0VNbiBUmBOcIp5FM",
-    "snapshot": {
-      "request": {
-        "method": "GET",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/features/mcp-defined-flag/tags",
-        "headers": {
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": ""
+        "body": "{\"addedTags\":[{\"type\":\"simple\",\"value\":\"mcp-defined\"}],\"removedTags\":[]}"
       },
       "responses": [
         {
@@ -417,69 +450,38 @@
     }
   },
   {
-    "hash": "vI9kP-zInL2_ChVUfd0rFZ_KNKodobwE6XPBaZxntgY",
+    "hash": "I0fX8JzqbORw1E8ixC_RK0OSlB8UUbsnP10hifDZe9k",
     "snapshot": {
       "request": {
-        "method": "DELETE",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-defined-flag/link/01M6619BAM5J46MMEXCV93XA4X",
-        "headers": {
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": ""
-      },
-      "responses": [
-        {
-          "statusCode": 204,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "TaXr9e2tgKaVBIdAPa6yDgG99ywjWKLXhk9Z7RFkP2c",
-    "snapshot": {
-      "request": {
-        "method": "POST",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-defined-flag/link",
+        "method": "PUT",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-server/features/mcp-defined-flag",
         "headers": {
           "content-type": "application/json",
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
-          "content-length": "39",
+          "content-length": "117",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
-        "body": "{\"url\":\"https://example.com/ticket/42\"}"
+        "body": "{\"type\":\"kill-switch\",\"description\":\"Degrades checkout and payments gracefully\",\"stale\":false,\"impressionData\":false}"
       },
       "responses": [
         {
-          "statusCode": 204,
+          "statusCode": 200,
           "headers": {
+            "content-length": "222",
             "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
             "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
             "x-content-type-options": "nosniff",
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "",
+          "body": "{\"name\":\"mcp-defined-flag\",\"description\":\"Degrades checkout and payments gracefully\",\"type\":\"kill-switch\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-11-02T09:56:49.999Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],

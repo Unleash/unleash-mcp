@@ -7,7 +7,7 @@ import { join } from 'node:path';
 
 /** Rewrites a snapshot undici just recorded into the checked-in form. */
 export const decodeBodies = (snapshotPath: string): void =>
-  writeEntries(snapshotPath, transcoded(readEntries(snapshotPath), 'base64', 'utf8'));
+  writeEntries(snapshotPath, sorted(transcoded(readEntries(snapshotPath), 'base64', 'utf8')));
 
 /** The checked-in snapshot with its bodies encoded back for undici to replay, in a file of its own that `remove` deletes. */
 export const encodedCopyOf = (snapshotPath: string): { path: string; remove: () => void } => {
@@ -18,7 +18,8 @@ export const encodedCopyOf = (snapshotPath: string): { path: string; remove: () 
 };
 
 type RecordedResponse = { body: string; [key: string]: unknown };
-type Snapshot = { timestamp?: string; responses: RecordedResponse[]; [key: string]: unknown };
+type RecordedRequest = { method: string; url: string; body?: string; [key: string]: unknown };
+type Snapshot = { timestamp?: string; request: RecordedRequest; responses: RecordedResponse[]; [key: string]: unknown };
 type Entry = { hash: string; snapshot: Snapshot };
 
 /**
@@ -33,6 +34,13 @@ export const transcoded = (entries: Entry[], from: BufferEncoding, to: BufferEnc
       responses: snapshot.responses.map((r) => ({ ...r, body: Buffer.from(r.body, from).toString(to) })),
     },
   }));
+
+// undici writes the entries in the order the responses arrived, which a tool's parallel requests leave to the network;
+// an order the requests decide keeps a re-recording's diff to what matters.
+export const sorted = (entries: Entry[]): Entry[] =>
+  [...entries].sort((a, b) => requestKey(a).localeCompare(requestKey(b)));
+const requestKey = ({ snapshot: { request } }: Entry): string =>
+  `${request.method} ${request.url} ${request.body ?? ''}`;
 
 const readEntries = (path: string): Entry[] => JSON.parse(readFileSync(path, 'utf8'));
 const writeEntries = (path: string, entries: Entry[]): void => writeFileSync(path, JSON.stringify(entries, null, 2));

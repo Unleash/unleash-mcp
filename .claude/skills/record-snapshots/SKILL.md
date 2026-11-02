@@ -7,11 +7,10 @@ description: Re-record the Unleash HTTP snapshots that tests replay. Use after a
 
 1. Make sure `.env` exists (copy `.env.example`) with a PAT for the Unleash sandbox (`UNLEASH_PAT`) and an admin PAT for setup and teardown (`UNLEASH_ADMIN_PAT`). Ask the driver if either is missing; never invent credentials.
 2. The sandbox needs the project `mcp-server`; the tests set up the rest (see `.claude/rules/testing.md`).
-3. Run `pnpm test:record`. It runs the tests against the real Unleash and rewrites the `*.snapshot.json` files next to them.
+3. Run `pnpm test:record`. It runs the test files one at a time against the real Unleash, so no file sees another's flags, and rewrites the `*.snapshot.json` files next to them.
 4. Review the snapshot diff: no tokens or secrets, no unrelated churn.
 5. Run `pnpm test` to confirm the replay passes and stays subsecond.
 
 ## When a recording goes wrong
 
-- The sandbox can answer `502 Bad Gateway` when every file records at once. A snapshot holding a 5xx response is wrong even if the test passed; re-record that file on its own: `UNLEASH_SNAPSHOT_MODE=record node --env-file=.env --test <file>`.
-- `project.test.ts` changes the change request settings of `mcp-server` while it runs. A file recorded alongside it can see its writes answered as a change request; re-record that file on its own too.
+- The sandbox can answer `502 Bad Gateway`. A snapshot holding a 5xx response is wrong even if the test passed; re-record that file on its own: `UNLEASH_SNAPSHOT_MODE=record node --env-file=.env --test <file>`.
