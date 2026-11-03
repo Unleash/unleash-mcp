@@ -4,6 +4,7 @@ import { production, stubChangeRequestsIn } from '../../unleash/testChangeReques
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { cancelChangeRequest, deleteFlag, deleteReleaseTemplate, deleteSegmentNamed } from '../../unleash/testSetup.ts';
+import { createReleaseTemplate } from '../configure/releaseTemplate.ts';
 import { createSegment } from '../configure/segment.ts';
 import { createRelease } from './release.ts';
 import { releaseInput } from './releaseInput.ts';
@@ -26,40 +27,17 @@ before(async () => {
   const created = await createSegment(admin, { kind: 'segment', action: 'create', name: segment, constraints: [] });
   assert(created.kind === 'applied');
   segmentId = created.id;
-  // The OpenAPI spec omits the body (it is `createReleasePlanTemplateSchema`).
-  const plan = await admin.POST('/api/admin/release-plan-templates', {
-    body: {
-      name: template,
-      milestones: [
-        {
-          name: 'Internal',
-          sortOrder: 0,
-          strategies: [
-            {
-              sortOrder: 0,
-              strategyName: 'flexibleRollout',
-              title: 'Internal',
-              parameters: { rollout: '100', stickiness: 'default', groupId: flag },
-            },
-          ],
-        },
-        {
-          name: 'Everyone',
-          sortOrder: 1,
-          strategies: [
-            {
-              sortOrder: 0,
-              strategyName: 'flexibleRollout',
-              title: 'Everyone',
-              parameters: { rollout: '100', stickiness: 'default', groupId: flag },
-            },
-          ],
-        },
-      ],
-    } as never,
+  const plan = await createReleaseTemplate(admin, {
+    kind: 'release_template',
+    action: 'create',
+    name: template,
+    milestones: [
+      { name: 'Internal', targets: [{ name: 'Internal', rollout: 100 }] },
+      { name: 'Everyone', targets: [{ name: 'Everyone', rollout: 100 }] },
+    ],
   });
-  assert(plan.data);
-  templateId = plan.data.id;
+  assert(plan.kind === 'applied' && typeof plan.id === 'string');
+  templateId = plan.id;
 });
 // The change request goes first, and the flag before the segment and the template:
 // Unleash may refuse to delete a segment or a template that is in use.
