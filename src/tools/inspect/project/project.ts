@@ -1,5 +1,6 @@
 import type { UnleashClient } from '../../../unleash/client.ts';
 import { type Failed, toFailed } from '../../shared/failed.ts';
+import { projectUrl } from '../../shared/uiUrl.ts';
 import type { ProjectQuery } from '../inspectInput.ts';
 import type { Project } from '../inspectOutput.ts';
 
@@ -14,6 +15,7 @@ export const inspectProject = async (unleash: UnleashClient, { project }: Projec
   return {
     kind: 'project',
     name,
+    url: projectUrl(unleash, project),
     ...(description ? { description } : {}),
     mode: mode ?? 'open',
     environments: (found.data.environments ?? []).map((e) => e.environment),

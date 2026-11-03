@@ -25,6 +25,8 @@ const gradual = (rollout: string) => ({
 });
 const features = '/api/admin/projects/{projectId}/features';
 const flagPath = `/api/admin/projects/${project}/features/${flag}`;
+const recordedUrl = `${unleash.baseUrl}/projects/${project}/features/${flag}`;
+const stubbedUrl = `https://unleash.example/projects/${project}/features/${flag}`;
 const tagsPath = `/api/admin/features/${flag}/tags`;
 const pendingPath = `/api/admin/projects/${project}/change-requests/pending/${flag}`;
 // Stubbed tests that are not about change requests skip reading them.
@@ -128,6 +130,7 @@ test('describes a flag with its lifecycle, environments, who worked on it, its p
   assert.partialDeepStrictEqual(output, {
     kind: 'flag',
     name: flag,
+    url: recordedUrl,
     type: 'kill-switch',
     staleness: 'active',
     lifecycle: { stage: 'define' },
@@ -212,6 +215,7 @@ test('names the lifecycle stage as the Unleash UI does, with its status', async 
   assert.deepEqual(output, {
     kind: 'flag',
     name: flag,
+    url: stubbedUrl,
     type: 'release',
     staleness: 'active',
     lifecycle: { stage: 'cleanup', status: 'kept', enteredAt: '2026-10-21T09:00:00.000Z' },
@@ -245,6 +249,7 @@ test('treats a transition without a type as time based', async () => {
   assert.deepEqual(output, {
     kind: 'flag',
     name: flag,
+    url: stubbedUrl,
     type: 'release',
     staleness: 'active',
     environments: [
@@ -268,7 +273,14 @@ test('tells when a person marked the flag stale', async () => {
 
   const output = await inspectFlag(unleash, openSource, now, { kind: 'flag', project, flag });
 
-  assert.deepEqual(output, { kind: 'flag', name: flag, type: 'release', staleness: 'stale', environments: [] });
+  assert.deepEqual(output, {
+    kind: 'flag',
+    name: flag,
+    url: stubbedUrl,
+    type: 'release',
+    staleness: 'stale',
+    environments: [],
+  });
 });
 
 test('tells when the flag is past its expected lifetime and nobody marked it stale', async () => {
@@ -283,6 +295,7 @@ test('tells when the flag is past its expected lifetime and nobody marked it sta
   assert.deepEqual(output, {
     kind: 'flag',
     name: flag,
+    url: stubbedUrl,
     type: 'release',
     staleness: 'potentially_stale',
     expectedLifetimeEndsAt: '2024-03-19T13:53:30.828Z',
@@ -307,6 +320,7 @@ test('tells when an SDK last saw the flag in each environment', async () => {
   assert.deepEqual(output, {
     kind: 'flag',
     name: flag,
+    url: stubbedUrl,
     type: 'release',
     staleness: 'active',
     environments: [
@@ -363,6 +377,7 @@ test('tells which values the parent must serve', async () => {
   assert.deepEqual(output, {
     kind: 'flag',
     name: flag,
+    url: stubbedUrl,
     type: 'release',
     staleness: 'active',
     environments: [],
@@ -382,6 +397,7 @@ test('tells when the parent must be off', async () => {
   assert.deepEqual(output, {
     kind: 'flag',
     name: flag,
+    url: stubbedUrl,
     type: 'release',
     staleness: 'active',
     environments: [],
@@ -448,6 +464,7 @@ test('lists the change requests waiting with changes to the flag, linked to the 
   assert.deepEqual(output, {
     kind: 'flag',
     name: flag,
+    url: stubbedUrl,
     type: 'release',
     staleness: 'active',
     environments: [],

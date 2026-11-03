@@ -63,7 +63,7 @@ test("sends left out settings as Unleash's defaults", async () => {
     changeRequestEnvironments: [{ name: 'production' }],
   });
 
-  assert.deepEqual(output, { kind: 'applied', id: 'mcp-project' });
+  assert.deepEqual(output, { kind: 'applied', id: 'mcp-project', url: 'https://unleash.example/projects/mcp-project' });
 });
 
 test('fails with the Unleash error when the project cannot be created', async () => {

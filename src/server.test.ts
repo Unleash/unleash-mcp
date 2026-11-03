@@ -189,7 +189,14 @@ test('inspect tool returns its results as structured content and as text', async
 
   const results = {
     results: [
-      { kind: 'project', name: project, mode: 'open', environments: ['development'], defaultStickiness: 'default' },
+      {
+        kind: 'project',
+        name: project,
+        url: `https://unleash.example/projects/${project}`,
+        mode: 'open',
+        environments: ['development'],
+        defaultStickiness: 'default',
+      },
     ],
   };
   assert.deepEqual(result, { structuredContent: results, content: [{ type: 'text', text: JSON.stringify(results) }] });

@@ -20,6 +20,7 @@ const flagNaming = z.object({
 const project = z.object({
   kind: z.literal('project'),
   name: z.string(),
+  url: z.string().describe('Where the project is in the Unleash UI; quote it instead of building a link'),
   description: z.string().optional().describe('Set when the project has one'),
   mode: z
     .enum(['open', 'protected', 'private'])
@@ -78,6 +79,7 @@ const pendingChangeRequest = changeRequest.extend({ environment: z.string() });
 const flag = z.object({
   kind: z.literal('flag'),
   name: z.string(),
+  url: z.string().describe('Where the flag is in the Unleash UI; quote it instead of building a link'),
   type: flagType,
   lifecycle: lifecycle.optional().describe('Where the flag is in its life'),
   staleness: staleness.describe(
