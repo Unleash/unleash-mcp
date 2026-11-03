@@ -2,6 +2,7 @@ import { z } from 'zod';
 import type { components } from '../../unleash/api.d.ts';
 import type { UnleashClient } from '../../unleash/client.ts';
 import { type Failed, toFailed } from './failed.ts';
+import { changeRequestUrl } from './uiUrl.ts';
 
 const uiConfig = '/api/admin/ui-config';
 const config = '/api/admin/projects/{projectId}/change-requests/config';
@@ -100,7 +101,7 @@ export type Changes = components['schemas']['changeRequestOneOrManyCreateSchema'
 export const changeRequest = z.object({
   id: z.number(),
   state: z.string(),
-  url: z.string().describe('Where people review it in the Unleash UI'),
+  url: z.string().describe('Where people review it in the Unleash UI; quote it instead of building a link'),
 });
 
 export type ChangeRequest = z.infer<typeof changeRequest>;
@@ -150,9 +151,5 @@ const submitForReview = async (
     },
   };
 };
-
-/** The Unleash UI's route for a change request, where people review it. */
-export const changeRequestUrl = ({ baseUrl }: UnleashClient, projectId: string, id: number): string =>
-  `${baseUrl}/projects/${encodeURIComponent(projectId)}/change-requests/${id}`;
 
 const submit: components['schemas']['changeRequestStateSchema'] = { state: 'In review' };

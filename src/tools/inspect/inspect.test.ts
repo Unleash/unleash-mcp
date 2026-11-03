@@ -44,8 +44,22 @@ test('answers each query in the order asked, failures included', async () => {
   assert.deepEqual(output, {
     results: [
       { kind: 'failed', status: 404, name: 'NotFoundError', reasons: ['No project found'] },
-      { kind: 'project', name: 'Known', mode: 'open', environments: ['development'], defaultStickiness: 'userId' },
-      { kind: 'flag', name: 'mcp-flag', type: 'release', staleness: 'active', environments: [] },
+      {
+        kind: 'project',
+        name: 'Known',
+        url: 'https://unleash.example/projects/known',
+        mode: 'open',
+        environments: ['development'],
+        defaultStickiness: 'userId',
+      },
+      {
+        kind: 'flag',
+        name: 'mcp-flag',
+        url: 'https://unleash.example/projects/known/features/mcp-flag',
+        type: 'release',
+        staleness: 'active',
+        environments: [],
+      },
       { kind: 'context_field', name: 'tier', stickiness: true },
       { kind: 'segment', id: 7, name: 'Beta', constraints: [], createdAt: '2026-10-22T08:00:00.000Z' },
     ],

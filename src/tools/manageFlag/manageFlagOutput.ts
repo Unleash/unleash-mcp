@@ -21,6 +21,7 @@ const applied = z.discriminatedUnion('action', [
     changed: z
       .array(changed)
       .describe('What was written after the flag was read or created; empty when an existing flag already matched'),
+    url: z.string().describe('Where the flag is in the Unleash UI; quote it instead of building a link'),
   }),
   z.object({ kind: z.literal('applied'), ...complete }),
   z.object({ kind: z.literal('applied'), ...setStaleness }),
@@ -59,7 +60,10 @@ export const manageFlagOutput = {
 export type ManageFlagOutput = z.infer<z.ZodObject<typeof manageFlagOutput>>;
 export type ManageFlagResult = z.infer<typeof result>;
 export type Changed = z.infer<typeof changed>;
-/** What a step answers. Only define says whether it created the flag and what it wrote. The tool adds the operation it answers. */
-export type Outcome = { kind: 'applied'; origin?: 'created' | 'found'; changed?: Changed[] } | Failed;
+/**
+ * What a step answers. Only define says whether it created the flag, what it wrote and where the flag is in the UI.
+ * The tool adds the operation it answers.
+ */
+export type Outcome = { kind: 'applied'; origin?: 'created' | 'found'; changed?: Changed[]; url?: string } | Failed;
 /** What a step answers when the operation waits for approval: the change request holding it. */
 export type PendingChange = { kind: 'pending_change_request'; changeRequest: ChangeRequest };

@@ -1,9 +1,10 @@
 import type { UnleashClient } from '../../unleash/client.ts';
 import { type Failed, toFailed } from '../shared/failed.ts';
+import { projectUrl } from '../shared/uiUrl.ts';
 import type { CreateProject, UpdateProject } from './configureInput.ts';
 import type { Outcome } from './configureOutput.ts';
 
-/** Creates a project, answering with the id Unleash picks for it so later changes can refer to it. */
+/** Creates a project, answering with the id Unleash picks for it so later changes can refer to it, and where it is in the UI. */
 export const createProject = async (
   unleash: UnleashClient,
   { name, description, mode, defaultStickiness, environments, changeRequestEnvironments }: CreateProject,
@@ -23,7 +24,7 @@ export const createProject = async (
     },
   });
   if (!created.response.ok || !created.data) return toFailed(created);
-  return { kind: 'applied', id: created.data.id };
+  return { kind: 'applied', id: created.data.id, url: projectUrl(unleash, created.data.id) };
 };
 
 /**

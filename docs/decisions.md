@@ -236,6 +236,12 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 - Every change request result carries a `url` to the change request in the Unleash UI, so people can open it instead of looking it up by number.
 - The link is built from our `UNLEASH_BASE_URL`, the address the user configured. Rejected: Unleash's own `unleashUrl` from `ui-config`, which self-hosted instances that never set it report as `http://localhost:4242`.
 
+## 2026-11-03 — UI links on created and inspected resources
+
+- A created project, a defined flag and an inspected project or flag carry a `url` to it in the Unleash UI, built from the configured base URL as change request links are (2026-10-26), so an instance's base path such as `/enterprise` stays in. Rejected: letting agents build the link from the host, which drops the base path.
+- The field is required: the base URL is always known, and an optional field makes agents null-check. Update and delete results carry none, as they carry no id: the create or inspect before them answered it.
+- The description says to quote the link instead of building one. Search rows carry none: they are many and rarely quoted, and an inspect answers one.
+
 ## 2026-10-26 — `manage_flag` tool
 
 - `flag_lifecycle` is renamed `manage_flag`: everything about a flag itself (defining it, its parent, its lifecycle, archive, revive and delete). Who gets the feature stays in `release`. Rejected: putting the parent in `configure` or in a tool of its own.

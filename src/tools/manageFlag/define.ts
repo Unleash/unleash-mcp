@@ -4,6 +4,7 @@ import { type Failed, toFailed } from '../shared/failed.ts';
 import type { FlagType } from '../shared/flagType.ts';
 import type { Link } from '../shared/link.ts';
 import type { Tag } from '../shared/tag.ts';
+import { flagUrl } from '../shared/uiUrl.ts';
 import type { Define } from './manageFlagInput.ts';
 import type { Changed, Outcome } from './manageFlagOutput.ts';
 
@@ -42,7 +43,12 @@ const defineNew = async (
   if (syncedTags.kind === 'failed') return syncedTags;
   const syncedLinks = await syncLinks(unleash, { path, current: [], listed: links });
   if (syncedLinks.kind === 'failed') return syncedLinks;
-  return { kind: 'applied', origin: 'created', changed: [...syncedTags.changed, ...syncedLinks.changed] };
+  return {
+    kind: 'applied',
+    origin: 'created',
+    changed: [...syncedTags.changed, ...syncedLinks.changed],
+    url: flagUrl(unleash, path.projectId, path.featureName),
+  };
 };
 
 // The flag read leaves the tags out, so they are read when some are listed.
@@ -62,6 +68,7 @@ const defineExisting = async (
     kind: 'applied',
     origin: 'found',
     changed: [...syncedDetails.changed, ...syncedTags.changed, ...syncedLinks.changed],
+    url: flagUrl(unleash, path.projectId, path.featureName),
   };
 };
 

@@ -6,6 +6,7 @@ import { inspectProject } from './project.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./project.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server';
+const url = `${unleash.baseUrl}/projects/${project}`;
 const flagNaming = { pattern: '^mcp-[a-z-]+$', example: 'mcp-flag', description: 'mcp, dash, lowercase words' };
 
 // Every flag the tests create has to match the pattern.
@@ -23,6 +24,7 @@ test('shows the settings, environments and flag naming pattern of a project', as
   assert.deepEqual(output, {
     kind: 'project',
     name: 'mcp-server',
+    url,
     mode: 'open',
     environments: ['development', 'production'],
     defaultStickiness: 'default',

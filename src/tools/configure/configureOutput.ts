@@ -108,6 +108,7 @@ const applied = z.discriminatedUnion('resource', [
       kind: z.literal('applied'),
       ...createdProject,
       id: z.string().describe('Project id, as other changes and tools take it'),
+      url: z.string().describe('Where the project is in the Unleash UI; quote it instead of building a link'),
     }),
     z.object({ kind: z.literal('applied'), ...updatedProject }),
   ]),
@@ -147,7 +148,10 @@ export const configureOutput = {
 export type ConfigureOutput = z.infer<z.ZodObject<typeof configureOutput>>;
 export type ConfigureResult = z.infer<typeof result>;
 export type Target = z.infer<typeof target>;
-/** What a step answers, with the id Unleash gave a created resource that has one. The tool adds the change it answers. */
-export type Outcome = { kind: 'applied'; id?: string | number } | Failed;
+/**
+ * What a step answers, with the id Unleash gave a created resource that has one, and its UI link where people open it.
+ * The tool adds the change it answers.
+ */
+export type Outcome = { kind: 'applied'; id?: string | number; url?: string } | Failed;
 /** What a step answers when the change waits for approval: the change request holding it. */
 export type PendingChange = { kind: 'pending_change_request'; changeRequest: ChangeRequest };

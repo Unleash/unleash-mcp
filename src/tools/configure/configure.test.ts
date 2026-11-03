@@ -87,7 +87,7 @@ test('answers a created segment with its id', async () => {
   });
 });
 
-test('answers a created project with its id', async () => {
+test('answers a created project with its id and its link in the UI', async () => {
   const { unleash, stub } = createStubbedClient();
   stub
     .intercept({ path: '/api/admin/projects', method: 'POST' })
@@ -97,7 +97,16 @@ test('answers a created project with its id', async () => {
   const output = await configure({ changes: [{ kind: 'project', action: 'create', name: 'Pet shop' }] });
 
   assert.deepEqual(output, {
-    results: [{ kind: 'applied', resource: 'project', action: 'create', name: 'Pet shop', id: 'pet-shop' }],
+    results: [
+      {
+        kind: 'applied',
+        resource: 'project',
+        action: 'create',
+        name: 'Pet shop',
+        id: 'pet-shop',
+        url: 'https://unleash.example/projects/pet-shop',
+      },
+    ],
   });
 });
 

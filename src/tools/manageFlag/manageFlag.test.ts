@@ -57,7 +57,15 @@ test('applies the operations after a failed one, naming the operation each resul
         flag: 'gone',
         error: { status: 404, name: 'NotFoundError', reasons: [message] },
       },
-      { kind: 'applied', action: 'define', project: 'web', flag: 'checkout', origin: 'created', changed: [] },
+      {
+        kind: 'applied',
+        action: 'define',
+        project: 'web',
+        flag: 'checkout',
+        origin: 'created',
+        changed: [],
+        url: 'https://unleash.example/projects/web/features/checkout',
+      },
       {
         kind: 'pending_change_request',
         action: 'archive',

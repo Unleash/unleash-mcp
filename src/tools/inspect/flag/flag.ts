@@ -1,7 +1,7 @@
 import type { Clock } from '../../../clock.ts';
 import type { components } from '../../../unleash/api.d.ts';
 import type { UnleashClient } from '../../../unleash/client.ts';
-import { changeRequestUrl, type EditionReader } from '../../shared/changeRequest.ts';
+import type { EditionReader } from '../../shared/changeRequest.ts';
 import { toConstraint, type UnleashConstraint } from '../../shared/constraint.ts';
 import { type Failed, toFailed } from '../../shared/failed.ts';
 import { toFlagState } from '../../shared/flagState.ts';
@@ -12,6 +12,7 @@ import type { Parent } from '../../shared/parent.ts';
 import { toStaleness } from '../../shared/staleness.ts';
 import type { Tag } from '../../shared/tag.ts';
 import type { Target, Value } from '../../shared/target.ts';
+import { changeRequestUrl, flagUrl } from '../../shared/uiUrl.ts';
 import type { FlagQuery } from '../inspectInput.ts';
 import type {
   Environment,
@@ -61,6 +62,7 @@ export const inspectFlag = async (
   return {
     kind: 'flag',
     name,
+    url: flagUrl(unleash, project, name),
     type: type as FlagType,
     ...(lifecycle ? { lifecycle: toLifecycle(lifecycle) } : {}),
     staleness: toStaleness(stale, lifetimeEndsAt, now()),
