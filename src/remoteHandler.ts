@@ -40,14 +40,18 @@ export const createRemoteHandler =
     const replies: JSONRPCMessage[] = [];
     const send = transport.send.bind(transport);
     transport.send = async (message, options) => {
-      await send(message, options);
       replies.push(message);
+      await send(message, options);
     };
     res.on('close', () => {
       transport.close().catch(() => {});
       server.close().catch(() => {});
     });
     await server.connect(transport);
-    await transport.handleRequest(req, res, parsedBody);
+    // handleRequest never settles when the client hangs up before the reply, so a closed response ends the wait too.
+    await Promise.race([
+      transport.handleRequest(req, res, parsedBody),
+      new Promise((resolve) => res.once('close', resolve)),
+    ]);
     return toMcpRequestSummary(parsedBody, replies);
   };

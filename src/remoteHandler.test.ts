@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { once } from 'node:events';
-import { createServer } from 'node:http';
+import { createServer, request } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { json } from 'node:stream/consumers';
 import { test } from 'node:test';
@@ -14,23 +14,26 @@ const serve = async (
   fetch: typeof globalThis.fetch,
   baseUrl: string,
   options: Omit<RemoteHandlerOptions, 'baseUrl'>,
-  requestSummaries: McpRequestSummary[],
 ) => {
   const handle = createRemoteHandler(fetch)({ baseUrl, ...options });
-  // Parses the body first, as Unleash's Express does, so the stream is already read when the handler gets it.
-  const server = createServer(async (req, res) => {
-    const parsedBody = req.method === 'POST' ? await json(req) : undefined;
-    const requestSummary = await handle(req, res, { authHeaders: { Authorization: 'user-session' }, parsedBody });
-    if (requestSummary) requestSummaries.push(requestSummary);
+  const handled: Promise<McpRequestSummary | undefined>[] = [];
+  const server = createServer((req, res) => {
+    handled.push(
+      (async () => {
+        // Parses the body first, as Unleash's Express does, so the stream is already read when the handler gets it.
+        const parsedBody = req.method === 'POST' ? await json(req) : undefined;
+        return handle(req, res, { authHeaders: { Authorization: 'user-session' }, parsedBody });
+      })(),
+    );
   });
   await once(server.listen(0), 'listening');
-  return server;
+  const requestSummaries = async () => (await Promise.all(handled)).filter((summary) => summary !== undefined);
+  return { server, requestSummaries };
 };
 
 const connect = async (options: Omit<RemoteHandlerOptions, 'baseUrl'>) => {
   const { baseUrl, fetch, stub } = createStubbedFetch();
-  const requestSummaries: McpRequestSummary[] = [];
-  const server = await serve(fetch, baseUrl, options, requestSummaries);
+  const { server, requestSummaries } = await serve(fetch, baseUrl, options);
   const client = new Client({ name: 'test-client', version: '0.0.0' });
   await client.connect(
     new StreamableHTTPClientTransport(new URL(`http://localhost:${(server.address() as AddressInfo).port}`)),
@@ -79,31 +82,50 @@ test('summarises each tool call for the host, without its arguments', async () =
     .intercept({ path: (path) => path.startsWith('/api/admin/'), method: 'GET' })
     .reply(403, { name: 'NoAccessError' })
     .times(2);
-  try {
-    await client.callTool({ name: 'search', arguments: { queries: [{ kind: 'projects', query: 'secret-launch' }] } });
-    await client.callTool({ name: 'audit', arguments: {} });
-    await client.callTool({ name: 'no_such_tool', arguments: {} });
 
-    assert.deepEqual(requestSummaries, [
-      {
-        kind: 'tool_call',
-        tool: 'search',
-        outcome: {
-          kind: 'succeeded',
-          resultBytes: 80,
-          results: { total: 1, failed: [{ name: 'NoAccessError', status: 403 }] },
-        },
-      },
-      {
-        kind: 'tool_call',
-        tool: 'audit',
-        outcome: { kind: 'failed', resultBytes: 77, error: { name: 'NoAccessError', status: 403 } },
-      },
-      { kind: 'unknown_tool_call', outcome: { kind: 'refused', resultBytes: 45 } },
-    ]);
-  } finally {
-    await close();
-  }
+  await client.callTool({ name: 'search', arguments: { queries: [{ kind: 'projects', query: 'secret-launch' }] } });
+  await client.callTool({ name: 'audit', arguments: {} });
+  await client.callTool({ name: 'no_such_tool', arguments: {} });
+  // The client's open event stream only ends when it disconnects.
+  await close();
+
+  assert.deepEqual(await requestSummaries(), [
+    {
+      kind: 'tool_result',
+      tool: 'search',
+      results: 1,
+      errors: [{ name: 'NoAccessError', status: 403 }],
+      resultBytes: 80,
+    },
+    {
+      kind: 'tool_result',
+      tool: 'audit',
+      results: 1,
+      errors: [{ name: 'NoAccessError', status: 403 }],
+      resultBytes: 77,
+    },
+    { kind: 'protocol_error' },
+  ]);
+});
+
+test('summarises a tool call the client hangs up on before the tool replies', async () => {
+  const hangUp = async () => {
+    call.destroy();
+    return new Promise<Response>(() => {});
+  };
+  const { server, requestSummaries } = await serve(hangUp, 'http://unleash.test', { feedbackConsent: 'denied' });
+  const call = request({
+    port: (server.address() as AddressInfo).port,
+    method: 'POST',
+    headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream' },
+  });
+  call.on('error', () => {});
+
+  call.end(JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'audit', arguments: {} } }));
+  await once(server, 'request');
+
+  assert.deepEqual(await requestSummaries(), [{ kind: 'no_reply', tool: 'audit' }]);
+  server.close();
 });
 
 test('offers send_feedback when the host has the consent to send it', async () => {
