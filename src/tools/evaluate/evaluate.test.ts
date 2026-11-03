@@ -6,7 +6,9 @@ import { unleashError } from '../../unleash/testError.ts';
 import { deleteFlag, deleteSegmentNamed } from '../../unleash/testSetup.ts';
 import { createSegment } from '../configure/segment.ts';
 import { defineFlag } from '../manageFlag/define.ts';
+import { setParentDependency } from '../manageFlag/setParentDependency.ts';
 import { createRelease } from '../release/release.ts';
+import type { ChangeRequestReader } from '../shared/changeRequest.ts';
 import { createEvaluate } from './evaluate.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./evaluate.snapshot.json', import.meta.url).pathname);
@@ -36,6 +38,9 @@ const sdkOnlyUnknown = {
   matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] },
 };
 let segmentId = 0;
+
+// Stubbed: the real reader finds production needs approval and opens a change request instead of writing.
+const withoutChangeRequests: ChangeRequestReader = async () => ({ kind: 'environments', environments: [] });
 
 const addTarget = (featureName: string, env: string, body: components['schemas']['createFeatureStrategySchema']) =>
   admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies', {
@@ -113,10 +118,13 @@ before(async () => {
   await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on', {
     params: { path: { projectId: project, featureName: child, environment } },
   });
-  await admin.POST('/api/admin/projects/{projectId}/features/{child}/dependencies', {
-    params: { path: { projectId: project, child } },
-    body: { feature: parent },
+  const linked = await setParentDependency(admin, withoutChangeRequests, {
+    action: 'set_parent_dependency',
+    project,
+    flag: child,
+    parent: { state: 'enabled', flag: parent },
   });
+  assert(linked.kind === 'applied');
 });
 after(async () => {
   await deleteSetup();
