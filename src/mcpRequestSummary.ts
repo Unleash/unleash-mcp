@@ -1,5 +1,4 @@
 import {
-  CallToolRequestParamsSchema,
   type CallToolResult,
   CallToolResultSchema,
   isJSONRPCErrorResponse,
@@ -29,8 +28,7 @@ export type McpRequestSummary =
   | { kind: 'sdk_error'; tool?: ToolName }
   | { kind: 'no_reply'; tool?: ToolName };
 
-const toolName = CallToolRequestParamsSchema.pick({ name: true });
-const isToolName = (name: string): name is ToolName => toolNames.some((known) => known === name);
+const toolCall = z.object({ name: z.enum(toolNames) });
 const isResponse = (message: JSONRPCMessage): message is JSONRPCResultResponse | JSONRPCErrorResponse =>
   isJSONRPCResultResponse(message) || isJSONRPCErrorResponse(message);
 
@@ -40,8 +38,7 @@ export const toMcpRequestSummary = (
   ending: 'replied' | 'hung_up',
 ): McpRequestSummary | undefined => {
   if (!isJSONRPCRequest(body) || body.method !== 'tools/call') return undefined;
-  const name = toolName.safeParse(body.params).data?.name;
-  const tool = name && isToolName(name) ? name : undefined;
+  const tool = toolCall.safeParse(body.params).data?.name;
   const named = tool ? { tool } : {};
   const reply = replies.filter(isResponse).find((response) => response.id === body.id);
   if (!reply) return { kind: ending === 'hung_up' ? 'no_reply' : 'sdk_error', ...named };

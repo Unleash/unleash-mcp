@@ -5,7 +5,7 @@ import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { ElicitRequestSchema, type Tool } from '@modelcontextprotocol/sdk/types.js';
 import { createServer } from './server.ts';
 import type { SendFeedback } from './tools/sendFeedback/sendFeedback.ts';
-import { reportableTools } from './tools/sendFeedback/sendFeedbackInput.ts';
+import { reportableTools } from './tools/toolNames.ts';
 import type { UnleashClient } from './unleash/client.ts';
 import { createRecordedClient, createStubbedClient } from './unleash/testClient.ts';
 import { createProjectNamed } from './unleash/testSetup.ts';
