@@ -17,11 +17,10 @@ type ToolError = z.infer<typeof toolError>;
 type ToolResult = { results: number; errors: ToolError[]; resultBytes: number };
 
 /**
- * `sdk_error` is the SDK answering instead of a tool: an unknown tool, malformed or invalid arguments, a tool that
- * threw, or a request the transport turned away.
- * `no_reply` is the client hanging up before the tool replied.
+ * `sdk_error`: the SDK answered instead of a tool, such as an unknown tool, bad arguments or a request it turned away.
+ * `no_reply`: the client hung up first.
  * `resultBytes` counts only the text the agent reads, since a success carries its JSON twice.
- * A name that is not one of this server's tools came from the client, so it never leaves the package.
+ * `tool` is left out for a name this server doesn't have, since the client made it up.
  */
 export type McpRequestSummary =
   | ({ kind: 'tool_result'; tool: ToolName } & ToolResult)
