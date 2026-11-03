@@ -4,6 +4,9 @@ import { createRecordedClient, createStubbedClient } from '../../../unleash/test
 import { unleashError } from '../../../unleash/testError.ts';
 import { deleteFlag, deleteSegmentNamed } from '../../../unleash/testSetup.ts';
 import { createSegment } from '../../configure/segment.ts';
+import { defineFlag } from '../../manageFlag/define.ts';
+import type { Define } from '../../manageFlag/manageFlagInput.ts';
+import { setStaleness } from '../../manageFlag/setStaleness.ts';
 import { createRelease } from '../../release/release.ts';
 import { searchFlags } from './flags.ts';
 
@@ -14,7 +17,6 @@ const second = 'mcp-searched-second';
 const archived = 'mcp-searched-archived';
 const user = 17;
 const segment = 'mcp-searched-segment';
-const features = '/api/admin/projects/{projectId}/features';
 let segmentId = 0;
 
 const deleteFlags = async (): Promise<void> => {
@@ -23,19 +25,18 @@ const deleteFlags = async (): Promise<void> => {
   await deleteFlag(admin, project, archived);
 };
 
+const define = async (definition: Omit<Define, 'action' | 'project'>): Promise<void> => {
+  const defined = await defineFlag(admin, { action: 'define', project, ...definition });
+  assert(defined.kind === 'applied' && defined.origin === 'created');
+};
+
 before(async () => {
   await deleteFlags();
-  await admin.POST(features, { params: { path: { projectId: project } }, body: { name: first, type: 'kill-switch' } });
-  await admin.POST('/api/admin/features/{featureName}/tags', {
-    params: { path: { featureName: first } },
-    body: { type: 'simple', value: 'mcp-search' },
-  });
-  await admin.PATCH('/api/admin/projects/{projectId}/features/{featureName}', {
-    params: { path: { projectId: project, featureName: first } },
-    body: [{ op: 'replace', path: '/stale', value: true }],
-  });
-  await admin.POST(features, { params: { path: { projectId: project } }, body: { name: second } });
-  await admin.POST(features, { params: { path: { projectId: project } }, body: { name: archived } });
+  await define({ flag: first, type: 'kill-switch', tags: [{ type: 'simple', value: 'mcp-search' }] });
+  await define({ flag: second });
+  await define({ flag: archived });
+  const staled = await setStaleness(admin, { action: 'set_staleness', project, flag: first, staleness: 'stale' });
+  assert(staled.kind === 'applied');
   await deleteSegmentNamed(admin, segment);
   const created = await createSegment(admin, { kind: 'segment', action: 'create', name: segment, constraints: [] });
   segmentId = created.kind === 'applied' ? created.id : 0;
