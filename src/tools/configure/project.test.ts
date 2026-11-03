@@ -16,10 +16,14 @@ let updatedId = '';
 before(async () => {
   for (const n of names) await deleteProjectNamed(admin, n);
   // Created by the user, not the admin: only its owner, which its creator becomes, may change a project.
-  const created = await unleash.POST('/api/admin/projects', {
-    body: { name: toUpdate, mode: 'open', defaultStickiness: 'default', environments: ['development'] },
+  const created = await createProject(unleash, {
+    kind: 'project',
+    action: 'create',
+    name: toUpdate,
+    environments: ['development'],
   });
-  updatedId = created.data?.id ?? '';
+  assert(created.kind === 'applied' && typeof created.id === 'string');
+  updatedId = created.id;
 });
 after(async () => {
   for (const n of names) await deleteProjectNamed(admin, n);

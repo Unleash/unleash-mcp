@@ -19,7 +19,7 @@ const deleteTypes = async (): Promise<void> => {
 before(async () => {
   await deleteTypes();
   for (const name of [updatable, deletable])
-    await admin.POST('/api/admin/tag-types', { body: { name, description: 'Before' } });
+    await createTagType(admin, { kind: 'tag_type', action: 'create', name, description: 'Before' });
 });
 after(async () => {
   await deleteTypes();

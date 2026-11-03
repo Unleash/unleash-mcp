@@ -69,8 +69,14 @@ test('fails with the Unleash error when the segment name is taken', async () => 
   assert.deepEqual(output, { kind: 'failed', status: 409, name: 'NameExistsError', reasons: [message] });
 });
 
+const segmentNamed = async (name: string, project?: string): Promise<number> => {
+  const created = await createSegment(admin, { kind: 'segment', action: 'create', name, project, constraints: [] });
+  assert(created.kind === 'applied');
+  return created.id;
+};
+
 test('replaces a segment', async () => {
-  const id = (await admin.POST('/api/admin/segments', { body: { name: updatable, constraints: [] } })).data?.id ?? 0;
+  const id = await segmentNamed(updatable);
 
   const output = await updateSegment(unleash, environmentsOf, {
     kind: 'segment',
@@ -100,7 +106,7 @@ test('fails with the Unleash error when the segment to update does not exist', a
 });
 
 test('deletes a segment', async () => {
-  const id = (await admin.POST('/api/admin/segments', { body: { name: deletable, constraints: [] } })).data?.id ?? 0;
+  const id = await segmentNamed(deletable);
 
   const output = await deleteSegment(unleash, environmentsOf, { kind: 'segment', action: 'delete', id });
 
@@ -123,8 +129,7 @@ test('fails with a reason when a flag still targets the segment, which Unleash l
 
 // `mcp-server` requires change requests in production.
 test('puts the update of a segment in a change request where the project requires one', async () => {
-  const id =
-    (await admin.POST('/api/admin/segments', { body: { name: reviewed, project, constraints: [] } })).data?.id ?? 0;
+  const id = await segmentNamed(reviewed, project);
 
   const output = await updateSegment(unleash, environmentsOf, {
     kind: 'segment',
@@ -141,9 +146,7 @@ test('puts the update of a segment in a change request where the project require
 });
 
 test('puts the deletion of a segment in a change request where the project requires one', async () => {
-  const id =
-    (await admin.POST('/api/admin/segments', { body: { name: reviewedDeletion, project, constraints: [] } })).data
-      ?.id ?? 0;
+  const id = await segmentNamed(reviewedDeletion, project);
 
   const output = await deleteSegment(unleash, environmentsOf, { kind: 'segment', action: 'delete', id, project });
 

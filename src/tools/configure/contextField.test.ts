@@ -51,8 +51,12 @@ test('fails with the Unleash error when the context field exists', async () => {
 });
 
 test('replaces a context field', async () => {
-  await admin.POST('/api/admin/context', {
-    body: { name: updatable, stickiness: true, legalValues: [{ value: 'gold' }] },
+  await createContextField(admin, {
+    kind: 'context_field',
+    action: 'create',
+    name: updatable,
+    stickiness: true,
+    legalValues: [{ value: 'gold' }],
   });
 
   const output = await updateContextField(unleash, {
@@ -79,7 +83,7 @@ test('fails with the Unleash error when the context field to update does not exi
 });
 
 test('deletes a context field', async () => {
-  await admin.POST('/api/admin/context', { body: { name: deletable } });
+  await createContextField(admin, { kind: 'context_field', action: 'create', name: deletable });
 
   const output = await deleteContextField(unleash, { kind: 'context_field', action: 'delete', name: deletable });
 
@@ -111,7 +115,7 @@ test('creates a context field in a project', async () => {
 });
 
 test('replaces a context field in a project', async () => {
-  await admin.POST('/api/admin/context', { body: { name: updatableProjectField, project } });
+  await createContextField(admin, { kind: 'context_field', action: 'create', project, name: updatableProjectField });
 
   const output = await updateContextField(unleash, {
     kind: 'context_field',
@@ -125,7 +129,7 @@ test('replaces a context field in a project', async () => {
 });
 
 test('deletes a context field in a project', async () => {
-  await admin.POST('/api/admin/context', { body: { name: deletableProjectField, project } });
+  await createContextField(admin, { kind: 'context_field', action: 'create', project, name: deletableProjectField });
 
   const output = await deleteContextField(unleash, {
     kind: 'context_field',

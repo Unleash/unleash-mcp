@@ -70,7 +70,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "2371",
+            "content-length": "2490",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -81,7 +81,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"version\":1,\"tagTypes\":[{\"name\":\"stage\",\"description\":\"Communicate feature stage\",\"icon\":\"\",\"color\":\"#ff6472\",\"valueCount\":3,\"usedInProjects\":8},{\"name\":\"release\",\"description\":\"Define which release it is part of\",\"icon\":null,\"color\":\"#96D2FA\",\"valueCount\":3,\"usedInProjects\":7},{\"name\":\"deprecated\",\"description\":\"\",\"icon\":null,\"color\":\"#D93644\",\"valueCount\":2,\"usedInProjects\":2},{\"name\":\"test\",\"description\":\"\",\"icon\":null,\"color\":\"#FFFFFF\",\"valueCount\":4,\"usedInProjects\":1},{\"name\":\"broken\",\"description\":\"broken\",\"icon\":null,\"color\":\"#D93644\",\"valueCount\":2,\"usedInProjects\":1},{\"name\":\"slack\",\"description\":\"Slack tag used by the slack-addon to specify the slack channel.\",\"icon\":\"S\",\"color\":\"#68A611\",\"valueCount\":3,\"usedInProjects\":2},{\"name\":\"simple\",\"description\":\"Used to simplify filtering of features\",\"icon\":\"#\",\"color\":\"#FFFFFF\",\"valueCount\":53,\"usedInProjects\":36},{\"name\":\"UX\",\"description\":\"For ux grouping\",\"icon\":null,\"color\":\"#BEBBF3\",\"valueCount\":5,\"usedInProjects\":14},{\"name\":\"role\",\"description\":\"What a flag is used for\",\"icon\":null,\"color\":null,\"valueCount\":1,\"usedInProjects\":2},{\"name\":\"migration-status\",\"description\":\"Created by ld-to-unleash\",\"icon\":null,\"color\":null,\"valueCount\":2,\"usedInProjects\":1},{\"name\":\"tagman\",\"description\":\"migration\\n\",\"icon\":null,\"color\":\"#FFFFFF\",\"valueCount\":2,\"usedInProjects\":2},{\"name\":\"AI\",\"description\":\"Track AI impact for your organization\",\"icon\":null,\"color\":\"#B0D182\",\"valueCount\":6,\"usedInProjects\":4},{\"name\":\"datadog\",\"description\":\"All Datadog tags added to a specific feature are sent to datadog event stream.\",\"icon\":\"D\",\"color\":\"#FFC46F\",\"valueCount\":1,\"usedInProjects\":2},{\"name\":\"group\",\"description\":\"For grouping toggles that go into a release\",\"icon\":null,\"color\":\"#B0D182\",\"valueCount\":6,\"usedInProjects\":10},{\"name\":\"tagname\",\"description\":\"\",\"icon\":null,\"color\":\"#FFFFFF\",\"valueCount\":2,\"usedInProjects\":3},{\"name\":\"new_test_tag\",\"description\":\"testing tags\",\"icon\":null,\"color\":\"#BEBBF3\",\"valueCount\":0,\"usedInProjects\":0},{\"name\":\"update_me_now\",\"description\":\"desc123123\",\"icon\":null,\"color\":\"#FFFFFF\",\"valueCount\":0,\"usedInProjects\":0},{\"name\":\"HenningTag\",\"description\":\"\",\"icon\":null,\"color\":\"#FFFFFF\",\"valueCount\":0,\"usedInProjects\":0},{\"name\":\"mcp-searched-type\",\"description\":\"Created by the MCP server tests\",\"icon\":null,\"color\":null,\"valueCount\":0,\"usedInProjects\":0}]}",
+          "body": "{\"version\":1,\"tagTypes\":[{\"name\":\"stage\",\"description\":\"Communicate feature stage\",\"icon\":\"\",\"color\":\"#ff6472\",\"valueCount\":3,\"usedInProjects\":8},{\"name\":\"release\",\"description\":\"Define which release it is part of\",\"icon\":null,\"color\":\"#96D2FA\",\"valueCount\":4,\"usedInProjects\":9},{\"name\":\"deprecated\",\"description\":\"\",\"icon\":null,\"color\":\"#D93644\",\"valueCount\":2,\"usedInProjects\":2},{\"name\":\"test\",\"description\":\"\",\"icon\":null,\"color\":\"#FFFFFF\",\"valueCount\":4,\"usedInProjects\":1},{\"name\":\"broken\",\"description\":\"broken\",\"icon\":null,\"color\":\"#D93644\",\"valueCount\":2,\"usedInProjects\":1},{\"name\":\"team\",\"description\":\"The team that owns the flag\",\"icon\":null,\"color\":null,\"valueCount\":1,\"usedInProjects\":1},{\"name\":\"slack\",\"description\":\"Slack tag used by the slack-addon to specify the slack channel.\",\"icon\":\"S\",\"color\":\"#68A611\",\"valueCount\":3,\"usedInProjects\":2},{\"name\":\"simple\",\"description\":\"Used to simplify filtering of features\",\"icon\":\"#\",\"color\":\"#FFFFFF\",\"valueCount\":53,\"usedInProjects\":36},{\"name\":\"UX\",\"description\":\"For ux grouping\",\"icon\":null,\"color\":\"#BEBBF3\",\"valueCount\":5,\"usedInProjects\":14},{\"name\":\"role\",\"description\":\"What a flag is used for\",\"icon\":null,\"color\":null,\"valueCount\":1,\"usedInProjects\":2},{\"name\":\"migration-status\",\"description\":\"Created by ld-to-unleash\",\"icon\":null,\"color\":null,\"valueCount\":2,\"usedInProjects\":1},{\"name\":\"tagman\",\"description\":\"migration\\n\",\"icon\":null,\"color\":\"#FFFFFF\",\"valueCount\":2,\"usedInProjects\":2},{\"name\":\"AI\",\"description\":\"Track AI impact for your organization\",\"icon\":null,\"color\":\"#B0D182\",\"valueCount\":6,\"usedInProjects\":4},{\"name\":\"datadog\",\"description\":\"All Datadog tags added to a specific feature are sent to datadog event stream.\",\"icon\":\"D\",\"color\":\"#FFC46F\",\"valueCount\":1,\"usedInProjects\":2},{\"name\":\"group\",\"description\":\"For grouping toggles that go into a release\",\"icon\":null,\"color\":\"#B0D182\",\"valueCount\":6,\"usedInProjects\":10},{\"name\":\"tagname\",\"description\":\"\",\"icon\":null,\"color\":\"#FFFFFF\",\"valueCount\":2,\"usedInProjects\":3},{\"name\":\"new_test_tag\",\"description\":\"testing tags\",\"icon\":null,\"color\":\"#BEBBF3\",\"valueCount\":0,\"usedInProjects\":0},{\"name\":\"update_me_now\",\"description\":\"desc123123\",\"icon\":null,\"color\":\"#FFFFFF\",\"valueCount\":0,\"usedInProjects\":0},{\"name\":\"HenningTag\",\"description\":\"\",\"icon\":null,\"color\":\"#FFFFFF\",\"valueCount\":0,\"usedInProjects\":0},{\"name\":\"mcp-searched-type\",\"description\":\"Created by the MCP server tests\",\"icon\":null,\"color\":null,\"valueCount\":0,\"usedInProjects\":0}]}",
           "trailers": {}
         }
       ],
@@ -89,7 +89,7 @@
     }
   },
   {
-    "hash": "k5bi2efvMumIGcYEu-2RbOchxNQYadHRkcUcTr5QUYs",
+    "hash": "A_DhxGfSBLV5fDCOAtmNLJdoqiBLzaA-jB83SCrJ210",
     "snapshot": {
       "request": {
         "method": "POST",
@@ -99,17 +99,17 @@
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
-          "content-length": "101",
+          "content-length": "76",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
-        "body": "{\"name\":\"mcp-searched-type\",\"description\":\"Created by the MCP server tests\",\"icon\":null,\"color\":null}"
+        "body": "{\"name\":\"mcp-searched-type\",\"description\":\"Created by the MCP server tests\"}"
       },
       "responses": [
         {
           "statusCode": 201,
           "headers": {
-            "content-length": "101",
+            "content-length": "76",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "location": "tag-types/mcp-searched-type",
@@ -121,7 +121,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcp-searched-type\",\"description\":\"Created by the MCP server tests\",\"icon\":null,\"color\":null}",
+          "body": "{\"name\":\"mcp-searched-type\",\"description\":\"Created by the MCP server tests\"}",
           "trailers": {}
         }
       ],
