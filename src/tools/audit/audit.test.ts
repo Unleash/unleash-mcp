@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
 import { deleteFlag } from '../../unleash/testSetup.ts';
+import { defineFlag } from '../manageFlag/define.ts';
+import { searchFlags } from '../search/flags/flags.ts';
 import { createAudit } from './audit.ts';
 import { auditInput } from './auditInput.ts';
 
@@ -20,12 +22,11 @@ const dayBefore = (date: Date): string => dayOf(new Date(date.getTime() - 24 * 6
 
 before(async () => {
   await deleteFlag(admin, project, flag);
-  const created = await admin.POST('/api/admin/projects/{projectId}/features', {
-    params: { path: { projectId: project } },
-    body: { name: flag },
-  });
-  assert(created.data?.createdAt);
-  recordedAt = new Date(created.data.createdAt);
+  const defined = await defineFlag(admin, { action: 'define', project, flag });
+  assert(defined.kind === 'applied' && defined.origin === 'created');
+  const found = await searchFlags(admin, { kind: 'flags', project, query: flag, offset: 0, limit: 1 });
+  assert(found.kind === 'flags' && found.flags[0]?.createdAt);
+  recordedAt = new Date(found.flags[0].createdAt);
   await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on', {
     params: { path: { projectId: project, featureName: flag, environment: 'development' } },
   });
