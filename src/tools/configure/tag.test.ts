@@ -10,11 +10,11 @@ const value = 'mcp-unused-tag';
 
 // A tag exists on its own once created, whether or not a flag has it.
 before(async () => {
-  await admin.DELETE('/api/admin/tags/{type}/{value}', { params: { path: { type, value } } });
+  await deleteTag(admin, { kind: 'tag', action: 'delete', type, value });
   await admin.POST('/api/admin/tags', { body: { type, value } });
 });
 after(async () => {
-  await admin.DELETE('/api/admin/tags/{type}/{value}', { params: { path: { type, value } } });
+  await deleteTag(admin, { kind: 'tag', action: 'delete', type, value });
   await close();
 });
 
