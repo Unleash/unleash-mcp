@@ -1,4 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import { z } from 'zod';
 import pkg from '../package.json' with { type: 'json' };
 import { systemClock } from './clock.ts';
 import { createAudit } from './tools/audit/audit.ts';
@@ -34,7 +36,7 @@ import { createAskUser } from './tools/sendFeedback/consentPrompt.ts';
 import type { SendFeedback } from './tools/sendFeedback/sendFeedback.ts';
 import { sendFeedbackInput } from './tools/sendFeedback/sendFeedbackInput.ts';
 import { sendFeedbackOutput } from './tools/sendFeedback/sendFeedbackOutput.ts';
-import type { Failed } from './tools/shared/failed.ts';
+import { type Failed, failed } from './tools/shared/failed.ts';
 import type { UnleashClient } from './unleash/client.ts';
 
 // Antigravity, Devin and Cursor show the model only text blocks, so a success carries a text copy too.
@@ -49,6 +51,20 @@ const toFailedToolResult = (result: Failed) => ({
   isError: true,
   content: [{ type: 'text' as const, text: JSON.stringify({ result }) }],
 });
+
+const failedToolResult = z.object({ result: failed });
+
+/** Reads back what toFailedToolResult wrote; undefined for any other error result, such as the SDK's own plain text. */
+export const readFailedToolResult = ({ content }: CallToolResult): Failed | undefined => {
+  const [first] = content;
+  if (first?.type !== 'text') return undefined;
+  try {
+    const read = failedToolResult.safeParse(JSON.parse(first.text));
+    return read.success ? read.data.result : undefined;
+  } catch {
+    return undefined;
+  }
+};
 
 // Clients that defer tools show the agent only tool names and these instructions until it loads a tool.
 const outcomes = {

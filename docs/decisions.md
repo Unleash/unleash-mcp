@@ -493,3 +493,8 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 ## 2026-11-04 — Recording sees the pseudonyms too
 
 - While recording, the client masks the email addresses in what the test sees, as the snapshot will, so a test asserting who made a change passes on recording and on replay alike. Rejected: asserting only that the field is there, which stops pinning the mapping.
+
+## 2026-11-03 — Tool outcomes for the host
+
+- The remote handler tells its host how each tool call ended (`onToolOutcome`), so Unleash can add it to its own analytics; the package sends it nowhere itself. It reads the response, not the tool, because the SDK answers unknown tools and invalid arguments before any tool runs. Rejected: Unleash reading the response bytes itself, which breaks silently if the package ever streams.
+- An outcome carries Unleash's error name and status, never its error text or the tool arguments, because Unleash writes it to anonymous analytics and the text can repeat the user's data. The text can come later if the names turn out too vague.

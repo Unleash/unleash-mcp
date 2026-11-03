@@ -7,6 +7,7 @@ import { test } from 'node:test';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { createRemoteHandler, type RemoteHandlerOptions } from './remoteHandler.ts';
+import type { ToolOutcome } from './toolOutcome.ts';
 import { createStubbedFetch } from './unleash/testClient.ts';
 
 const serve = async (
@@ -64,6 +65,35 @@ test('acts in Unleash as the caller, with the auth the host forwards', async () 
     assert.deepEqual(result.structuredContent, {
       results: [{ kind: 'projects', projects: [{ id: 'web', name: 'Web' }] }],
     });
+  } finally {
+    await close();
+  }
+});
+
+test('tells the host how each tool call ended', async () => {
+  const outcomes: ToolOutcome[] = [];
+  const { client, stub, close } = await connect({
+    feedbackConsent: 'denied',
+    onToolOutcome: (outcome) => outcomes.push(outcome),
+  });
+  stub
+    .intercept({ path: (path) => path.startsWith('/api/admin/'), method: 'GET' })
+    .reply(403, { name: 'NoAccessError' })
+    .times(2);
+  try {
+    await client.callTool({ name: 'search', arguments: { queries: [{ kind: 'projects' }] } });
+    await client.callTool({ name: 'audit', arguments: {} });
+    await client.callTool({ name: 'no_such_tool', arguments: {} });
+
+    assert.deepEqual(outcomes, [
+      {
+        kind: 'succeeded',
+        resultBytes: 80,
+        queries: { total: 1, failed: [{ errorName: 'NoAccessError', errorStatus: 403 }] },
+      },
+      { kind: 'failed', resultBytes: 77, errorName: 'NoAccessError', errorStatus: 403 },
+      { kind: 'refused', resultBytes: 45 },
+    ]);
   } finally {
     await close();
   }

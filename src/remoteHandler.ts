@@ -2,15 +2,21 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import pkg from '../package.json' with { type: 'json' };
 import { createServer } from './server.ts';
+import { reportToolOutcome, type ToolOutcome } from './toolOutcome.ts';
 import { granted } from './tools/sendFeedback/consent.ts';
 import { createSendFeedback, defaultFeedbackBaseUrl } from './tools/sendFeedback/sendFeedback.ts';
 import { createUnleashClient } from './unleash/client.ts';
 
 /**
- * What the host decides: where Unleash is, whether its admin agreed to send feedback, and the Unleash instance that receives it
- * (unset, Unleash's own instance).
+ * What the host decides: where Unleash is, whether its admin agreed to send feedback, the Unleash instance that receives it
+ * (unset, Unleash's own instance), and what to do with how a tool call ended, which needs the parsed body.
  */
-export type RemoteHandlerOptions = { baseUrl: string; feedbackConsent: 'granted' | 'denied'; feedbackUrl?: string };
+export type RemoteHandlerOptions = {
+  baseUrl: string;
+  feedbackConsent: 'granted' | 'denied';
+  feedbackUrl?: string;
+  onToolOutcome?: (outcome: ToolOutcome) => void;
+};
 
 /** Serves one MCP request. The host forwards the caller's auth to Unleash, and the body when it has parsed it already. */
 export type McpRequestHandler = (
@@ -25,7 +31,12 @@ export type McpRequestHandler = (
  */
 export const createRemoteHandler =
   (fetch: typeof globalThis.fetch) =>
-  ({ baseUrl, feedbackConsent, feedbackUrl = defaultFeedbackBaseUrl }: RemoteHandlerOptions): McpRequestHandler =>
+  ({
+    baseUrl,
+    feedbackConsent,
+    feedbackUrl = defaultFeedbackBaseUrl,
+    onToolOutcome,
+  }: RemoteHandlerOptions): McpRequestHandler =>
   async (req, res, { authHeaders, parsedBody }) => {
     const unleash = createUnleashClient({ baseUrl, headers: authHeaders, fetch });
     const sendFeedback =
@@ -34,6 +45,7 @@ export const createRemoteHandler =
         : undefined;
     const server = createServer(unleash, fetch, sendFeedback);
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
+    if (onToolOutcome) reportToolOutcome(transport, parsedBody, onToolOutcome);
     res.on('close', () => {
       transport.close().catch(() => {});
       server.close().catch(() => {});
