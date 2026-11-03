@@ -5,6 +5,7 @@ import { stubEnterprise } from '../../../unleash/testChangeRequest.ts';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
 import { deleteFlag, deleteReleaseTemplate } from '../../../unleash/testSetup.ts';
+import { createReleaseTemplate } from '../../configure/releaseTemplate.ts';
 import { defineFlag } from '../../manageFlag/define.ts';
 import type { Define } from '../../manageFlag/manageFlagInput.ts';
 import { setParentDependency } from '../../manageFlag/setParentDependency.ts';
@@ -20,12 +21,6 @@ const parent = 'mcp-inspected-parent';
 const beta = { field: 'userId', operator: 'IN' as const, values: ['1', '2'] };
 const values = [{ name: 'blue', payload: { type: 'string' as const, value: '#00f' }, share: 30 }, { name: 'green' }];
 const template = 'mcp-inspect-plan';
-const gradual = (rollout: string) => ({
-  sortOrder: 0,
-  strategyName: 'flexibleRollout',
-  title: 'Everyone',
-  parameters: { rollout, stickiness: 'default', groupId: parent },
-});
 const flagPath = `/api/admin/projects/${project}/features/${flag}`;
 const recordedUrl = `${unleash.baseUrl}/projects/${project}/features/${flag}`;
 const stubbedUrl = `https://unleash.example/projects/${project}/features/${flag}`;
@@ -43,40 +38,24 @@ const deleteFlags = async (): Promise<void> => {
 
 // Rolls the parent out in development through a release plan at its first milestone, moving on by time and then by exposure.
 const addReleasePlan = async (): Promise<void> => {
-  // The OpenAPI spec omits the body (it is `createReleasePlanTemplateSchema`).
-  const created = await admin.POST('/api/admin/release-plan-templates', {
-    body: {
-      name: template,
-      milestones: [
-        {
-          name: 'Canary',
-          sortOrder: 0,
-          strategies: [gradual('10')],
-          transitionCondition: { type: 'time', intervalMinutes: 60 },
-        },
-        {
-          name: 'Half',
-          sortOrder: 1,
-          strategies: [gradual('50')],
-          transitionCondition: { type: 'exposure', minimumExposures: 5 },
-        },
-        { name: 'Everyone', sortOrder: 2, strategies: [gradual('100')] },
-      ],
-    } as never,
+  const created = await createReleaseTemplate(admin, {
+    kind: 'release_template',
+    action: 'create',
+    name: template,
+    milestones: [
+      { name: 'Canary', targets: [{ name: 'Everyone', rollout: 10 }], advance: { afterMinutes: 60 } },
+      { name: 'Half', targets: [{ name: 'Everyone', rollout: 50 }], advance: { afterExposures: 5 } },
+      { name: 'Everyone', targets: [{ name: 'Everyone', rollout: 100 }] },
+    ],
   });
-  assert(created.data);
-  const path = { project, featureName: parent, environment: 'development' };
-  const plan = await admin.POST(
-    '/api/admin/projects/{project}/features/{featureName}/environments/{environment}/release-plans',
-    { params: { path }, body: { templateId: created.data.id } },
-  );
-  assert(plan.data?.milestones[0]);
-  await admin.POST(
-    '/api/admin/projects/{project}/features/{featureName}/environments/{environment}/release-plans/{planId}/milestones/{milestoneId}/start',
-    {
-      params: { path: { ...path, planId: plan.data.id, milestoneId: plan.data.milestones[0].id } },
-    },
-  );
+  assert(created.kind === 'applied' && typeof created.id === 'string');
+  const released = await createRelease(admin)({
+    project,
+    flag: { name: parent, state: 'disabled' },
+    environment: 'development',
+    audience: { template: created.id },
+  });
+  assert(released.kind === 'released');
 };
 
 const define = async (definition: Omit<Define, 'action' | 'project'>): Promise<void> => {
