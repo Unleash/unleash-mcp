@@ -6,20 +6,22 @@ import { json } from 'node:stream/consumers';
 import { test } from 'node:test';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+import type { McpRequestSummary } from './mcpRequestSummary.ts';
 import { createRemoteHandler, type RemoteHandlerOptions } from './remoteHandler.ts';
-import type { McpRequestReport } from './requestReport.ts';
 import { createStubbedFetch } from './unleash/testClient.ts';
 
 const serve = async (
   fetch: typeof globalThis.fetch,
   baseUrl: string,
   options: Omit<RemoteHandlerOptions, 'baseUrl'>,
+  requestSummaries: McpRequestSummary[],
 ) => {
   const handle = createRemoteHandler(fetch)({ baseUrl, ...options });
   // Parses the body first, as Unleash's Express does, so the stream is already read when the handler gets it.
   const server = createServer(async (req, res) => {
     const parsedBody = req.method === 'POST' ? await json(req) : undefined;
-    await handle(req, res, { authHeaders: { Authorization: 'user-session' }, parsedBody });
+    const requestSummary = await handle(req, res, { authHeaders: { Authorization: 'user-session' }, parsedBody });
+    if (requestSummary) requestSummaries.push(requestSummary);
   });
   await once(server.listen(0), 'listening');
   return server;
@@ -27,7 +29,8 @@ const serve = async (
 
 const connect = async (options: Omit<RemoteHandlerOptions, 'baseUrl'>) => {
   const { baseUrl, fetch, stub } = createStubbedFetch();
-  const server = await serve(fetch, baseUrl, options);
+  const requestSummaries: McpRequestSummary[] = [];
+  const server = await serve(fetch, baseUrl, options, requestSummaries);
   const client = new Client({ name: 'test-client', version: '0.0.0' });
   await client.connect(
     new StreamableHTTPClientTransport(new URL(`http://localhost:${(server.address() as AddressInfo).port}`)),
@@ -36,7 +39,7 @@ const connect = async (options: Omit<RemoteHandlerOptions, 'baseUrl'>) => {
     await client.close();
     server.close();
   };
-  return { client, stub, close };
+  return { client, stub, requestSummaries, close };
 };
 
 const toolNames = async (options: Omit<RemoteHandlerOptions, 'baseUrl'>) => {
@@ -70,12 +73,8 @@ test('acts in Unleash as the caller, with the auth the host forwards', async () 
   }
 });
 
-test('reports each request to the host, without tool arguments', async () => {
-  const reports: McpRequestReport[] = [];
-  const { client, stub, close } = await connect({
-    feedbackConsent: 'denied',
-    onRequest: (report) => reports.push(report),
-  });
+test('summarises each tool call for the host, without its arguments', async () => {
+  const { client, stub, requestSummaries, close } = await connect({ feedbackConsent: 'denied' });
   stub
     .intercept({ path: (path) => path.startsWith('/api/admin/'), method: 'GET' })
     .reply(403, { name: 'NoAccessError' })
@@ -85,7 +84,7 @@ test('reports each request to the host, without tool arguments', async () => {
     await client.callTool({ name: 'audit', arguments: {} });
     await client.callTool({ name: 'no_such_tool', arguments: {} });
 
-    assert.deepEqual(reports, [
+    assert.deepEqual(requestSummaries, [
       {
         kind: 'tool_call',
         tool: 'search',

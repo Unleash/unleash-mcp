@@ -54,7 +54,6 @@ const toFailedToolResult = (result: Failed) => ({
 
 const failedToolResult = z.object({ result: failed });
 
-/** Reads back what toFailedToolResult wrote; undefined for any other error result, such as the SDK's own plain text. */
 export const readFailedToolResult = ({ content }: CallToolResult): Failed | undefined => {
   const [first] = content;
   if (first?.type !== 'text') return undefined;
@@ -91,7 +90,6 @@ const outcomes = {
     'Report anonymously to Unleash where this MCP fell short: a tool error, a request no tool supports, a wrong result, or a question the docs leave unanswered.',
 };
 
-/** Whether a name is one of this server's tools, since every tool has an entry in `outcomes`. */
 export const isToolName = (name: string): boolean => Object.hasOwn(outcomes, name);
 
 // Without it, an agent that hasn't loaded send_feedback yet offers to report instead of reporting.

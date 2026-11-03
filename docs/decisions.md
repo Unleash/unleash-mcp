@@ -498,7 +498,8 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 
 ## 2026-11-03 — Request reports for the host
 
-- The remote handler reports each tool call to its host (`onRequest`): the tool and how it ended. Unleash adds it to its own analytics; the package sends it nowhere itself. The package already understands MCP, so Unleash never parses MCP messages. Rejected: Unleash parsing the request itself, which put protocol knowledge in two repos.
-- A tool call's outcome carries the size of the text the agent reads (`resultBytes`), so we see which tools fill the agent's context on real customer data, which the evals' small sandbox can't show.
-- A tool call's outcome is read from the reply, not the tool, because the SDK answers unknown tools and invalid arguments before any tool runs. The handler wraps the transport's `send` to see the reply, since SDK 1.32 has no hook on replies. Rejected: Unleash reading the response bytes itself, which breaks silently if the package ever streams.
-- A report carries Unleash's error name and status, never its error text or the tool arguments, because Unleash writes it to anonymous analytics and the text can repeat the user's data. A tool name that is not one of this server's tools is left out. The error text can come later if the names turn out too vague.
+## 2026-11-03 — Request summaries for the host
+
+- The remote handler returns a summary of each tool call and how it ended, so Unleash never parses MCP messages. Rejected: Unleash parsing the request itself, which put protocol knowledge in two repos, and a callback option, which needed guarding against the host's own errors.
+- Outcomes are read from the reply, because the SDK answers unknown tools and invalid arguments before any tool runs. Rejected: Unleash reading the response bytes, which breaks silently if the package ever streams.
+- A summary never carries the tool arguments or Unleash's error text, because Unleash writes it to anonymous analytics. The error text can come later if the error names turn out too vague.
