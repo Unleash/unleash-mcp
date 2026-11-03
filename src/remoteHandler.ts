@@ -9,13 +9,13 @@ import { createUnleashClient } from './unleash/client.ts';
 
 /**
  * What the host decides: where Unleash is, whether its admin agreed to send feedback, the Unleash instance that receives it
- * (unset, Unleash's own instance), and what to do with a report of each request.
+ * (unset, Unleash's own instance), and what to do with a report of each tool call.
  */
 export type RemoteHandlerOptions = {
   baseUrl: string;
   feedbackConsent: 'granted' | 'denied';
   feedbackUrl?: string;
-  /** Called once per request with what it was. Needs the parsed body: a request without one is not reported. */
+  /** Called once per tool call with how it ended. Needs the parsed body: a request without one is not reported. */
   onRequest?: (report: McpRequestReport) => void;
 };
 
@@ -46,7 +46,7 @@ export const createRemoteHandler =
         : undefined;
     const server = createServer(unleash, fetch, sendFeedback);
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
-    if (onRequest) reportRequest({ server, transport, body: parsedBody, onRequest });
+    if (onRequest) reportRequest({ transport, body: parsedBody, onRequest });
     res.on('close', () => {
       transport.close().catch(() => {});
       server.close().catch(() => {});

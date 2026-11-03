@@ -87,27 +87,20 @@ test('reports each request to the host, without tool arguments', async () => {
 
     assert.deepEqual(reports, [
       {
-        kind: 'initialize',
-        client: { name: 'test-client', version: '0.0.0' },
-        capabilities: [],
-        extensions: [],
-      },
-      { kind: 'other', method: 'notifications/initialized' },
-      {
         kind: 'tool_call',
         tool: 'search',
         outcome: {
           kind: 'succeeded',
           resultBytes: 80,
-          results: { total: 1, failed: [{ errorName: 'NoAccessError', errorStatus: 403 }] },
+          results: { total: 1, failed: [{ name: 'NoAccessError', status: 403 }] },
         },
       },
       {
         kind: 'tool_call',
         tool: 'audit',
-        outcome: { kind: 'failed', resultBytes: 77, errorName: 'NoAccessError', errorStatus: 403 },
+        outcome: { kind: 'failed', resultBytes: 77, error: { name: 'NoAccessError', status: 403 } },
       },
-      { kind: 'tool_call', tool: undefined, outcome: { kind: 'refused', resultBytes: 45 } },
+      { kind: 'unknown_tool_call', outcome: { kind: 'refused', resultBytes: 45 } },
     ]);
   } finally {
     await close();

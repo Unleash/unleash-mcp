@@ -9,9 +9,6 @@ export const failed = z.object({
 
 export type Failed = z.infer<typeof failed>;
 
-/** A failure nested under `error`, next to the change or operation it answers, as configure and manage_flag return it. */
-export const failedError = failed.omit({ kind: true });
-
 // Unleash puts the useful error messages in `details`, which the OpenAPI spec omits.
 type UnleashError = { name?: string; details?: { message: string }[] };
 // openapi-fetch leaves `error` unset when an error reply has no body, so `response.ok` is the failure check.
