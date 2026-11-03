@@ -5,8 +5,11 @@ import { stubEnterprise } from '../../../unleash/testChangeRequest.ts';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
 import { deleteFlag, deleteReleaseTemplate } from '../../../unleash/testSetup.ts';
+import { defineFlag } from '../../manageFlag/define.ts';
+import type { Define } from '../../manageFlag/manageFlagInput.ts';
+import { setParentDependency } from '../../manageFlag/setParentDependency.ts';
 import { createRelease } from '../../release/release.ts';
-import { createEditionReader, type EditionReader } from '../../shared/changeRequest.ts';
+import { type ChangeRequestReader, createEditionReader, type EditionReader } from '../../shared/changeRequest.ts';
 import { inspectFlag } from './flag.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./flag.snapshot.json', import.meta.url).pathname);
@@ -23,7 +26,6 @@ const gradual = (rollout: string) => ({
   title: 'Everyone',
   parameters: { rollout, stickiness: 'default', groupId: parent },
 });
-const features = '/api/admin/projects/{projectId}/features';
 const flagPath = `/api/admin/projects/${project}/features/${flag}`;
 const recordedUrl = `${unleash.baseUrl}/projects/${project}/features/${flag}`;
 const stubbedUrl = `https://unleash.example/projects/${project}/features/${flag}`;
@@ -77,22 +79,29 @@ const addReleasePlan = async (): Promise<void> => {
   );
 };
 
+const define = async (definition: Omit<Define, 'action' | 'project'>): Promise<void> => {
+  const defined = await defineFlag(admin, { action: 'define', project, ...definition });
+  assert(defined.kind === 'applied' && defined.origin === 'created');
+};
+// Stubbed, like `openSource`: the real reader finds production needs approval and opens a change request instead of writing.
+const withoutChangeRequests: ChangeRequestReader = async () => ({ kind: 'environments', environments: [] });
+
 before(async () => {
   await deleteFlags();
-  await admin.POST(features, { params: { path: { projectId: project } }, body: { name: parent } });
-  await admin.POST(features, { params: { path: { projectId: project } }, body: { name: flag, type: 'kill-switch' } });
-  await admin.POST('/api/admin/projects/{projectId}/features/{child}/dependencies', {
-    params: { path: { projectId: project, child: flag } },
-    body: { feature: parent },
+  await define({ flag: parent });
+  await define({
+    flag,
+    type: 'kill-switch',
+    tags: [{ type: 'simple', value: 'mcp-inspect' }],
+    links: [{ url: 'https://example.com/mcp-inspect', title: 'Spec' }],
   });
-  await admin.POST('/api/admin/features/{featureName}/tags', {
-    params: { path: { featureName: flag } },
-    body: { type: 'simple', value: 'mcp-inspect' },
+  const linked = await setParentDependency(admin, withoutChangeRequests, {
+    action: 'set_parent_dependency',
+    project,
+    flag,
+    parent: { state: 'enabled', flag: parent },
   });
-  await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/link', {
-    params: { path: { projectId: project, featureName: flag } },
-    body: { url: 'https://example.com/mcp-inspect', title: 'Spec' },
-  });
+  assert(linked.kind === 'applied');
   await createRelease(admin)({
     project,
     flag: { name: flag, state: 'enabled' },
