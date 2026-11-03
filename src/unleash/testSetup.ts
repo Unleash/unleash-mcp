@@ -1,7 +1,7 @@
 import type { UnleashClient } from './client.ts';
 
-// Setup and teardown that recorded tests do as an admin, so they recreate what they need and
-// leave nothing behind. Over time these should go through the server's own tools.
+// Teardown that recorded tests do as an admin, so they leave nothing behind. Setup goes through the
+// server's own tools; only what no tool does, such as deleting from the archive, lives here.
 
 // Removes the flag for good: archiving and then deleting from the archive. A flag with children
 // cannot be deleted, so their dependencies on it go first.

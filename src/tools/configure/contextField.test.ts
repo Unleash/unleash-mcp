@@ -18,7 +18,7 @@ const deletableProjectField = 'mcpDeletableProjectContextField';
 
 const deleteFields = async (): Promise<void> => {
   for (const contextField of [name, updatable, deletable, projectField, updatableProjectField, deletableProjectField])
-    await admin.DELETE('/api/admin/context/{contextField}', { params: { path: { contextField } } });
+    await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: contextField });
 };
 
 before(deleteFields);

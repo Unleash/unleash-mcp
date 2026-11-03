@@ -480,3 +480,7 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 ## 2026-11-02 — Tool annotations
 
 - Every tool has a title and the applicable hint, as the Connectors Directory requires. It counts any change to data as destructive, so all five tools that change Unleash are, and Claude prompts before each call. `send_feedback` stays non-destructive: it adds an anonymous report, changes nothing in the user's Unleash, and the server asks for consent itself.
+
+## 2026-11-03 — Test setup goes through the server's own tools
+
+- Setup and teardown use the tool functions wherever one covers the job, and assert their outcome; the admin API stays only where no tool does the job, such as archiving a flag for a test. Finishes the "over time" of 2026-10-22.

@@ -13,7 +13,7 @@ const deletable = 'mcp-deletable-type';
 
 const deleteTypes = async (): Promise<void> => {
   for (const name of [created, updatable, deletable])
-    await admin.DELETE('/api/admin/tag-types/{name}', { params: { path: { name } } });
+    await deleteTagType(admin, { kind: 'tag_type', action: 'delete', name });
 };
 
 before(async () => {
