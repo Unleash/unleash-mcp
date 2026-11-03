@@ -47,11 +47,10 @@ export const createRemoteHandler =
       transport.close().catch(() => {});
       server.close().catch(() => {});
     });
+    const closed = res.closed ? Promise.resolve() : new Promise((resolve) => res.once('close', resolve));
     await server.connect(transport);
-    // handleRequest never settles when the client hangs up before the reply, so a closed response ends the wait too.
-    await Promise.race([
-      transport.handleRequest(req, res, parsedBody),
-      new Promise((resolve) => res.once('close', resolve)),
-    ]);
-    return toMcpRequestSummary(parsedBody, replies);
+    // handleRequest never settles when the client hangs up, and can settle before the response is written.
+    await Promise.race([transport.handleRequest(req, res, parsedBody), closed]);
+    await closed;
+    return toMcpRequestSummary(parsedBody, replies, res.writableFinished ? 'replied' : 'hung_up');
   };

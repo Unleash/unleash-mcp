@@ -104,7 +104,7 @@ test('summarises each tool call for the host, without its arguments', async () =
       errors: [{ name: 'NoAccessError', status: 403 }],
       resultBytes: 77,
     },
-    { kind: 'protocol_error' },
+    { kind: 'sdk_error' },
   ]);
 });
 
@@ -125,6 +125,23 @@ test('summarises a tool call the client hangs up on before the tool replies', as
   await once(server, 'request');
 
   assert.deepEqual(await requestSummaries(), [{ kind: 'no_reply', tool: 'audit' }]);
+  server.close();
+});
+
+test('summarises a tool call the SDK turns away before any tool runs', async () => {
+  const { baseUrl, fetch } = createStubbedFetch();
+  const { server, requestSummaries } = await serve(fetch, baseUrl, { feedbackConsent: 'denied' });
+  const call = request({
+    port: (server.address() as AddressInfo).port,
+    method: 'POST',
+    headers: { 'content-type': 'application/json', accept: 'application/json' },
+  });
+  call.on('response', (response) => response.resume());
+
+  call.end(JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'audit', arguments: {} } }));
+  await once(server, 'request');
+
+  assert.deepEqual(await requestSummaries(), [{ kind: 'sdk_error', tool: 'audit' }]);
   server.close();
 });
 

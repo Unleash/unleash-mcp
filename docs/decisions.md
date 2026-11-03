@@ -494,12 +494,8 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 
 - While recording, the client masks the email addresses in what the test sees, as the snapshot will, so a test asserting who made a change passes on recording and on replay alike. Rejected: asserting only that the field is there, which stops pinning the mapping.
 
-## 2026-11-03 — Tool outcomes for the host
-
-## 2026-11-03 — Request reports for the host
-
 ## 2026-11-03 — Request summaries for the host
 
-- The remote handler returns a summary of each tool call and how it ended, so Unleash never parses MCP messages. Rejected: Unleash parsing the request itself, which put protocol knowledge in two repos, and a callback option, which needed guarding against the host's own errors.
-- Outcomes are read from the reply, because the SDK answers unknown tools and invalid arguments before any tool runs. Rejected: Unleash reading the response bytes, which breaks silently if the package ever streams.
-- A summary never carries the tool arguments or Unleash's error text, because Unleash writes it to anonymous analytics. The error text can come later if the error names turn out too vague.
+- The remote handler returns a summary of each tool call, so Unleash never parses MCP messages. Rejected: Unleash parsing the request, and a callback option.
+- A summary says what came back (a tool result, an SDK error or no reply), not whether the call succeeded, since a list tool's call never fails as a whole.
+- It never carries the tool arguments or Unleash's error text, because Unleash writes it to anonymous analytics.
