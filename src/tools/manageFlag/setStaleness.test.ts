@@ -3,8 +3,7 @@ import { after, before, test } from 'node:test';
 import { isDeepStrictEqual } from 'node:util';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { deleteFlag } from '../../unleash/testSetup.ts';
-import { defineFlag } from './define.ts';
+import { createFlag, deleteFlag } from '../../unleash/testSetup.ts';
 import { setStaleness } from './setStaleness.ts';
 
 const { unleash, admin, close } = createRecordedClient(
@@ -15,8 +14,7 @@ const flag = 'mcp-stale-flag';
 
 before(async () => {
   await deleteFlag(admin, project, flag);
-  const defined = await defineFlag(admin, { action: 'define', project, flag });
-  assert(defined.kind === 'applied' && defined.origin === 'created');
+  await createFlag(admin, project, { flag });
 });
 after(async () => {
   await deleteFlag(admin, project, flag);

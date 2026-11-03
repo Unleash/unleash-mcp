@@ -2,10 +2,8 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { deleteFlag, deleteSegmentNamed } from '../../../unleash/testSetup.ts';
+import { applied, createFlag, deleteFlag, deleteSegmentNamed, released } from '../../../unleash/testSetup.ts';
 import { createSegment } from '../../configure/segment.ts';
-import { defineFlag } from '../../manageFlag/define.ts';
-import type { Define } from '../../manageFlag/manageFlagInput.ts';
 import { setStaleness } from '../../manageFlag/setStaleness.ts';
 import { createRelease } from '../../release/release.ts';
 import { searchFlags } from './flags.ts';
@@ -25,27 +23,28 @@ const deleteFlags = async (): Promise<void> => {
   await deleteFlag(admin, project, archived);
 };
 
-const define = async (definition: Omit<Define, 'action' | 'project'>): Promise<void> => {
-  const defined = await defineFlag(admin, { action: 'define', project, ...definition });
-  assert(defined.kind === 'applied' && defined.origin === 'created');
-};
-
 before(async () => {
   await deleteFlags();
-  await define({ flag: first, type: 'kill-switch', tags: [{ type: 'simple', value: 'mcp-search' }] });
-  await define({ flag: second });
-  await define({ flag: archived });
+  await createFlag(admin, project, {
+    flag: first,
+    type: 'kill-switch',
+    tags: [{ type: 'simple', value: 'mcp-search' }],
+  });
+  await createFlag(admin, project, { flag: second });
+  await createFlag(admin, project, { flag: archived });
   const staled = await setStaleness(admin, { action: 'set_staleness', project, flag: first, staleness: 'stale' });
   assert(staled.kind === 'applied');
   await deleteSegmentNamed(admin, segment);
   const created = await createSegment(admin, { kind: 'segment', action: 'create', name: segment, constraints: [] });
-  segmentId = created.kind === 'applied' ? created.id : 0;
-  await createRelease(admin)({
-    project,
-    flag: { name: second, state: 'enabled' },
-    environment: 'development',
-    audience: { targets: [{ name: 'Beta', segments: [segmentId] }] },
-  });
+  segmentId = applied(created).id;
+  released(
+    await createRelease(admin)({
+      project,
+      flag: { name: second, state: 'enabled' },
+      environment: 'development',
+      audience: { targets: [{ name: 'Beta', segments: [segmentId] }] },
+    }),
+  );
   await admin.DELETE('/api/admin/projects/{projectId}/features/{featureName}', {
     params: { path: { projectId: project, featureName: archived } },
   });

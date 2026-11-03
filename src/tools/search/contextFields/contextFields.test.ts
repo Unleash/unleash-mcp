@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
+import { applied } from '../../../unleash/testSetup.ts';
 import { createContextField, deleteContextField } from '../../configure/contextField.ts';
 import { searchContextFields } from './contextFields.ts';
 
@@ -19,14 +20,16 @@ const deleteFields = async (): Promise<void> => {
 
 before(async () => {
   await deleteFields();
-  await createContextField(admin, {
-    kind: 'context_field',
-    action: 'create',
-    name: global,
-    description: 'Customer tier',
-    stickiness: true,
-  });
-  await createContextField(admin, { kind: 'context_field', action: 'create', project, name: projectScoped });
+  applied(
+    await createContextField(admin, {
+      kind: 'context_field',
+      action: 'create',
+      name: global,
+      description: 'Customer tier',
+      stickiness: true,
+    }),
+  );
+  applied(await createContextField(admin, { kind: 'context_field', action: 'create', project, name: projectScoped }));
 });
 after(async () => {
   await deleteFields();

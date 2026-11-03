@@ -3,6 +3,7 @@ import { after, before, test } from 'node:test';
 import { isDeepStrictEqual } from 'node:util';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
+import { applied } from '../../unleash/testSetup.ts';
 import { createTagType, deleteTagType, updateTagType } from './tagType.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./tagType.snapshot.json', import.meta.url).pathname);
@@ -19,7 +20,7 @@ const deleteTypes = async (): Promise<void> => {
 before(async () => {
   await deleteTypes();
   for (const name of [updatable, deletable])
-    await createTagType(admin, { kind: 'tag_type', action: 'create', name, description: 'Before' });
+    applied(await createTagType(admin, { kind: 'tag_type', action: 'create', name, description: 'Before' }));
 });
 after(async () => {
   await deleteTypes();

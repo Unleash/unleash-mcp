@@ -1,7 +1,35 @@
+import assert from 'node:assert/strict';
+import { defineFlag } from '../tools/manageFlag/define.ts';
+import type { Define } from '../tools/manageFlag/manageFlagInput.ts';
+import type { ChangeRequestReader } from '../tools/shared/changeRequest.ts';
 import type { UnleashClient } from './client.ts';
 
-// Teardown that recorded tests do as an admin, so they leave nothing behind. Setup goes through the
-// server's own tools; only what no tool does, such as deleting from the archive, lives here.
+// Setup and teardown that recorded tests do as an admin. Setup goes through the server's own tools;
+// only what no tool does, such as deleting from the archive, is done over the API here.
+
+// A refused write fails in setup, with Unleash's answer, and not a few lines later with less to go on.
+export const applied = <T extends { kind: string }>(outcome: T): Extract<T, { kind: 'applied' }> => {
+  assert.equal(outcome.kind, 'applied', `setup expected applied: ${JSON.stringify(outcome)}`);
+  return outcome as Extract<T, { kind: 'applied' }>;
+};
+
+export const released = <T extends { kind: string }>(outcome: T): Extract<T, { kind: 'released' }> => {
+  assert.equal(outcome.kind, 'released', `setup expected released: ${JSON.stringify(outcome)}`);
+  return outcome as Extract<T, { kind: 'released' }>;
+};
+
+// A flag left behind by a failed recording must not pass for the fixture, so an existing one fails.
+export const createFlag = async (
+  admin: UnleashClient,
+  project: string,
+  definition: Omit<Define, 'action' | 'project'>,
+): Promise<void> => {
+  const defined = applied(await defineFlag(admin, { action: 'define', project, ...definition }));
+  assert.equal(defined.origin, 'created', `${definition.flag} was there before the test`);
+};
+
+/** For a tool that routes through change requests: `mcp-server` needs approval in production, and setup writes directly. */
+export const withoutChangeRequests: ChangeRequestReader = async () => ({ kind: 'environments', environments: [] });
 
 // Removes the flag for good: archiving and then deleting from the archive. A flag with children
 // cannot be deleted, so their dependencies on it go first.

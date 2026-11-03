@@ -4,9 +4,8 @@ import { isDeepStrictEqual } from 'node:util';
 import { production, stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { cancelChangeRequest, deleteFlag } from '../../unleash/testSetup.ts';
+import { cancelChangeRequest, createFlag, deleteFlag } from '../../unleash/testSetup.ts';
 import { createChangeRequestReader } from '../shared/changeRequest.ts';
-import { defineFlag } from './define.ts';
 import { setParentDependency } from './setParentDependency.ts';
 
 const { unleash, admin, close } = createRecordedClient(
@@ -20,8 +19,8 @@ let changeRequestId: number | undefined;
 before(async () => {
   await deleteFlag(admin, project, child);
   await deleteFlag(admin, project, parent);
-  await defineFlag(admin, { action: 'define', project, flag: parent });
-  await defineFlag(admin, { action: 'define', project, flag: child });
+  await createFlag(admin, project, { flag: parent });
+  await createFlag(admin, project, { flag: child });
 });
 // The change request goes first, so nothing pending refers to the flags.
 after(async () => {

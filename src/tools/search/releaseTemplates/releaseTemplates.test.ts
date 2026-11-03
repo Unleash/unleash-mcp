@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { deleteReleaseTemplate } from '../../../unleash/testSetup.ts';
+import { applied, deleteReleaseTemplate } from '../../../unleash/testSetup.ts';
 import { createReleaseTemplate } from '../../configure/releaseTemplate.ts';
 import { searchReleaseTemplates } from './releaseTemplates.ts';
 
@@ -32,7 +32,7 @@ before(async () => {
     name: global,
     milestones,
   });
-  globalId = createdGlobal.kind === 'applied' ? String(createdGlobal.id) : '';
+  globalId = String(applied(createdGlobal).id);
   const createdProjectScoped = await createReleaseTemplate(admin, {
     kind: 'release_template',
     action: 'create',
@@ -40,14 +40,14 @@ before(async () => {
     name: projectScoped,
     milestones,
   });
-  projectScopedId = createdProjectScoped.kind === 'applied' ? String(createdProjectScoped.id) : '';
+  projectScopedId = String(applied(createdProjectScoped).id);
   const createdArchived = await createReleaseTemplate(admin, {
     kind: 'release_template',
     action: 'create',
     name: archived,
     milestones,
   });
-  archivedId = createdArchived.kind === 'applied' ? String(createdArchived.id) : '';
+  archivedId = String(applied(createdArchived).id);
   await admin.POST('/api/admin/release-plan-templates/archive/{templateId}', {
     params: { path: { templateId: archivedId } },
   });

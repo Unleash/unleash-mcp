@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
+import { applied } from '../../../unleash/testSetup.ts';
 import { createTagType, deleteTagType } from '../../configure/tagType.ts';
 import { searchTagTypes } from './tagTypes.ts';
 
@@ -10,12 +11,14 @@ const name = 'mcp-searched-type';
 
 before(async () => {
   await deleteTagType(admin, { kind: 'tag_type', action: 'delete', name });
-  await createTagType(admin, {
-    kind: 'tag_type',
-    action: 'create',
-    name,
-    description: 'Created by the MCP server tests',
-  });
+  applied(
+    await createTagType(admin, {
+      kind: 'tag_type',
+      action: 'create',
+      name,
+      description: 'Created by the MCP server tests',
+    }),
+  );
 });
 after(async () => {
   await deleteTagType(admin, { kind: 'tag_type', action: 'delete', name });

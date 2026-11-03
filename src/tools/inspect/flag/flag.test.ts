@@ -4,13 +4,17 @@ import { fixedClock } from '../../../testClock.ts';
 import { stubEnterprise } from '../../../unleash/testChangeRequest.ts';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { deleteFlag, deleteReleaseTemplate } from '../../../unleash/testSetup.ts';
+import {
+  createFlag,
+  deleteFlag,
+  deleteReleaseTemplate,
+  released,
+  withoutChangeRequests,
+} from '../../../unleash/testSetup.ts';
 import { createReleaseTemplate } from '../../configure/releaseTemplate.ts';
-import { defineFlag } from '../../manageFlag/define.ts';
-import type { Define } from '../../manageFlag/manageFlagInput.ts';
 import { setParentDependency } from '../../manageFlag/setParentDependency.ts';
 import { createRelease } from '../../release/release.ts';
-import { type ChangeRequestReader, createEditionReader, type EditionReader } from '../../shared/changeRequest.ts';
+import { createEditionReader, type EditionReader } from '../../shared/changeRequest.ts';
 import { inspectFlag } from './flag.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./flag.snapshot.json', import.meta.url).pathname);
@@ -58,17 +62,10 @@ const addReleasePlan = async (): Promise<void> => {
   assert(released.kind === 'released');
 };
 
-const define = async (definition: Omit<Define, 'action' | 'project'>): Promise<void> => {
-  const defined = await defineFlag(admin, { action: 'define', project, ...definition });
-  assert(defined.kind === 'applied' && defined.origin === 'created');
-};
-// Stubbed, like `openSource`: the real reader finds production needs approval and opens a change request instead of writing.
-const withoutChangeRequests: ChangeRequestReader = async () => ({ kind: 'environments', environments: [] });
-
 before(async () => {
   await deleteFlags();
-  await define({ flag: parent });
-  await define({
+  await createFlag(admin, project, { flag: parent });
+  await createFlag(admin, project, {
     flag,
     type: 'kill-switch',
     tags: [{ type: 'simple', value: 'mcp-inspect' }],
@@ -81,23 +78,25 @@ before(async () => {
     parent: { state: 'enabled', flag: parent },
   });
   assert(linked.kind === 'applied');
-  await createRelease(admin)({
-    project,
-    flag: { name: flag, state: 'enabled' },
-    environment: 'development',
-    audience: {
-      targets: [
-        {
-          name: 'Beta testers',
-          rollout: 50,
-          constraints: [beta],
-          values,
-          stickiness: 'userId',
-          rolloutGroup: 'mcp-other-draw',
-        },
-      ],
-    },
-  });
+  released(
+    await createRelease(admin)({
+      project,
+      flag: { name: flag, state: 'enabled' },
+      environment: 'development',
+      audience: {
+        targets: [
+          {
+            name: 'Beta testers',
+            rollout: 50,
+            constraints: [beta],
+            values,
+            stickiness: 'userId',
+            rolloutGroup: 'mcp-other-draw',
+          },
+        ],
+      },
+    }),
+  );
   await addReleasePlan();
 });
 after(async () => {

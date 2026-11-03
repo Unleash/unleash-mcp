@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
+import { applied } from '../../unleash/testSetup.ts';
 import { createContextField, deleteContextField } from './contextField.ts';
 import { createLegalValue, deleteLegalValue } from './legalValue.ts';
 
@@ -18,8 +19,8 @@ const deleteFields = async (): Promise<void> => {
 
 before(async () => {
   await deleteFields();
-  await createContextField(admin, { kind: 'context_field', action: 'create', name: field });
-  await createContextField(admin, { kind: 'context_field', action: 'create', project, name: projectField });
+  applied(await createContextField(admin, { kind: 'context_field', action: 'create', name: field }));
+  applied(await createContextField(admin, { kind: 'context_field', action: 'create', project, name: projectField }));
 });
 after(async () => {
   await deleteFields();
@@ -51,7 +52,7 @@ test('fails with the Unleash error when the context field does not exist', async
 });
 
 test('removes a legal value from a context field', async () => {
-  await createLegalValue(admin, { kind: 'legal_value', action: 'create', field, value: 'silver' });
+  applied(await createLegalValue(admin, { kind: 'legal_value', action: 'create', field, value: 'silver' }));
 
   const output = await deleteLegalValue(unleash, { kind: 'legal_value', action: 'delete', field, value: 'silver' });
 
@@ -83,13 +84,15 @@ test('adds a legal value to a context field in a project', async () => {
 });
 
 test('removes a legal value from a context field in a project', async () => {
-  await createLegalValue(admin, {
-    kind: 'legal_value',
-    action: 'create',
-    project,
-    field: projectField,
-    value: 'silver',
-  });
+  applied(
+    await createLegalValue(admin, {
+      kind: 'legal_value',
+      action: 'create',
+      project,
+      field: projectField,
+      value: 'silver',
+    }),
+  );
 
   const output = await deleteLegalValue(unleash, {
     kind: 'legal_value',

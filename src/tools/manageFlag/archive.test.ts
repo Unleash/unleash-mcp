@@ -3,10 +3,9 @@ import { after, before, test } from 'node:test';
 import { stubChangeRequestsIn, stubEnterprise } from '../../unleash/testChangeRequest.ts';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { cancelChangeRequest, deleteFlag } from '../../unleash/testSetup.ts';
+import { cancelChangeRequest, createFlag, deleteFlag } from '../../unleash/testSetup.ts';
 import { createChangeRequestReader } from '../shared/changeRequest.ts';
 import { archiveFlag } from './archive.ts';
-import { defineFlag } from './define.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./archive.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server';
@@ -15,8 +14,7 @@ let changeRequestId: number | undefined;
 
 before(async () => {
   await deleteFlag(admin, project, flag);
-  const defined = await defineFlag(admin, { action: 'define', project, flag });
-  assert(defined.kind === 'applied' && defined.origin === 'created');
+  await createFlag(admin, project, { flag });
 });
 // The change request goes first, so nothing pending refers to the flag.
 after(async () => {

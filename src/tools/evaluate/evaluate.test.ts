@@ -3,12 +3,17 @@ import { after, before, test } from 'node:test';
 import type { components } from '../../unleash/api.d.ts';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { deleteFlag, deleteSegmentNamed } from '../../unleash/testSetup.ts';
+import {
+  applied,
+  createFlag,
+  deleteFlag,
+  deleteSegmentNamed,
+  released,
+  withoutChangeRequests,
+} from '../../unleash/testSetup.ts';
 import { createSegment } from '../configure/segment.ts';
-import { defineFlag } from '../manageFlag/define.ts';
 import { setParentDependency } from '../manageFlag/setParentDependency.ts';
 import { createRelease } from '../release/release.ts';
-import type { ChangeRequestReader } from '../shared/changeRequest.ts';
 import { createEvaluate } from './evaluate.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./evaluate.snapshot.json', import.meta.url).pathname);
@@ -38,9 +43,6 @@ const sdkOnlyUnknown = {
   matchedBy: { constraints: [userIn(users.targetedBySdkOnly)] },
 };
 let segmentId = 0;
-
-// Stubbed: the real reader finds production needs approval and opens a change request instead of writing.
-const withoutChangeRequests: ChangeRequestReader = async () => ({ kind: 'environments', environments: [] });
 
 const addTarget = (featureName: string, env: string, body: components['schemas']['createFeatureStrategySchema']) =>
   admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies', {
@@ -78,23 +80,25 @@ before(async () => {
     name: segment,
     constraints: [{ field: 'appName', operator: 'IN', values: ['unleash-mcp'] }],
   });
-  segmentId = created.kind === 'applied' ? created.id : 0;
-  await createRelease(admin)({
-    project,
-    flag: { name: flag, state: 'enabled' },
-    environment,
-    audience: {
-      targets: [
-        {
-          name: 'Beta',
-          rollout: 80,
-          segments: [segmentId],
-          constraints: [beta],
-          values: [{ name: 'blue', payload: { type: 'string', value: 'b' } }],
-        },
-      ],
-    },
-  });
+  segmentId = applied(created).id;
+  released(
+    await createRelease(admin)({
+      project,
+      flag: { name: flag, state: 'enabled' },
+      environment,
+      audience: {
+        targets: [
+          {
+            name: 'Beta',
+            rollout: 80,
+            segments: [segmentId],
+            constraints: [beta],
+            values: [{ name: 'blue', payload: { type: 'string', value: 'b' } }],
+          },
+        ],
+      },
+    }),
+  );
   await addTarget(flag, environment, { name: 'flexibleRollout', title: paused.name, disabled: true });
   await addSdkOnlyTarget(flag, environment);
   await addSdkOnlyTarget(flag, 'production');
@@ -113,7 +117,7 @@ before(async () => {
     title: 'Nobody yet',
     parameters: { rollout: '0', stickiness: 'default', groupId: flag },
   });
-  for (const name of [parent, child]) await defineFlag(admin, { action: 'define', project, flag: name });
+  for (const name of [parent, child]) await createFlag(admin, project, { flag: name });
   await addSdkOnlyTarget(child, environment);
   await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on', {
     params: { path: { projectId: project, featureName: child, environment } },

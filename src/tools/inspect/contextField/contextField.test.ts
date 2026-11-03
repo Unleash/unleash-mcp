@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { deleteFlag } from '../../../unleash/testSetup.ts';
+import { applied, deleteFlag, released } from '../../../unleash/testSetup.ts';
 import { createContextField, deleteContextField } from '../../configure/contextField.ts';
 import { createRelease } from '../../release/release.ts';
 import { inspectContextField } from './contextField.ts';
@@ -26,26 +26,30 @@ const deleteFields = async (): Promise<void> => {
 before(async () => {
   await deleteFlag(admin, project, flag);
   await deleteFields();
-  await createContextField(admin, {
-    kind: 'context_field',
-    action: 'create',
-    name: field,
-    description: 'Customer tier',
-    stickiness: true,
-    legalValues,
-  });
-  await createContextField(admin, { kind: 'context_field', action: 'create', project, name: projectField });
-  await createRelease(admin)({
-    project,
-    flag: { name: flag, state: 'enabled' },
-    environment: 'development',
-    audience: {
-      targets: [
-        { name: 'Gold', constraints: [gold] },
-        { name: 'Gold again', constraints: [gold] },
-      ],
-    },
-  });
+  applied(
+    await createContextField(admin, {
+      kind: 'context_field',
+      action: 'create',
+      name: field,
+      description: 'Customer tier',
+      stickiness: true,
+      legalValues,
+    }),
+  );
+  applied(await createContextField(admin, { kind: 'context_field', action: 'create', project, name: projectField }));
+  released(
+    await createRelease(admin)({
+      project,
+      flag: { name: flag, state: 'enabled' },
+      environment: 'development',
+      audience: {
+        targets: [
+          { name: 'Gold', constraints: [gold] },
+          { name: 'Gold again', constraints: [gold] },
+        ],
+      },
+    }),
+  );
 });
 after(async () => {
   await deleteFlag(admin, project, flag);

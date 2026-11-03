@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { deleteSegmentNamed } from '../../../unleash/testSetup.ts';
+import { applied, deleteSegmentNamed } from '../../../unleash/testSetup.ts';
 import { createSegment } from '../../configure/segment.ts';
 import { searchSegments } from './segments.ts';
 
@@ -21,7 +21,7 @@ before(async () => {
     name: global,
     constraints: [],
   });
-  globalId = createdGlobal.kind === 'applied' ? createdGlobal.id : 0;
+  globalId = applied(createdGlobal).id;
   const createdProjectScoped = await createSegment(admin, {
     kind: 'segment',
     action: 'create',
@@ -29,7 +29,7 @@ before(async () => {
     name: projectScoped,
     constraints: [],
   });
-  projectScopedId = createdProjectScoped.kind === 'applied' ? createdProjectScoped.id : 0;
+  projectScopedId = applied(createdProjectScoped).id;
 });
 after(async () => {
   for (const name of [global, projectScoped]) await deleteSegmentNamed(admin, name);

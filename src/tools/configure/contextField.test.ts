@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
+import { applied } from '../../unleash/testSetup.ts';
 import { createContextField, deleteContextField, updateContextField } from './contextField.ts';
 
 const { unleash, admin, close } = createRecordedClient(
@@ -51,13 +52,15 @@ test('fails with the Unleash error when the context field exists', async () => {
 });
 
 test('replaces a context field', async () => {
-  await createContextField(admin, {
-    kind: 'context_field',
-    action: 'create',
-    name: updatable,
-    stickiness: true,
-    legalValues: [{ value: 'gold' }],
-  });
+  applied(
+    await createContextField(admin, {
+      kind: 'context_field',
+      action: 'create',
+      name: updatable,
+      stickiness: true,
+      legalValues: [{ value: 'gold' }],
+    }),
+  );
 
   const output = await updateContextField(unleash, {
     kind: 'context_field',
@@ -83,7 +86,7 @@ test('fails with the Unleash error when the context field to update does not exi
 });
 
 test('deletes a context field', async () => {
-  await createContextField(admin, { kind: 'context_field', action: 'create', name: deletable });
+  applied(await createContextField(admin, { kind: 'context_field', action: 'create', name: deletable }));
 
   const output = await deleteContextField(unleash, { kind: 'context_field', action: 'delete', name: deletable });
 
@@ -115,7 +118,9 @@ test('creates a context field in a project', async () => {
 });
 
 test('replaces a context field in a project', async () => {
-  await createContextField(admin, { kind: 'context_field', action: 'create', project, name: updatableProjectField });
+  applied(
+    await createContextField(admin, { kind: 'context_field', action: 'create', project, name: updatableProjectField }),
+  );
 
   const output = await updateContextField(unleash, {
     kind: 'context_field',
@@ -129,7 +134,9 @@ test('replaces a context field in a project', async () => {
 });
 
 test('deletes a context field in a project', async () => {
-  await createContextField(admin, { kind: 'context_field', action: 'create', project, name: deletableProjectField });
+  applied(
+    await createContextField(admin, { kind: 'context_field', action: 'create', project, name: deletableProjectField }),
+  );
 
   const output = await deleteContextField(unleash, {
     kind: 'context_field',

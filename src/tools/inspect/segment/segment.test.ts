@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { deleteFlag, deleteSegmentNamed } from '../../../unleash/testSetup.ts';
+import { deleteFlag, deleteSegmentNamed, released } from '../../../unleash/testSetup.ts';
 import { createSegment } from '../../configure/segment.ts';
 import { createRelease } from '../../release/release.ts';
 import { inspectSegment } from './segment.ts';
@@ -27,17 +27,19 @@ before(async () => {
   });
   assert(created.kind === 'applied');
   id = created.id;
-  await createRelease(admin)({
-    project,
-    flag: { name: flag, state: 'enabled' },
-    environment: 'development',
-    audience: {
-      targets: [
-        { name: 'Beta', segments: [id] },
-        { name: 'Beta again', segments: [id] },
-      ],
-    },
-  });
+  released(
+    await createRelease(admin)({
+      project,
+      flag: { name: flag, state: 'enabled' },
+      environment: 'development',
+      audience: {
+        targets: [
+          { name: 'Beta', segments: [id] },
+          { name: 'Beta again', segments: [id] },
+        ],
+      },
+    }),
+  );
 });
 after(async () => {
   await deleteFlag(admin, project, flag);
