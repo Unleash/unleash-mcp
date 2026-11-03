@@ -5,6 +5,7 @@ import { createRecordedClient, createStubbedClient } from '../../unleash/testCli
 import { unleashError } from '../../unleash/testError.ts';
 import { deleteFlag } from '../../unleash/testSetup.ts';
 import { completeFlag } from './complete.ts';
+import { defineFlag } from './define.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./complete.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server';
@@ -12,10 +13,8 @@ const flag = 'mcp-completed-flag';
 
 before(async () => {
   await deleteFlag(admin, project, flag);
-  await admin.POST('/api/admin/projects/{projectId}/features', {
-    params: { path: { projectId: project } },
-    body: { name: flag },
-  });
+  const defined = await defineFlag(admin, { action: 'define', project, flag });
+  assert(defined.kind === 'applied' && defined.origin === 'created');
 });
 after(async () => {
   await deleteFlag(admin, project, flag);

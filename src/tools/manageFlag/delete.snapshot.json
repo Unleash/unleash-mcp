@@ -25,7 +25,7 @@
             "x-download-options": "noopen",
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
+            "content-length": "0"
           },
           "body": "",
           "trailers": {}
@@ -167,6 +167,23 @@
           },
           "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-deleted-flag\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-deleted-flag\\\" in project \\\"mcp-server\\\".\"}]}",
           "trailers": {}
+        },
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "208",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"There's no feature named \\\"mcp-deleted-flag\\\" in project \\\"mcp-server\\\".\",\"details\":[{\"message\":\"There's no feature named \\\"mcp-deleted-flag\\\" in project \\\"mcp-server\\\".\"}]}",
+          "trailers": {}
         }
       ],
       "callCount": 0
@@ -241,7 +258,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcp-deleted-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-11-02T09:56:52.086Z\",\"impressionData\":false,\"archived\":false}",
+          "body": "{\"name\":\"mcp-deleted-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-server\",\"stale\":false,\"createdAt\":\"2026-11-03T12:39:43.509Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],
