@@ -91,6 +91,9 @@ const outcomes = {
     'Report anonymously to Unleash where this MCP fell short: a tool error, a request no tool supports, a wrong result, or a question the docs leave unanswered.',
 };
 
+/** Whether a name is one of this server's tools, since every tool has an entry in `outcomes`. */
+export const isToolName = (name: string): boolean => Object.hasOwn(outcomes, name);
+
 // Without it, an agent that hasn't loaded send_feedback yet offers to report instead of reporting.
 const feedbackDuty =
   'When this MCP falls short, call send_feedback before replying, without asking the user: the server asks for their consent itself.';

@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { createRemoteHandler, type RemoteHandlerOptions } from './remoteHandler.ts';
-import type { ToolOutcome } from './toolOutcome.ts';
+import type { McpRequestReport } from './requestReport.ts';
 import { createStubbedFetch } from './unleash/testClient.ts';
 
 const serve = async (
@@ -70,29 +70,44 @@ test('acts in Unleash as the caller, with the auth the host forwards', async () 
   }
 });
 
-test('tells the host how each tool call ended', async () => {
-  const outcomes: ToolOutcome[] = [];
+test('reports each request to the host, without tool arguments', async () => {
+  const reports: McpRequestReport[] = [];
   const { client, stub, close } = await connect({
     feedbackConsent: 'denied',
-    onToolOutcome: (outcome) => outcomes.push(outcome),
+    onRequest: (report) => reports.push(report),
   });
   stub
     .intercept({ path: (path) => path.startsWith('/api/admin/'), method: 'GET' })
     .reply(403, { name: 'NoAccessError' })
     .times(2);
   try {
-    await client.callTool({ name: 'search', arguments: { queries: [{ kind: 'projects' }] } });
+    await client.callTool({ name: 'search', arguments: { queries: [{ kind: 'projects', query: 'secret-launch' }] } });
     await client.callTool({ name: 'audit', arguments: {} });
     await client.callTool({ name: 'no_such_tool', arguments: {} });
 
-    assert.deepEqual(outcomes, [
+    assert.deepEqual(reports, [
       {
-        kind: 'succeeded',
-        resultBytes: 80,
-        queries: { total: 1, failed: [{ errorName: 'NoAccessError', errorStatus: 403 }] },
+        kind: 'initialize',
+        client: { name: 'test-client', version: '0.0.0' },
+        capabilities: [],
+        extensions: [],
       },
-      { kind: 'failed', resultBytes: 77, errorName: 'NoAccessError', errorStatus: 403 },
-      { kind: 'refused', resultBytes: 45 },
+      { kind: 'other', method: 'notifications/initialized' },
+      {
+        kind: 'tool_call',
+        tool: 'search',
+        outcome: {
+          kind: 'succeeded',
+          resultBytes: 80,
+          results: { total: 1, failed: [{ errorName: 'NoAccessError', errorStatus: 403 }] },
+        },
+      },
+      {
+        kind: 'tool_call',
+        tool: 'audit',
+        outcome: { kind: 'failed', resultBytes: 77, errorName: 'NoAccessError', errorStatus: 403 },
+      },
+      { kind: 'tool_call', tool: undefined, outcome: { kind: 'refused', resultBytes: 45 } },
     ]);
   } finally {
     await close();

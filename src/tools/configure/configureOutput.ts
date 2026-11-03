@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { type ChangeRequest, changeRequest as changeRequestShape } from '../shared/changeRequest.ts';
-import { type Failed, failed } from '../shared/failed.ts';
+import { type Failed, failedError } from '../shared/failed.ts';
 
 const contextField = {
   resource: z.literal('context_field'),
@@ -86,7 +86,7 @@ const target = z.discriminatedUnion('resource', [
   project,
 ]);
 
-const error = failed.omit({ kind: true }).describe('What Unleash answered; the change was not applied');
+const error = failedError.describe('What Unleash answered; the change was not applied');
 
 const applied = z.discriminatedUnion('resource', [
   z.object({ kind: z.literal('applied'), ...contextField }),

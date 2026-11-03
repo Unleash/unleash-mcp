@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { type ChangeRequest, changeRequest as changeRequestShape } from '../shared/changeRequest.ts';
-import { type Failed, failed } from '../shared/failed.ts';
+import { type Failed, failedError } from '../shared/failed.ts';
 
 const define = { action: z.literal('define'), project: z.string(), flag: z.string() };
 const complete = { action: z.literal('complete'), project: z.string(), flag: z.string() };
@@ -30,9 +30,9 @@ const applied = z.discriminatedUnion('action', [
   z.object({ kind: z.literal('applied'), ...setParentDependency }),
 ]);
 
-const error = failed
-  .omit({ kind: true })
-  .describe('What Unleash answered; the operation was not applied, or only in part where it takes several writes');
+const error = failedError.describe(
+  'What Unleash answered; the operation was not applied, or only in part where it takes several writes',
+);
 
 const failedOperation = z.discriminatedUnion('action', [
   z.object({ kind: z.literal('failed'), ...define, error }),
