@@ -46,7 +46,7 @@ export const reportRequest = ({
   // A host callback that throws must not reach the SDK, which may already have sent the reply.
   const report = (r: McpRequestReport): void => {
     try {
-      onRequest(r);
+      Promise.resolve(onRequest(r)).catch(() => {});
     } catch {}
   };
   if (!isJSONRPCRequest(body) || body.method !== 'tools/call') return;
