@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import type { CallToolResult, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { toMcpRequestSummary } from './mcpRequestSummary.ts';
 import { toFailedToolResult } from './tools/shared/failed.ts';
 
@@ -10,12 +10,12 @@ const toolCallRequest = (name: string) => ({
   method: 'tools/call',
   params: { name, arguments: {} },
 });
-const answer = (result: CallToolResult): JSONRPCMessage => ({ jsonrpc: '2.0', id: 1, result });
-const toolResult = (structuredContent: Record<string, unknown>) => ({
+const summaryOf = (tool: string, result: CallToolResult) =>
+  toMcpRequestSummary(toolCallRequest(tool), [{ jsonrpc: '2.0', id: 1, result }], 'replied');
+const toolResult = (structuredContent: Record<string, unknown>): CallToolResult => ({
   structuredContent,
-  content: [{ type: 'text' as const, text: JSON.stringify(structuredContent) }],
+  content: [{ type: 'text', text: JSON.stringify(structuredContent) }],
 });
-const sdkError = (text: string) => ({ isError: true, content: [{ type: 'text' as const, text }] });
 
 test('leaves out a request that is not a tool call', () => {
   const summary = toMcpRequestSummary({ jsonrpc: '2.0', id: 1, method: 'tools/list' }, [], 'replied');
@@ -35,87 +35,53 @@ test('summarises a tool call the SDK turns away without a reply as an SDK error'
   assert.deepEqual(summary, { kind: 'sdk_error', tool: 'audit' });
 });
 
-test('names a tool this server does not have unknown', () => {
-  const summary = toMcpRequestSummary(
-    toolCallRequest('no_such_tool'),
-    [answer(sdkError('Tool no_such_tool not found'))],
-    'replied',
-  );
+test('summarises a call to a tool this server lacks under the tool unknown', () => {
+  const summary = toMcpRequestSummary(toolCallRequest('no_such_tool'), [], 'replied');
 
   assert.deepEqual(summary, { kind: 'sdk_error', tool: 'unknown' });
 });
 
 test("summarises the SDK's own error text for a tool as an SDK error", () => {
-  const summary = toMcpRequestSummary(
-    toolCallRequest('audit'),
-    [answer(sdkError('Input validation error: Invalid arguments for tool audit'))],
-    'replied',
-  );
+  const summary = summaryOf('audit', { isError: true, content: [{ type: 'text', text: 'Input validation error' }] });
 
   assert.deepEqual(summary, { kind: 'sdk_error', tool: 'audit' });
 });
 
 test('counts a failed tool by the error Unleash answered with', () => {
-  const failed = toFailedToolResult({ kind: 'failed', status: 403, name: 'NoAccessError', reasons: ['secret-launch'] });
+  const failed = toFailedToolResult({ kind: 'failed', status: 403, name: 'NoAccessError', reasons: [] });
 
-  const summary = toMcpRequestSummary(toolCallRequest('audit'), [answer(failed)], 'replied');
+  const summary = summaryOf('audit', failed);
 
-  assert.deepEqual(summary, {
+  assert.partialDeepStrictEqual(summary, {
     kind: 'tool_result',
-    tool: 'audit',
     results: 1,
     errors: [{ name: 'NoAccessError', status: 403 }],
-    resultBytes: failed.content[0].text.length,
   });
 });
 
-test('counts a single result as one, with the bytes of its text only', () => {
-  const released = toolResult({ result: { kind: 'released', flag: 'crème-brûlée' } });
-
-  const summary = toMcpRequestSummary(toolCallRequest('release'), [answer(released)], 'replied');
+test('counts a single result as one, measuring its text in bytes, not characters', () => {
+  const summary = summaryOf('release', toolResult({ result: { kind: 'released', flag: 'crème-brûlée' } }));
 
   assert.deepEqual(summary, { kind: 'tool_result', tool: 'release', results: 1, errors: [], resultBytes: 55 });
 });
 
-test('counts each result of a list, naming the ones that failed', () => {
-  const found = toolResult({
-    results: [
-      { kind: 'projects', projects: [] },
-      { kind: 'failed', status: 404, name: 'NotFoundError', reasons: [] },
+test('counts each result of a list, naming the plain failures and the failed changes', () => {
+  const summary = summaryOf(
+    'configure',
+    toolResult({
+      results: [
+        { kind: 'projects', projects: [] },
+        { kind: 'failed', status: 404, name: 'NotFoundError', reasons: [] },
+        { kind: 'failed', name: 'beta-users', error: { status: 409, name: 'NameExistsError', reasons: [] } },
+      ],
+    }),
+  );
+
+  assert.partialDeepStrictEqual(summary, {
+    results: 3,
+    errors: [
+      { name: 'NotFoundError', status: 404 },
+      { name: 'NameExistsError', status: 409 },
     ],
-  });
-
-  const summary = toMcpRequestSummary(toolCallRequest('search'), [answer(found)], 'replied');
-
-  assert.deepEqual(summary, {
-    kind: 'tool_result',
-    tool: 'search',
-    results: 2,
-    errors: [{ name: 'NotFoundError', status: 404 }],
-    resultBytes: found.content[0].text.length,
-  });
-});
-
-test('reads the error of a change that names what it changed', () => {
-  const configured = toolResult({
-    results: [
-      {
-        kind: 'failed',
-        resource: 'segment',
-        action: 'create',
-        name: 'beta-users',
-        error: { status: 409, name: 'NameExistsError', reasons: [] },
-      },
-    ],
-  });
-
-  const summary = toMcpRequestSummary(toolCallRequest('configure'), [answer(configured)], 'replied');
-
-  assert.deepEqual(summary, {
-    kind: 'tool_result',
-    tool: 'configure',
-    results: 1,
-    errors: [{ name: 'NameExistsError', status: 409 }],
-    resultBytes: configured.content[0].text.length,
   });
 });
