@@ -2,14 +2,14 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { applied } from '../../unleash/testSetup.ts';
+import { applied, createProjectNamed, deleteProjectNamed } from '../../unleash/testSetup.ts';
 import { createContextField, deleteContextField } from './contextField.ts';
 import { createLegalValue, deleteLegalValue } from './legalValue.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./legalValue.snapshot.json', import.meta.url).pathname);
-// Not the fields in contextField.test.ts: test files run in parallel while recording.
+// Not the fields in contextField.test.ts: context fields are global.
 const field = 'mcpLegalValueField';
-const project = 'mcp-server';
+const project = 'mcp-configure-legal-value';
 const projectField = 'mcpProjectLegalValueField';
 
 const deleteFields = async (): Promise<void> => {
@@ -18,12 +18,14 @@ const deleteFields = async (): Promise<void> => {
 };
 
 before(async () => {
+  await createProjectNamed(admin, unleash, project);
   await deleteFields();
   applied(await createContextField(admin, { kind: 'context_field', action: 'create', name: field }));
   applied(await createContextField(admin, { kind: 'context_field', action: 'create', project, name: projectField }));
 });
 after(async () => {
   await deleteFields();
+  await deleteProjectNamed(admin, project);
   await close();
 });
 

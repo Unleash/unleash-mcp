@@ -6,7 +6,9 @@ import { createRecordedClient, createStubbedClient } from '../../../unleash/test
 import { unleashError } from '../../../unleash/testError.ts';
 import {
   createFlag,
+  createProjectNamed,
   deleteFlag,
+  deleteProjectNamed,
   deleteReleaseTemplate,
   released,
   withoutChangeRequests,
@@ -19,7 +21,7 @@ import { inspectFlag } from './flag.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./flag.snapshot.json', import.meta.url).pathname);
 const editionOf = createEditionReader(unleash);
-const project = 'mcp-server';
+const project = 'mcp-inspect-flag';
 const flag = 'mcp-inspected-flag';
 const parent = 'mcp-inspected-parent';
 const beta = { field: 'userId', operator: 'IN' as const, values: ['1', '2'] };
@@ -63,7 +65,8 @@ const addReleasePlan = async (): Promise<void> => {
 };
 
 before(async () => {
-  await deleteFlags();
+  await createProjectNamed(admin, unleash, project);
+  await deleteReleaseTemplate(admin, template);
   await createFlag(admin, project, { flag: parent });
   await createFlag(admin, project, {
     flag,
@@ -101,6 +104,7 @@ before(async () => {
 });
 after(async () => {
   await deleteFlags();
+  await deleteProjectNamed(admin, project);
   await close();
 });
 
@@ -399,7 +403,7 @@ test('fails with the Unleash error when the flag does not exist', async () => {
     kind: 'failed',
     status: 404,
     name: 'NotFoundError',
-    reasons: [`There's no feature named "mcp-unknown" in project "mcp-server".`],
+    reasons: [`There's no feature named "mcp-unknown" in project "${project}".`],
   });
 });
 

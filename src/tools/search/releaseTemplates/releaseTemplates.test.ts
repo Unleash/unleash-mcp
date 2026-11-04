@@ -2,14 +2,14 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { applied, deleteReleaseTemplate } from '../../../unleash/testSetup.ts';
+import { applied, createProjectNamed, deleteProjectNamed, deleteReleaseTemplate } from '../../../unleash/testSetup.ts';
 import { createReleaseTemplate } from '../../configure/releaseTemplate.ts';
 import { searchReleaseTemplates } from './releaseTemplates.ts';
 
 const { unleash, admin, close } = createRecordedClient(
   new URL('./releaseTemplates.snapshot.json', import.meta.url).pathname,
 );
-const project = 'mcp-server';
+const project = 'mcp-search-release-templates';
 const global = 'mcp-searched-template';
 const projectScoped = 'mcp-searched-project-template';
 const archived = 'mcp-searched-archived-template';
@@ -25,6 +25,7 @@ const cleanUp = async () => {
 };
 
 before(async () => {
+  await createProjectNamed(admin, unleash, project);
   await cleanUp();
   const createdGlobal = await createReleaseTemplate(admin, {
     kind: 'release_template',
@@ -48,16 +49,19 @@ before(async () => {
     milestones,
   });
   archivedId = String(applied(createdArchived).id);
-  await admin.POST('/api/admin/release-plan-templates/archive/{templateId}', {
+  const archivedTemplate = await admin.POST('/api/admin/release-plan-templates/archive/{templateId}', {
     params: { path: { templateId: archivedId } },
   });
+  assert(archivedTemplate.response.ok, String(archivedTemplate.response.status));
 });
 // Unleash leaves archived templates out of its lists, so the archived one is deleted by its id.
 after(async () => {
   await cleanUp();
-  await admin.DELETE('/api/admin/release-plan-templates/{templateId}', {
+  const deletedTemplate = await admin.DELETE('/api/admin/release-plan-templates/{templateId}', {
     params: { path: { templateId: archivedId } },
   });
+  assert(deletedTemplate.response.ok, String(deletedTemplate.response.status));
+  await deleteProjectNamed(admin, project);
   await close();
 });
 

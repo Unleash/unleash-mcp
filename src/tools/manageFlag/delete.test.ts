@@ -2,15 +2,15 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { createFlag, deleteFlag } from '../../unleash/testSetup.ts';
+import { createFlag, createProjectNamed, deleteFlag, deleteProjectNamed } from '../../unleash/testSetup.ts';
 import { deleteArchivedFlag } from './delete.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./delete.snapshot.json', import.meta.url).pathname);
-const project = 'mcp-server';
+const project = 'mcp-manage-flag-delete';
 const flag = 'mcp-deleted-flag';
 
 before(async () => {
-  await deleteFlag(admin, project, flag);
+  await createProjectNamed(admin, unleash, project);
   await createFlag(admin, project, { flag });
   await admin.DELETE('/api/admin/projects/{projectId}/features/{featureName}', {
     params: { path: { projectId: project, featureName: flag } },
@@ -19,6 +19,7 @@ before(async () => {
 // Cleans up only after a failed recording: a deleted flag is gone already.
 after(async () => {
   await deleteFlag(admin, project, flag);
+  await deleteProjectNamed(admin, project);
   await close();
 });
 

@@ -8,16 +8,18 @@ import type { SendFeedback } from './tools/sendFeedback/sendFeedback.ts';
 import { reportableTools } from './tools/sendFeedback/sendFeedbackInput.ts';
 import type { UnleashClient } from './unleash/client.ts';
 import { createRecordedClient, createStubbedClient } from './unleash/testClient.ts';
-import { deleteFlag } from './unleash/testSetup.ts';
+import { createProjectNamed, deleteProjectNamed } from './unleash/testSetup.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./server.snapshot.json', import.meta.url).pathname);
-const project = 'mcp-server';
-// Not `mcp-flag`: test files run in parallel while recording, and release.test.ts deletes that one.
+const project = 'mcp-server-test';
+// Not `mcp-flag`: flag names are unique across the instance, and release.test.ts uses that one.
 const flag = 'mcp-server-flag';
 
-// The flag is gone before the test, so the release creates it.
-before(() => deleteFlag(admin, project, flag));
-after(close);
+before(() => createProjectNamed(admin, unleash, project));
+after(async () => {
+  await deleteProjectNamed(admin, project);
+  await close();
+});
 
 // No test reaches the docs: docs is tested on its own.
 const docsFetch: typeof globalThis.fetch = () => assert.fail('the docs were fetched');

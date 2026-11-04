@@ -43,9 +43,12 @@ export const masked = (entries: Entry[]): Entry[] =>
     hash,
     snapshot: {
       ...snapshot,
-      responses: snapshot.responses.map((r) => ({ ...r, body: r.body.replace(email, pseudonym) })),
+      responses: snapshot.responses.map((r) => ({ ...r, body: maskedText(r.body) })),
     },
   }));
+
+/** The text with every email address replaced by its pseudonym; not idempotent, a pseudonym is an address too. */
+export const maskedText = (text: string): string => text.replace(email, pseudonym);
 
 const pseudonym = (address: string): string =>
   `user-${createHash('sha256').update(address).digest('hex').slice(0, 6)}@example.com`;

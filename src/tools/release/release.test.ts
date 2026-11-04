@@ -3,14 +3,21 @@ import { after, before, test } from 'node:test';
 import { production, stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { cancelChangeRequest, deleteFlag, deleteReleaseTemplate, deleteSegmentNamed } from '../../unleash/testSetup.ts';
+import {
+  cancelChangeRequest,
+  createProjectNamed,
+  deleteFlag,
+  deleteProjectNamed,
+  deleteReleaseTemplate,
+  deleteSegmentNamed,
+} from '../../unleash/testSetup.ts';
 import { createReleaseTemplate } from '../configure/releaseTemplate.ts';
 import { createSegment } from '../configure/segment.ts';
 import { createRelease } from './release.ts';
 import { releaseInput } from './releaseInput.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./release.snapshot.json', import.meta.url).pathname);
-const project = 'mcp-server';
+const project = 'mcp-release';
 const flag = 'mcp-flag';
 
 const segment = 'mcp-beta';
@@ -19,9 +26,8 @@ let segmentId: number;
 let templateId: string;
 let changeRequestId: number | undefined;
 
-// The flag is gone before the tests, so the first release creates it.
 before(async () => {
-  await deleteFlag(admin, project, flag);
+  await createProjectNamed(admin, unleash, project);
   await deleteSegmentNamed(admin, segment);
   await deleteReleaseTemplate(admin, template);
   const created = await createSegment(admin, { kind: 'segment', action: 'create', name: segment, constraints: [] });
@@ -46,6 +52,7 @@ after(async () => {
   await deleteFlag(admin, project, flag);
   await deleteSegmentNamed(admin, segment);
   await deleteReleaseTemplate(admin, template);
+  await deleteProjectNamed(admin, project);
   await close();
 });
 
@@ -239,7 +246,7 @@ test('moves the release plan to another milestone, replacing the audiences', asy
   });
 });
 
-// `mcp-server` requires change requests in production.
+// The test project requires change requests in production.
 test('puts the release in a change request where the environment requires one', async () => {
   const release = createRelease(unleash);
 

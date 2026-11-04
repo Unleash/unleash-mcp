@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { deleteReleaseTemplate } from '../../unleash/testSetup.ts';
+import { applied, deleteReleaseTemplate } from '../../unleash/testSetup.ts';
+import { createContextField, deleteContextField } from './contextField.ts';
 import { createReleaseTemplate } from './releaseTemplate.ts';
 
 const { unleash, admin, close } = createRecordedClient(
@@ -10,10 +11,17 @@ const { unleash, admin, close } = createRecordedClient(
 );
 const name = 'mcp-release-template';
 const ulid = /^[0-9A-Z]{26}$/;
+const emailField = 'mcpTemplateEmail';
 
-before(() => deleteReleaseTemplate(admin, name));
+// The field goes after the template that constrains on it.
+before(async () => {
+  await deleteReleaseTemplate(admin, name);
+  await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: emailField });
+  applied(await createContextField(admin, { kind: 'context_field', action: 'create', name: emailField }));
+});
 after(async () => {
   await deleteReleaseTemplate(admin, name);
+  await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: emailField });
   await close();
 });
 
@@ -29,7 +37,7 @@ test('creates a release template whose milestones advance on their own, answerin
         targets: [
           {
             name: 'Employees',
-            constraints: [{ field: 'email', operator: 'STR_ENDS_WITH', values: ['@getunleash.io'] }],
+            constraints: [{ field: emailField, operator: 'STR_ENDS_WITH', values: ['@getunleash.io'] }],
             values: [{ name: 'new' }],
           },
         ],

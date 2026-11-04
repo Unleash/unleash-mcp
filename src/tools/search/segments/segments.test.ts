@@ -2,18 +2,19 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { applied, deleteSegmentNamed } from '../../../unleash/testSetup.ts';
+import { applied, createProjectNamed, deleteProjectNamed, deleteSegmentNamed } from '../../../unleash/testSetup.ts';
 import { createSegment } from '../../configure/segment.ts';
 import { searchSegments } from './segments.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./segments.snapshot.json', import.meta.url).pathname);
-const project = 'mcp-server';
+const project = 'mcp-search-segments';
 const global = 'mcp-searched-segment';
 const projectScoped = 'mcp-searched-project-segment';
 let globalId = 0;
 let projectScopedId = 0;
 
 before(async () => {
+  await createProjectNamed(admin, unleash, project);
   for (const name of [global, projectScoped]) await deleteSegmentNamed(admin, name);
   const createdGlobal = await createSegment(admin, {
     kind: 'segment',
@@ -33,6 +34,7 @@ before(async () => {
 });
 after(async () => {
   for (const name of [global, projectScoped]) await deleteSegmentNamed(admin, name);
+  await deleteProjectNamed(admin, project);
   await close();
 });
 

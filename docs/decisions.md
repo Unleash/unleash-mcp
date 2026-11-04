@@ -484,3 +484,12 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 ## 2026-11-03 — Test setup goes through the server's own tools
 
 - Setup and teardown use the tool functions wherever one covers the job, and assert their outcome; the admin API stays only where no tool does the job, such as archiving a flag for a test. Finishes the "over time" of 2026-10-22.
+
+## 2026-11-03 — Each test file creates its own project
+
+- A recorded test file creates its project through the tools in `before` and deletes it, flags included, in `after`, so the sandbox needs nothing set up and holds nothing of ours between recordings; the shared `mcp-server` had colleagues as members and settings nobody could see in the repo. Supersedes "the sandbox holds only the project `mcp-server`" (2026-10-22). Unleash derives the id from the name, so a file names its project up front. Rejected: one bootstrapped project for all files, which keeps the sandbox state and the cross-file leftovers.
+- The user under test joins each project as a Member over the API, since a root Editor has no say in a project it is not in and no tool manages members. Change requests stay required in production only: an instance can turn them on for every environment of a new project, so the setup switches development off explicitly.
+
+## 2026-11-04 — Recording sees the pseudonyms too
+
+- While recording, the client masks the email addresses in what the test sees, as the snapshot will, so a test asserting who made a change passes on recording and on replay alike. Rejected: asserting only that the field is there, which stops pinning the mapping.

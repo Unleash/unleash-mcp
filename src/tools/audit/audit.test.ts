@@ -3,13 +3,13 @@ import { after, before, test } from 'node:test';
 import { z } from 'zod';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { createFlag, deleteFlag } from '../../unleash/testSetup.ts';
+import { createFlag, createProjectNamed, deleteFlag, deleteProjectNamed } from '../../unleash/testSetup.ts';
 import { searchFlags } from '../search/flags/flags.ts';
 import { createAudit } from './audit.ts';
 import { auditInput } from './auditInput.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./audit.snapshot.json', import.meta.url).pathname);
-const project = 'mcp-server';
+const project = 'mcp-audit';
 const flag = 'mcp-audited-flag';
 // Parsed as the MCP SDK does, so the defaults apply.
 const input = z.object(auditInput);
@@ -20,7 +20,7 @@ const dayOf = (date: Date): string => date.toISOString().slice(0, 10);
 const dayBefore = (date: Date): string => dayOf(new Date(date.getTime() - 24 * 60 * 60 * 1000));
 
 before(async () => {
-  await deleteFlag(admin, project, flag);
+  await createProjectNamed(admin, unleash, project);
   await createFlag(admin, project, { flag });
   const found = await searchFlags(admin, { kind: 'flags', project, query: flag, offset: 0, limit: 1 });
   assert(found.kind === 'flags' && found.flags[0]?.createdAt);
@@ -31,6 +31,7 @@ before(async () => {
 });
 after(async () => {
   await deleteFlag(admin, project, flag);
+  await deleteProjectNamed(admin, project);
   await close();
 });
 

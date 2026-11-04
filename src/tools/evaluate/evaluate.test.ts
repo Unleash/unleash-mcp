@@ -6,7 +6,9 @@ import { unleashError } from '../../unleash/testError.ts';
 import {
   applied,
   createFlag,
+  createProjectNamed,
   deleteFlag,
+  deleteProjectNamed,
   deleteSegmentNamed,
   released,
   withoutChangeRequests,
@@ -17,7 +19,7 @@ import { createRelease } from '../release/release.ts';
 import { createEvaluate } from './evaluate.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./evaluate.snapshot.json', import.meta.url).pathname);
-const project = 'mcp-server';
+const project = 'mcp-evaluate';
 const flag = 'mcp-evaluated-flag';
 const parent = 'mcp-evaluated-parent';
 const child = 'mcp-evaluated-child';
@@ -64,15 +66,18 @@ const addSdkOnlyTarget = (featureName: string, env: string) =>
     ],
   });
 
+// The flags go first: Unleash refuses to delete a strategy or segment in use.
 const deleteSetup = async () => {
   for (const name of [flag, child, parent]) await deleteFlag(admin, project, name);
   await deleteSegmentNamed(admin, segment);
   await admin.DELETE('/api/admin/strategies/{name}', { params: { path: { name: sdkOnlyStrategy } } });
 };
 
-// The flags go first: Unleash refuses to delete a strategy or segment in use. A new flag is off, so the parent stays unsatisfied.
+// A new flag is off, so the parent stays unsatisfied.
 before(async () => {
-  await deleteSetup();
+  await createProjectNamed(admin, unleash, project);
+  await deleteSegmentNamed(admin, segment);
+  await admin.DELETE('/api/admin/strategies/{name}', { params: { path: { name: sdkOnlyStrategy } } });
   await admin.POST('/api/admin/strategies', { body: { name: sdkOnlyStrategy, parameters: [] } });
   const created = await createSegment(admin, {
     kind: 'segment',
@@ -132,6 +137,7 @@ before(async () => {
 });
 after(async () => {
   await deleteSetup();
+  await deleteProjectNamed(admin, project);
   await close();
 });
 

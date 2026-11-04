@@ -1,18 +1,23 @@
 import assert from 'node:assert/strict';
-import { after, test } from 'node:test';
+import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
+import { createProjectNamed, deleteProjectNamed } from '../../../unleash/testSetup.ts';
 import { searchProjects } from './projects.ts';
 
-const { unleash, close } = createRecordedClient(new URL('./projects.snapshot.json', import.meta.url).pathname);
+const { unleash, admin, close } = createRecordedClient(new URL('./projects.snapshot.json', import.meta.url).pathname);
+const project = 'mcp-search-projects';
 
-after(close);
+before(() => createProjectNamed(admin, unleash, project));
+after(async () => {
+  await deleteProjectNamed(admin, project);
+  await close();
+});
 
-// The sandbox project the tests run in is the only fixture, so it is what the search finds.
 test('finds projects by a part of their id, case insensitive', async () => {
-  const output = await searchProjects(unleash, { kind: 'projects', query: 'MCP-SERVER' });
+  const output = await searchProjects(unleash, { kind: 'projects', query: project.toUpperCase() });
 
-  assert.partialDeepStrictEqual(output, { kind: 'projects', projects: [{ id: 'mcp-server', name: 'mcp-server' }] });
+  assert.partialDeepStrictEqual(output, { kind: 'projects', projects: [{ id: project, name: project }] });
 });
 
 test('finds projects by a part of their name, case insensitive', async () => {

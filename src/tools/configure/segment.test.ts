@@ -4,8 +4,15 @@ import { isDeepStrictEqual } from 'node:util';
 import { production, stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { cancelChangeRequest, deleteSegmentNamed } from '../../unleash/testSetup.ts';
+import {
+  applied,
+  cancelChangeRequest,
+  createProjectNamed,
+  deleteProjectNamed,
+  deleteSegmentNamed,
+} from '../../unleash/testSetup.ts';
 import { createChangeRequestReader } from '../shared/changeRequest.ts';
+import { createContextField, deleteContextField } from './contextField.ts';
 import { createSegment, deleteSegment, updateSegment } from './segment.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./segment.snapshot.json', import.meta.url).pathname);
@@ -17,7 +24,8 @@ const updated = 'mcp-updated-segment';
 const deletable = 'mcp-deletable-segment';
 const reviewed = 'mcp-reviewed-segment';
 const reviewedDeletion = 'mcp-reviewed-deletion-segment';
-const project = 'mcp-server';
+const project = 'mcp-configure-segment';
+const emailField = 'mcpSegmentEmail';
 // Unleash adds a change to the user's open change request, in review or not, so both tests can answer the same one.
 const changeRequestIds = new Set<number>();
 
@@ -26,11 +34,18 @@ const deleteSegments = async (): Promise<void> => {
     await deleteSegmentNamed(admin, segment);
 };
 
-before(deleteSegments);
+before(async () => {
+  await createProjectNamed(admin, unleash, project);
+  await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: emailField });
+  applied(await createContextField(admin, { kind: 'context_field', action: 'create', name: emailField }));
+  await deleteSegments();
+});
 // The change requests go first, so nothing pending refers to the segments.
 after(async () => {
   for (const id of changeRequestIds) await cancelChangeRequest(unleash, project, id);
   await deleteSegments();
+  await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: emailField });
+  await deleteProjectNamed(admin, project);
   await close();
 });
 
@@ -40,7 +55,7 @@ test('creates a segment with its constraints, answering with its id', async () =
     action: 'create',
     name,
     description: 'Created by the MCP server tests',
-    constraints: [{ field: 'email', operator: 'STR_ENDS_WITH', values: ['@getunleash.io'] }],
+    constraints: [{ field: emailField, operator: 'STR_ENDS_WITH', values: ['@getunleash.io'] }],
   });
 
   assert.equal(output.kind, 'applied');
@@ -127,7 +142,7 @@ test('fails with a reason when a flag still targets the segment, which Unleash l
   });
 });
 
-// `mcp-server` requires change requests in production.
+// The test project requires change requests in production.
 test('puts the update of a segment in a change request where the project requires one', async () => {
   const id = await segmentNamed(reviewed, project);
 

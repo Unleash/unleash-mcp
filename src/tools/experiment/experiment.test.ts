@@ -4,13 +4,13 @@ import { z } from 'zod';
 import { stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { cancelChangeRequest, deleteFlag } from '../../unleash/testSetup.ts';
+import { cancelChangeRequest, createProjectNamed, deleteFlag, deleteProjectNamed } from '../../unleash/testSetup.ts';
 import { createExperiment } from './experiment.ts';
 import { experimentInput } from './experimentInput.ts';
 import { experimentOutput } from './experimentOutput.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./experiment.snapshot.json', import.meta.url).pathname);
-const project = 'mcp-server';
+const project = 'mcp-experiment';
 const flag = 'mcp-checkout-experiment';
 let changeRequestId: number | undefined;
 // The MCP SDK checks every result against the output schema, so a result it doesn't describe never reaches the agent.
@@ -22,12 +22,12 @@ const values = [
 ];
 const everyone = [{ name: 'Everyone', values }];
 
-// The flag is gone before the tests, so the first one creates it.
-before(() => deleteFlag(admin, project, flag));
+before(() => createProjectNamed(admin, unleash, project));
 // The change request goes first, so nothing pending refers to the flag.
 after(async () => {
   if (changeRequestId) await cancelChangeRequest(unleash, project, changeRequestId);
   await deleteFlag(admin, project, flag);
+  await deleteProjectNamed(admin, project);
   await close();
 });
 
@@ -60,7 +60,7 @@ test('stops an existing experiment', async () => {
   assert.partialDeepStrictEqual(output, { kind: 'split', flag: { origin: 'found', state: 'disabled' } });
 });
 
-// `mcp-server` requires change requests in production.
+// The test project requires change requests in production.
 test('puts the experiment in a change request where the environment requires one', async () => {
   const output = await createExperiment(unleash)({
     project,

@@ -2,13 +2,19 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { deleteFlag, deleteSegmentNamed, released } from '../../../unleash/testSetup.ts';
+import {
+  createProjectNamed,
+  deleteFlag,
+  deleteProjectNamed,
+  deleteSegmentNamed,
+  released,
+} from '../../../unleash/testSetup.ts';
 import { createSegment } from '../../configure/segment.ts';
 import { createRelease } from '../../release/release.ts';
 import { inspectSegment } from './segment.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./segment.snapshot.json', import.meta.url).pathname);
-const project = 'mcp-server';
+const project = 'mcp-inspect-segment';
 const segment = 'mcp-inspected-segment';
 const flag = 'mcp-segment-flag';
 const beta = { field: 'userId', operator: 'IN' as const, values: ['1', '2'] };
@@ -16,7 +22,7 @@ let id = 0;
 
 // The flag goes first: Unleash may refuse to delete a segment in use. Two targets on the segment in one environment show as one use.
 before(async () => {
-  await deleteFlag(admin, project, flag);
+  await createProjectNamed(admin, unleash, project);
   await deleteSegmentNamed(admin, segment);
   const created = await createSegment(admin, {
     kind: 'segment',
@@ -44,6 +50,7 @@ before(async () => {
 after(async () => {
   await deleteFlag(admin, project, flag);
   await deleteSegmentNamed(admin, segment);
+  await deleteProjectNamed(admin, project);
   await close();
 });
 

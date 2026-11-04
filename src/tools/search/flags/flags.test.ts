@@ -2,14 +2,22 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { applied, createFlag, deleteFlag, deleteSegmentNamed, released } from '../../../unleash/testSetup.ts';
+import {
+  applied,
+  createFlag,
+  createProjectNamed,
+  deleteFlag,
+  deleteProjectNamed,
+  deleteSegmentNamed,
+  released,
+} from '../../../unleash/testSetup.ts';
 import { createSegment } from '../../configure/segment.ts';
 import { setStaleness } from '../../manageFlag/setStaleness.ts';
 import { createRelease } from '../../release/release.ts';
 import { searchFlags } from './flags.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./flags.snapshot.json', import.meta.url).pathname);
-const project = 'mcp-server';
+const project = 'mcp-search-flags';
 const first = 'mcp-searched-first';
 const second = 'mcp-searched-second';
 const archived = 'mcp-searched-archived';
@@ -24,7 +32,7 @@ const deleteFlags = async (): Promise<void> => {
 };
 
 before(async () => {
-  await deleteFlags();
+  await createProjectNamed(admin, unleash, project);
   await createFlag(admin, project, {
     flag: first,
     type: 'kill-switch',
@@ -45,14 +53,16 @@ before(async () => {
       audience: { targets: [{ name: 'Beta', segments: [segmentId] }] },
     }),
   );
-  await admin.DELETE('/api/admin/projects/{projectId}/features/{featureName}', {
+  const archivedFlag = await admin.DELETE('/api/admin/projects/{projectId}/features/{featureName}', {
     params: { path: { projectId: project, featureName: archived } },
   });
+  assert(archivedFlag.response.ok, String(archivedFlag.response.status));
 });
 // The flags go first: Unleash may refuse to delete a segment in use.
 after(async () => {
   await deleteFlags();
   await deleteSegmentNamed(admin, segment);
+  await deleteProjectNamed(admin, project);
   await close();
 });
 

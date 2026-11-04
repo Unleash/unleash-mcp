@@ -2,7 +2,7 @@ import { type Dispatcher, type Interceptable, MockAgent, SnapshotAgent } from 'u
 import { z } from 'zod';
 import { readConfig } from '../config.ts';
 import { createUnleashClient, type UnleashClient } from './client.ts';
-import { decodeBodies, encodedCopyOf } from './testSnapshot.ts';
+import { decodeBodies, encodedCopyOf, maskedText } from './testSnapshot.ts';
 
 // Tests replay recorded exchanges so they stay subsecond and work offline; recording against the real
 // Unleash is the only way to keep the snapshots truthful about the API.
@@ -19,15 +19,16 @@ export const createRecordedClient = (
     excludeHeaders: ['authorization', ...churningHeaders],
     ignoreHeaders: ['authorization'],
   });
+  const fetch = record ? maskingEmails(createFetch(agent)) : createFetch(agent);
   const unleash = createUnleashClient({
     baseUrl: config.UNLEASH_BASE_URL,
     headers: { Authorization: config.UNLEASH_PAT },
-    fetch: createFetch(agent),
+    fetch,
   });
   const admin = createUnleashClient({
     baseUrl: config.UNLEASH_BASE_URL,
     headers: adminHeaders(record),
-    fetch: createFetch(agent),
+    fetch,
   });
   // Closing the agent writes the snapshots when recording.
   const close = async (): Promise<void> => {
@@ -75,4 +76,19 @@ const createFetch =
     const request = new Request(input, init);
     request.headers.set('accept-encoding', 'identity');
     return globalThis.fetch(request, { dispatcher: agent });
+  };
+
+// A recording masks the email addresses in what the test sees, as the snapshot will: a test then asserts the same on both.
+const maskingEmails =
+  (fetch: typeof globalThis.fetch): typeof globalThis.fetch =>
+  async (input, init) => {
+    const response = await fetch(input, init);
+    const text = await response.text();
+    const headers = new Headers(response.headers);
+    headers.delete('content-length');
+    return new Response(text ? maskedText(text) : null, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
   };

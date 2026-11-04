@@ -2,24 +2,24 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { z } from 'zod';
 import { createRecordedClient } from '../../unleash/testClient.ts';
-import { cancelChangeRequest, deleteFlag } from '../../unleash/testSetup.ts';
+import { cancelChangeRequest, createProjectNamed, deleteFlag, deleteProjectNamed } from '../../unleash/testSetup.ts';
 import { createKillSwitch } from './killSwitch.ts';
 import { killSwitchInput } from './killSwitchInput.ts';
 import { killSwitchOutput } from './killSwitchOutput.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./killSwitch.snapshot.json', import.meta.url).pathname);
-const project = 'mcp-server';
+const project = 'mcp-kill-switch';
 const flag = 'mcp-disable-payments';
 let changeRequestId: number | undefined;
 // The MCP SDK checks every result against the output schema, so a result it doesn't describe never reaches the agent.
 const describedByOutputSchema = (result: unknown) => z.object(killSwitchOutput).safeParse({ result }).error;
 
-// The switch is gone before the tests, so the first one creates it.
-before(() => deleteFlag(admin, project, flag));
+before(() => createProjectNamed(admin, unleash, project));
 // The change request goes first, so nothing pending refers to the switch.
 after(async () => {
   if (changeRequestId) await cancelChangeRequest(unleash, project, changeRequestId);
   await deleteFlag(admin, project, flag);
+  await deleteProjectNamed(admin, project);
   await close();
 });
 
@@ -50,7 +50,7 @@ test('turns an existing switch off', async () => {
   assert.partialDeepStrictEqual(output, { kind: 'switched', flag: { origin: 'found', state: 'disabled' } });
 });
 
-// `mcp-server` requires change requests in production.
+// The test project requires change requests in production.
 test('puts the switch in a change request where the environment requires one', async () => {
   const output = await createKillSwitch(unleash)({
     project,

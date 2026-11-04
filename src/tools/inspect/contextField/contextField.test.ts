@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { applied, deleteFlag, released } from '../../../unleash/testSetup.ts';
+import { applied, createProjectNamed, deleteFlag, deleteProjectNamed, released } from '../../../unleash/testSetup.ts';
 import { createContextField, deleteContextField } from '../../configure/contextField.ts';
 import { createRelease } from '../../release/release.ts';
 import { inspectContextField } from './contextField.ts';
@@ -10,7 +10,7 @@ import { inspectContextField } from './contextField.ts';
 const { unleash, admin, close } = createRecordedClient(
   new URL('./contextField.snapshot.json', import.meta.url).pathname,
 );
-const project = 'mcp-server';
+const project = 'mcp-inspect-context-field';
 const field = 'mcpInspectedField';
 const projectField = 'mcpInspectedProjectField';
 const legalValues = [{ value: 'gold', description: 'Paying customers' }, { value: 'free' }];
@@ -24,7 +24,7 @@ const deleteFields = async (): Promise<void> => {
 
 // The flag goes first: a field in use cannot be deleted. Two strategies on the field in one environment show as one use.
 before(async () => {
-  await deleteFlag(admin, project, flag);
+  await createProjectNamed(admin, unleash, project);
   await deleteFields();
   applied(
     await createContextField(admin, {
@@ -54,6 +54,7 @@ before(async () => {
 after(async () => {
   await deleteFlag(admin, project, flag);
   await deleteFields();
+  await deleteProjectNamed(admin, project);
   await close();
 });
 

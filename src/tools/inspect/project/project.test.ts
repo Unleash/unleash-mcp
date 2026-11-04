@@ -2,28 +2,34 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
+import { createProjectNamed, deleteProjectNamed } from '../../../unleash/testSetup.ts';
 import { inspectProject } from './project.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./project.snapshot.json', import.meta.url).pathname);
-const project = 'mcp-server';
+const project = 'mcp-inspect-project';
 const url = `${unleash.baseUrl}/projects/${project}`;
 const flagNaming = { pattern: '^mcp-[a-z-]+$', example: 'mcp-flag', description: 'mcp, dash, lowercase words' };
 
 // Every flag the tests create has to match the pattern.
 before(async () => {
-  await admin.PUT('/api/admin/projects/{projectId}/settings', {
+  await createProjectNamed(admin, unleash, project);
+  const named = await admin.PUT('/api/admin/projects/{projectId}/settings', {
     params: { path: { projectId: project } },
     body: { featureNaming: flagNaming },
   });
+  assert(named.response.ok, String(named.response.status));
 });
-after(close);
+after(async () => {
+  await deleteProjectNamed(admin, project);
+  await close();
+});
 
 test('shows the settings, environments and flag naming pattern of a project', async () => {
   const output = await inspectProject(unleash, { kind: 'project', project });
 
   assert.deepEqual(output, {
     kind: 'project',
-    name: 'mcp-server',
+    name: project,
     url,
     mode: 'open',
     environments: ['development', 'production'],
@@ -32,7 +38,7 @@ test('shows the settings, environments and flag naming pattern of a project', as
   });
 });
 
-// The sandbox project has no description, and the recorded test shows an empty one is left out.
+// The test project has no description, and the recorded test shows an empty one is left out.
 test('shows the description of a project that has one', async () => {
   const { unleash, stub } = createStubbedClient();
   const description = 'Flags of the MCP server tests';

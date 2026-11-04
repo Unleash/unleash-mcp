@@ -2,14 +2,14 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { applied } from '../../../unleash/testSetup.ts';
+import { applied, createProjectNamed, deleteProjectNamed } from '../../../unleash/testSetup.ts';
 import { createContextField, deleteContextField } from '../../configure/contextField.ts';
 import { searchContextFields } from './contextFields.ts';
 
 const { unleash, admin, close } = createRecordedClient(
   new URL('./contextFields.snapshot.json', import.meta.url).pathname,
 );
-const project = 'mcp-server';
+const project = 'mcp-search-context-fields';
 const global = 'mcpSearchedField';
 const projectScoped = 'mcpSearchedProjectField';
 
@@ -19,6 +19,7 @@ const deleteFields = async (): Promise<void> => {
 };
 
 before(async () => {
+  await createProjectNamed(admin, unleash, project);
   await deleteFields();
   applied(
     await createContextField(admin, {
@@ -33,6 +34,7 @@ before(async () => {
 });
 after(async () => {
   await deleteFields();
+  await deleteProjectNamed(admin, project);
   await close();
 });
 

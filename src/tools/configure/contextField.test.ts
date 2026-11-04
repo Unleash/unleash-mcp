@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { applied } from '../../unleash/testSetup.ts';
+import { applied, createProjectNamed, deleteProjectNamed } from '../../unleash/testSetup.ts';
 import { createContextField, deleteContextField, updateContextField } from './contextField.ts';
 
 const { unleash, admin, close } = createRecordedClient(
@@ -12,7 +12,7 @@ const name = 'mcpContextField';
 // Each test that needs an existing field gets its own, so tests don't depend on running in order.
 const updatable = 'mcpUpdatableContextField';
 const deletable = 'mcpDeletableContextField';
-const project = 'mcp-server';
+const project = 'mcp-configure-context-field';
 const projectField = 'mcpProjectContextField';
 const updatableProjectField = 'mcpUpdatableProjectContextField';
 const deletableProjectField = 'mcpDeletableProjectContextField';
@@ -22,9 +22,13 @@ const deleteFields = async (): Promise<void> => {
     await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: contextField });
 };
 
-before(deleteFields);
+before(async () => {
+  await createProjectNamed(admin, unleash, project);
+  await deleteFields();
+});
 after(async () => {
   await deleteFields();
+  await deleteProjectNamed(admin, project);
   await close();
 });
 

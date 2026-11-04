@@ -4,21 +4,26 @@ import { isDeepStrictEqual } from 'node:util';
 import { production, stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { cancelChangeRequest, createFlag, deleteFlag } from '../../unleash/testSetup.ts';
+import {
+  cancelChangeRequest,
+  createFlag,
+  createProjectNamed,
+  deleteFlag,
+  deleteProjectNamed,
+} from '../../unleash/testSetup.ts';
 import { createChangeRequestReader } from '../shared/changeRequest.ts';
 import { setParentDependency } from './setParentDependency.ts';
 
 const { unleash, admin, close } = createRecordedClient(
   new URL('./setParentDependency.snapshot.json', import.meta.url).pathname,
 );
-const project = 'mcp-server';
+const project = 'mcp-manage-flag-set-parent-dependency';
 const parent = 'mcp-parent-flag';
 const child = 'mcp-child-flag';
 let changeRequestId: number | undefined;
 
 before(async () => {
-  await deleteFlag(admin, project, child);
-  await deleteFlag(admin, project, parent);
+  await createProjectNamed(admin, unleash, project);
   await createFlag(admin, project, { flag: parent });
   await createFlag(admin, project, { flag: child });
 });
@@ -27,10 +32,11 @@ after(async () => {
   if (changeRequestId) await cancelChangeRequest(unleash, project, changeRequestId);
   await deleteFlag(admin, project, child);
   await deleteFlag(admin, project, parent);
+  await deleteProjectNamed(admin, project);
   await close();
 });
 
-// `mcp-server` requires change requests in production. The recording pins the change Unleash accepted.
+// The test project requires change requests in production. The recording pins the change Unleash accepted.
 test('puts the parent of a flag in a change request where the project requires one', async () => {
   const output = await setParentDependency(unleash, createChangeRequestReader(unleash), {
     action: 'set_parent_dependency',
