@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import { finished } from 'node:stream/promises';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import type { JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 import pkg from '../package.json' with { type: 'json' };
@@ -47,10 +48,15 @@ export const createRemoteHandler =
       transport.close().catch(() => {});
       server.close().catch(() => {});
     });
-    const closed = res.closed ? Promise.resolve() : new Promise((resolve) => res.once('close', resolve));
+    // finished() rejects when the client hangs up, also before this handler ran.
+    const responseEnd = finished(res).then(
+      () => 'replied' as const,
+      () => 'hung_up' as const,
+    );
     await server.connect(transport);
-    // handleRequest never settles when the client hangs up, and can settle before the response is written.
-    await Promise.race([transport.handleRequest(req, res, parsedBody), closed]);
-    await closed;
-    return toMcpRequestSummary(parsedBody, replies, res.writableFinished ? 'replied' : 'hung_up');
+    // handleRequest never settles on a hang-up. The race still passes its errors to the host.
+    await Promise.race([transport.handleRequest(req, res, parsedBody), responseEnd]);
+    // handleRequest may win the race, and it doesn't say how the response ended.
+    const ending = await responseEnd;
+    return toMcpRequestSummary(parsedBody, replies, ending);
   };
