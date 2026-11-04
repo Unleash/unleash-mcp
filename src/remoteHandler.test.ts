@@ -103,7 +103,7 @@ test('summarises each tool call for the host, without its arguments', async (t) 
       errors: [{ name: 'NoAccessError', status: 403 }],
       resultBytes: 77,
     },
-    { kind: 'sdk_error' },
+    { kind: 'sdk_error', tool: 'unknown' },
   ]);
 });
 

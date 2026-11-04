@@ -20,12 +20,11 @@ type ToolResult = { results: number; errors: ToolError[]; resultBytes: number };
  * `sdk_error`: the SDK answered instead of a tool, such as an unknown tool, bad arguments or a request it turned away.
  * `no_reply`: the client hung up first.
  * `resultBytes` counts only the text the agent reads, since a success carries its JSON twice.
- * `tool` is left out for a name this server doesn't have, since the client made it up.
  */
 export type McpRequestSummary =
   | ({ kind: 'tool_result'; tool: ToolName } & ToolResult)
-  | { kind: 'sdk_error'; tool?: ToolName }
-  | { kind: 'no_reply'; tool?: ToolName };
+  | { kind: 'sdk_error'; tool: ToolName | 'unknown' }
+  | { kind: 'no_reply'; tool: ToolName | 'unknown' };
 
 const toolCall = z.object({ name: z.enum(toolNames) });
 const isResponse = (message: JSONRPCMessage): message is JSONRPCResultResponse | JSONRPCErrorResponse =>
@@ -37,14 +36,13 @@ export const toMcpRequestSummary = (
   ending: 'replied' | 'hung_up',
 ): McpRequestSummary | undefined => {
   if (!isJSONRPCRequest(body) || body.method !== 'tools/call') return undefined;
-  const tool = toolCall.safeParse(body.params).data?.name;
-  const named = tool ? { tool } : {};
+  const tool = toolCall.safeParse(body.params).data?.name ?? 'unknown';
   const reply = replies.filter(isResponse).find((response) => response.id === body.id);
-  if (!reply) return { kind: ending === 'hung_up' ? 'no_reply' : 'sdk_error', ...named };
-  if (isJSONRPCErrorResponse(reply)) return { kind: 'sdk_error', ...named };
+  if (!reply) return { kind: ending === 'hung_up' ? 'no_reply' : 'sdk_error', tool };
+  if (isJSONRPCErrorResponse(reply)) return { kind: 'sdk_error', tool };
   const result = CallToolResultSchema.safeParse(reply.result);
   const counted = result.success ? countResults(result.data) : undefined;
-  return tool && counted ? { kind: 'tool_result', tool, ...counted } : { kind: 'sdk_error', ...named };
+  return tool !== 'unknown' && counted ? { kind: 'tool_result', tool, ...counted } : { kind: 'sdk_error', tool };
 };
 
 const resultList = z.object({ results: z.array(z.unknown()) });
