@@ -1,7 +1,11 @@
 import {
   type CallToolResult,
   CallToolResultSchema,
+  ClientNotificationSchema,
+  ClientRequestSchema,
+  InitializeRequestParamsSchema,
   isJSONRPCErrorResponse,
+  isJSONRPCNotification,
   isJSONRPCRequest,
   isJSONRPCResultResponse,
   type JSONRPCErrorResponse,
@@ -17,16 +21,25 @@ type ToolError = z.infer<typeof toolError>;
 type ToolResult = { results: number; errors: ToolError[]; resultBytes: number };
 
 /**
+ * `initialize`: the client as it introduced itself, whatever came back.
  * `sdk_error`: the SDK answered instead of a tool, such as an unknown tool, bad arguments or a request it turned away.
  * `no_reply`: the client hung up first.
+ * `unreadable`: a body that is not one JSON-RPC request or notification, such as a batch.
  * `resultBytes` counts only the text the agent reads, since a success carries its JSON twice.
+ * A method MCP doesn't have is `unknown` and a capability it doesn't know is left out, since the client made them up.
  */
 export type McpRequestSummary =
+  | { kind: 'initialize'; client: { name: string; version: string }; capabilities: string[] }
   | ({ kind: 'tool_result'; tool: ToolName } & ToolResult)
   | { kind: 'sdk_error'; tool: ToolName | 'unknown' }
-  | { kind: 'no_reply'; tool: ToolName | 'unknown' };
+  | { kind: 'no_reply'; tool: ToolName | 'unknown' }
+  | { kind: 'other'; method: string }
+  | { kind: 'unreadable' };
 
 const toolCall = z.object({ name: z.enum(toolNames) });
+const clientMethods = new Set<string>(
+  [...ClientRequestSchema.options, ...ClientNotificationSchema.options].map((schema) => schema.shape.method.value),
+);
 const isResponse = (message: JSONRPCMessage): message is JSONRPCResultResponse | JSONRPCErrorResponse =>
   isJSONRPCResultResponse(message) || isJSONRPCErrorResponse(message);
 
@@ -35,7 +48,20 @@ export const toMcpRequestSummary = (
   replies: JSONRPCMessage[],
   ending: 'replied' | 'hung_up',
 ): McpRequestSummary | undefined => {
-  if (!isJSONRPCRequest(body) || body.method !== 'tools/call') return undefined;
+  if (body === undefined) return undefined;
+  if (!isJSONRPCRequest(body) && !isJSONRPCNotification(body)) return { kind: 'unreadable' };
+  const initialize = body.method === 'initialize' && InitializeRequestParamsSchema.safeParse(body.params).data;
+  if (isJSONRPCRequest(body) && initialize) {
+    const { clientInfo, capabilities } = initialize;
+    return {
+      kind: 'initialize',
+      client: { name: clientInfo.name, version: clientInfo.version },
+      capabilities: Object.keys(capabilities),
+    };
+  }
+  if (!isJSONRPCRequest(body) || body.method !== 'tools/call') {
+    return { kind: 'other', method: clientMethods.has(body.method) ? body.method : 'unknown' };
+  }
   const tool = toolCall.safeParse(body.params).data?.name ?? 'unknown';
   const reply = replies.filter(isResponse).find((response) => response.id === body.id);
   if (!reply) return { kind: ending === 'hung_up' ? 'no_reply' : 'sdk_error', tool };

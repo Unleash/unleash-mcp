@@ -74,7 +74,7 @@ test('acts in Unleash as the caller, with the auth the host forwards', async (t)
   });
 });
 
-test('summarises each tool call for the host, without its arguments', async (t) => {
+test('summarises each request for the host, without tool arguments', async (t) => {
   const { client, stub, requestSummaries, close } = await connect({ feedbackConsent: 'denied' });
   t.after(close);
   stub
@@ -89,6 +89,8 @@ test('summarises each tool call for the host, without its arguments', async (t) 
   await close();
 
   assert.deepEqual(await requestSummaries(), [
+    { kind: 'initialize', client: { name: 'test-client', version: '0.0.0' }, capabilities: [] },
+    { kind: 'other', method: 'notifications/initialized' },
     {
       kind: 'tool_result',
       tool: 'search',
