@@ -55,8 +55,9 @@ const toolNames = async (options: Omit<RemoteHandlerOptions, 'baseUrl'>) => {
 };
 
 // Stubbed although it is a happy path: snapshots ignore the authorization header, so only a stub can check it is forwarded.
-test('acts in Unleash as the caller, with the auth the host forwards', async () => {
+test('acts in Unleash as the caller, with the auth the host forwards', async (t) => {
   const { client, stub, close } = await connect({ feedbackConsent: 'denied' });
+  t.after(close);
   stub
     .intercept({
       path: '/api/admin/projects',
@@ -65,19 +66,17 @@ test('acts in Unleash as the caller, with the auth the host forwards', async () 
       headers: { authorization: 'user-session' },
     })
     .reply(200, { version: 1, projects: [{ id: 'web', name: 'Web' }] });
-  try {
-    const result = await client.callTool({ name: 'search', arguments: { queries: [{ kind: 'projects' }] } });
 
-    assert.deepEqual(result.structuredContent, {
-      results: [{ kind: 'projects', projects: [{ id: 'web', name: 'Web' }] }],
-    });
-  } finally {
-    await close();
-  }
+  const result = await client.callTool({ name: 'search', arguments: { queries: [{ kind: 'projects' }] } });
+
+  assert.deepEqual(result.structuredContent, {
+    results: [{ kind: 'projects', projects: [{ id: 'web', name: 'Web' }] }],
+  });
 });
 
-test('summarises each tool call for the host, without its arguments', async () => {
+test('summarises each tool call for the host, without its arguments', async (t) => {
   const { client, stub, requestSummaries, close } = await connect({ feedbackConsent: 'denied' });
+  t.after(close);
   stub
     .intercept({ path: (path) => path.startsWith('/api/admin/'), method: 'GET' })
     .reply(403, { name: 'NoAccessError' })
@@ -108,12 +107,13 @@ test('summarises each tool call for the host, without its arguments', async () =
   ]);
 });
 
-test('summarises a tool call the client hangs up on before the tool replies', async () => {
+test('summarises a tool call the client hangs up on before the tool replies', async (t) => {
   const hangUp = async () => {
     call.destroy();
     return new Promise<Response>(() => {});
   };
   const { server, requestSummaries } = await serve(hangUp, 'http://unleash.test', { feedbackConsent: 'denied' });
+  t.after(() => server.close());
   const call = request({
     port: (server.address() as AddressInfo).port,
     method: 'POST',
@@ -125,12 +125,12 @@ test('summarises a tool call the client hangs up on before the tool replies', as
   await once(server, 'request');
 
   assert.deepEqual(await requestSummaries(), [{ kind: 'no_reply', tool: 'audit' }]);
-  server.close();
 });
 
-test('summarises a tool call the SDK turns away before any tool runs', async () => {
+test('summarises a tool call the SDK turns away before any tool runs', async (t) => {
   const { baseUrl, fetch } = createStubbedFetch();
   const { server, requestSummaries } = await serve(fetch, baseUrl, { feedbackConsent: 'denied' });
+  t.after(() => server.close());
   const call = request({
     port: (server.address() as AddressInfo).port,
     method: 'POST',
@@ -142,7 +142,6 @@ test('summarises a tool call the SDK turns away before any tool runs', async () 
   await once(server, 'request');
 
   assert.deepEqual(await requestSummaries(), [{ kind: 'sdk_error', tool: 'audit' }]);
-  server.close();
 });
 
 test('offers send_feedback when the host has the consent to send it', async () => {
