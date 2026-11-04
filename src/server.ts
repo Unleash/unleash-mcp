@@ -34,7 +34,8 @@ import { createAskUser } from './tools/sendFeedback/consentPrompt.ts';
 import type { SendFeedback } from './tools/sendFeedback/sendFeedback.ts';
 import { sendFeedbackInput } from './tools/sendFeedback/sendFeedbackInput.ts';
 import { sendFeedbackOutput } from './tools/sendFeedback/sendFeedbackOutput.ts';
-import type { Failed } from './tools/shared/failed.ts';
+import { toFailedToolResult } from './tools/shared/failed.ts';
+import type { ToolName } from './tools/toolNames.ts';
 import type { UnleashClient } from './unleash/client.ts';
 
 // Antigravity, Devin and Cursor show the model only text blocks, so a success carries a text copy too.
@@ -43,15 +44,8 @@ const toToolResult = (structuredContent: Record<string, unknown>) => ({
   content: [{ type: 'text' as const, text: JSON.stringify(structuredContent) }],
 });
 
-// At the time of this writing,
-// Claude Code shows the model only the text blocks of an error result, so failures are text.
-const toFailedToolResult = (result: Failed) => ({
-  isError: true,
-  content: [{ type: 'text' as const, text: JSON.stringify({ result }) }],
-});
-
 // Clients that defer tools show the agent only tool names and these instructions until it loads a tool.
-const outcomes = {
+const outcomes: Record<ToolName, string> = {
   release:
     'Turn a feature on or off in an environment: for everyone, a percentage, chosen audiences or segments, split across values, or through a release template or release plan milestone; a missing flag is created. For a permanent kill switch, use kill_switch; for an A/B test, use experiment.',
   experiment:

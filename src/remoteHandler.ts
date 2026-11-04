@@ -1,6 +1,9 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import { finished } from 'node:stream/promises';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import type { JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 import pkg from '../package.json' with { type: 'json' };
+import { type McpRequestSummary, toMcpRequestSummary } from './mcpRequestSummary.ts';
 import { createServer } from './server.ts';
 import { granted } from './tools/sendFeedback/consent.ts';
 import { createSendFeedback, defaultFeedbackBaseUrl } from './tools/sendFeedback/sendFeedback.ts';
@@ -17,7 +20,7 @@ export type McpRequestHandler = (
   req: IncomingMessage,
   res: ServerResponse,
   options: { authHeaders: Record<string, string>; parsedBody?: unknown },
-) => Promise<void>;
+) => Promise<McpRequestSummary | undefined>;
 
 /**
  * Builds the handler a host such as Unleash mounts. Stateless: every request gets its own server, acting as its caller,
@@ -34,10 +37,26 @@ export const createRemoteHandler =
         : undefined;
     const server = createServer(unleash, fetch, sendFeedback);
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
+    // SDK 1.32 has no hook on replies.
+    const replies: JSONRPCMessage[] = [];
+    const send = transport.send.bind(transport);
+    transport.send = async (message, options) => {
+      replies.push(message);
+      await send(message, options);
+    };
     res.on('close', () => {
       transport.close().catch(() => {});
       server.close().catch(() => {});
     });
+    // finished() rejects when the client hangs up, also before this handler ran.
+    const responseEnd = finished(res).then(
+      () => 'replied' as const,
+      () => 'hung_up' as const,
+    );
     await server.connect(transport);
-    await transport.handleRequest(req, res, parsedBody);
+    // handleRequest never settles on a hang-up. The race still passes its errors to the host.
+    await Promise.race([transport.handleRequest(req, res, parsedBody), responseEnd]);
+    // handleRequest may win the race, and it doesn't say how the response ended.
+    const ending = await responseEnd;
+    return toMcpRequestSummary(parsedBody, replies, ending);
   };
