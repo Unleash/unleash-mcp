@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { once } from 'node:events';
-import { createServer, request } from 'node:http';
+import { createServer, type IncomingMessage, request, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { json } from 'node:stream/consumers';
 import { test } from 'node:test';
@@ -16,15 +16,15 @@ const serve = async (
   options: Omit<RemoteHandlerOptions, 'baseUrl'>,
 ) => {
   const handle = createRemoteHandler(fetch)({ baseUrl, ...options });
+  // Parses the body first, as Unleash's Express does, so the stream is already read when the handler gets it.
+  const handleParsed = async (req: IncomingMessage, res: ServerResponse) => {
+    const parsedBody = req.method === 'POST' ? await json(req) : undefined;
+    return handle(req, res, { authHeaders: { Authorization: 'user-session' }, parsedBody });
+  };
+  // A summary settles only when the response closes, so the tests await them after the client disconnects.
   const handled: Promise<McpRequestSummary | undefined>[] = [];
   const server = createServer((req, res) => {
-    handled.push(
-      (async () => {
-        // Parses the body first, as Unleash's Express does, so the stream is already read when the handler gets it.
-        const parsedBody = req.method === 'POST' ? await json(req) : undefined;
-        return handle(req, res, { authHeaders: { Authorization: 'user-session' }, parsedBody });
-      })(),
-    );
+    handled.push(handleParsed(req, res));
   });
   await once(server.listen(0), 'listening');
   const requestSummaries = async () => (await Promise.all(handled)).filter((summary) => summary !== undefined);
