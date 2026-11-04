@@ -496,6 +496,6 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 
 ## 2026-11-03 — Request summaries for the host
 
-- The remote handler returns a summary of each tool call, so Unleash never parses MCP messages. Rejected: Unleash parsing the request, and a callback option.
+- The remote handler returns a summary of each request, so Unleash never parses MCP messages. Rejected: Unleash parsing the request, and a callback option.
 - A summary says what came back (a tool result, an SDK error or no reply), not whether the call succeeded, since a list tool's call never fails as a whole.
-- It never carries the tool arguments or Unleash's error text, because Unleash writes it to anonymous analytics.
+- It never carries the tool arguments, Unleash's error text or names the client made up, because Unleash writes it to anonymous analytics.

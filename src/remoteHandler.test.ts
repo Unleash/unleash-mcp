@@ -34,7 +34,10 @@ const serve = async (
 const connect = async (options: Omit<RemoteHandlerOptions, 'baseUrl'>) => {
   const { baseUrl, fetch, stub } = createStubbedFetch();
   const { server, requestSummaries } = await serve(fetch, baseUrl, options);
-  const client = new Client({ name: 'test-client', version: '0.0.0' });
+  const client = new Client(
+    { name: 'test-client', version: '0.0.0' },
+    { capabilities: { roots: {}, extensions: { 'io.modelcontextprotocol/ui': {} } } },
+  );
   await client.connect(
     new StreamableHTTPClientTransport(new URL(`http://localhost:${(server.address() as AddressInfo).port}`)),
   );
@@ -74,7 +77,7 @@ test('acts in Unleash as the caller, with the auth the host forwards', async (t)
   });
 });
 
-test('summarises each tool call for the host, without its arguments', async (t) => {
+test('summarises each request for the host, without tool arguments', async (t) => {
   const { client, stub, requestSummaries, close } = await connect({ feedbackConsent: 'denied' });
   t.after(close);
   stub
@@ -82,6 +85,7 @@ test('summarises each tool call for the host, without its arguments', async (t) 
     .reply(403, { name: 'NoAccessError' })
     .times(2);
 
+  await client.listTools();
   await client.callTool({ name: 'search', arguments: { queries: [{ kind: 'projects', query: 'secret-launch' }] } });
   await client.callTool({ name: 'audit', arguments: {} });
   await client.callTool({ name: 'no_such_tool', arguments: {} });
@@ -89,6 +93,14 @@ test('summarises each tool call for the host, without its arguments', async (t) 
   await close();
 
   assert.deepEqual(await requestSummaries(), [
+    {
+      kind: 'initialize',
+      client: { name: 'test-client', version: '0.0.0' },
+      capabilities: ['roots', 'extensions'],
+      extensions: ['io.modelcontextprotocol/ui'],
+    },
+    { kind: 'other', method: 'notifications/initialized' },
+    { kind: 'other', method: 'tools/list' },
     {
       kind: 'tool_result',
       tool: 'search',

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import { type CallToolResult, LATEST_PROTOCOL_VERSION } from '@modelcontextprotocol/sdk/types.js';
 import { toMcpRequestSummary } from './mcpRequestSummary.ts';
 import { toFailedToolResult } from './tools/shared/failed.ts';
 
@@ -17,10 +17,60 @@ const toolResult = (structuredContent: Record<string, unknown>): CallToolResult 
   content: [{ type: 'text', text: JSON.stringify(structuredContent) }],
 });
 
-test('leaves out a request that is not a tool call', () => {
-  const summary = toMcpRequestSummary({ jsonrpc: '2.0', id: 1, method: 'tools/list' }, [], 'replied');
+test('leaves out a request without a body, such as the event stream', () => {
+  const summary = toMcpRequestSummary(undefined, [], 'replied');
 
   assert.equal(summary, undefined);
+});
+
+test('summarises a batch as unreadable', () => {
+  const summary = toMcpRequestSummary([toolCallRequest('audit')], [], 'replied');
+
+  assert.deepEqual(summary, { kind: 'unreadable' });
+});
+
+test('summarises initialize as the client introduced itself, leaving out capabilities and extensions MCP lacks', () => {
+  const initialize = {
+    jsonrpc: '2.0',
+    id: 1,
+    method: 'initialize',
+    params: {
+      protocolVersion: LATEST_PROTOCOL_VERSION,
+      capabilities: {
+        roots: {},
+        'jane@example.com': {},
+        extensions: { 'io.modelcontextprotocol/ui': {}, 'jane@example.com/ui': {} },
+      },
+      clientInfo: { name: 'claude-code', version: '2.1.0' },
+    },
+  };
+
+  const summary = toMcpRequestSummary(initialize, [], 'replied');
+
+  assert.deepEqual(summary, {
+    kind: 'initialize',
+    client: { name: 'claude-code', version: '2.1.0' },
+    capabilities: ['roots', 'extensions'],
+    extensions: ['io.modelcontextprotocol/ui'],
+  });
+});
+
+test('summarises any other request by its method', () => {
+  const summary = toMcpRequestSummary({ jsonrpc: '2.0', id: 1, method: 'tools/list' }, [], 'replied');
+
+  assert.deepEqual(summary, { kind: 'other', method: 'tools/list' });
+});
+
+test('summarises an initialize MCP cannot read as another request', () => {
+  const summary = toMcpRequestSummary({ jsonrpc: '2.0', id: 1, method: 'initialize', params: {} }, [], 'replied');
+
+  assert.deepEqual(summary, { kind: 'other', method: 'initialize' });
+});
+
+test('summarises a method MCP lacks as unknown', () => {
+  const summary = toMcpRequestSummary({ jsonrpc: '2.0', method: 'notifications/jane@example.com' }, [], 'replied');
+
+  assert.deepEqual(summary, { kind: 'other', method: 'unknown' });
 });
 
 test('summarises a tool call the client hangs up on as no reply', () => {
