@@ -493,3 +493,18 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 ## 2026-11-04 — Recording sees the pseudonyms too
 
 - While recording, the client masks the email addresses in what the test sees, as the snapshot will, so a test asserting who made a change passes on recording and on replay alike. Rejected: asserting only that the field is there, which stops pinning the mapping.
+
+## 2026-11-04 — Lightweight eval tool, built here
+
+- The evals are a lightweight tool of our own, in TypeScript with npm packages only, no other language and no Docker, grown from the minimum step by step: a prompt, an agent run with the MCP server attached, a check of the outcome, pass or fail. Rejected: Harbor, MCPEval and mcp-eval (Python, Docker), promptfoo (single tool calls, not journeys), Phoenix (a results layer for later, if run history is missed).
+- An eval is a real end-to-end run: a coding agent, Claude Code headless for now, on a cheap model, with the dev MCP server against the live sandbox. The tools have to do the heavy lifting, so a cheap model is the subject that exposes a weak description.
+- A journey is graded on the outcome, the answer or the Unleash state read back, never on which tools were called, so a valid other path still passes and descriptions are not tuned to one path.
+
+## 2026-11-04 — Eval budgets
+
+- An eval checks three things: correct (the outcome), token efficient (tokens of tool results, estimated at 4 characters each since the client reports tokens per turn and not per result, and tool calls) and backend efficient (calls to Unleash, not measured yet). The efficiency checks are budgets per journey, ceilings set from the worst pass seen, so a description that sends the agent on extra lookups or a result that grows fails the eval. Rejected: asserting input tokens or cost, which the client's own prompt dominates; a single tolerance for every journey.
+- A failed lookup is not an error: the agent may check whether a flag exists before creating it. Only a refused write fails a journey.
+
+## 2026-11-04 — The eval agent sees nothing of the repo
+
+- The eval agent runs from an empty directory: run from the repo, Claude Code loads CLAUDE.md, the rules and the memory of this project, about 2k tokens describing the very tools under test, which can bias how it uses them. Each run is a fresh session with no history. The server is still this working tree's source, so edits are evaluated at once.
