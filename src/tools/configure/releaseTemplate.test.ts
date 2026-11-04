@@ -52,7 +52,7 @@ test('creates a release template whose milestones advance on their own, answerin
   assert.match(String(output.id), ulid);
 });
 
-// Stubbed, not recorded: the sandbox's limit of 10 release templates leaves no room for a second one.
+// Stubbed, not recorded: the sandbox's limit of 10 release templates leaves little room for more.
 test('creates a release template in a project', async () => {
   const { unleash, stub } = createStubbedClient();
   const id = '01JB9GGTGQYEQ9D40R17T3YVW2';

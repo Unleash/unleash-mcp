@@ -14,15 +14,14 @@ const deleteEnvironment = () =>
 
 before(async () => {
   await deleteEnvironment();
-  await admin.POST('/api/admin/environments', { body: { name: deprecated, type: 'production' } });
-  await admin.POST('/api/admin/environments/{name}/off', { params: { path: { name: deprecated } } });
+  const created = await admin.POST('/api/admin/environments', { body: { name: deprecated, type: 'production' } });
+  assert(created.response.ok, String(created.response.status));
+  const off = await admin.POST('/api/admin/environments/{name}/off', { params: { path: { name: deprecated } } });
+  assert(off.response.ok, String(off.response.status));
 });
-after(async () => {
-  await deleteEnvironment();
-  await close();
-});
+after(close);
 
-// The sandbox's environments are shared, so only two are asserted: the fixture project's and the one made here.
+// The sandbox's environments are shared, so only two are asserted: the built-in production one and the one made here.
 test('finds environments by a part of their name, case insensitive, with their type', async () => {
   const output = await searchEnvironments(unleash, { kind: 'environments', query: 'PRODUCTION' });
 

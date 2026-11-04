@@ -4,13 +4,7 @@ import { isDeepStrictEqual } from 'node:util';
 import { production, stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import {
-  applied,
-  cancelChangeRequest,
-  createProjectNamed,
-  deleteProjectNamed,
-  deleteSegmentNamed,
-} from '../../unleash/testSetup.ts';
+import { applied, createProjectNamed, deleteSegmentNamed } from '../../unleash/testSetup.ts';
 import { createChangeRequestReader } from '../shared/changeRequest.ts';
 import { createContextField, deleteContextField } from './contextField.ts';
 import { createSegment, deleteSegment, updateSegment } from './segment.ts';
@@ -26,8 +20,6 @@ const reviewed = 'mcp-reviewed-segment';
 const reviewedDeletion = 'mcp-reviewed-deletion-segment';
 const project = 'mcp-configure-segment';
 const emailField = 'mcpSegmentEmail';
-// Unleash adds a change to the user's open change request, in review or not, so both tests can answer the same one.
-const changeRequestIds = new Set<number>();
 
 const deleteSegments = async (): Promise<void> => {
   for (const segment of [name, projectSegment, updatable, updated, deletable, reviewed, reviewedDeletion])
@@ -36,18 +28,11 @@ const deleteSegments = async (): Promise<void> => {
 
 before(async () => {
   await createProjectNamed(admin, unleash, project);
+  await deleteSegments();
   await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: emailField });
   applied(await createContextField(admin, { kind: 'context_field', action: 'create', name: emailField }));
-  await deleteSegments();
 });
-// The change requests go first, so nothing pending refers to the segments.
-after(async () => {
-  for (const id of changeRequestIds) await cancelChangeRequest(unleash, project, id);
-  await deleteSegments();
-  await deleteContextField(admin, { kind: 'context_field', action: 'delete', name: emailField });
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 test('creates a segment with its constraints, answering with its id', async () => {
   const output = await createSegment(unleash, {
@@ -156,7 +141,6 @@ test('puts the update of a segment in a change request where the project require
   });
 
   assert(output.kind === 'pending_change_request');
-  changeRequestIds.add(output.changeRequest.id);
   assert.equal(output.changeRequest.state, 'In review');
 });
 
@@ -166,7 +150,6 @@ test('puts the deletion of a segment in a change request where the project requi
   const output = await deleteSegment(unleash, environmentsOf, { kind: 'segment', action: 'delete', id, project });
 
   assert(output.kind === 'pending_change_request');
-  changeRequestIds.add(output.changeRequest.id);
   assert.equal(output.changeRequest.state, 'In review');
 });
 

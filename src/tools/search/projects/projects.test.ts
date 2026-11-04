@@ -2,17 +2,14 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { createProjectNamed, deleteProjectNamed } from '../../../unleash/testSetup.ts';
+import { createProjectNamed } from '../../../unleash/testSetup.ts';
 import { searchProjects } from './projects.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./projects.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-search-projects';
 
 before(() => createProjectNamed(admin, unleash, project));
-after(async () => {
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 test('finds projects by a part of their id, case insensitive', async () => {
   const output = await searchProjects(unleash, { kind: 'projects', query: project.toUpperCase() });

@@ -3,7 +3,7 @@ import { after, before, test } from 'node:test';
 import { z } from 'zod';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { createFlag, createProjectNamed, deleteFlag, deleteProjectNamed } from '../../unleash/testSetup.ts';
+import { createFlag, createProjectNamed } from '../../unleash/testSetup.ts';
 import { searchFlags } from '../search/flags/flags.ts';
 import { createAudit } from './audit.ts';
 import { auditInput } from './auditInput.ts';
@@ -29,11 +29,7 @@ before(async () => {
     params: { path: { projectId: project, featureName: flag, environment: 'development' } },
   });
 });
-after(async () => {
-  await deleteFlag(admin, project, flag);
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 // A deleted flag keeps its history, so earlier recordings add older changes: only the most recent ones are asserted.
 // Turning an environment on with no targets adds Unleash's default one first.

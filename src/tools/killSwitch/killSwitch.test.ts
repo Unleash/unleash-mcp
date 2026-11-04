@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { z } from 'zod';
 import { createRecordedClient } from '../../unleash/testClient.ts';
-import { cancelChangeRequest, createProjectNamed, deleteFlag, deleteProjectNamed } from '../../unleash/testSetup.ts';
+import { createProjectNamed } from '../../unleash/testSetup.ts';
 import { createKillSwitch } from './killSwitch.ts';
 import { killSwitchInput } from './killSwitchInput.ts';
 import { killSwitchOutput } from './killSwitchOutput.ts';
@@ -10,18 +10,11 @@ import { killSwitchOutput } from './killSwitchOutput.ts';
 const { unleash, admin, close } = createRecordedClient(new URL('./killSwitch.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-kill-switch';
 const flag = 'mcp-disable-payments';
-let changeRequestId: number | undefined;
 // The MCP SDK checks every result against the output schema, so a result it doesn't describe never reaches the agent.
 const describedByOutputSchema = (result: unknown) => z.object(killSwitchOutput).safeParse({ result }).error;
 
 before(() => createProjectNamed(admin, unleash, project));
-// The change request goes first, so nothing pending refers to the switch.
-after(async () => {
-  if (changeRequestId) await cancelChangeRequest(unleash, project, changeRequestId);
-  await deleteFlag(admin, project, flag);
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 // The recording pins the create as a kill switch that lives forever, and the target for everyone.
 test('creates a missing switch and turns it on for everyone', async () => {
@@ -59,7 +52,6 @@ test('puts the switch in a change request where the environment requires one', a
   });
 
   assert(output.kind === 'pending_change_request');
-  changeRequestId = output.changeRequest.id;
   assert.equal(output.changeRequest.state, 'In review');
   assert.equal(describedByOutputSchema(output), undefined);
 });

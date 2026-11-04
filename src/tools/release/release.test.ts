@@ -7,7 +7,6 @@ import {
   cancelChangeRequest,
   createProjectNamed,
   deleteFlag,
-  deleteProjectNamed,
   deleteReleaseTemplate,
   deleteSegmentNamed,
 } from '../../unleash/testSetup.ts';
@@ -47,12 +46,11 @@ before(async () => {
 });
 // The change request goes first, and the flag before the segment and the template:
 // Unleash may refuse to delete a segment or a template that is in use.
+// The template goes in `after`: the sandbox caps them, and the flag's plan keeps it in use.
 after(async () => {
   if (changeRequestId) await cancelChangeRequest(unleash, project, changeRequestId);
   await deleteFlag(admin, project, flag);
-  await deleteSegmentNamed(admin, segment);
   await deleteReleaseTemplate(admin, template);
-  await deleteProjectNamed(admin, project);
   await close();
 });
 
@@ -458,7 +456,7 @@ test('stops serving the feature before changing its audiences', async () => {
   });
 });
 
-// Stubbed, not recorded: the sandbox's limit of 10 release templates leaves room for only configure's.
+// Stubbed, not recorded: the sandbox's limit of 10 release templates leaves little room for more.
 // The delete is stubbed only once the plan is in, so removing the old audience first fails the test.
 test('releases through a release template, replacing the audiences', async () => {
   const { unleash, stub } = createStubbedOpenSource();

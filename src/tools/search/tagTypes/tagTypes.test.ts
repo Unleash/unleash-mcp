@@ -20,10 +20,7 @@ before(async () => {
     }),
   );
 });
-after(async () => {
-  await deleteTagType(admin, { kind: 'tag_type', action: 'delete', name });
-  await close();
-});
+after(close);
 
 test('finds tag types by a part of their name, case insensitive', async () => {
   const output = await searchTagTypes(unleash, { kind: 'tag_types', query: 'MCP-SEARCHED' });

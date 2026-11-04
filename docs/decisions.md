@@ -130,7 +130,7 @@ Why v2 is the way it is, in the words of the person who made each decision. To a
 
 ## 2026-10-22 — Tests set up their own data
 
-- Tests recreate everything they need in setup and remove it in teardown; the sandbox holds only the project `mcp-server`. Rejected: depending on predefined flags and settings in the sandbox, which drift and break recordings.
+- Tests recreate everything they need in setup and remove it in teardown; the sandbox holds only the project `mcp-server`. Superseded by 2026-11-03, "Each test file creates its own project". Rejected: depending on predefined flags and settings in the sandbox, which drift and break recordings.
 - Setup copes with what a failed recording leaves behind (a flag with children, a segment with the same name), so a recording never needs a manual sandbox cleanup.
 - Over time, setup should go through the server's own tools instead of the admin API.
 
@@ -487,8 +487,8 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 
 ## 2026-11-03 — Each test file creates its own project
 
-- A recorded test file creates its project through the tools in `before` and deletes it, flags included, in `after`, so the sandbox needs nothing set up and holds nothing of ours between recordings; the shared `mcp-server` had colleagues as members and settings nobody could see in the repo. Supersedes "the sandbox holds only the project `mcp-server`" (2026-10-22). Unleash derives the id from the name, so a file names its project up front. Rejected: one bootstrapped project for all files, which keeps the sandbox state and the cross-file leftovers.
-- The user under test joins each project as a Member over the API, since a root Editor has no say in a project it is not in and no tool manages members. Change requests stay required in production only: an instance can turn them on for every environment of a new project, so the setup switches development off explicitly.
+- A recorded test file creates its project through the tools in `before`, after removing what an earlier recording left of it, so the sandbox needs nothing set up; what a recording made stays for a look when something went wrong, and only release templates are removed in `after`, since the instance caps them at ten; the shared `mcp-server` had colleagues as members and settings nobody could see in the repo. Supersedes "the sandbox holds only the project `mcp-server`" (2026-10-22). Unleash derives the id from the name, so a file names its project up front. Rejected: one bootstrapped project for all files, which keeps the sandbox state and the cross-file leftovers.
+- The user under test joins each project, since a root Editor has no say in a project it is not in. Change requests stay required in production only, whatever an instance turns on for a new project's environments.
 
 ## 2026-11-04 — Recording sees the pseudonyms too
 

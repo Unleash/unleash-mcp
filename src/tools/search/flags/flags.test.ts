@@ -2,15 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import {
-  applied,
-  createFlag,
-  createProjectNamed,
-  deleteFlag,
-  deleteProjectNamed,
-  deleteSegmentNamed,
-  released,
-} from '../../../unleash/testSetup.ts';
+import { applied, createFlag, createProjectNamed, deleteSegmentNamed, released } from '../../../unleash/testSetup.ts';
 import { createSegment } from '../../configure/segment.ts';
 import { setStaleness } from '../../manageFlag/setStaleness.ts';
 import { createRelease } from '../../release/release.ts';
@@ -22,14 +14,8 @@ const first = 'mcp-searched-first';
 const second = 'mcp-searched-second';
 const archived = 'mcp-searched-archived';
 const user = 17;
-const segment = 'mcp-searched-segment';
+const segment = 'mcp-searched-flags-segment';
 let segmentId = 0;
-
-const deleteFlags = async (): Promise<void> => {
-  await deleteFlag(admin, project, first);
-  await deleteFlag(admin, project, second);
-  await deleteFlag(admin, project, archived);
-};
 
 before(async () => {
   await createProjectNamed(admin, unleash, project);
@@ -58,13 +44,7 @@ before(async () => {
   });
   assert(archivedFlag.response.ok, String(archivedFlag.response.status));
 });
-// The flags go first: Unleash may refuse to delete a segment in use.
-after(async () => {
-  await deleteFlags();
-  await deleteSegmentNamed(admin, segment);
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 // Unleash leaves archived flags out unless the lifecycle filter asks for them, so the total counts the two active ones.
 // Unleash orders by creation date, oldest first, so the first flag fills a page of one.

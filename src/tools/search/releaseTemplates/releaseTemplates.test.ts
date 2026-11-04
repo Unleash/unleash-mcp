@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { applied, createProjectNamed, deleteProjectNamed, deleteReleaseTemplate } from '../../../unleash/testSetup.ts';
+import { applied, createProjectNamed, deleteReleaseTemplate } from '../../../unleash/testSetup.ts';
 import { createReleaseTemplate } from '../../configure/releaseTemplate.ts';
 import { searchReleaseTemplates } from './releaseTemplates.ts';
 
@@ -54,14 +54,16 @@ before(async () => {
   });
   assert(archivedTemplate.response.ok, String(archivedTemplate.response.status));
 });
-// Unleash leaves archived templates out of its lists, so the archived one is deleted by its id.
+// The templates go in `after`: the sandbox caps them. Unleash leaves archived templates out of its lists, so the
+// archived one is deleted by its id, when setup got as far as archiving it.
 after(async () => {
   await cleanUp();
-  const deletedTemplate = await admin.DELETE('/api/admin/release-plan-templates/{templateId}', {
-    params: { path: { templateId: archivedId } },
-  });
-  assert(deletedTemplate.response.ok, String(deletedTemplate.response.status));
-  await deleteProjectNamed(admin, project);
+  if (archivedId) {
+    const deletedTemplate = await admin.DELETE('/api/admin/release-plan-templates/{templateId}', {
+      params: { path: { templateId: archivedId } },
+    });
+    assert(deletedTemplate.response.ok, String(deletedTemplate.response.status));
+  }
   await close();
 });
 

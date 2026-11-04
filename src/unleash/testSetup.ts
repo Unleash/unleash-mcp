@@ -13,8 +13,9 @@ import { searchSegments } from '../tools/search/segments/segments.ts';
 import type { ChangeRequestReader } from '../tools/shared/changeRequest.ts';
 import type { UnleashClient } from './client.ts';
 
-// Setup and teardown that recorded tests do as an admin, through the server's own tools; only what no tool does
-// (deleting a project or a template, cancelling a change request, project membership) is done over the API.
+// Setup that recorded tests do as an admin, through the server's own tools; only what no tool does (deleting a project
+// or a template, cancelling a change request, project membership) is done over the API. A test cleans up before, not
+// after: what it made stays for a look when something went wrong, and the next recording starts over.
 
 // A refused write fails in setup, with Unleash's answer, and not a few lines later with less to go on.
 export const applied = <T extends { kind: string }>(outcome: T): Extract<T, { kind: 'applied' }> => {
@@ -27,7 +28,7 @@ export const released = <T extends { kind: string }>(outcome: T): Extract<T, { k
   return outcome as Extract<T, { kind: 'released' }>;
 };
 
-// A flag left behind by a failed recording must not pass for the fixture, so an existing one fails.
+// A flag an earlier recording left must not pass for the one the test defines, so an existing one fails.
 export const createFlag = async (
   admin: UnleashClient,
   project: string,
@@ -107,10 +108,15 @@ export const cancelChangeRequest = async (author: UnleashClient, projectId: stri
  * Deletes projects by name, with their flags: Unleash refuses to delete a project with active flags, and an archived one
  * keeps its name taken. A failed recording leaves one only its name tells apart, since Unleash picks a created project's id.
  */
-export const deleteProjectNamed = async (admin: UnleashClient, name: string): Promise<void> => {
+export const deleteProjectNamed = async (admin: UnleashClient, author: UnleashClient, name: string): Promise<void> => {
   const listed = await searchProjects(admin, { kind: 'projects', query: name });
   assert(listed.kind === 'projects');
   for (const project of listed.projects.filter((p) => p.name === name)) {
+    // A pending change request keeps its flag from being archived.
+    const pending = await author.GET('/api/admin/projects/{projectId}/change-requests/pending', {
+      params: { path: { projectId: project.id } },
+    });
+    for (const changeRequest of pending.data ?? []) await cancelChangeRequest(author, project.id, changeRequest.id);
     // Two searches: a flag has no lifecycle stage until shortly after its creation, so the stage filter would skip it.
     const live = await searchFlags(admin, { kind: 'flags', project: project.id, offset: 0, limit: 50 });
     const archived = await searchFlags(admin, {
@@ -131,11 +137,11 @@ export const deleteProjectNamed = async (admin: UnleashClient, name: string): Pr
 
 /**
  * The test file's own project, with change requests required in production, so files share nothing and the sandbox
- * holds none of ours between recordings. Unleash derives the id from the name, so the file can name it up front.
+ * needs nothing set up. Unleash derives the id from the name, so the file can name it up front.
  * The user under test joins as a Member: a root Editor has no say in a project it is not in.
  */
 export const createProjectNamed = async (admin: UnleashClient, unleash: UnleashClient, name: string): Promise<void> => {
-  await deleteProjectNamed(admin, name);
+  await deleteProjectNamed(admin, unleash, name);
   const created = applied(
     await createProject(admin, {
       kind: 'project',

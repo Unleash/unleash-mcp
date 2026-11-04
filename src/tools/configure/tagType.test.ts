@@ -22,10 +22,7 @@ before(async () => {
   for (const name of [updatable, deletable])
     applied(await createTagType(admin, { kind: 'tag_type', action: 'create', name, description: 'Before' }));
 });
-after(async () => {
-  await deleteTypes();
-  await close();
-});
+after(close);
 
 test('creates a tag type with its description', async () => {
   const outcome = await createTagType(unleash, {

@@ -8,7 +8,7 @@ import type { SendFeedback } from './tools/sendFeedback/sendFeedback.ts';
 import { reportableTools } from './tools/sendFeedback/sendFeedbackInput.ts';
 import type { UnleashClient } from './unleash/client.ts';
 import { createRecordedClient, createStubbedClient } from './unleash/testClient.ts';
-import { createProjectNamed, deleteProjectNamed } from './unleash/testSetup.ts';
+import { createProjectNamed } from './unleash/testSetup.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./server.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-server-test';
@@ -16,10 +16,7 @@ const project = 'mcp-server-test';
 const flag = 'mcp-server-flag';
 
 before(() => createProjectNamed(admin, unleash, project));
-after(async () => {
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 // No test reaches the docs: docs is tested on its own.
 const docsFetch: typeof globalThis.fetch = () => assert.fail('the docs were fetched');

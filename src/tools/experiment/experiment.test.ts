@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { cancelChangeRequest, createProjectNamed, deleteFlag, deleteProjectNamed } from '../../unleash/testSetup.ts';
+import { createProjectNamed } from '../../unleash/testSetup.ts';
 import { createExperiment } from './experiment.ts';
 import { experimentInput } from './experimentInput.ts';
 import { experimentOutput } from './experimentOutput.ts';
@@ -12,7 +12,6 @@ import { experimentOutput } from './experimentOutput.ts';
 const { unleash, admin, close } = createRecordedClient(new URL('./experiment.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-experiment';
 const flag = 'mcp-checkout-experiment';
-let changeRequestId: number | undefined;
 // The MCP SDK checks every result against the output schema, so a result it doesn't describe never reaches the agent.
 const describedByOutputSchema = (result: unknown) => z.object(experimentOutput).safeParse({ result }).error;
 
@@ -23,13 +22,7 @@ const values = [
 const everyone = [{ name: 'Everyone', values }];
 
 before(() => createProjectNamed(admin, unleash, project));
-// The change request goes first, so nothing pending refers to the flag.
-after(async () => {
-  if (changeRequestId) await cancelChangeRequest(unleash, project, changeRequestId);
-  await deleteFlag(admin, project, flag);
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 // The recording pins the create as an experiment flag reporting impressions.
 test('creates a missing flag and splits everyone across the values', async () => {
@@ -70,7 +63,6 @@ test('puts the experiment in a change request where the environment requires one
   });
 
   assert(output.kind === 'pending_change_request');
-  changeRequestId = output.changeRequest.id;
   assert.equal(output.changeRequest.state, 'In review');
   assert.equal(describedByOutputSchema(output), undefined);
 });

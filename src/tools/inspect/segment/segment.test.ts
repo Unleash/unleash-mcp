@@ -2,13 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import {
-  createProjectNamed,
-  deleteFlag,
-  deleteProjectNamed,
-  deleteSegmentNamed,
-  released,
-} from '../../../unleash/testSetup.ts';
+import { createProjectNamed, deleteSegmentNamed, released } from '../../../unleash/testSetup.ts';
 import { createSegment } from '../../configure/segment.ts';
 import { createRelease } from '../../release/release.ts';
 import { inspectSegment } from './segment.ts';
@@ -47,12 +41,7 @@ before(async () => {
     }),
   );
 });
-after(async () => {
-  await deleteFlag(admin, project, flag);
-  await deleteSegmentNamed(admin, segment);
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 test('describes a segment with the constraints it stands for and who made it', async () => {
   const output = await inspectSegment(unleash, { kind: 'segment', id });

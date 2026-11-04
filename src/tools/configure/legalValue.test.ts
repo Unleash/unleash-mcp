@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { applied, createProjectNamed, deleteProjectNamed } from '../../unleash/testSetup.ts';
+import { applied, createProjectNamed } from '../../unleash/testSetup.ts';
 import { createContextField, deleteContextField } from './contextField.ts';
 import { createLegalValue, deleteLegalValue } from './legalValue.ts';
 
@@ -23,11 +23,7 @@ before(async () => {
   applied(await createContextField(admin, { kind: 'context_field', action: 'create', name: field }));
   applied(await createContextField(admin, { kind: 'context_field', action: 'create', project, name: projectField }));
 });
-after(async () => {
-  await deleteFields();
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 test('adds a legal value to a context field', async () => {
   const output = await createLegalValue(unleash, {

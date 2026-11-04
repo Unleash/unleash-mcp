@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { createFlag, createProjectNamed, deleteFlag, deleteProjectNamed } from '../../unleash/testSetup.ts';
+import { createFlag, createProjectNamed } from '../../unleash/testSetup.ts';
 import { deleteArchivedFlag } from './delete.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./delete.snapshot.json', import.meta.url).pathname);
@@ -16,12 +16,7 @@ before(async () => {
     params: { path: { projectId: project, featureName: flag } },
   });
 });
-// Cleans up only after a failed recording: a deleted flag is gone already.
-after(async () => {
-  await deleteFlag(admin, project, flag);
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 test('deletes an archived flag for good', async () => {
   const output = await deleteArchivedFlag(unleash, { action: 'delete', project, flag });

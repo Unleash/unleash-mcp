@@ -14,7 +14,7 @@ const names = [name, toUpdate, renamed];
 let updatedId = '';
 
 before(async () => {
-  for (const n of names) await deleteProjectNamed(admin, n);
+  for (const n of names) await deleteProjectNamed(admin, unleash, n);
   // Created by the user, not the admin: only its owner, which its creator becomes, may change a project.
   const created = await createProject(unleash, {
     kind: 'project',
@@ -25,10 +25,7 @@ before(async () => {
   assert(created.kind === 'applied' && typeof created.id === 'string');
   updatedId = created.id;
 });
-after(async () => {
-  for (const n of names) await deleteProjectNamed(admin, n);
-  await close();
-});
+after(close);
 
 test('creates a project with every setting, answering with the id Unleash picks', async () => {
   const output = await createProject(unleash, {

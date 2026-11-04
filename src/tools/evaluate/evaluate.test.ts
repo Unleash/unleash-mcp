@@ -7,8 +7,6 @@ import {
   applied,
   createFlag,
   createProjectNamed,
-  deleteFlag,
-  deleteProjectNamed,
   deleteSegmentNamed,
   released,
   withoutChangeRequests,
@@ -46,11 +44,20 @@ const sdkOnlyUnknown = {
 };
 let segmentId = 0;
 
-const addTarget = (featureName: string, env: string, body: components['schemas']['createFeatureStrategySchema']) =>
-  admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies', {
-    params: { path: { projectId: project, featureName, environment: env } },
-    body,
-  });
+const addTarget = async (
+  featureName: string,
+  env: string,
+  body: components['schemas']['createFeatureStrategySchema'],
+) => {
+  const added = await admin.POST(
+    '/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/strategies',
+    {
+      params: { path: { projectId: project, featureName, environment: env } },
+      body,
+    },
+  );
+  assert(added.response.ok, String(added.response.status));
+};
 
 const addSdkOnlyTarget = (featureName: string, env: string) =>
   addTarget(featureName, env, {
@@ -66,19 +73,13 @@ const addSdkOnlyTarget = (featureName: string, env: string) =>
     ],
   });
 
-// The flags go first: Unleash refuses to delete a strategy or segment in use.
-const deleteSetup = async () => {
-  for (const name of [flag, child, parent]) await deleteFlag(admin, project, name);
-  await deleteSegmentNamed(admin, segment);
-  await admin.DELETE('/api/admin/strategies/{name}', { params: { path: { name: sdkOnlyStrategy } } });
-};
-
 // A new flag is off, so the parent stays unsatisfied.
 before(async () => {
   await createProjectNamed(admin, unleash, project);
   await deleteSegmentNamed(admin, segment);
   await admin.DELETE('/api/admin/strategies/{name}', { params: { path: { name: sdkOnlyStrategy } } });
-  await admin.POST('/api/admin/strategies', { body: { name: sdkOnlyStrategy, parameters: [] } });
+  const strategy = await admin.POST('/api/admin/strategies', { body: { name: sdkOnlyStrategy, parameters: [] } });
+  assert(strategy.response.ok, String(strategy.response.status));
   const created = await createSegment(admin, {
     kind: 'segment',
     action: 'create',
@@ -124,9 +125,10 @@ before(async () => {
   });
   for (const name of [parent, child]) await createFlag(admin, project, { flag: name });
   await addSdkOnlyTarget(child, environment);
-  await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on', {
+  const on = await admin.POST('/api/admin/projects/{projectId}/features/{featureName}/environments/{environment}/on', {
     params: { path: { projectId: project, featureName: child, environment } },
   });
+  assert(on.response.ok, String(on.response.status));
   const linked = await setParentDependency(admin, withoutChangeRequests, {
     action: 'set_parent_dependency',
     project,
@@ -135,11 +137,7 @@ before(async () => {
   });
   assert(linked.kind === 'applied');
 });
-after(async () => {
-  await deleteSetup();
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 const evaluateAs = (...contexts: { appName: string; userId: string }[]) =>
   createEvaluate(unleash)({ queries: contexts.map((context) => ({ flag, environment, context })) });

@@ -3,7 +3,7 @@ import { after, before, test } from 'node:test';
 import { isDeepStrictEqual } from 'node:util';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { createFlag, createProjectNamed, deleteFlag, deleteProjectNamed } from '../../unleash/testSetup.ts';
+import { createFlag, createProjectNamed } from '../../unleash/testSetup.ts';
 import { completeFlag } from './complete.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./complete.snapshot.json', import.meta.url).pathname);
@@ -14,11 +14,7 @@ before(async () => {
   await createProjectNamed(admin, unleash, project);
   await createFlag(admin, project, { flag });
 });
-after(async () => {
-  await deleteFlag(admin, project, flag);
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 test('marks a flag completed with the feature kept', async () => {
   const outcome = await completeFlag(unleash, { action: 'complete', project, flag, outcome: { kind: 'kept' } });

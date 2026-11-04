@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { createProjectNamed, deleteProjectNamed } from '../../../unleash/testSetup.ts';
+import { createProjectNamed } from '../../../unleash/testSetup.ts';
 import { inspectProject } from './project.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./project.snapshot.json', import.meta.url).pathname);
@@ -19,10 +19,7 @@ before(async () => {
   });
   assert(named.response.ok, String(named.response.status));
 });
-after(async () => {
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 test('shows the settings, environments and flag naming pattern of a project', async () => {
   const output = await inspectProject(unleash, { kind: 'project', project });

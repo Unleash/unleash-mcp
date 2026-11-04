@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { createFlag, createProjectNamed, deleteFlag, deleteProjectNamed } from '../../unleash/testSetup.ts';
+import { createFlag, createProjectNamed } from '../../unleash/testSetup.ts';
 import { reviveFlag } from './revive.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./revive.snapshot.json', import.meta.url).pathname);
@@ -16,11 +16,7 @@ before(async () => {
     params: { path: { projectId: project, featureName: flag } },
   });
 });
-after(async () => {
-  await deleteFlag(admin, project, flag);
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 test('brings an archived flag back', async () => {
   const output = await reviveFlag(unleash, { action: 'revive', project, flag });

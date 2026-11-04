@@ -4,13 +4,7 @@ import { isDeepStrictEqual } from 'node:util';
 import { production, stubChangeRequestsIn } from '../../unleash/testChangeRequest.ts';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import {
-  cancelChangeRequest,
-  createFlag,
-  createProjectNamed,
-  deleteFlag,
-  deleteProjectNamed,
-} from '../../unleash/testSetup.ts';
+import { createFlag, createProjectNamed } from '../../unleash/testSetup.ts';
 import { createChangeRequestReader } from '../shared/changeRequest.ts';
 import { setParentDependency } from './setParentDependency.ts';
 
@@ -20,21 +14,13 @@ const { unleash, admin, close } = createRecordedClient(
 const project = 'mcp-manage-flag-set-parent-dependency';
 const parent = 'mcp-parent-flag';
 const child = 'mcp-child-flag';
-let changeRequestId: number | undefined;
 
 before(async () => {
   await createProjectNamed(admin, unleash, project);
   await createFlag(admin, project, { flag: parent });
   await createFlag(admin, project, { flag: child });
 });
-// The change request goes first, so nothing pending refers to the flags.
-after(async () => {
-  if (changeRequestId) await cancelChangeRequest(unleash, project, changeRequestId);
-  await deleteFlag(admin, project, child);
-  await deleteFlag(admin, project, parent);
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 // The test project requires change requests in production. The recording pins the change Unleash accepted.
 test('puts the parent of a flag in a change request where the project requires one', async () => {
@@ -46,7 +32,6 @@ test('puts the parent of a flag in a change request where the project requires o
   });
 
   assert(output.kind === 'pending_change_request');
-  changeRequestId = output.changeRequest.id;
   assert.equal(output.changeRequest.state, 'In review');
 });
 

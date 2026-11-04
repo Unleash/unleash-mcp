@@ -4,7 +4,7 @@ import { isDeepStrictEqual } from 'node:util';
 import type { Interceptable } from 'undici';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { createProjectNamed, deleteFlag, deleteProjectNamed } from '../../unleash/testSetup.ts';
+import { createProjectNamed } from '../../unleash/testSetup.ts';
 import { defineFlag } from './define.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./define.snapshot.json', import.meta.url).pathname);
@@ -16,11 +16,7 @@ const recordedUrl = `${unleash.baseUrl}/projects/${project}/features/${flag}`;
 const stubbedUrl = 'https://unleash.example/projects/web/features/checkout';
 
 before(() => createProjectNamed(admin, unleash, project));
-after(async () => {
-  await deleteFlag(admin, project, flag);
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 // The recording replays by full request, so it pins each request's body: the type and description on the create,
 // then the tag and the link on their own requests.

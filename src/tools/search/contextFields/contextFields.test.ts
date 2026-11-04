@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { applied, createProjectNamed, deleteProjectNamed } from '../../../unleash/testSetup.ts';
+import { applied, createProjectNamed } from '../../../unleash/testSetup.ts';
 import { createContextField, deleteContextField } from '../../configure/contextField.ts';
 import { searchContextFields } from './contextFields.ts';
 
@@ -32,11 +32,7 @@ before(async () => {
   );
   applied(await createContextField(admin, { kind: 'context_field', action: 'create', project, name: projectScoped }));
 });
-after(async () => {
-  await deleteFields();
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 // Unleash sorts the list by name, so the global field comes first.
 test('finds context fields by a part of their name, case insensitive, with what the agent filters on itself', async () => {

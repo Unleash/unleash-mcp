@@ -8,7 +8,6 @@ import {
   createFlag,
   createProjectNamed,
   deleteFlag,
-  deleteProjectNamed,
   deleteReleaseTemplate,
   released,
   withoutChangeRequests,
@@ -102,9 +101,9 @@ before(async () => {
   );
   await addReleasePlan();
 });
+// The template goes in `after`: the sandbox caps them, and the parent's plan keeps it in use.
 after(async () => {
   await deleteFlags();
-  await deleteProjectNamed(admin, project);
   await close();
 });
 

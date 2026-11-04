@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { applied, createProjectNamed, deleteFlag, deleteProjectNamed, released } from '../../../unleash/testSetup.ts';
+import { applied, createProjectNamed, released } from '../../../unleash/testSetup.ts';
 import { createContextField, deleteContextField } from '../../configure/contextField.ts';
 import { createRelease } from '../../release/release.ts';
 import { inspectContextField } from './contextField.ts';
@@ -51,12 +51,7 @@ before(async () => {
     }),
   );
 });
-after(async () => {
-  await deleteFlag(admin, project, flag);
-  await deleteFields();
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 test('describes a context field with the values it allows and whether it can drive stickiness', async () => {
   const output = await inspectContextField(unleash, { kind: 'context_field', name: field });

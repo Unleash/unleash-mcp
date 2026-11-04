@@ -11,12 +11,10 @@ const value = 'mcp-searched-tag';
 
 before(async () => {
   await deleteTag(admin, { kind: 'tag', action: 'delete', type, value });
-  await admin.POST('/api/admin/tags', { body: { type, value } });
+  const created = await admin.POST('/api/admin/tags', { body: { type, value } });
+  assert(created.response.ok, String(created.response.status));
 });
-after(async () => {
-  await deleteTag(admin, { kind: 'tag', action: 'delete', type, value });
-  await close();
-});
+after(close);
 
 test('finds tags by a part of their value, case insensitive', async () => {
   const output = await searchTags(unleash, { kind: 'tags', query: 'MCP-SEARCHED' });

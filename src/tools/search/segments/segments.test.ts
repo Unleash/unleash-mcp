@@ -2,14 +2,14 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createRecordedClient, createStubbedClient } from '../../../unleash/testClient.ts';
 import { unleashError } from '../../../unleash/testError.ts';
-import { applied, createProjectNamed, deleteProjectNamed, deleteSegmentNamed } from '../../../unleash/testSetup.ts';
+import { applied, createProjectNamed, deleteSegmentNamed } from '../../../unleash/testSetup.ts';
 import { createSegment } from '../../configure/segment.ts';
 import { searchSegments } from './segments.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./segments.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-search-segments';
-const global = 'mcp-searched-segment';
-const projectScoped = 'mcp-searched-project-segment';
+const global = 'mcp-segment-search-global';
+const projectScoped = 'mcp-segment-search-project';
 let globalId = 0;
 let projectScopedId = 0;
 
@@ -32,38 +32,34 @@ before(async () => {
   });
   projectScopedId = applied(createdProjectScoped).id;
 });
-after(async () => {
-  for (const name of [global, projectScoped]) await deleteSegmentNamed(admin, name);
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 const creator = 'user-e8d327@example.com';
 
-// Unleash sorts the list by name, so the project segment comes first.
+// Unleash sorts the list by name, so the global segment comes first.
 test('finds segments by a part of their name, case insensitive, with what the agent filters on itself', async () => {
-  const output = await searchSegments(unleash, { kind: 'segments', query: 'MCP-SEARCHED' });
+  const output = await searchSegments(unleash, { kind: 'segments', query: 'MCP-SEGMENT-SEARCH' });
 
   assert.partialDeepStrictEqual(output, {
     kind: 'segments',
     segments: [
-      { id: projectScopedId, name: projectScoped, project, createdBy: creator, usedInProjects: 0, usedInFlags: 0 },
       { id: globalId, name: global, createdBy: creator, usedInProjects: 0, usedInFlags: 0 },
+      { id: projectScopedId, name: projectScoped, project, createdBy: creator, usedInProjects: 0, usedInFlags: 0 },
     ],
   });
 });
 
 test('keeps the segments usable in a project: global or owned by it', async () => {
-  const output = await searchSegments(unleash, { kind: 'segments', project, query: 'mcp-searched' });
+  const output = await searchSegments(unleash, { kind: 'segments', project, query: 'mcp-segment-search' });
 
   assert.partialDeepStrictEqual(output, {
     kind: 'segments',
-    segments: [{ name: projectScoped, project }, { name: global }],
+    segments: [{ name: global }, { name: projectScoped, project }],
   });
 });
 
 test('leaves out the segments owned by another project', async () => {
-  const output = await searchSegments(unleash, { kind: 'segments', project: 'mcp-other', query: 'mcp-searched' });
+  const output = await searchSegments(unleash, { kind: 'segments', project: 'mcp-other', query: 'mcp-segment-search' });
 
   assert(output.kind === 'segments');
   assert.equal(output.segments.length, 1);

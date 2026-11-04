@@ -3,39 +3,25 @@ import { after, before, test } from 'node:test';
 import { stubChangeRequestsIn, stubEnterprise } from '../../unleash/testChangeRequest.ts';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import {
-  cancelChangeRequest,
-  createFlag,
-  createProjectNamed,
-  deleteFlag,
-  deleteProjectNamed,
-} from '../../unleash/testSetup.ts';
+import { createFlag, createProjectNamed } from '../../unleash/testSetup.ts';
 import { createChangeRequestReader } from '../shared/changeRequest.ts';
 import { archiveFlag } from './archive.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./archive.snapshot.json', import.meta.url).pathname);
 const project = 'mcp-manage-flag-archive';
 const flag = 'mcp-archived-flag';
-let changeRequestId: number | undefined;
 
 before(async () => {
   await createProjectNamed(admin, unleash, project);
   await createFlag(admin, project, { flag });
 });
-// The change request goes first, so nothing pending refers to the flag.
-after(async () => {
-  if (changeRequestId) await cancelChangeRequest(unleash, project, changeRequestId);
-  await deleteFlag(admin, project, flag);
-  await deleteProjectNamed(admin, project);
-  await close();
-});
+after(close);
 
 // The test project requires change requests in production.
 test('puts the archiving of a flag in a change request where the project requires one', async () => {
   const output = await archiveFlag(unleash, createChangeRequestReader(unleash), { action: 'archive', project, flag });
 
   assert(output.kind === 'pending_change_request');
-  changeRequestId = output.changeRequest.id;
   assert.equal(output.changeRequest.state, 'In review');
 });
 

@@ -44,21 +44,6 @@
           },
           "body": "",
           "trailers": {}
-        },
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "",
-          "trailers": {}
         }
       ],
       "callCount": 0

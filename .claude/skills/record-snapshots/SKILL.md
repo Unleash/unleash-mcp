@@ -6,7 +6,7 @@ description: Re-record the Unleash HTTP snapshots that tests replay. Use after a
 # Record snapshots
 
 1. Make sure `.env` exists (copy `.env.example`) with a PAT for the Unleash sandbox (`UNLEASH_PAT`) and an admin PAT for setup and teardown (`UNLEASH_ADMIN_PAT`). Ask the driver if either is missing; never invent credentials.
-2. The sandbox needs nothing set up: each test file creates its own project and removes it (see `.claude/rules/testing.md`). It must be Enterprise with the environments `development` and `production`, Unleash's built-in context fields, tag type `simple` and project role `Member`, and the user PAT's account must hold the Editor root role.
+2. The sandbox needs nothing set up: each test file creates its own project, starting over from what the last recording left (see `.claude/rules/testing.md`). It must be Enterprise with the environments `development` and `production`, Unleash's built-in context fields, tag type `simple` and project role `Member`, and the user PAT's account must hold the Editor root role.
 3. Run `pnpm test:record`. It runs the test files one at a time against the real Unleash, so no file sees another's flags, and rewrites the `*.snapshot.json` files next to them.
 4. Review the snapshot diff: no tokens or secrets, no unrelated churn.
 5. Run `pnpm test` to confirm the replay passes and stays subsecond.

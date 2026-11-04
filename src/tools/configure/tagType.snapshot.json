@@ -46,23 +46,6 @@
           },
           "body": "",
           "trailers": {}
-        },
-        {
-          "statusCode": 404,
-          "headers": {
-            "content-length": "110",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"name\":\"NotFoundError\",\"message\":\"Could not find tag-type\",\"details\":[{\"message\":\"Could not find tag-type\"}]}",
-          "trailers": {}
         }
       ],
       "callCount": 0
@@ -84,23 +67,6 @@
         "body": ""
       },
       "responses": [
-        {
-          "statusCode": 404,
-          "headers": {
-            "content-length": "110",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"name\":\"NotFoundError\",\"message\":\"Could not find tag-type\",\"details\":[{\"message\":\"Could not find tag-type\"}]}",
-          "trailers": {}
-        },
         {
           "statusCode": 200,
           "headers": {
@@ -136,23 +102,6 @@
         "body": ""
       },
       "responses": [
-        {
-          "statusCode": 404,
-          "headers": {
-            "content-length": "110",
-            "content-security-policy": "frame-ancestors 'none'",
-            "content-type": "application/json; charset=utf-8",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "vary": "Accept-Encoding",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none"
-          },
-          "body": "{\"name\":\"NotFoundError\",\"message\":\"Could not find tag-type\",\"details\":[{\"message\":\"Could not find tag-type\"}]}",
-          "trailers": {}
-        },
         {
           "statusCode": 200,
           "headers": {

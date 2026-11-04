@@ -9,7 +9,7 @@ const releasePlans = '/api/admin/projects/mcp-server/features/mcp-flag/environme
 const templateId = '01JB9GGTGQYEQ9D40R17T3YVW2';
 const json = { headers: { 'content-type': 'application/json' } };
 
-// Stubbed, not recorded: the sandbox's limit of 10 release templates leaves room for only configure's.
+// Stubbed, not recorded: the sandbox's limit of 10 release templates leaves little room for more.
 test('answers with the plan and the milestone it started', async () => {
   const { unleash, stub } = createStubbedClient();
   const plan = {
