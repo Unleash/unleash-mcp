@@ -13,6 +13,6 @@ paths:
 - `pnpm test:record` records one file at a time, so one file's flags and settings changes never show up in another's snapshot.
 - Tests must be subsecond. Avoid network I/O, timers and process spawning.
 - Recorded tests assert the tool output only; don't read Unleash state back.
-- Setup and teardown use the `admin` client from `createRecordedClient`; the code under test uses `unleash`. Change requests are cancelled by their author, `unleash`.
+- Setup and teardown use the `admin` client from `createRecordedClient`; the code under test uses `unleash`. Exceptions, both for lack of rights: the file's project is created by `unleash`, which owns it, and change requests are cancelled by their author, `unleash`.
 
 Why: `docs/decisions.md` (Testing against Unleash, Admin client for test setup and teardown, Test setup goes through the server's own tools, Each test file creates its own project, Recording sees the pseudonyms too).

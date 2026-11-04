@@ -7,7 +7,6 @@ import { deleteArchivedFlag } from '../tools/manageFlag/delete.ts';
 import type { Define } from '../tools/manageFlag/manageFlagInput.ts';
 import { setParentDependency } from '../tools/manageFlag/setParentDependency.ts';
 import { searchFlags } from '../tools/search/flags/flags.ts';
-import { searchProjects } from '../tools/search/projects/projects.ts';
 import { searchReleaseTemplates } from '../tools/search/releaseTemplates/releaseTemplates.ts';
 import { searchSegments } from '../tools/search/segments/segments.ts';
 import type { ChangeRequestReader } from '../tools/shared/changeRequest.ts';
@@ -105,45 +104,33 @@ export const cancelChangeRequest = async (author: UnleashClient, projectId: stri
 };
 
 /**
- * Deletes projects by name, with their flags: Unleash refuses to delete a project with active flags, and an archived one
- * keeps its name taken. A failed recording leaves one only its name tells apart, since Unleash picks a created project's id.
+ * Deletes a project with its flags: Unleash refuses to delete a project with active flags, and an archived one keeps its
+ * name taken. Nothing is listed: Unleash derives a project's id from its name, and answers a missing project with success.
  */
-export const deleteProjectNamed = async (admin: UnleashClient, author: UnleashClient, name: string): Promise<void> => {
-  const listed = await searchProjects(admin, { kind: 'projects', query: name });
-  assert(listed.kind === 'projects');
-  for (const project of listed.projects.filter((p) => p.name === name)) {
-    // A pending change request keeps its flag from being archived.
-    const pending = await author.GET('/api/admin/projects/{projectId}/change-requests/pending', {
-      params: { path: { projectId: project.id } },
-    });
-    for (const changeRequest of pending.data ?? []) await cancelChangeRequest(author, project.id, changeRequest.id);
-    // Two searches: a flag has no lifecycle stage until shortly after its creation, so the stage filter would skip it.
-    const live = await searchFlags(admin, { kind: 'flags', project: project.id, offset: 0, limit: 50 });
-    const archived = await searchFlags(admin, {
-      kind: 'flags',
-      project: project.id,
-      stages: ['archived'],
-      offset: 0,
-      limit: 50,
-    });
-    assert(live.kind === 'flags' && archived.kind === 'flags');
-    for (const flag of [...live.flags, ...archived.flags]) await deleteFlag(admin, project.id, flag.name);
-    const deleted = await admin.DELETE('/api/admin/projects/{projectId}', {
-      params: { path: { projectId: project.id } },
-    });
-    assert(deleted.response.ok, `${name}: ${deleted.response.status}`);
-  }
+export const deleteProject = async (admin: UnleashClient, author: UnleashClient, id: string): Promise<void> => {
+  // A pending change request keeps its flag from being archived.
+  const pending = await author.GET('/api/admin/projects/{projectId}/change-requests/pending', {
+    params: { path: { projectId: id } },
+  });
+  for (const changeRequest of pending.data ?? []) await cancelChangeRequest(author, id, changeRequest.id);
+  // Two searches: a flag has no lifecycle stage until shortly after its creation, so the stage filter would skip it.
+  const live = await searchFlags(admin, { kind: 'flags', project: id, offset: 0, limit: 50 });
+  const archived = await searchFlags(admin, { kind: 'flags', project: id, stages: ['archived'], offset: 0, limit: 50 });
+  assert(live.kind === 'flags' && archived.kind === 'flags');
+  for (const flag of [...live.flags, ...archived.flags]) await deleteFlag(admin, id, flag.name);
+  const deleted = await admin.DELETE('/api/admin/projects/{projectId}', { params: { path: { projectId: id } } });
+  assert(deleted.response.ok, `${id}: ${deleted.response.status}`);
 };
 
 /**
  * The test file's own project, with change requests required in production, so files share nothing and the sandbox
- * needs nothing set up. Unleash derives the id from the name, so the file can name it up front.
- * The user under test joins as a Member: a root Editor has no say in a project it is not in.
+ * needs nothing set up. Unleash derives the id from the name, so the file can name it up front. The user under test
+ * creates it and so owns it: a root Editor has no say in a project it is not in, and no tool adds members.
  */
 export const createProjectNamed = async (admin: UnleashClient, unleash: UnleashClient, name: string): Promise<void> => {
-  await deleteProjectNamed(admin, unleash, name);
+  await deleteProject(admin, unleash, name);
   const created = applied(
-    await createProject(admin, {
+    await createProject(unleash, {
       kind: 'project',
       action: 'create',
       name,
@@ -165,13 +152,4 @@ export const createProjectNamed = async (admin: UnleashClient, unleash: UnleashC
       ],
     }),
   );
-  const me = await unleash.GET('/api/admin/user');
-  const roles = await admin.GET('/api/admin/roles');
-  const member = roles.data?.roles.find((role) => role.name === 'Member');
-  assert(me.data?.user.id && member);
-  const joined = await admin.POST('/api/admin/projects/{projectId}/access', {
-    params: { path: { projectId: name } },
-    body: { roles: [member.id], users: [me.data.user.id], groups: [] },
-  });
-  assert(joined.response.ok, `${name} membership: ${joined.response.status}`);
 };

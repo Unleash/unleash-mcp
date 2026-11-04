@@ -488,7 +488,7 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 ## 2026-11-03 — Each test file creates its own project
 
 - A recorded test file creates its project through the tools in `before`, after removing what an earlier recording left of it, so the sandbox needs nothing set up; what a recording made stays for a look when something went wrong, and only release templates are removed in `after`, since the instance caps them at ten; the shared `mcp-server` had colleagues as members and settings nobody could see in the repo. Supersedes "the sandbox holds only the project `mcp-server`" (2026-10-22). Unleash derives the id from the name, so a file names its project up front. Rejected: one bootstrapped project for all files, which keeps the sandbox state and the cross-file leftovers.
-- The user under test joins each project, since a root Editor has no say in a project it is not in. Change requests stay required in production only, whatever an instance turns on for a new project's environments.
+- The user under test creates the project and so owns it, since a root Editor has no say in a project it is not in and no tool adds members; the rest of the setup stays with the admin. Change requests stay required in production only, whatever an instance turns on for a new project's environments.
 
 ## 2026-11-04 — Recording sees the pseudonyms too
 

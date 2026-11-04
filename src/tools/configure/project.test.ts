@@ -3,18 +3,18 @@ import { after, before, test } from 'node:test';
 import { isDeepStrictEqual } from 'node:util';
 import { createRecordedClient, createStubbedClient } from '../../unleash/testClient.ts';
 import { unleashError } from '../../unleash/testError.ts';
-import { deleteProjectNamed } from '../../unleash/testSetup.ts';
+import { deleteProject } from '../../unleash/testSetup.ts';
 import { createProject, updateProject } from './project.ts';
 
 const { unleash, admin, close } = createRecordedClient(new URL('./project.snapshot.json', import.meta.url).pathname);
 const name = 'mcp-project';
 const toUpdate = 'mcp-project-update';
 const renamed = 'mcp-project-renamed';
-const names = [name, toUpdate, renamed];
 let updatedId = '';
 
 before(async () => {
-  for (const n of names) await deleteProjectNamed(admin, unleash, n);
+  // Unleash derives the id from the name, and the renamed project keeps the id it was created with.
+  for (const n of [name, toUpdate]) await deleteProject(admin, unleash, n);
   // Created by the user, not the admin: only its owner, which its creator becomes, may change a project.
   const created = await createProject(unleash, {
     kind: 'project',
