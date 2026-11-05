@@ -500,3 +500,7 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 - A summary says what came back (a tool result, an SDK error or no reply), not whether the call succeeded, since a list tool's call never fails as a whole.
 - It never carries the tool arguments, Unleash's error text or method and capability names MCP lacks, because Unleash writes it to anonymous analytics. The client's name and version pass through as sent, since there is no list of clients to check them against.
 - `./remote` exports `mcpVersion` for the host to record next to each summary, since the version belongs to the package, not to a request. Rejected: `mcpVersion` on every summary, which every summary test then had to repeat.
+
+## 2026-11-05 — Failures as structured content and text
+
+- A failure returns `structuredContent` too, next to its text, so the request summary can read every tool result from `structuredContent` instead of parsing a failure's text. Every client we measured shows the model the text of a failure carrying both, so agents see no change. Supersedes "returned as a text block only" and "Rejected: failures carrying both" in the 2026-10-21 Failures as text entry, and "Rejected: failures carrying both" in the 2026-10-27 Successes as structured content and text entry.

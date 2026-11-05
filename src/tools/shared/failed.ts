@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { toToolResult } from './toolResult.ts';
 
 export const failed = z.object({
   kind: z.literal('failed'),
@@ -9,12 +10,7 @@ export const failed = z.object({
 
 export type Failed = z.infer<typeof failed>;
 
-// At the time of this writing,
-// Claude Code shows the model only the text blocks of an error result, so failures are text.
-export const toFailedToolResult = (result: Failed) => ({
-  isError: true,
-  content: [{ type: 'text' as const, text: JSON.stringify({ result }) }],
-});
+export const toFailedToolResult = (result: Failed) => ({ isError: true, ...toToolResult({ result }) });
 
 const failedToolResult = z.object({ result: failed });
 

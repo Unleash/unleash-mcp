@@ -25,7 +25,7 @@ type ToolResult = { results: number; errors: ToolError[]; resultBytes: number };
  * `sdk_error`: the SDK answered instead of a tool, such as an unknown tool, bad arguments or a request it turned away.
  * `no_reply`: the client hung up first.
  * `unreadable`: a body that is not one JSON-RPC request or notification, such as a batch.
- * `resultBytes` counts only the text the agent reads, since a success carries its JSON twice.
+ * `resultBytes` counts only the text the agent reads, since a result carries its JSON twice.
  * A method MCP doesn't have is `unknown` and a capability it doesn't know is left out, since the client made them up.
  */
 export type McpRequestSummary =

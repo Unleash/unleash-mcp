@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import { type CallToolResult, LATEST_PROTOCOL_VERSION } from '@modelcontextprotocol/sdk/types.js';
 import { toMcpRequestSummary } from './mcpRequestSummary.ts';
 import { toFailedToolResult } from './tools/shared/failed.ts';
+import { toToolResult } from './tools/shared/toolResult.ts';
 
 const toolCallRequest = (name: string) => ({
   jsonrpc: '2.0',
@@ -12,10 +13,6 @@ const toolCallRequest = (name: string) => ({
 });
 const summaryOf = (tool: string, result: CallToolResult) =>
   toMcpRequestSummary(toolCallRequest(tool), [{ jsonrpc: '2.0', id: 1, result }], 'replied');
-const toolResult = (structuredContent: Record<string, unknown>): CallToolResult => ({
-  structuredContent,
-  content: [{ type: 'text', text: JSON.stringify(structuredContent) }],
-});
 
 test('leaves out a request without a body, such as the event stream', () => {
   const summary = toMcpRequestSummary(undefined, [], 'replied');
@@ -99,7 +96,7 @@ test('counts a failed tool by the error Unleash answered with', () => {
 });
 
 test('counts a single result as one, measuring its text in bytes, not characters', () => {
-  const summary = summaryOf('release', toolResult({ result: { kind: 'released', flag: 'crème-brûlée' } }));
+  const summary = summaryOf('release', toToolResult({ result: { kind: 'released', flag: 'crème-brûlée' } }));
 
   assert.deepEqual(summary, { kind: 'tool_result', tool: 'release', results: 1, errors: [], resultBytes: 55 });
 });
@@ -107,7 +104,7 @@ test('counts a single result as one, measuring its text in bytes, not characters
 test('counts each result of a list, naming the plain failures and the failed changes', () => {
   const summary = summaryOf(
     'configure',
-    toolResult({
+    toToolResult({
       results: [
         { kind: 'projects', projects: [] },
         { kind: 'failed', status: 404, name: 'NotFoundError', reasons: [] },

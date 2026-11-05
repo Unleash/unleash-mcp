@@ -35,14 +35,9 @@ import type { SendFeedback } from './tools/sendFeedback/sendFeedback.ts';
 import { sendFeedbackInput } from './tools/sendFeedback/sendFeedbackInput.ts';
 import { sendFeedbackOutput } from './tools/sendFeedback/sendFeedbackOutput.ts';
 import { toFailedToolResult } from './tools/shared/failed.ts';
+import { toToolResult } from './tools/shared/toolResult.ts';
 import type { ToolName } from './tools/toolNames.ts';
 import type { UnleashClient } from './unleash/client.ts';
-
-// Antigravity, Devin and Cursor show the model only text blocks, so a success carries a text copy too.
-const toToolResult = (structuredContent: Record<string, unknown>) => ({
-  structuredContent,
-  content: [{ type: 'text' as const, text: JSON.stringify(structuredContent) }],
-});
 
 // Clients that defer tools show the agent only tool names and these instructions until it loads a tool.
 const outcomes: Record<ToolName, string> = {

@@ -103,7 +103,7 @@ test('release tool reports the targets', async () => {
   await client.close();
 });
 
-test('release tool reports a failure as text', async () => {
+test('release tool reports a failure as structured content and as text', async () => {
   const { unleash: stubbed, stub } = createStubbedClient();
   const message = 'You need the "SKIP_CHANGE_REQUEST" permission.';
   stub
@@ -125,7 +125,11 @@ test('release tool reports a failure as text', async () => {
   });
 
   const failed = { result: { kind: 'failed', status: 403, name: 'PermissionError', reasons: [message] } };
-  assert.deepEqual(result, { isError: true, content: [{ type: 'text', text: JSON.stringify(failed) }] });
+  assert.deepEqual(result, {
+    isError: true,
+    structuredContent: failed,
+    content: [{ type: 'text', text: JSON.stringify(failed) }],
+  });
   await client.close();
 });
 
