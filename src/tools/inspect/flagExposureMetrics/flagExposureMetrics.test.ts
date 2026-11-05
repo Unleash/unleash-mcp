@@ -12,13 +12,15 @@ const environment = 'production';
 const rawPath = `/api/admin/client-metrics/features/${flag}/raw`;
 const query = { kind: 'flag_exposure_metrics' as const, project, flag, environment, hoursBack: 48 };
 
-const row = (appName: string, timestamp: string, yes: number, no: number, env = environment) => ({
+type Counts = { yes: number; no: number; variants?: Record<string, number> };
+const row = (appName: string, timestamp: string, { yes, no, variants }: Counts, env = environment) => ({
   featureName: flag,
   appName,
   environment: env,
   timestamp,
   yes,
   no,
+  ...(variants ? { variants } : {}),
 });
 
 const stubbed = (hoursBack: number, data: object[]) => {
@@ -27,12 +29,13 @@ const stubbed = (hoursBack: number, data: object[]) => {
   return unleash;
 };
 
-test('sums the evaluations of every application in the environment over the window', async () => {
+// The web application reports the evaluations that got no variant as `disabled`, as SDKs do.
+test('sums the evaluations of every application in the environment over the window, variants included', async () => {
   const unleash = stubbed(48, [
-    row('web', '2026-11-04T14:00:00.000Z', 0, 0),
-    row('web', '2026-11-04T15:00:00.000Z', 7, 3),
-    row('worker', '2026-11-04T15:00:00.000Z', 3, 2),
-    row('web', '2026-11-04T15:00:00.000Z', 5, 0, 'development'),
+    row('web', '2026-11-04T14:00:00.000Z', { yes: 0, no: 0 }),
+    row('web', '2026-11-04T15:00:00.000Z', { yes: 7, no: 3, variants: { blue: 4, green: 3, disabled: 3 } }),
+    row('worker', '2026-11-04T15:00:00.000Z', { yes: 3, no: 2, variants: { blue: 3 } }),
+    row('web', '2026-11-04T15:00:00.000Z', { yes: 5, no: 0, variants: { blue: 5 } }, 'development'),
   ]);
 
   const output = await inspectFlagExposureMetrics(unleash, query);
@@ -42,7 +45,7 @@ test('sums the evaluations of every application in the environment over the wind
     flag,
     environment,
     url: `https://unleash.example/projects/${project}/features/${flag}/metrics?environment=${environment}&hoursBack=48`,
-    totals: { requests: 15, enabled: 10 },
+    totals: { requests: 15, enabled: 10, variants: { blue: 7, green: 3 } },
   });
 });
 
@@ -51,8 +54,9 @@ test('answers all zero when no SDK reported in the environment', async () => {
 
   assert.partialDeepStrictEqual(output, {
     url: `https://unleash.example/projects/${project}/features/${flag}/metrics?environment=${environment}&hoursBack=6`,
-    totals: { requests: 0, enabled: 0 },
   });
+  assert(output.kind === 'flag_exposure_metrics');
+  assert.deepEqual(output.totals, { requests: 0, enabled: 0 });
 });
 
 test("reports Unleash's error", async () => {

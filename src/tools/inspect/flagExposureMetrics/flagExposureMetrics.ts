@@ -29,10 +29,23 @@ export const inspectFlagExposureMetrics = async (
   };
 };
 
-const toTotals = (rows: UnleashMetric[]): ExposureTotals => ({
-  requests: sum(rows, (row) => row.yes + row.no),
-  enabled: sum(rows, (row) => row.yes),
-});
+const toTotals = (rows: UnleashMetric[]): ExposureTotals => {
+  const variants = toVariantCounts(rows);
+  return {
+    requests: sum(rows, (row) => row.yes + row.no),
+    enabled: sum(rows, (row) => row.yes),
+    ...(variants ? { variants } : {}),
+  };
+};
+
+// SDKs count the evaluations that got no variant as `disabled`, which the UI leaves out.
+const toVariantCounts = (rows: UnleashMetric[]): Record<string, number> | undefined => {
+  const counts: Record<string, number> = {};
+  for (const row of rows)
+    for (const [variant, count] of Object.entries(row.variants ?? {}))
+      if (variant !== 'disabled') counts[variant] = (counts[variant] ?? 0) + count;
+  return Object.keys(counts).length > 0 ? counts : undefined;
+};
 
 const sum = (rows: UnleashMetric[], of: (row: UnleashMetric) => number): number =>
   rows.reduce((total, row) => total + of(row), 0);

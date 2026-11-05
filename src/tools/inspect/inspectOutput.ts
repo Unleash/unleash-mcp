@@ -138,6 +138,10 @@ const segment = z.object({
 const exposureTotals = z.object({
   requests: z.number().describe('Evaluations, enabled or not'),
   enabled: z.number().describe('Evaluations that got the feature'),
+  variants: z
+    .record(z.string(), z.number())
+    .optional()
+    .describe('Evaluations per variant, as SDKs count them on variant calls; left out when none was reported'),
 });
 
 const flagExposureMetrics = z.object({
