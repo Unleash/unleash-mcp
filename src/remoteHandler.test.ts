@@ -94,14 +94,14 @@ test('summarises each request for the host, without tool arguments', async (t) =
     {
       kind: 'tool_result',
       tool: 'search',
-      results: 1,
+      resultKinds: { failed: 1 },
       errors: [{ name: 'NoAccessError', status: 403 }],
       resultBytes: 80,
     },
     {
       kind: 'tool_result',
       tool: 'audit',
-      results: 1,
+      resultKinds: { failed: 1 },
       errors: [{ name: 'NoAccessError', status: 403 }],
       resultBytes: 77,
     },

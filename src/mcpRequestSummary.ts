@@ -13,12 +13,12 @@ import {
   type JSONRPCResultResponse,
 } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { failed, readFailedToolResult } from './tools/shared/failed.ts';
+import { failed } from './tools/shared/failed.ts';
 import { type ToolName, toolNames } from './tools/toolNames.ts';
 
 const toolError = failed.pick({ name: true, status: true });
 type ToolError = z.infer<typeof toolError>;
-type ToolResult = { results: number; errors: ToolError[]; resultBytes: number };
+type ResultCounts = { resultKinds: Record<string, number>; errors: ToolError[]; resultBytes: number };
 
 /**
  * `initialize`: the client as it introduced itself, whatever came back.
@@ -30,7 +30,7 @@ type ToolResult = { results: number; errors: ToolError[]; resultBytes: number };
  */
 export type McpRequestSummary =
   | { kind: 'initialize'; client: { name: string; version: string }; capabilities: string[] }
-  | ({ kind: 'tool_result'; tool: ToolName } & ToolResult)
+  | ({ kind: 'tool_result'; tool: ToolName } & ResultCounts)
   | { kind: 'sdk_error'; tool: ToolName | 'unknown' }
   | { kind: 'no_reply'; tool: ToolName | 'unknown' }
   | { kind: 'other'; method: string }
@@ -71,23 +71,29 @@ export const toMcpRequestSummary = (
   return tool !== 'unknown' && counted ? { kind: 'tool_result', tool, ...counted } : { kind: 'sdk_error', tool };
 };
 
-const resultList = z.object({ results: z.array(z.unknown()) });
+const resultItem = z.looseObject({ kind: z.string() });
+const resultItems = z.union([
+  z.object({ results: z.array(resultItem) }).transform(({ results }) => results),
+  z.object({ result: resultItem }).transform(({ result }) => [result]),
+]);
 const failedItem = z.union([
   failed.pick({ kind: true, name: true, status: true }),
   z.object({ kind: z.literal('failed'), error: toolError }).transform(({ error }) => error),
 ]);
 
-const countResults = (result: CallToolResult): ToolResult | undefined => {
+const countResults = (result: CallToolResult): ResultCounts | undefined => {
+  // The SDK's own errors carry no structured content.
+  const items = resultItems.safeParse(result.structuredContent).data;
+  if (!items) return undefined;
   const text = result.content.map((block) => (block.type === 'text' ? block.text : '')).join('');
   const resultBytes = Buffer.byteLength(text);
-  if (result.isError) {
-    const error = readFailedToolResult(text);
-    return error && { results: 1, errors: [{ name: error.name, status: error.status }], resultBytes };
+  const resultKinds: Record<string, number> = {};
+  for (const item of items) {
+    resultKinds[item.kind] = (resultKinds[item.kind] ?? 0) + 1;
   }
-  const items = resultList.safeParse(result.structuredContent).data?.results ?? [result.structuredContent];
   const errors = items.flatMap((item) => {
     const read = failedItem.safeParse(item);
     return read.success ? [{ name: read.data.name, status: read.data.status }] : [];
   });
-  return { results: items.length, errors, resultBytes };
+  return { resultKinds, errors, resultBytes };
 };

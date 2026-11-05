@@ -88,36 +88,49 @@ test('counts a failed tool by the error Unleash answered with', () => {
 
   const summary = summaryOf('audit', failed);
 
-  assert.partialDeepStrictEqual(summary, {
+  assert.deepEqual(summary, {
     kind: 'tool_result',
-    results: 1,
+    tool: 'audit',
+    resultKinds: { failed: 1 },
     errors: [{ name: 'NoAccessError', status: 403 }],
+    resultBytes: 77,
   });
 });
 
-test('counts a single result as one, measuring its text in bytes, not characters', () => {
+test('counts a single result by its kind, measuring its text in bytes, not characters', () => {
   const summary = summaryOf('release', toToolResult({ result: { kind: 'released', flag: 'crème-brûlée' } }));
 
-  assert.deepEqual(summary, { kind: 'tool_result', tool: 'release', results: 1, errors: [], resultBytes: 55 });
+  assert.deepEqual(summary, {
+    kind: 'tool_result',
+    tool: 'release',
+    resultKinds: { released: 1 },
+    errors: [],
+    resultBytes: 55,
+  });
 });
 
-test('counts each result of a list, naming the plain failures and the failed changes', () => {
+test('counts each result of a list by kind, naming the error of each failed change', () => {
   const summary = summaryOf(
     'configure',
     toToolResult({
       results: [
-        { kind: 'projects', projects: [] },
-        { kind: 'failed', status: 404, name: 'NotFoundError', reasons: [] },
-        { kind: 'failed', name: 'beta-users', error: { status: 409, name: 'NameExistsError', reasons: [] } },
+        { kind: 'applied', resource: 'segment', action: 'create', name: 'internal-users', id: 7 },
+        {
+          kind: 'failed',
+          resource: 'segment',
+          action: 'create',
+          name: 'beta-users',
+          error: { status: 409, name: 'NameExistsError', reasons: [] },
+        },
       ],
     }),
   );
 
-  assert.partialDeepStrictEqual(summary, {
-    results: 3,
-    errors: [
-      { name: 'NotFoundError', status: 404 },
-      { name: 'NameExistsError', status: 409 },
-    ],
+  assert.deepEqual(summary, {
+    kind: 'tool_result',
+    tool: 'configure',
+    resultKinds: { applied: 1, failed: 1 },
+    errors: [{ name: 'NameExistsError', status: 409 }],
+    resultBytes: 240,
   });
 });

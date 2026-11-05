@@ -499,6 +499,7 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 - The remote handler returns a summary of each request, so Unleash never parses MCP messages. Rejected: Unleash parsing the request, and a callback option.
 - A summary says what came back (a tool result, an SDK error or no reply), not whether the call succeeded, since a list tool's call never fails as a whole.
 - It never carries the tool arguments, Unleash's error text or method and capability names MCP lacks, because Unleash writes it to anonymous analytics. The client's name and version pass through as sent, since there is no list of clients to check them against.
+- A tool result counts its items by `kind`, so analysts can tell what was asked for or how it ended, such as `flag_exposure_metrics` or `pending_change_request`. The kinds are literals, so nothing a client sent reaches them: the SDK checks a result against our output schema, and an error result, which it skips, is built from the `Failed` type. Rejected: a closed list of kinds in the summary, a second copy of every output schema.
 - `./remote` exports `mcpVersion` for the host to record next to each summary, since the version belongs to the package, not to a request. Rejected: `mcpVersion` on every summary, which every summary test then had to repeat.
 
 ## 2026-11-05 — Failures as structured content and text

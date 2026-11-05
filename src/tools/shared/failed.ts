@@ -12,16 +12,6 @@ export type Failed = z.infer<typeof failed>;
 
 export const toFailedToolResult = (result: Failed) => ({ isError: true, ...toToolResult({ result }) });
 
-const failedToolResult = z.object({ result: failed });
-
-export const readFailedToolResult = (text: string): Failed | undefined => {
-  try {
-    return failedToolResult.safeParse(JSON.parse(text)).data?.result;
-  } catch {
-    return undefined;
-  }
-};
-
 // Unleash puts the useful error messages in `details`, which the OpenAPI spec omits.
 type UnleashError = { name?: string; details?: { message: string }[] };
 // openapi-fetch leaves `error` unset when an error reply has no body, so `response.ok` is the failure check.
