@@ -13,7 +13,7 @@ const rawPath = `/api/admin/client-metrics/features/${flag}/raw`;
 const query = { kind: 'flag_exposure_metrics' as const, project, flag, environment, hoursBack: 48 };
 
 type Counts = { yes: number; no: number; variants?: Record<string, number> };
-const row = (appName: string, timestamp: string, { yes, no, variants }: Counts, env = environment) => ({
+const row = (appName: string, timestamp: string | number, { yes, no, variants }: Counts, env = environment) => ({
   featureName: flag,
   appName,
   environment: env,
@@ -29,16 +29,17 @@ const stubbed = (hoursBack: number, data: object[]) => {
   return unleash;
 };
 
-// The web application reports the evaluations that got no variant as `disabled`, as SDKs do.
-test('sums the evaluations of every application in the environment over the window, variants included', async () => {
-  const unleash = stubbed(48, [
-    row('web', '2026-11-04T14:00:00.000Z', { yes: 0, no: 0 }),
-    row('web', '2026-11-04T15:00:00.000Z', { yes: 7, no: 3, variants: { blue: 4, green: 3, disabled: 3 } }),
-    row('worker', '2026-11-04T15:00:00.000Z', { yes: 3, no: 2, variants: { blue: 3 } }),
-    row('web', '2026-11-04T15:00:00.000Z', { yes: 5, no: 0, variants: { blue: 5 } }, 'development'),
-  ]);
+// Two applications over two hours, the later hour first and once as a number, as the spec allows; the web application
+// reports the evaluations that got no variant as `disabled`, as SDKs do.
+const hourly = [
+  row('worker', Date.UTC(2026, 10, 4, 15), { yes: 3, no: 2, variants: { blue: 3 } }),
+  row('web', '2026-11-04T14:00:00.000Z', { yes: 0, no: 0 }),
+  row('web', '2026-11-04T15:00:00.000Z', { yes: 7, no: 3, variants: { blue: 4, green: 3, disabled: 3 } }),
+  row('web', '2026-11-04T15:00:00.000Z', { yes: 5, no: 0, variants: { blue: 5 } }, 'development'),
+];
 
-  const output = await inspectFlagExposureMetrics(unleash, query);
+test('sums the evaluations of every application in the environment over the window, variants included', async () => {
+  const output = await inspectFlagExposureMetrics(stubbed(48, hourly), query);
 
   assert.deepEqual(output, {
     kind: 'flag_exposure_metrics',
@@ -47,6 +48,31 @@ test('sums the evaluations of every application in the environment over the wind
     url: `https://unleash.example/projects/${project}/features/${flag}/metrics?environment=${environment}&hoursBack=48`,
     totals: { requests: 15, enabled: 10, variants: { blue: 7, green: 3 } },
   });
+});
+
+test('lists the window per hour, summed over the applications, when the series is included', async () => {
+  const output = await inspectFlagExposureMetrics(stubbed(48, hourly), { ...query, include: ['series'] });
+
+  assert(output.kind === 'flag_exposure_metrics');
+  assert.deepEqual(output.series, [
+    { at: '2026-11-04T14:00Z', requests: 0, enabled: 0 },
+    { at: '2026-11-04T15:00Z', requests: 15, enabled: 10, variants: { blue: 7, green: 3 } },
+  ]);
+});
+
+test('lists the window per UTC day beyond 48 hours', async () => {
+  const unleash = stubbed(168, [
+    row('web', '2026-11-03T00:00:00.000Z', { yes: 100, no: 50 }),
+    row('web', '2026-11-04T00:00:00.000Z', { yes: 40, no: 0 }),
+  ]);
+
+  const output = await inspectFlagExposureMetrics(unleash, { ...query, hoursBack: 168, include: ['series'] });
+
+  assert(output.kind === 'flag_exposure_metrics');
+  assert.deepEqual(output.series, [
+    { at: '2026-11-03', requests: 150, enabled: 100 },
+    { at: '2026-11-04', requests: 40, enabled: 40 },
+  ]);
 });
 
 test('answers all zero when no SDK reported in the environment', async () => {

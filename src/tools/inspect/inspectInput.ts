@@ -58,6 +58,12 @@ const flagExposureMetrics = z
       .max(30 * 24)
       .default(48)
       .describe('The window, ending now; at most 30 days'),
+    include: z
+      .array(z.enum(['series']))
+      .optional()
+      .describe(
+        'series: the counts per hour, or per UTC day beyond 48 hours. Costs many tokens, so ask only for a question about when something changed',
+      ),
   })
   .describe(
     'Exposure metrics: how often SDKs evaluated a flag in an environment and how often they got it, as the Unleash exposure metrics page shows; whether SDKs saw a flag at all, inspecting the flag tells',

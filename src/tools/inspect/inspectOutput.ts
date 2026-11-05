@@ -144,6 +144,10 @@ const exposureTotals = z.object({
     .describe('Evaluations per variant, as SDKs count them on variant calls; left out when none was reported'),
 });
 
+const exposureBucket = exposureTotals.extend({
+  at: z.string().describe('Start of the bucket: the hour as 2026-11-02T16:00Z, or the UTC day as 2026-11-02'),
+});
+
 const flagExposureMetrics = z.object({
   kind: z.literal('flag_exposure_metrics'),
   flag: z.string(),
@@ -152,6 +156,10 @@ const flagExposureMetrics = z.object({
   totals: exposureTotals.describe(
     'Over the window. All zero when no SDK reported; SDKs report on an interval, so a flag turned on minutes ago may show nothing yet',
   ),
+  series: z
+    .array(exposureBucket)
+    .optional()
+    .describe('Set when included: the window per hour, or per UTC day beyond 48 hours, oldest first'),
 });
 
 const result = z.discriminatedUnion('kind', [project, flag, contextField, segment, flagExposureMetrics, failed]);
@@ -175,3 +183,4 @@ export type Milestone = z.infer<typeof milestone>;
 export type Transition = z.infer<typeof transition>;
 export type FlagExposureMetrics = z.infer<typeof flagExposureMetrics>;
 export type ExposureTotals = z.infer<typeof exposureTotals>;
+export type ExposureBucket = z.infer<typeof exposureBucket>;

@@ -3,7 +3,7 @@ import type { UnleashClient } from '../../../unleash/client.ts';
 import { type Failed, toFailed } from '../../shared/failed.ts';
 import { flagUrl } from '../../shared/uiUrl.ts';
 import type { FlagExposureMetricsQuery } from '../inspectInput.ts';
-import type { ExposureTotals, FlagExposureMetrics } from '../inspectOutput.ts';
+import type { ExposureBucket, ExposureTotals, FlagExposureMetrics } from '../inspectOutput.ts';
 
 type UnleashMetric = components['schemas']['featureEnvironmentMetricsSchema'];
 
@@ -11,7 +11,7 @@ type UnleashMetric = components['schemas']['featureEnvironmentMetricsSchema'];
 // metrics page reads it; the page's environment filter and its sums happen here.
 export const inspectFlagExposureMetrics = async (
   unleash: UnleashClient,
-  { project, flag, environment, hoursBack }: FlagExposureMetricsQuery,
+  { project, flag, environment, hoursBack, include = [] }: FlagExposureMetricsQuery,
 ): Promise<FlagExposureMetrics | Failed> => {
   const found = await unleash.GET('/api/admin/client-metrics/features/{name}/raw', {
     params: { path: { name: flag } },
@@ -26,8 +26,19 @@ export const inspectFlagExposureMetrics = async (
     environment,
     url: `${flagUrl(unleash, project, flag)}/metrics?environment=${encodeURIComponent(environment)}&hoursBack=${hoursBack}`,
     totals: toTotals(rows),
+    ...(include.includes('series') ? { series: toSeries(rows, hoursBack) } : {}),
   };
 };
+
+// Unleash buckets by the hour up to 48 hours back and by the UTC day beyond, and sends the bucket's start as ISO text.
+const toSeries = (rows: UnleashMetric[], hoursBack: number): ExposureBucket[] =>
+  [...new Set(rows.map(startOf))].sort().map((start) => ({
+    at: hoursBack > 48 ? start.slice(0, 10) : `${start.slice(0, 16)}Z`,
+    ...toTotals(rows.filter((row) => startOf(row) === start)),
+  }));
+
+// The spec types the timestamp as a date or a number.
+const startOf = (row: UnleashMetric): string => new Date(row.timestamp).toISOString();
 
 const toTotals = (rows: UnleashMetric[]): ExposureTotals => {
   const variants = toVariantCounts(rows);
