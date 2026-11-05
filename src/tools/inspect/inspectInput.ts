@@ -45,7 +45,25 @@ const segment = z
   })
   .describe('A segment: the constraints it stands for, its project, who made it, and on request which flags use it');
 
-const query = z.discriminatedUnion('kind', [project, flag, contextField, segment]);
+const flagExposureMetrics = z
+  .object({
+    kind: z.literal('flag_exposure_metrics'),
+    project: z.string().describe('Project id, as a flags search returns it'),
+    flag: z.string().describe('Feature flag name, as a flags search returns it'),
+    environment: z.string().describe('Environment name, as inspecting the flag lists them'),
+    hoursBack: z
+      .number()
+      .int()
+      .min(1)
+      .max(30 * 24)
+      .default(48)
+      .describe('The window, ending now; at most 30 days'),
+  })
+  .describe(
+    'Exposure metrics: how often SDKs evaluated a flag in an environment and how often they got it, as the Unleash exposure metrics page shows; whether SDKs saw a flag at all, inspecting the flag tells',
+  );
+
+const query = z.discriminatedUnion('kind', [project, flag, contextField, segment, flagExposureMetrics]);
 
 export const inspectInput = {
   queries: z
@@ -61,3 +79,4 @@ export type ProjectQuery = z.infer<typeof project>;
 export type FlagQuery = z.infer<typeof flag>;
 export type ContextFieldQuery = z.infer<typeof contextField>;
 export type SegmentQuery = z.infer<typeof segment>;
+export type FlagExposureMetricsQuery = z.infer<typeof flagExposureMetrics>;

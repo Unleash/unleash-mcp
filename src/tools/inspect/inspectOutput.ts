@@ -135,7 +135,22 @@ const segment = z.object({
     .describe('Set when usage is included; every flag environment with a target on the segment'),
 });
 
-const result = z.discriminatedUnion('kind', [project, flag, contextField, segment, failed]);
+const exposureTotals = z.object({
+  requests: z.number().describe('Evaluations, enabled or not'),
+  enabled: z.number().describe('Evaluations that got the feature'),
+});
+
+const flagExposureMetrics = z.object({
+  kind: z.literal('flag_exposure_metrics'),
+  flag: z.string(),
+  environment: z.string(),
+  url: z.string().describe('The exposure metrics page in the Unleash UI; quote it instead of building a link'),
+  totals: exposureTotals.describe(
+    'Over the window. All zero when no SDK reported; SDKs report on an interval, so a flag turned on minutes ago may show nothing yet',
+  ),
+});
+
+const result = z.discriminatedUnion('kind', [project, flag, contextField, segment, flagExposureMetrics, failed]);
 
 export const inspectOutput = {
   results: z.array(result).describe('One per query, in the order asked'),
@@ -154,3 +169,5 @@ export type Environment = z.infer<typeof environment>;
 export type ReleasePlan = z.infer<typeof releasePlan>;
 export type Milestone = z.infer<typeof milestone>;
 export type Transition = z.infer<typeof transition>;
+export type FlagExposureMetrics = z.infer<typeof flagExposureMetrics>;
+export type ExposureTotals = z.infer<typeof exposureTotals>;

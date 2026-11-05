@@ -3,6 +3,7 @@ import type { UnleashClient } from '../../unleash/client.ts';
 import { createEditionReader, type EditionReader } from '../shared/changeRequest.ts';
 import { inspectContextField } from './contextField/contextField.ts';
 import { inspectFlag } from './flag/flag.ts';
+import { inspectFlagExposureMetrics } from './flagExposureMetrics/flagExposureMetrics.ts';
 import type { InspectInput, Query } from './inspectInput.ts';
 import type { InspectOutput, InspectResult } from './inspectOutput.ts';
 import { inspectProject } from './project/project.ts';
@@ -31,5 +32,7 @@ const inspect = (
       return inspectContextField(unleash, query);
     case 'segment':
       return inspectSegment(unleash, query);
+    case 'flag_exposure_metrics':
+      return inspectFlagExposureMetrics(unleash, query);
   }
 };
