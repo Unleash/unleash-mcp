@@ -48,7 +48,7 @@ const outcomes: Record<ToolName, string> = {
   kill_switch:
     'Add a permanent kill switch, named after what it turns off, or flip one on or off in an environment, for everyone or chosen audiences; flipping creates a missing switch.',
   inspect:
-    'See a project, flag, context field or segment in full, such as the environments of a project, who gets a flag in each environment and when SDKs last saw it there, or which flags use a context field or segment, or how often SDKs evaluated a flag in an environment and got it.',
+    'See a project, flag, context field, segment or release template in full, such as the environments of a project, who gets a flag in each environment and when SDKs last saw it there, which flags use a context field or segment, the milestones of a release template, or how often SDKs evaluated a flag in an environment and got it.',
   search:
     'Find projects, environments, flags, segments, context fields, tag types, tags, release templates and event types, filter flags by tag, segment, lifecycle stage, staleness, creator or creation date, and get the ids and names the other tools take.',
   evaluate:

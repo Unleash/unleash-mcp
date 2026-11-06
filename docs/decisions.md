@@ -505,3 +505,10 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 ## 2026-11-05 — Failures as structured content and text
 
 - A failure returns `structuredContent` too, next to its text, so the request summary can read every tool result from `structuredContent` instead of parsing a failure's text. Every client we measured shows the model the text of a failure carrying both, so agents see no change. Supersedes "returned as a text block only" and "Rejected: failures carrying both" in the 2026-10-21 Failures as text entry, and "Rejected: failures carrying both" in the 2026-10-27 Successes as structured content and text entry.
+
+## 2026-11-06 — Release template inspect
+
+- `inspect` shows a release template's milestones in order and when each moves on, so an agent can see what a template does before releasing through it.
+- The big details of a template, the targets of each milestone, are requested on demand with `include: ['targets']`, the same include pattern as other reads. This updates "Release template search" (2026-10-26): search rows stay the id and the name, and the strategies are now disclosed on request.
+- A template target leaves out `rolloutGroup`: a template holds a placeholder for the flag name there until it is applied. Rejected: showing the placeholder.
+- The query takes the id only. Unleash's global template endpoint also answers project templates, and a search row doesn't say which kind it is. Rejected: a `project` next to the id, which the agent can't fill from a search row and which needs the beta project endpoint.
