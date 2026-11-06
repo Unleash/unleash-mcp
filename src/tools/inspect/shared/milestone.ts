@@ -28,14 +28,22 @@ export const toTransition = (condition: object): Transition => {
 export const toTarget =
   (flag: string) =>
   (s: UnleashStrategy): Target & { rollout: number; stickiness: string; rolloutGroup: string } => ({
-    name: s.title || s.name,
-    rollout: Number(s.parameters?.rollout ?? 100),
-    stickiness: s.parameters?.stickiness ?? 'default',
+    ...toTemplateTarget(s),
     rolloutGroup: s.parameters?.groupId ?? flag,
-    ...(s.constraints?.length ? { constraints: s.constraints.map(toConstraint) } : {}),
-    ...(s.segments?.length ? { segments: s.segments } : {}),
-    ...(s.variants?.length ? { values: s.variants.map(toValue) } : {}),
   });
+
+/**
+ * Maps a release template's strategy to a target without its rollout group: a template stores a placeholder for the
+ * flag name there, which only gets a value once the template is applied to a flag.
+ */
+export const toTemplateTarget = (s: UnleashStrategy): Target & { rollout: number; stickiness: string } => ({
+  name: s.title || s.name,
+  rollout: Number(s.parameters?.rollout ?? 100),
+  stickiness: s.parameters?.stickiness ?? 'default',
+  ...(s.constraints?.length ? { constraints: s.constraints.map(toConstraint) } : {}),
+  ...(s.segments?.length ? { segments: s.segments } : {}),
+  ...(s.variants?.length ? { values: s.variants.map(toValue) } : {}),
+});
 
 // A variable weight is what Unleash resolved, not what was asked for, so only a fixed one comes back as a share.
 const toValue = ({ name, payload, weight, weightType }: UnleashVariant): Value => ({

@@ -7,6 +7,7 @@ import { inspectFlagExposureMetrics } from './flagExposureMetrics/flagExposureMe
 import type { InspectInput, Query } from './inspectInput.ts';
 import type { InspectOutput, InspectResult } from './inspectOutput.ts';
 import { inspectProject } from './project/project.ts';
+import { inspectReleaseTemplate } from './releaseTemplate/releaseTemplate.ts';
 import { inspectSegment } from './segment/segment.ts';
 
 // Queries are independent, so they run together and each one answers its HTTP failures on its own.
@@ -34,5 +35,7 @@ const inspect = (
       return inspectSegment(unleash, query);
     case 'flag_exposure_metrics':
       return inspectFlagExposureMetrics(unleash, query);
+    case 'release_template':
+      return inspectReleaseTemplate(unleash, query);
   }
 };

@@ -162,7 +162,39 @@ const flagExposureMetrics = z.object({
     .describe('Set when included: the window per hour, or per UTC day beyond 48 hours, oldest first'),
 });
 
-const result = z.discriminatedUnion('kind', [project, flag, contextField, segment, flagExposureMetrics, failed]);
+const templateMilestone = z.object({
+  name: z.string(),
+  transition: transition
+    .optional()
+    .describe(
+      'Set when a plan made from the template moves on from this milestone by itself, once the condition is met',
+    ),
+  targets: z
+    .array(target.required({ rollout: true, stickiness: true }))
+    .optional()
+    .describe('Set when targets are included; the audiences this milestone gives the feature to'),
+});
+
+const releaseTemplate = z.object({
+  kind: z.literal('release_template'),
+  id: z.string(),
+  name: z.string(),
+  project: z.string().optional().describe('Set on a project template; absent on a global one'),
+  description: z.string().optional(),
+  milestones: z
+    .array(templateMilestone)
+    .describe('In order; a plan made from the template starts at the first and moves from one to the next'),
+});
+
+const result = z.discriminatedUnion('kind', [
+  project,
+  flag,
+  contextField,
+  segment,
+  flagExposureMetrics,
+  releaseTemplate,
+  failed,
+]);
 
 export const inspectOutput = {
   results: z.array(result).describe('One per query, in the order asked'),
@@ -184,3 +216,5 @@ export type Transition = z.infer<typeof transition>;
 export type FlagExposureMetrics = z.infer<typeof flagExposureMetrics>;
 export type ExposureTotals = z.infer<typeof exposureTotals>;
 export type ExposureBucket = z.infer<typeof exposureBucket>;
+/** A release template as inspect answers it: its milestones in order, with their targets only when included. */
+export type ReleaseTemplate = z.infer<typeof releaseTemplate>;
