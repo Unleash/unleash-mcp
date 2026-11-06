@@ -1,0 +1,681 @@
+[
+  {
+    "hash": "K6dypGzHEc2cWbUdAwMgef2dzzILOpAgXPeoLqkU3oE",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-inspect-release-template",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "SBAxU3jluxPJXhZT3NN4kbXTt9SGlLZSjHoeOAjE6HQ",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-inspect-release-template/release-templates/01M6R5HJPC9KZPFJQQRXTN0WW3",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "WXIICPFzo4c4lWszqmYqGZz7FKDMSkLF0DAd_pq-L8U",
+    "snapshot": {
+      "request": {
+        "method": "DELETE",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M6R5HJJXKE03XBRDJN27R860",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "I0vU6gdlkWcnS0TQLgs0vg88kZ8seCPWmFdFhjHrH4k",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-inspect-release-template/change-requests/pending",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "2",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "[]",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "9TmujReW68_Eyq6GRxdvEWd0PTzgPH9GSDG2DQ1Laf4",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-inspect-release-template/release-templates?include=root",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "1693",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174}]",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "1917",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "[{\"id\":\"01M6R5HJPC9KZPFJQQRXTN0WW3\",\"name\":\"mcp-inspected-project-template\",\"createdAt\":\"2026-11-06T10:12:51.528Z\",\"description\":null,\"project\":\"mcp-inspect-release-template\",\"discriminator\":\"template\",\"createdByUserId\":216},{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174}]",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "6ylrNGweoULTkN8KHiU7rRv32xGwB71-FtloTUVwW7I",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "1693",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174}]",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "1906",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M6R5HJJXKE03XBRDJN27R860\",\"name\":\"mcp-inspected-template\",\"createdAt\":\"2026-11-06T10:12:51.417Z\",\"description\":\"Beta first, then everyone\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":216}]",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "1rOg8_pHc9K6UHoMFu2ZNzAwQgnPOBTkcoGDpPSztZk",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M6JTP2KVAF1ZSCY05PEYX9PK",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 404,
+          "headers": {
+            "content-length": "180",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"name\":\"NotFoundError\",\"message\":\"Could not find template with id 01M6JTP2KVAF1ZSCY05PEYX9PK\",\"details\":[{\"message\":\"Could not find template with id 01M6JTP2KVAF1ZSCY05PEYX9PK\"}]}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "w1vlNww3LAa1QecdLJvpj2COuEQx8O0X4yI8p_UMfic",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M6R5HJJXKE03XBRDJN27R860",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "1308",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"id\":\"01M6R5HJJXKE03XBRDJN27R860\",\"discriminator\":\"template\",\"name\":\"mcp-inspected-template\",\"description\":\"Beta first, then everyone\",\"project\":null,\"createdByUserId\":216,\"createdAt\":\"2026-11-06T10:12:51.417Z\",\"milestones\":[{\"id\":\"01M6R5HJJYK54T3XTAVWM2RVPY\",\"name\":\"Beta\",\"sortOrder\":0,\"strategies\":[{\"id\":\"01M6R5HJK0XZ81CYMM9847H50G\",\"milestoneId\":\"01M6R5HJJYK54T3XTAVWM2RVPY\",\"sortOrder\":0,\"title\":\"Beta testers\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"{{featureName}}\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"variants\":[],\"segments\":[],\"disabled\":false}],\"releasePlanDefinitionId\":\"01M6R5HJJXKE03XBRDJN27R860\",\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"id\":\"01M6R5HJK22S9ZTG1H48JGZHSV\",\"name\":\"Everyone\",\"sortOrder\":1,\"strategies\":[{\"id\":\"01M6R5HJK3Y4SBYXEDTR25H0C7\",\"milestoneId\":\"01M6R5HJK22S9ZTG1H48JGZHSV\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"{{featureName}}\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"releasePlanDefinitionId\":\"01M6R5HJJXKE03XBRDJN27R860\"}],\"archivedAt\":null}",
+          "trailers": {}
+        },
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "1308",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"id\":\"01M6R5HJJXKE03XBRDJN27R860\",\"discriminator\":\"template\",\"name\":\"mcp-inspected-template\",\"description\":\"Beta first, then everyone\",\"project\":null,\"createdByUserId\":216,\"createdAt\":\"2026-11-06T10:12:51.417Z\",\"milestones\":[{\"id\":\"01M6R5HJJYK54T3XTAVWM2RVPY\",\"name\":\"Beta\",\"sortOrder\":0,\"strategies\":[{\"id\":\"01M6R5HJK0XZ81CYMM9847H50G\",\"milestoneId\":\"01M6R5HJJYK54T3XTAVWM2RVPY\",\"sortOrder\":0,\"title\":\"Beta testers\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"{{featureName}}\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"variants\":[],\"segments\":[],\"disabled\":false}],\"releasePlanDefinitionId\":\"01M6R5HJJXKE03XBRDJN27R860\",\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"id\":\"01M6R5HJK22S9ZTG1H48JGZHSV\",\"name\":\"Everyone\",\"sortOrder\":1,\"strategies\":[{\"id\":\"01M6R5HJK3Y4SBYXEDTR25H0C7\",\"milestoneId\":\"01M6R5HJK22S9ZTG1H48JGZHSV\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"{{featureName}}\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"releasePlanDefinitionId\":\"01M6R5HJJXKE03XBRDJN27R860\"}],\"archivedAt\":null}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "iB5Ty2UAWxO31F2CPJJycm7h8LtrRbm-GaPHoGHOh1A",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M6R5HJPC9KZPFJQQRXTN0WW3",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "700",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"id\":\"01M6R5HJPC9KZPFJQQRXTN0WW3\",\"discriminator\":\"template\",\"name\":\"mcp-inspected-project-template\",\"description\":null,\"project\":\"mcp-inspect-release-template\",\"createdByUserId\":216,\"createdAt\":\"2026-11-06T10:12:51.528Z\",\"milestones\":[{\"id\":\"01M6R5HJPDH7AJYGYZG62NKF4Y\",\"name\":\"Half\",\"sortOrder\":0,\"strategies\":[{\"id\":\"01M6R5HJPEMCZQCZTVNFR0WQ4P\",\"milestoneId\":\"01M6R5HJPDH7AJYGYZG62NKF4Y\",\"sortOrder\":0,\"title\":\"Half\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"{{featureName}}\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"releasePlanDefinitionId\":\"01M6R5HJPC9KZPFJQQRXTN0WW3\"}],\"archivedAt\":null}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "Bg8fiNZmDPnzBVdnFwpRoWlWyDZzZxo0fqQeiW2NWvg",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/features?project=IS%3Amcp-inspect-release-template&lifecycle=IS_ANY_OF%3Aarchived&offset=0&limit=50",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "25",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"features\":[],\"total\":0}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "jLKUveCIY9afHzF_gXo9cQK4Ghuvc-xfcEx-VuQ8WfE",
+    "snapshot": {
+      "request": {
+        "method": "GET",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/search/features?project=IS%3Amcp-inspect-release-template&offset=0&limit=50",
+        "headers": {
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": ""
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "25",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"features\":[],\"total\":0}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "RRK5xrQFWmnuJteX1wyfN2EJbrt7AZJ1JF17kHYU94g",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects",
+        "headers": {
+          "content-type": "application/json",
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "201",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": "{\"name\":\"mcp-inspect-release-template\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1}]}"
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "headers": {
+            "content-length": "282",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "location": "projects/mcp-inspect-release-template",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"id\":\"mcp-inspect-release-template\",\"name\":\"mcp-inspect-release-template\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1},{\"name\":\"development\",\"requiredApprovals\":1}]}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "aj2h8e-kCiqY_Xb0XwvzyD5b6iFlOvq_po5YavYeFmo",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-inspect-release-template/release-templates",
+        "headers": {
+          "content-type": "application/json",
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "284",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": "{\"name\":\"mcp-inspected-project-template\",\"milestones\":[{\"name\":\"Half\",\"sortOrder\":0,\"strategies\":[{\"name\":\"flexibleRollout\",\"title\":\"Half\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[],\"segments\":[],\"variants\":[],\"sortOrder\":0}]}]}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "682",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"id\":\"01M6R5HJPC9KZPFJQQRXTN0WW3\",\"name\":\"mcp-inspected-project-template\",\"createdAt\":\"2026-11-06T10:12:51.528Z\",\"description\":null,\"project\":\"mcp-inspect-release-template\",\"discriminator\":\"template\",\"createdByUserId\":216,\"milestones\":[{\"id\":\"01M6R5HJPDH7AJYGYZG62NKF4Y\",\"name\":\"Half\",\"sortOrder\":0,\"releasePlanDefinitionId\":\"01M6R5HJPC9KZPFJQQRXTN0WW3\",\"strategies\":[{\"id\":\"01M6R5HJPEMCZQCZTVNFR0WQ4P\",\"milestoneId\":\"01M6R5HJPDH7AJYGYZG62NKF4Y\",\"sortOrder\":0,\"title\":\"Half\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}]}]}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "1_rsIQlmAg3Zpm9G2tnYBSuoq960mJtGY1rya0rlEPg",
+    "snapshot": {
+      "request": {
+        "method": "POST",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates",
+        "headers": {
+          "content-type": "application/json",
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "721",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": "{\"name\":\"mcp-inspected-template\",\"description\":\"Beta first, then everyone\",\"milestones\":[{\"name\":\"Beta\",\"sortOrder\":0,\"strategies\":[{\"name\":\"flexibleRollout\",\"title\":\"Beta testers\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[{\"contextName\":\"userId\",\"operator\":\"IN\",\"values\":[\"1\",\"2\"],\"inverted\":false,\"caseInsensitive\":false}],\"segments\":[],\"variants\":[],\"sortOrder\":0}],\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"name\":\"Everyone\",\"sortOrder\":1,\"strategies\":[{\"name\":\"flexibleRollout\",\"title\":\"Everyone\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[],\"segments\":[],\"variants\":[],\"sortOrder\":0}]}]}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-length": "1290",
+            "content-security-policy": "frame-ancestors 'none'",
+            "content-type": "application/json; charset=utf-8",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "{\"id\":\"01M6R5HJJXKE03XBRDJN27R860\",\"name\":\"mcp-inspected-template\",\"createdAt\":\"2026-11-06T10:12:51.417Z\",\"description\":\"Beta first, then everyone\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":216,\"milestones\":[{\"id\":\"01M6R5HJJYK54T3XTAVWM2RVPY\",\"name\":\"Beta\",\"sortOrder\":0,\"releasePlanDefinitionId\":\"01M6R5HJJXKE03XBRDJN27R860\",\"strategies\":[{\"id\":\"01M6R5HJK0XZ81CYMM9847H50G\",\"milestoneId\":\"01M6R5HJJYK54T3XTAVWM2RVPY\",\"sortOrder\":0,\"title\":\"Beta testers\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[{\"contextName\":\"userId\",\"operator\":\"IN\",\"values\":[\"1\",\"2\"],\"inverted\":false,\"caseInsensitive\":false}],\"variants\":[],\"segments\":[],\"disabled\":false}],\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"id\":\"01M6R5HJK22S9ZTG1H48JGZHSV\",\"name\":\"Everyone\",\"sortOrder\":1,\"releasePlanDefinitionId\":\"01M6R5HJJXKE03XBRDJN27R860\",\"strategies\":[{\"id\":\"01M6R5HJK3Y4SBYXEDTR25H0C7\",\"milestoneId\":\"01M6R5HJK22S9ZTG1H48JGZHSV\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}]}]}",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "JHjzWujTME29v4tpWuuQQnxSmIQhL6APBNOeFZ2Iq1s",
+    "snapshot": {
+      "request": {
+        "method": "PUT",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-inspect-release-template",
+        "headers": {
+          "content-type": "application/json",
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "39",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": "{\"name\":\"mcp-inspect-release-template\"}"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none",
+            "transfer-encoding": "chunked"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "SDZpO38bRjBpcK24GqhxObpNCg7X8TqU_MNyJaeB3p4",
+    "snapshot": {
+      "request": {
+        "method": "PUT",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-inspect-release-template/environments/development/change-requests/config",
+        "headers": {
+          "content-type": "application/json",
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "31",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": "{\"changeRequestsEnabled\":false}"
+      },
+      "responses": [
+        {
+          "statusCode": 204,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  },
+  {
+    "hash": "MLqlBsJEF605ODt0pKB1JI87Z4xrrMFlerVLe9ak8NU",
+    "snapshot": {
+      "request": {
+        "method": "PUT",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-inspect-release-template/environments/production/change-requests/config",
+        "headers": {
+          "content-type": "application/json",
+          "accept-encoding": "identity",
+          "accept": "*/*",
+          "accept-language": "*",
+          "content-length": "52",
+          "sec-fetch-mode": "cors",
+          "user-agent": "node"
+        },
+        "body": "{\"changeRequestsEnabled\":true,\"requiredApprovals\":1}"
+      },
+      "responses": [
+        {
+          "statusCode": 204,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'none'",
+            "referrer-policy": "no-referrer",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-content-type-options": "nosniff",
+            "x-download-options": "noopen",
+            "x-frame-options": "DENY",
+            "x-permitted-cross-domain-policies": "none"
+          },
+          "body": "",
+          "trailers": {}
+        }
+      ],
+      "callCount": 0
+    }
+  }
+]

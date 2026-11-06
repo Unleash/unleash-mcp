@@ -131,7 +131,9 @@ const releaseTemplates = z
       ),
     query: z.string().optional().describe('Case-insensitive text the name contains; leave out to list all'),
   })
-  .describe('Release templates by name, with the ids release takes. Milestones and their strategies are left out');
+  .describe(
+    'Release templates by name, with the ids release and inspect take. Their milestones are on a release template inspect',
+  );
 
 const eventTypes = z
   .object({

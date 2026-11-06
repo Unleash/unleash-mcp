@@ -69,7 +69,30 @@ const flagExposureMetrics = z
     'Exposure metrics: how often SDKs evaluated a flag in an environment and how often they got it, as the Unleash exposure metrics page shows; whether SDKs saw a flag at all, inspecting the flag tells',
   );
 
-const query = z.discriminatedUnion('kind', [project, flag, contextField, segment, flagExposureMetrics]);
+const releaseTemplateInclude = z
+  .enum(['targets'])
+  .describe(
+    'targets: the audiences each milestone gives the feature to. Costs many tokens, so ask only to compare or reuse audiences',
+  );
+
+const releaseTemplate = z
+  .object({
+    kind: z.literal('release_template'),
+    id: z.string().describe('Release template id, as a release templates search returns it; global or in a project'),
+    include: z.array(releaseTemplateInclude).optional().describe('Parts that cost many tokens, left out unless named'),
+  })
+  .describe(
+    'A release template: its milestones in order, when each moves on by itself, and on request who each one gives the feature to',
+  );
+
+const query = z.discriminatedUnion('kind', [
+  project,
+  flag,
+  contextField,
+  segment,
+  flagExposureMetrics,
+  releaseTemplate,
+]);
 
 export const inspectInput = {
   queries: z
@@ -86,3 +109,4 @@ export type FlagQuery = z.infer<typeof flag>;
 export type ContextFieldQuery = z.infer<typeof contextField>;
 export type SegmentQuery = z.infer<typeof segment>;
 export type FlagExposureMetricsQuery = z.infer<typeof flagExposureMetrics>;
+export type ReleaseTemplateQuery = z.infer<typeof releaseTemplate>;

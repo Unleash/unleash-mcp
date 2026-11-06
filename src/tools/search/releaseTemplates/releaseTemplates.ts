@@ -4,7 +4,7 @@ import type { ReleaseTemplatesQuery } from '../searchInput.ts';
 import type { ReleaseTemplates } from '../searchOutput.ts';
 
 /**
- * Lists release templates by name, with the ids release takes; milestones and their strategies stay off.
+ * Lists release templates by name, with the ids release and inspect take; their milestones are on inspect.
  * Unleash lists templates without a name filter, so the query is applied here, and it leaves archived ones out.
  * In a project, Unleash adds the global templates to the project's own when asked to include root.
  */

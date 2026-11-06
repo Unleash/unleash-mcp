@@ -2,7 +2,6 @@ import type { Clock } from '../../../clock.ts';
 import type { components } from '../../../unleash/api.d.ts';
 import type { UnleashClient } from '../../../unleash/client.ts';
 import type { EditionReader } from '../../shared/changeRequest.ts';
-import { toConstraint, type UnleashConstraint } from '../../shared/constraint.ts';
 import { type Failed, toFailed } from '../../shared/failed.ts';
 import { toFlagState } from '../../shared/flagState.ts';
 import type { FlagType } from '../../shared/flagType.ts';
@@ -11,18 +10,10 @@ import type { Link } from '../../shared/link.ts';
 import type { Parent } from '../../shared/parent.ts';
 import { toStaleness } from '../../shared/staleness.ts';
 import type { Tag } from '../../shared/tag.ts';
-import type { Target, Value } from '../../shared/target.ts';
 import { changeRequestUrl, flagUrl } from '../../shared/uiUrl.ts';
 import type { FlagQuery } from '../inspectInput.ts';
-import type {
-  Environment,
-  Flag,
-  Lifecycle,
-  Milestone,
-  PendingChangeRequest,
-  ReleasePlan,
-  Transition,
-} from '../inspectOutput.ts';
+import type { Environment, Flag, Lifecycle, Milestone, PendingChangeRequest, ReleasePlan } from '../inspectOutput.ts';
+import { toTarget, toTransition } from '../shared/milestone.ts';
 
 export const inspectFlag = async (
   unleash: UnleashClient,
@@ -104,16 +95,6 @@ const readPendingChangeRequests = async (
 
 type UnleashEnvironment = components['schemas']['featureEnvironmentSchema'];
 type UnleashReleasePlan = components['schemas']['releasePlanSchema'];
-type UnleashVariant = components['schemas']['strategyVariantSchema'];
-// What a feature strategy and a release plan milestone strategy have in common.
-type UnleashStrategy = {
-  name: string;
-  title?: string | null;
-  parameters?: Record<string, string>;
-  constraints?: UnleashConstraint[];
-  segments?: number[];
-  variants?: UnleashVariant[];
-};
 
 // Unleash allows one release plan per environment; its schema is an array anyway.
 const toEnvironment =
@@ -141,34 +122,6 @@ const toReleasePlan =
       }),
     ),
   });
-
-// TODO: take `transitionConditionSchema` directly once the spec uses it on a plan milestone instead of an empty object.
-const toTransition = (condition: object): Transition => {
-  const c = condition as components['schemas']['transitionConditionSchema'];
-  return c.type === 'exposure'
-    ? { type: 'exposure', minimumExposures: c.minimumExposures }
-    : { type: 'time', intervalMinutes: c.intervalMinutes };
-};
-
-// The reverse of the release plan's toStrategy, so a target can be edited and released again.
-const toTarget =
-  (flag: string) =>
-  (s: UnleashStrategy): Target & { rollout: number; stickiness: string; rolloutGroup: string } => ({
-    name: s.title || s.name,
-    rollout: Number(s.parameters?.rollout ?? 100),
-    stickiness: s.parameters?.stickiness ?? 'default',
-    rolloutGroup: s.parameters?.groupId ?? flag,
-    ...(s.constraints?.length ? { constraints: s.constraints.map(toConstraint) } : {}),
-    ...(s.segments?.length ? { segments: s.segments } : {}),
-    ...(s.variants?.length ? { values: s.variants.map(toValue) } : {}),
-  });
-
-// A variable weight is what Unleash resolved, not what was asked for, so only a fixed one comes back as a share.
-const toValue = ({ name, payload, weight, weightType }: UnleashVariant): Value => ({
-  name,
-  ...(payload ? { payload: { type: payload.type, value: payload.value } } : {}),
-  ...(weightType === 'fix' ? { share: weight / 10 } : {}),
-});
 
 const toLifecycle = ({
   stage,

@@ -15,7 +15,7 @@ const template = z.strictObject({
   template: z
     .string()
     .describe(
-      'Release template id, as a release templates search returns it. Its first milestone starts right away, replacing any release plan the flag had',
+      'Release template id, as a release templates search returns it; see its milestones with a release template inspect. Its first milestone starts right away, replacing any release plan the flag had',
     ),
 });
 
