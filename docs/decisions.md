@@ -512,3 +512,8 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 - The big details of a template, the targets of each milestone, are requested on demand with `include: ['targets']`, the same include pattern as other reads. This updates "Release template search" (2026-10-26): search rows stay the id and the name, and the strategies are now disclosed on request.
 - A template target leaves out `rolloutGroup`: a template holds a placeholder for the flag name there until it is applied. Rejected: showing the placeholder.
 - The query takes the id only. Unleash's global template endpoint also answers project templates, and a search row doesn't say which kind it is. Rejected: a `project` next to the id, which the agent can't fill from a search row and which needs the beta project endpoint.
+
+## 2026-11-07 — Requests name the MCP
+
+- Requests to Unleash name the MCP the way Unleash SDKs name themselves: `unleash-appname: unleash-mcp` and `user-agent: unleash-mcp/<version>`. Unleash labels its request metrics with the app name, so it can tell MCP traffic from the UI and other clients. v1 sent both since #10, the app name as `x-unleash-appname`, which Unleash also reads; the rewrite left them out.
+- The servers add the headers where they build their client. Rejected: adding them in `createUnleashClient`, which test clients use too: recorded snapshots hash every request header but the authorization, so no recorded request would match anymore.

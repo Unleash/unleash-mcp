@@ -6,6 +6,7 @@ import { json } from 'node:stream/consumers';
 import { test } from 'node:test';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+import pkg from '../package.json' with { type: 'json' };
 import type { McpRequestSummary } from './mcpRequestSummary.ts';
 import { createRemoteHandler, type RemoteHandlerOptions } from './remoteHandler.ts';
 import { createStubbedFetch } from './unleash/testClient.ts';
@@ -64,6 +65,25 @@ test('acts in Unleash as the caller, with the auth the host forwards', async (t)
       query: { view: 'core' },
       method: 'GET',
       headers: { authorization: 'user-session' },
+    })
+    .reply(200, { version: 1, projects: [{ id: 'web', name: 'Web' }] });
+
+  const result = await client.callTool({ name: 'search', arguments: { queries: [{ kind: 'projects' }] } });
+
+  assert.deepEqual(result.structuredContent, {
+    results: [{ kind: 'projects', projects: [{ id: 'web', name: 'Web' }] }],
+  });
+});
+
+test('tells Unleash its requests come from the MCP', async (t) => {
+  const { client, stub, close } = await connect({ feedbackConsent: 'denied' });
+  t.after(close);
+  stub
+    .intercept({
+      path: '/api/admin/projects',
+      query: { view: 'core' },
+      method: 'GET',
+      headers: { 'unleash-appname': 'unleash-mcp', 'user-agent': `unleash-mcp/${pkg.version}` },
     })
     .reply(200, { version: 1, projects: [{ id: 'web', name: 'Web' }] });
 

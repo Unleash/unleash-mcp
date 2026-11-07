@@ -14,3 +14,10 @@ export const createUnleashClient = ({ baseUrl, headers, fetch }: UnleashClientOp
   const base = baseUrl.replace(/\/+$/, '');
   return Object.assign(createClient<paths>({ baseUrl: base, headers, fetch }), { baseUrl: base });
 };
+
+// Unleash SDKs name themselves in these headers, and Unleash labels its request metrics with the app name.
+// The servers send them and test clients don't: recorded snapshots hash the request headers.
+export const identifyingHeaders = (mcpVersion: string): Record<string, string> => ({
+  'unleash-appname': 'unleash-mcp',
+  'user-agent': `unleash-mcp/${mcpVersion}`,
+});

@@ -9,13 +9,13 @@ import { createServer } from './server.ts';
 import { createConsent, granted } from './tools/sendFeedback/consent.ts';
 import { createConsentStore, platformConfigDir } from './tools/sendFeedback/consentStore.ts';
 import { createSendFeedback } from './tools/sendFeedback/sendFeedback.ts';
-import { createUnleashClient } from './unleash/client.ts';
+import { createUnleashClient, identifyingHeaders } from './unleash/client.ts';
 
 const config = readConfig(process.env);
 
 const unleash = createUnleashClient({
   baseUrl: config.UNLEASH_BASE_URL,
-  headers: { Authorization: config.UNLEASH_PAT },
+  headers: { ...identifyingHeaders(pkg.version), Authorization: config.UNLEASH_PAT },
   fetch: globalThis.fetch,
 });
 

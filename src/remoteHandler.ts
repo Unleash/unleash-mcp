@@ -7,7 +7,7 @@ import { type McpRequestSummary, toMcpRequestSummary } from './mcpRequestSummary
 import { createServer } from './server.ts';
 import { granted } from './tools/sendFeedback/consent.ts';
 import { createSendFeedback, defaultFeedbackBaseUrl } from './tools/sendFeedback/sendFeedback.ts';
-import { createUnleashClient } from './unleash/client.ts';
+import { createUnleashClient, identifyingHeaders } from './unleash/client.ts';
 
 /**
  * What the host decides: where Unleash is, whether its admin agreed to send feedback, and the Unleash instance that receives it
@@ -30,7 +30,11 @@ export const createRemoteHandler =
   (fetch: typeof globalThis.fetch) =>
   ({ baseUrl, feedbackConsent, feedbackUrl = defaultFeedbackBaseUrl }: RemoteHandlerOptions): McpRequestHandler =>
   async (req, res, { authHeaders, parsedBody }) => {
-    const unleash = createUnleashClient({ baseUrl, headers: authHeaders, fetch });
+    const unleash = createUnleashClient({
+      baseUrl,
+      headers: { ...identifyingHeaders(pkg.version), ...authHeaders },
+      fetch,
+    });
     const sendFeedback =
       feedbackConsent === 'granted'
         ? createSendFeedback({ fetch, mcpVersion: pkg.version, feedbackBaseUrl: feedbackUrl, consent: granted })
