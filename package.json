@@ -33,7 +33,8 @@
     "test": "node --env-file=.env --test",
     "test:record": "UNLEASH_SNAPSHOT_MODE=record node --env-file=.env --test --test-concurrency=1",
     "spec:update": "curl -sSf https://sandbox.getunleash.io/enterprise/docs/openapi.json -o src/unleash/openapi.json && pnpm spec:generate",
-    "spec:generate": "openapi-typescript src/unleash/openapi.json -o src/unleash/api.d.ts"
+    "spec:generate": "openapi-typescript src/unleash/openapi.json -o src/unleash/api.d.ts",
+    "eval": "node --env-file=.env --test --test-timeout=600000 \"evals/**/*.eval.ts\""
   },
   "engines": {
     "node": ">=24"
