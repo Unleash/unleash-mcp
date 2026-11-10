@@ -2,10 +2,15 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { runAgent } from './agent.ts';
 import { repeat } from './repeat.ts';
+import { createEvalProject } from './unleash.ts';
+
+const project = 'mcp-eval-environments';
 
 test('names the environments of a project', async (t) => {
+  await createEvalProject(project);
+
   await repeat(t, async () => {
-    const run = await runAgent(t, 'Which environments does the default project have? Answer with their names only.');
+    const run = await runAgent(t, `Which environments does the project ${project} have? Answer with their names only.`);
 
     assert.match(run.answer, /development/i);
     assert.match(run.answer, /production/i);
