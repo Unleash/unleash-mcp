@@ -26,7 +26,7 @@ const usernameSlug = userInfo()
   .username.toLowerCase()
   .replaceAll(/[^a-z0-9]+/g, '-')
   .replaceAll(/^-|-$/g, '');
-export const evalName = (name: string): string => `mcp-eval-${name}-${usernameSlug}`;
+export const evalName = (name: string): string => `eval-${name}-${usernameSlug}`;
 
 /** A fresh project for an eval, in place of what an earlier run left of it, with change requests off so the agent's writes land. */
 export const createEvalProject = async (name: string): Promise<void> => {

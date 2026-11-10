@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { z } from 'zod';
 
 // The checked-in snapshot holds response bodies as text, so it reads and diffs as the JSON Unleash sent (the recording client
 // asks for no compression to make that so); the file undici reads and writes holds them as base64.
@@ -37,18 +38,33 @@ export const transcoded = (entries: Entry[], from: BufferEncoding, to: BufferEnc
   }));
 
 const email = /[\w.+-]+@[\w-]+(\.[\w-]+)+/g;
+// An audit event carries the address of whoever made the change, the recording developer's.
+const ip = /"ip":"[^"]*"/g;
+const documentationAddress = '"ip":"192.0.2.1"';
+const testProject = /^mcp-/;
+const projectsListing = z.looseObject({ projects: z.array(z.looseObject({ id: z.string() })) });
 
 export const masked = (entries: Entry[]): Entry[] =>
   entries.map(({ hash, snapshot }) => ({
     hash,
     snapshot: {
       ...snapshot,
-      responses: snapshot.responses.map((r) => ({ ...r, body: maskedText(r.body) })),
+      responses: snapshot.responses.map((r) => ({ ...r, body: maskedBody(snapshot.request, r.body) })),
     },
   }));
 
-/** The text with every email address replaced by its pseudonym; not idempotent, a pseudonym is an address too. */
-export const maskedText = (text: string): string => text.replace(email, pseudonym);
+/**
+ * The body with every email address replaced by its pseudonym (not idempotent, a pseudonym is an address too), every IP
+ * address replaced by one reserved for documentation, and a listing of projects cut down to the tests' own: the rest
+ * are what everyone else made on the shared sandbox.
+ */
+export const maskedBody = (request: Pick<RecordedRequest, 'method' | 'url'>, body: string): string => {
+  const withoutPeople = body.replace(email, pseudonym).replace(ip, documentationAddress);
+  if (request.method !== 'GET' || !new URL(request.url).pathname.endsWith('/api/admin/projects')) return withoutPeople;
+  const listing = JSON.parse(withoutPeople);
+  const { projects } = projectsListing.parse(listing);
+  return JSON.stringify({ ...listing, projects: projects.filter(({ id }) => testProject.test(id)) });
+};
 
 const pseudonym = (address: string): string =>
   `user-${createHash('sha256').update(address).digest('hex').slice(0, 6)}@example.com`;

@@ -2,7 +2,7 @@ import { type Dispatcher, type Interceptable, MockAgent, SnapshotAgent } from 'u
 import { z } from 'zod';
 import { readConfig } from '../config.ts';
 import { createUnleashClient, type UnleashClient } from './client.ts';
-import { decodeBodies, encodedCopyOf, maskedText } from './testSnapshot.ts';
+import { decodeBodies, encodedCopyOf, maskedBody } from './testSnapshot.ts';
 
 // Tests replay recorded exchanges so they stay subsecond and work offline; recording against the real
 // Unleash is the only way to keep the snapshots truthful about the API.
@@ -19,7 +19,7 @@ export const createRecordedClient = (
     excludeHeaders: ['authorization', ...churningHeaders],
     ignoreHeaders: ['authorization'],
   });
-  const fetch = record ? maskingEmails(createFetch(agent)) : createFetch(agent);
+  const fetch = record ? masking(createFetch(agent)) : createFetch(agent);
   const unleash = createUnleashClient({
     baseUrl: config.UNLEASH_BASE_URL,
     headers: { Authorization: config.UNLEASH_PAT },
@@ -78,15 +78,16 @@ const createFetch =
     return globalThis.fetch(request, { dispatcher: agent });
   };
 
-// A recording masks the email addresses in what the test sees, as the snapshot will: a test then asserts the same on both.
-const maskingEmails =
+// A recording masks what the test sees as the snapshot will: a test then asserts the same on both.
+const masking =
   (fetch: typeof globalThis.fetch): typeof globalThis.fetch =>
   async (input, init) => {
-    const response = await fetch(input, init);
+    const request = new Request(input, init);
+    const response = await fetch(request);
     const text = await response.text();
     const headers = new Headers(response.headers);
     headers.delete('content-length');
-    return new Response(text ? maskedText(text) : null, {
+    return new Response(text ? maskedBody(request, text) : null, {
       status: response.status,
       statusText: response.statusText,
       headers,
