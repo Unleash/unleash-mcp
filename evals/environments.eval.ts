@@ -9,5 +9,6 @@ test('names the environments of a project', async (t) => {
 
     assert.match(run.answer, /development/i);
     assert.match(run.answer, /production/i);
+    return run;
   });
 });

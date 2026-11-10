@@ -18,17 +18,24 @@ export type Run = {
   seconds: number;
 };
 
+/** The part of a `Run` an eval can put a ceiling on. */
+export type RunCost = Pick<Run, 'toolCalls' | 'toolResultTokens' | 'costUsd' | 'seconds'>;
+
+export const costParts = (cost: RunCost): string[] => [
+  `tool calls ${cost.toolCalls}`,
+  `tool results ~${cost.toolResultTokens} tokens`,
+  `$${cost.costUsd.toFixed(4)}`,
+  `${cost.seconds.toFixed(1)}s`,
+];
+
 export const report = (t: TestContext, run: Run): void => {
   t.diagnostic(
     [
       run.model,
       `turns ${run.turns}`,
-      `tool calls ${run.toolCalls}`,
       `failures ${run.failures.length}`,
-      `tool results ~${run.toolResultTokens} tokens`,
       `tokens ${run.inputTokens} in / ${run.outputTokens} out`,
-      `$${run.costUsd.toFixed(4)}`,
-      `${run.seconds.toFixed(1)}s`,
+      ...costParts(run),
     ].join(', '),
   );
   t.diagnostic(`calls: ${run.calls.map(({ tool, tokens }) => `${tool} ~${tokens}`).join(', ')}`);
