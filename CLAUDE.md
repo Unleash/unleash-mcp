@@ -21,7 +21,8 @@ pnpm lint               # biome; lint:fix applies the safe fixes
 pnpm check              # typecheck, lint and test; the pre-commit hook runs it
 pnpm build              # dist/ for the published package; runs on pack
 pnpm test:record        # see the record-snapshots skill
-pnpm eval               # agent evals against the sandbox; they spawn Claude Code and cost money
+pnpm eval               # agent evals against the sandbox; they spawn Claude Code and take minutes
+pnpm eval:once          # each eval once, for a quick look
 pnpm spec:update        # see the update-openapi-spec skill
 pnpm spec:generate
 ```

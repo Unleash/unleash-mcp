@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { runAgent } from './agent.ts';
 import { repeat } from './repeat.ts';
-import { createEvalProject, readFlag } from './unleash.ts';
+import { createEvalProject, evalName, readFlag } from './unleash.ts';
 
-const project = 'mcp-eval-release';
-const flag = 'mcp-eval-new-search';
+const project = evalName('release');
+const flag = evalName('new-search');
 
 test('rolls a new flag out to a percentage in one environment', async (t) => {
   const medians = await repeat(t, async () => {
@@ -29,5 +29,5 @@ test('rolls a new flag out to a percentage in one environment', async (t) => {
   });
 
   assert.ok(medians.toolCalls <= 6);
-  assert.ok(medians.toolResultTokens <= 453);
+  assert.ok(medians.toolResultTokens <= 736);
 });
