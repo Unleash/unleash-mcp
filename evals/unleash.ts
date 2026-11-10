@@ -16,7 +16,7 @@ const adminPat = z.object({ UNLEASH_ADMIN_PAT: z.string().min(1) }).parse(proces
 const client = (token: string): UnleashClient =>
   createUnleashClient({ baseUrl: config.UNLEASH_BASE_URL, headers: { Authorization: token }, fetch: globalThis.fetch });
 const unleash = client(config.UNLEASH_PAT);
-const admin = client(adminPat);
+export const admin = client(adminPat);
 
 /** A fresh project for an eval, in place of what an earlier run left of it, with change requests off so the agent's writes land. */
 export const createEvalProject = async (name: string): Promise<void> => {
