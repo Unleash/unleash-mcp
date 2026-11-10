@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { runAgent } from './agent.ts';
 import { repeat } from './repeat.ts';
-import { createEvalProject } from './unleash.ts';
+import { createEvalProject, evalName } from './unleash.ts';
 
-const project = 'mcp-eval-environments';
+const project = evalName('environments');
 
 test('names the environments of a project', async (t) => {
   await createEvalProject(project);

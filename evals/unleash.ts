@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { userInfo } from 'node:os';
 import { z } from 'zod';
 import { readConfig } from '../src/config.ts';
 import { createProject, updateProject } from '../src/tools/configure/project.ts';
@@ -17,6 +18,15 @@ const client = (token: string): UnleashClient =>
   createUnleashClient({ baseUrl: config.UNLEASH_BASE_URL, headers: { Authorization: token }, fetch: globalThis.fetch });
 const unleash = client(config.UNLEASH_PAT);
 export const admin = client(adminPat);
+
+// Names end in the developer's username so that two machines never share a project. Flag names are unique across the
+// instance, so a flag the eval names carries it too, and a prompt names every flag rather than leave it to the agent.
+// Unleash derives a project's id from its name as a slug: single hyphens, none at either end.
+const usernameSlug = userInfo()
+  .username.toLowerCase()
+  .replaceAll(/[^a-z0-9]+/g, '-')
+  .replaceAll(/^-|-$/g, '');
+export const evalName = (name: string): string => `mcp-eval-${name}-${usernameSlug}`;
 
 /** A fresh project for an eval, in place of what an earlier run left of it, with change requests off so the agent's writes land. */
 export const createEvalProject = async (name: string): Promise<void> => {
@@ -59,5 +69,6 @@ export const readFlags = async (project: string): Promise<ProjectFeature[]> => {
     params: { path: { projectId: project } },
   });
   assert.ok(data, `listing ${project}: ${response.status}`);
-  return data.features;
+  // The listing comes back in no fixed order.
+  return data.features.toSorted((a, b) => a.name.localeCompare(b.name));
 };
