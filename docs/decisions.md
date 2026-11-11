@@ -548,3 +548,8 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 
 - A recorded projects listing is cut down to the `mcp-` projects the recorded tests make, at recording and in what the test sees, like the email pseudonyms: the full listing is every project anyone made on the shared sandbox, 388 names and descriptions at the time, which is nobody's to publish in this repo. Eval projects are named `eval-` so the developer's username in their names never lands in a snapshot. The listing stays in the history before this change. Rejected: rewriting the history, which breaks every release tag and clone since the projects search for a list of demo project names on a public sandbox.
 - The IP address on an audit event, the recording developer's, is replaced by an address reserved for documentation. Names, avatars and email hashes of the people in the snapshots stay: they are the committers, whose names and addresses the commits publish anyway. Other users' segment and tag names stay too, as test data on a public sandbox.
+
+## 2026-11-11 — Inspect lists the lifecycle stages
+
+- `inspect` takes a `lifecycle_stages` query that lists the stages a flag can be in. Unleash has no endpoint for them, so as a workaround they are read off `GET /api/admin/lifecycle/count`, which returns a count per stage whether it has flags or not.
+- Only the stage names are returned: the counts are a side effect of the workaround. Rejected: stages with their counts.
