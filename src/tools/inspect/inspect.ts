@@ -6,6 +6,7 @@ import { inspectFlag } from './flag/flag.ts';
 import { inspectFlagExposureMetrics } from './flagExposureMetrics/flagExposureMetrics.ts';
 import type { InspectInput, Query } from './inspectInput.ts';
 import type { InspectOutput, InspectResult } from './inspectOutput.ts';
+import { inspectLifecycleStages } from './lifecycleStages/lifecycleStages.ts';
 import { inspectProject } from './project/project.ts';
 import { inspectReleaseTemplate } from './releaseTemplate/releaseTemplate.ts';
 import { inspectSegment } from './segment/segment.ts';
@@ -37,5 +38,7 @@ const inspect = (
       return inspectFlagExposureMetrics(unleash, query);
     case 'release_template':
       return inspectReleaseTemplate(unleash, query);
+    case 'lifecycle_stages':
+      return inspectLifecycleStages(unleash);
   }
 };

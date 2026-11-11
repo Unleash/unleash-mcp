@@ -186,6 +186,11 @@ const releaseTemplate = z.object({
     .describe('In order; a plan made from the template starts at the first and moves from one to the next'),
 });
 
+const lifecycleStages = z.object({
+  kind: z.literal('lifecycle_stages'),
+  stages: z.array(lifecycleStage).describe('In the order a flag moves through them, as search filters take them'),
+});
+
 const result = z.discriminatedUnion('kind', [
   project,
   flag,
@@ -193,6 +198,7 @@ const result = z.discriminatedUnion('kind', [
   segment,
   flagExposureMetrics,
   releaseTemplate,
+  lifecycleStages,
   failed,
 ]);
 
@@ -218,3 +224,5 @@ export type ExposureTotals = z.infer<typeof exposureTotals>;
 export type ExposureBucket = z.infer<typeof exposureBucket>;
 /** A release template as inspect answers it: its milestones in order, with their targets only when included. */
 export type ReleaseTemplate = z.infer<typeof releaseTemplate>;
+/** The lifecycle stages a flag can be in, in order, as inspect answers them. */
+export type LifecycleStages = z.infer<typeof lifecycleStages>;

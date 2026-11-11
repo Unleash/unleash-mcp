@@ -85,6 +85,10 @@ const releaseTemplate = z
     'A release template: its milestones in order, when each moves on by itself, and on request who each one gives the feature to',
   );
 
+const lifecycleStages = z
+  .object({ kind: z.literal('lifecycle_stages') })
+  .describe('The lifecycle stages a flag can be in, in order');
+
 const query = z.discriminatedUnion('kind', [
   project,
   flag,
@@ -92,6 +96,7 @@ const query = z.discriminatedUnion('kind', [
   segment,
   flagExposureMetrics,
   releaseTemplate,
+  lifecycleStages,
 ]);
 
 export const inspectInput = {
