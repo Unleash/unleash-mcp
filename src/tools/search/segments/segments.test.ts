@@ -34,7 +34,7 @@ before(async () => {
 });
 after(close);
 
-const creator = 'user-e8d327@example.com';
+const creator = 'user-72d1b3@example.com';
 
 // Unleash sorts the list by name, so the global segment comes first.
 test('finds segments by a part of their name, case insensitive, with what the agent filters on itself', async () => {

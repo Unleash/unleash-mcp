@@ -320,7 +320,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcpLegalValueField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-11-04T08:25:11.725Z\"}",
+          "body": "{\"name\":\"mcpLegalValueField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-11-12T10:40:11.542Z\"}",
           "trailers": {}
         }
       ],
@@ -402,7 +402,7 @@
     }
   },
   {
-    "hash": "AvJN9PDbOPEaENakCFvArAfH1_xDuTlza0sXjRaKDk8",
+    "hash": "2E36Sq1GI1ZJvnsf3MW9f2-4xNIogS68hVW4olXQA7k",
     "snapshot": {
       "request": {
         "method": "POST",
@@ -412,17 +412,17 @@
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
-          "content-length": "198",
+          "content-length": "124",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
-        "body": "{\"name\":\"mcp-configure-legal-value\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1}]}"
+        "body": "{\"name\":\"mcp-configure-legal-value\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"]}"
       },
       "responses": [
         {
           "statusCode": 201,
           "headers": {
-            "content-length": "276",
+            "content-length": "188",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "location": "projects/mcp-configure-legal-value",
@@ -434,7 +434,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"mcp-configure-legal-value\",\"name\":\"mcp-configure-legal-value\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1},{\"name\":\"development\",\"requiredApprovals\":1}]}",
+          "body": "{\"id\":\"mcp-configure-legal-value\",\"name\":\"mcp-configure-legal-value\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[]}",
           "trailers": {}
         }
       ],
@@ -474,7 +474,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcpProjectLegalValueField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-11-04T08:25:12.038Z\",\"project\":\"mcp-configure-legal-value\"}",
+          "body": "{\"name\":\"mcpProjectLegalValueField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-11-12T10:40:11.641Z\",\"project\":\"mcp-configure-legal-value\"}",
           "trailers": {}
         }
       ],
@@ -534,43 +534,6 @@
           "user-agent": "node"
         },
         "body": "{\"value\":\"silver\"}"
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "53rcfhgspwNmA_CyQ8Tz2urjBccYkLB8dmzBvLXRM8A",
-    "snapshot": {
-      "request": {
-        "method": "PUT",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-configure-legal-value",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "36",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"name\":\"mcp-configure-legal-value\"}"
       },
       "responses": [
         {

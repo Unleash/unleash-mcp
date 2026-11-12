@@ -53,7 +53,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "50416",
+            "content-length": "50289",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -64,7 +64,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"version\":1,\"projects\":[{\"id\":\"mcp-audit\",\"name\":\"mcp-audit\",\"description\":null,\"createdAt\":\"2026-11-04T08:25:04.091Z\",\"archivedAt\":null},{\"id\":\"mcp-configure-context-field\",\"name\":\"mcp-configure-context-field\",\"description\":null,\"createdAt\":\"2026-11-04T08:25:07.066Z\",\"archivedAt\":null},{\"id\":\"mcp-configure-legal-value\",\"name\":\"mcp-configure-legal-value\",\"description\":null,\"createdAt\":\"2026-11-04T08:25:10.733Z\",\"archivedAt\":null},{\"id\":\"mcp-configure-segment\",\"name\":\"mcp-configure-segment\",\"description\":null,\"createdAt\":\"2026-11-04T08:25:19.299Z\",\"archivedAt\":null},{\"id\":\"mcp-demo\",\"name\":\"mcp-demo\",\"description\":\"\",\"createdAt\":\"2026-01-27T13:39:21.653Z\",\"archivedAt\":null},{\"id\":\"mcp-evaluate\",\"name\":\"mcp-evaluate\",\"description\":null,\"createdAt\":\"2026-11-04T08:25:29.302Z\",\"archivedAt\":null},{\"id\":\"mcp-experiment\",\"name\":\"mcp-experiment\",\"description\":null,\"createdAt\":\"2026-11-04T08:25:38.946Z\",\"archivedAt\":null},{\"id\":\"mcp-inspect-context-field\",\"name\":\"mcp-inspect-context-field\",\"description\":null,\"createdAt\":\"2026-11-04T08:25:42.805Z\",\"archivedAt\":null},{\"id\":\"mcp-inspect-flag\",\"name\":\"mcp-inspect-flag\",\"description\":null,\"createdAt\":\"2026-11-04T08:27:26.188Z\",\"archivedAt\":null},{\"id\":\"mcp-inspect-flag-metrics\",\"name\":\"mcp-inspect-flag-metrics\",\"description\":null,\"createdAt\":\"2026-11-04T16:02:40.430Z\",\"archivedAt\":null},{\"id\":\"mcp-inspect-project\",\"name\":\"mcp-inspect-project\",\"description\":null,\"createdAt\":\"2026-11-04T08:25:54.093Z\",\"archivedAt\":null},{\"id\":\"mcp-inspect-release-template\",\"name\":\"mcp-inspect-release-template\",\"description\":null,\"createdAt\":\"2026-11-06T10:12:50.812Z\",\"archivedAt\":null},{\"id\":\"mcp-inspect-segment\",\"name\":\"mcp-inspect-segment\",\"description\":null,\"createdAt\":\"2026-11-04T08:25:56.874Z\",\"archivedAt\":null},{\"id\":\"mcp-kill-switch\",\"name\":\"mcp-kill-switch\",\"description\":null,\"createdAt\":\"2026-11-04T08:26:02.325Z\",\"archivedAt\":null},{\"id\":\"mcp-manage-flag-archive\",\"name\":\"mcp-manage-flag-archive\",\"description\":null,\"createdAt\":\"2026-11-04T08:26:09.114Z\",\"archivedAt\":null},{\"id\":\"mcp-manage-flag-complete\",\"name\":\"mcp-manage-flag-complete\",\"description\":null,\"createdAt\":\"2026-11-04T08:26:12.087Z\",\"archivedAt\":null},{\"id\":\"mcp-manage-flag-define\",\"name\":\"mcp-manage-flag-define\",\"description\":null,\"createdAt\":\"2026-11-04T08:26:14.543Z\",\"archivedAt\":null},{\"id\":\"mcp-manage-flag-delete\",\"name\":\"mcp-manage-flag-delete\",\"description\":null,\"createdAt\":\"2026-11-04T08:26:17.213Z\",\"archivedAt\":null},{\"id\":\"mcp-manage-flag-revive\",\"name\":\"mcp-manage-flag-revive\",\"description\":null,\"createdAt\":\"2026-11-04T08:26:20.116Z\",\"archivedAt\":null},{\"id\":\"mcp-manage-flag-set-parent-dependency\",\"name\":\"mcp-manage-flag-set-parent-dependency\",\"description\":null,\"createdAt\":\"2026-11-04T08:26:24.136Z\",\"archivedAt\":null},{\"id\":\"mcp-manage-flag-set-staleness\",\"name\":\"mcp-manage-flag-set-staleness\",\"description\":null,\"createdAt\":\"2026-11-04T08:26:27.436Z\",\"archivedAt\":null},{\"id\":\"mcp-manual-test\",\"name\":\"mcp-manual-final\",\"description\":\"Testing project updates\",\"createdAt\":\"2026-10-29T09:18:45.494Z\",\"archivedAt\":null},{\"id\":\"mcp-manual-second\",\"name\":\"mcp-manual-second\",\"description\":null,\"createdAt\":\"2026-10-29T09:26:10.147Z\",\"archivedAt\":null},{\"id\":\"mcp-project\",\"name\":\"mcp-project\",\"description\":\"Created by the MCP server tests\",\"createdAt\":\"2026-11-04T08:25:15.119Z\",\"archivedAt\":null},{\"id\":\"mcp-project-update\",\"name\":\"mcp-project-renamed\",\"description\":\"Changed by the MCP server tests\",\"createdAt\":\"2026-11-04T08:25:14.926Z\",\"archivedAt\":null},{\"id\":\"mcp-release\",\"name\":\"mcp-release\",\"description\":null,\"createdAt\":\"2026-11-04T08:26:29.391Z\",\"archivedAt\":null},{\"id\":\"mcp-search-context-fields\",\"name\":\"mcp-search-context-fields\",\"description\":null,\"createdAt\":\"2026-11-04T08:26:38.317Z\",\"archivedAt\":null},{\"id\":\"mcp-search-flags\",\"name\":\"mcp-search-flags\",\"description\":null,\"createdAt\":\"2026-11-04T08:26:44.901Z\",\"archivedAt\":null},{\"id\":\"mcp-search-projects\",\"name\":\"mcp-search-projects\",\"description\":null,\"createdAt\":\"2026-11-10T14:18:49.769Z\",\"archivedAt\":null},{\"id\":\"mcp-search-release-templates\",\"name\":\"mcp-search-release-templates\",\"description\":null,\"createdAt\":\"2026-11-04T08:26:51.433Z\",\"archivedAt\":null},{\"id\":\"mcp-search-segments\",\"name\":\"mcp-search-segments\",\"description\":null,\"createdAt\":\"2026-11-04T08:26:55.251Z\",\"archivedAt\":null},{\"id\":\"mcp-server\",\"name\":\"mcp-server\",\"description\":\"\",\"createdAt\":\"2026-10-20T08:11:51.313Z\",\"archivedAt\":null},{\"id\":\"mcp-server-test\",\"name\":\"mcp-server-test\",\"description\":null,\"createdAt\":\"2026-11-04T08:25:00.008Z\",\"archivedAt\":null}]}",
+          "body": "{\"version\":1,\"projects\":[{\"id\":\"mcp-audit\",\"name\":\"mcp-audit\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:06.834Z\",\"archivedAt\":null},{\"id\":\"mcp-configure-context-field\",\"name\":\"mcp-configure-context-field\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:08.633Z\",\"archivedAt\":null},{\"id\":\"mcp-configure-legal-value\",\"name\":\"mcp-configure-legal-value\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:11.124Z\",\"archivedAt\":null},{\"id\":\"mcp-configure-segment\",\"name\":\"mcp-configure-segment\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:16.661Z\",\"archivedAt\":null},{\"id\":\"mcp-demo\",\"name\":\"mcp-demo\",\"description\":\"\",\"createdAt\":\"2026-01-27T13:39:21.653Z\",\"archivedAt\":null},{\"id\":\"mcp-evaluate\",\"name\":\"mcp-evaluate\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:23.832Z\",\"archivedAt\":null},{\"id\":\"mcp-experiment\",\"name\":\"mcp-experiment\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:28.505Z\",\"archivedAt\":null},{\"id\":\"mcp-inspect-context-field\",\"name\":\"mcp-inspect-context-field\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:31.511Z\",\"archivedAt\":null},{\"id\":\"mcp-inspect-flag\",\"name\":\"mcp-inspect-flag\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:33.994Z\",\"archivedAt\":null},{\"id\":\"mcp-inspect-flag-metrics\",\"name\":\"mcp-inspect-flag-metrics\",\"description\":null,\"createdAt\":\"2026-11-04T16:02:40.430Z\",\"archivedAt\":null},{\"id\":\"mcp-inspect-project\",\"name\":\"mcp-inspect-project\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:38.208Z\",\"archivedAt\":null},{\"id\":\"mcp-inspect-release-template\",\"name\":\"mcp-inspect-release-template\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:39.440Z\",\"archivedAt\":null},{\"id\":\"mcp-inspect-segment\",\"name\":\"mcp-inspect-segment\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:41.734Z\",\"archivedAt\":null},{\"id\":\"mcp-kill-switch\",\"name\":\"mcp-kill-switch\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:44.739Z\",\"archivedAt\":null},{\"id\":\"mcp-manage-flag-archive\",\"name\":\"mcp-manage-flag-archive\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:47.686Z\",\"archivedAt\":null},{\"id\":\"mcp-manage-flag-complete\",\"name\":\"mcp-manage-flag-complete\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:49.595Z\",\"archivedAt\":null},{\"id\":\"mcp-manage-flag-define\",\"name\":\"mcp-manage-flag-define\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:51.269Z\",\"archivedAt\":null},{\"id\":\"mcp-manage-flag-delete\",\"name\":\"mcp-manage-flag-delete\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:53.309Z\",\"archivedAt\":null},{\"id\":\"mcp-manage-flag-revive\",\"name\":\"mcp-manage-flag-revive\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:55.273Z\",\"archivedAt\":null},{\"id\":\"mcp-manage-flag-set-parent-dependency\",\"name\":\"mcp-manage-flag-set-parent-dependency\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:57.387Z\",\"archivedAt\":null},{\"id\":\"mcp-manage-flag-set-staleness\",\"name\":\"mcp-manage-flag-set-staleness\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:59.538Z\",\"archivedAt\":null},{\"id\":\"mcp-manual-test\",\"name\":\"mcp-manual-final\",\"description\":\"Testing project updates\",\"createdAt\":\"2026-10-29T09:18:45.494Z\",\"archivedAt\":null},{\"id\":\"mcp-manual-second\",\"name\":\"mcp-manual-second\",\"description\":null,\"createdAt\":\"2026-10-29T09:26:10.147Z\",\"archivedAt\":null},{\"id\":\"mcp-project\",\"name\":\"mcp-project\",\"description\":\"Created by the MCP server tests\",\"createdAt\":\"2026-11-12T10:40:13.527Z\",\"archivedAt\":null},{\"id\":\"mcp-project-update\",\"name\":\"mcp-project-renamed\",\"description\":\"Changed by the MCP server tests\",\"createdAt\":\"2026-11-12T10:40:13.429Z\",\"archivedAt\":null},{\"id\":\"mcp-release\",\"name\":\"mcp-release\",\"description\":null,\"createdAt\":\"2026-11-12T10:41:01.298Z\",\"archivedAt\":null},{\"id\":\"mcp-search-context-fields\",\"name\":\"mcp-search-context-fields\",\"description\":null,\"createdAt\":\"2026-11-12T10:41:08.407Z\",\"archivedAt\":null},{\"id\":\"mcp-search-flags\",\"name\":\"mcp-search-flags\",\"description\":null,\"createdAt\":\"2026-11-12T10:41:12.871Z\",\"archivedAt\":null},{\"id\":\"mcp-search-projects\",\"name\":\"mcp-search-projects\",\"description\":null,\"createdAt\":\"2026-11-12T10:41:16.621Z\",\"archivedAt\":null},{\"id\":\"mcp-search-release-templates\",\"name\":\"mcp-search-release-templates\",\"description\":null,\"createdAt\":\"2026-11-04T08:26:51.433Z\",\"archivedAt\":null},{\"id\":\"mcp-search-segments\",\"name\":\"mcp-search-segments\",\"description\":null,\"createdAt\":\"2026-11-04T08:26:55.251Z\",\"archivedAt\":null},{\"id\":\"mcp-server\",\"name\":\"mcp-server\",\"description\":\"\",\"createdAt\":\"2026-10-20T08:11:51.313Z\",\"archivedAt\":null},{\"id\":\"mcp-server-test\",\"name\":\"mcp-server-test\",\"description\":null,\"createdAt\":\"2026-11-12T10:40:04.535Z\",\"archivedAt\":null}]}",
           "trailers": {}
         }
       ],
@@ -183,7 +183,7 @@
     }
   },
   {
-    "hash": "Mt1eh2bgbPI_Sc9_16dUNOBkeOrp40JKRLnNDQDEBVU",
+    "hash": "GqinquNz0xjE9CIhsb2kJztZuWpM17diFAwmlHKxBH8",
     "snapshot": {
       "request": {
         "method": "POST",
@@ -193,17 +193,17 @@
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
-          "content-length": "192",
+          "content-length": "118",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
-        "body": "{\"name\":\"mcp-search-projects\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1}]}"
+        "body": "{\"name\":\"mcp-search-projects\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"]}"
       },
       "responses": [
         {
           "statusCode": 201,
           "headers": {
-            "content-length": "264",
+            "content-length": "176",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "location": "projects/mcp-search-projects",
@@ -215,44 +215,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"mcp-search-projects\",\"name\":\"mcp-search-projects\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1},{\"name\":\"development\",\"requiredApprovals\":1}]}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "fWA69lKuLlgnFPvEa3Qbwol2YY-ZOr6NDVjCJB4l8sE",
-    "snapshot": {
-      "request": {
-        "method": "PUT",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-search-projects",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "30",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"name\":\"mcp-search-projects\"}"
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "",
+          "body": "{\"id\":\"mcp-search-projects\",\"name\":\"mcp-search-projects\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[]}",
           "trailers": {}
         }
       ],

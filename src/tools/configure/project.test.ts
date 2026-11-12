@@ -36,7 +36,6 @@ test('creates a project with every setting, answering with the id Unleash picks'
     mode: 'protected',
     defaultStickiness: 'userId',
     environments: ['development', 'production'],
-    changeRequestEnvironments: [{ name: 'production', requiredApprovals: 2 }],
   });
 
   assert.ok(output.kind === 'applied');
@@ -51,18 +50,12 @@ test("sends left out settings as Unleash's defaults", async () => {
       name,
       mode: 'open',
       defaultStickiness: 'default',
-      changeRequestEnvironments: [{ name: 'production', requiredApprovals: 1 }],
     });
   stub
     .intercept({ path: '/api/admin/projects', method: 'POST', body: defaulted })
     .reply(201, { id: 'mcp-project', name }, { headers: { 'content-type': 'application/json' } });
 
-  const output = await createProject(unleash, {
-    kind: 'project',
-    action: 'create',
-    name,
-    changeRequestEnvironments: [{ name: 'production' }],
-  });
+  const output = await createProject(unleash, { kind: 'project', action: 'create', name });
 
   assert.deepEqual(output, { kind: 'applied', id: 'mcp-project', url: 'https://unleash.example/projects/mcp-project' });
 });
@@ -87,13 +80,13 @@ test('changes every setting of a project', async () => {
     mode: 'protected',
     defaultStickiness: 'userId',
     environments: ['production'],
-    changeRequestEnvironments: [{ name: 'production', enabled: true, requiredApprovals: 2 }],
   });
 
   assert.deepEqual(output, { kind: 'applied' });
 });
 
 // Unleash answers 200 to a mode in the project update without saving it, so only the body sent shows the mode goes to settings.
+// The stub has no overview either, so reading the environments without being asked fails the test.
 test('changes the mode through the project settings', async () => {
   const { unleash, stub } = createStubbedClient();
   const body = (expected: object) => (sent: string) => isDeepStrictEqual(JSON.parse(sent), expected);
@@ -142,39 +135,6 @@ test('writes only the environments that differ from the enabled ones', async () 
   assert.deepEqual(output, { kind: 'applied' });
 });
 
-// The stub has no overview, so reading the environments without being asked fails the test. Approvals left out are 1.
-test('leaves environments alone when left out, turning change requests on and off as asked', async () => {
-  const { unleash, stub } = createStubbedClient();
-  stub.intercept({ path: '/api/admin/projects/mcp-project', method: 'PUT' }).reply(200, {});
-  stub
-    .intercept({
-      path: '/api/admin/projects/mcp-project/environments/production/change-requests/config',
-      method: 'PUT',
-      body: (body) => isDeepStrictEqual(JSON.parse(body), { changeRequestsEnabled: false }),
-    })
-    .reply(200, {});
-  stub
-    .intercept({
-      path: '/api/admin/projects/mcp-project/environments/development/change-requests/config',
-      method: 'PUT',
-      body: (body) => isDeepStrictEqual(JSON.parse(body), { changeRequestsEnabled: true, requiredApprovals: 1 }),
-    })
-    .reply(200, {});
-
-  const output = await updateProject(unleash, {
-    kind: 'project',
-    action: 'update',
-    id: 'mcp-project',
-    name,
-    changeRequestEnvironments: [
-      { name: 'production', enabled: false },
-      { name: 'development', enabled: true },
-    ],
-  });
-
-  assert.deepEqual(output, { kind: 'applied' });
-});
-
 // The stub answers nothing else, so a write after the refused one fails the test.
 test('stops at the first write Unleash refuses, with its error', async () => {
   const { unleash, stub } = createStubbedClient();
@@ -189,7 +149,6 @@ test('stops at the first write Unleash refuses, with its error', async () => {
     id: 'mcp-project',
     name,
     environments: ['production'],
-    changeRequestEnvironments: [{ name: 'production', enabled: true }],
   });
 
   assert.deepEqual(output, { kind: 'failed', status: 404, name: 'NotFoundError', reasons: [message] });

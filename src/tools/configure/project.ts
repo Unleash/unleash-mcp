@@ -7,7 +7,7 @@ import type { Outcome } from './configureOutput.ts';
 /** Creates a project, answering with the id Unleash picks for it so later changes can refer to it, and where it is in the UI. */
 export const createProject = async (
   unleash: UnleashClient,
-  { name, description, mode, defaultStickiness, environments, changeRequestEnvironments }: CreateProject,
+  { name, description, mode, defaultStickiness, environments }: CreateProject,
 ): Promise<Outcome> => {
   // The spec makes the settings Unleash defaults required, so a left out one is sent as that default.
   const created = await unleash.POST('/api/admin/projects', {
@@ -17,10 +17,6 @@ export const createProject = async (
       mode: mode ?? 'open',
       defaultStickiness: defaultStickiness ?? 'default',
       environments,
-      changeRequestEnvironments: changeRequestEnvironments?.map((e) => ({
-        name: e.name,
-        requiredApprovals: e.requiredApprovals ?? 1,
-      })),
     },
   });
   if (!created.response.ok || !created.data) return toFailed(created);
@@ -29,11 +25,11 @@ export const createProject = async (
 
 /**
  * Changes a project, leaving out what the change leaves out. Environments are diffed against the enabled ones, so only
- * the differences are written; change request environments are set one by one. Stops at the first refused write.
+ * the differences are written. Stops at the first refused write.
  */
 export const updateProject = async (
   unleash: UnleashClient,
-  { id, name, description, mode, defaultStickiness, environments, changeRequestEnvironments }: UpdateProject,
+  { id, name, description, mode, defaultStickiness, environments }: UpdateProject,
 ): Promise<Outcome> => {
   const path = { projectId: id };
   const updated = await unleash.PUT('/api/admin/projects/{projectId}', {
@@ -51,17 +47,6 @@ export const updateProject = async (
   if (environments) {
     const refused = await setEnvironments(unleash, id, environments);
     if (refused) return refused;
-  }
-
-  for (const { name: environment, enabled, requiredApprovals } of changeRequestEnvironments ?? []) {
-    const configured = await unleash.PUT(
-      '/api/admin/projects/{projectId}/environments/{environment}/change-requests/config',
-      {
-        params: { path: { ...path, environment } },
-        body: { changeRequestsEnabled: enabled, ...(enabled ? { requiredApprovals: requiredApprovals ?? 1 } : {}) },
-      },
-    );
-    if (!configured.response.ok) return toFailed(configured);
   }
   return { kind: 'applied' };
 };

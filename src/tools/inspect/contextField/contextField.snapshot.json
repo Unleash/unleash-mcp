@@ -171,7 +171,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcpInspectedField\",\"description\":\"Customer tier\",\"stickiness\":true,\"sortOrder\":0,\"legalValues\":[{\"value\":\"gold\",\"description\":\"Paying customers\"},{\"value\":\"free\"}],\"createdAt\":\"2026-11-04T08:25:43.698Z\"}",
+          "body": "{\"name\":\"mcpInspectedField\",\"description\":\"Customer tier\",\"stickiness\":true,\"sortOrder\":0,\"legalValues\":[{\"value\":\"gold\",\"description\":\"Paying customers\"},{\"value\":\"free\"}],\"createdAt\":\"2026-11-12T10:40:31.944Z\"}",
           "trailers": {}
         },
         {
@@ -188,7 +188,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcpInspectedField\",\"description\":\"Customer tier\",\"stickiness\":true,\"sortOrder\":0,\"legalValues\":[{\"value\":\"gold\",\"description\":\"Paying customers\"},{\"value\":\"free\"}],\"createdAt\":\"2026-11-04T08:25:43.698Z\"}",
+          "body": "{\"name\":\"mcpInspectedField\",\"description\":\"Customer tier\",\"stickiness\":true,\"sortOrder\":0,\"legalValues\":[{\"value\":\"gold\",\"description\":\"Paying customers\"},{\"value\":\"free\"}],\"createdAt\":\"2026-11-12T10:40:31.944Z\"}",
           "trailers": {}
         }
       ],
@@ -225,7 +225,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"strategies\":[{\"id\":\"01M6JTM07XMMWWYWBZZEPQ72QG\",\"projectId\":\"mcp-inspect-context-field\",\"featureName\":\"mcp-context-field-flag\",\"strategyName\":\"flexibleRollout\",\"environment\":\"development\"},{\"id\":\"01M6JTM0FBTD0YBH6JY3BTN2ZW\",\"projectId\":\"mcp-inspect-context-field\",\"featureName\":\"mcp-context-field-flag\",\"strategyName\":\"flexibleRollout\",\"environment\":\"development\"}]}",
+          "body": "{\"strategies\":[{\"id\":\"01M77NGJPGWRP8T4N9ABZD8WP9\",\"projectId\":\"mcp-inspect-context-field\",\"featureName\":\"mcp-context-field-flag\",\"strategyName\":\"flexibleRollout\",\"environment\":\"development\"},{\"id\":\"01M77NGJTCRNN636X5SFNXK787\",\"projectId\":\"mcp-inspect-context-field\",\"featureName\":\"mcp-context-field-flag\",\"strategyName\":\"flexibleRollout\",\"environment\":\"development\"}]}",
           "trailers": {}
         }
       ],
@@ -373,7 +373,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcpInspectedProjectField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-11-04T08:25:43.848Z\",\"project\":\"mcp-inspect-context-field\"}",
+          "body": "{\"name\":\"mcpInspectedProjectField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-11-12T10:40:32.045Z\",\"project\":\"mcp-inspect-context-field\"}",
           "trailers": {}
         }
       ],
@@ -410,7 +410,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":true,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[{\"name\":\"flexibleRollout\",\"constraints\":[{\"values\":[\"gold\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"mcpInspectedField\",\"caseInsensitive\":false}],\"variants\":[],\"parameters\":{\"groupId\":\"mcp-context-field-flag\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"segments\":[],\"sortOrder\":0,\"id\":\"01M6JSH6KME67D1D0ERA3WMW8M\",\"title\":\"Gold\",\"disabled\":false},{\"name\":\"flexibleRollout\",\"constraints\":[{\"values\":[\"gold\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"mcpInspectedField\",\"caseInsensitive\":false}],\"variants\":[],\"parameters\":{\"groupId\":\"mcp-context-field-flag\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"segments\":[],\"sortOrder\":1,\"id\":\"01M6JSH6ZVA6XKT0KVCJVA7090\",\"title\":\"Gold again\",\"disabled\":false}],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-context-field-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-inspect-context-field\",\"stale\":false,\"createdAt\":\"2026-11-04T08:06:43.810Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-14T08:06:43.810Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-04T08:06:43.968Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":true,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[{\"name\":\"flexibleRollout\",\"constraints\":[{\"values\":[\"gold\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"mcpInspectedField\",\"caseInsensitive\":false}],\"variants\":[],\"parameters\":{\"groupId\":\"mcp-context-field-flag\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"segments\":[],\"sortOrder\":0,\"id\":\"01M6JTM07XMMWWYWBZZEPQ72QG\",\"title\":\"Gold\",\"disabled\":false},{\"name\":\"flexibleRollout\",\"constraints\":[{\"values\":[\"gold\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"mcpInspectedField\",\"caseInsensitive\":false}],\"variants\":[],\"parameters\":{\"groupId\":\"mcp-context-field-flag\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"segments\":[],\"sortOrder\":1,\"id\":\"01M6JTM0FBTD0YBH6JY3BTN2ZW\",\"title\":\"Gold again\",\"disabled\":false}],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-context-field-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-inspect-context-field\",\"stale\":false,\"createdAt\":\"2026-11-04T08:25:44.190Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-14T08:25:44.190Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-04T08:25:44.253Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         },
         {
@@ -501,7 +501,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"features\":[{\"type\":\"release\",\"description\":null,\"project\":\"mcp-inspect-context-field\",\"favorite\":false,\"name\":\"mcp-context-field-flag\",\"createdAt\":\"2026-11-04T08:06:43.810Z\",\"stale\":false,\"archivedAt\":null,\"impressionData\":false,\"dependencyType\":null,\"environments\":[{\"name\":\"development\",\"enabled\":true,\"type\":\"development\",\"sortOrder\":2,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":true,\"hasEnabledStrategies\":true,\"yes\":0,\"no\":0,\"changeRequestIds\":[]},{\"name\":\"production\",\"enabled\":false,\"type\":\"production\",\"sortOrder\":8,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]}],\"segments\":[],\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-04T08:06:43.968Z\"}}],\"total\":1}",
+          "body": "{\"features\":[{\"type\":\"release\",\"description\":null,\"project\":\"mcp-inspect-context-field\",\"favorite\":false,\"name\":\"mcp-context-field-flag\",\"createdAt\":\"2026-11-04T08:25:44.190Z\",\"stale\":false,\"archivedAt\":null,\"impressionData\":false,\"dependencyType\":null,\"environments\":[{\"name\":\"development\",\"enabled\":true,\"type\":\"development\",\"sortOrder\":2,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":true,\"hasEnabledStrategies\":true,\"yes\":0,\"no\":0,\"changeRequestIds\":[]},{\"name\":\"production\",\"enabled\":false,\"type\":\"production\",\"sortOrder\":8,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]}],\"segments\":[],\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-04T08:25:44.253Z\"}}],\"total\":1}",
           "trailers": {}
         }
       ],
@@ -527,7 +527,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "5291",
+            "content-length": "5434",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -538,7 +538,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"environment\":\"Enterprise\",\"flags\":{\"OIDC\":true,\"EEA\":true,\"RE\":true,\"UG\":true,\"SE\":false,\"CO\":true,\"UNLEASH_CLOUD\":true,\"C\":true,\"P\":true,\"anonymiseEventLog\":false,\"enableLicense\":false,\"sessionTimeouts\":false,\"responseTimeWithAppNameKillSwitch\":false,\"maintenanceMode\":false,\"messageBanner\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"strictSchemaValidation\":false,\"personalAccessTokensKillSwitch\":false,\"migrationLock\":true,\"demo\":false,\"onboardingIntroTourAdvancedTopics\":false,\"interactiveDemoKillSwitch\":false,\"filterInvalidClientMetrics\":false,\"disableMetrics\":false,\"celebrateUnleash\":false,\"feedbackPosting\":true,\"encryptEmails\":false,\"extendedUsageMetrics\":{\"name\":\"maxResults\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"3600000\"},\"feature_enabled\":true,\"featureEnabled\":true},\"outdatedSdksBanner\":true,\"feedbackComments\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"usePromiseTokenCache\":true,\"disableUpdateMaxRevisionId\":false,\"disablePublishUnannouncedEvents\":false,\"responseTimeMetricsFix\":true,\"disableShowContextFieldSelectionValues\":false,\"manyStrategiesPagination\":true,\"enableLegacyVariants\":false,\"extendedMetrics\":true,\"removeUnsafeInlineStyleSrc\":false,\"projectRoleAssignment\":false,\"webhookDomainLogging\":false,\"productivityReportEmail\":true,\"productivityReportUnsubscribers\":false,\"tokenExpiryNotifications\":true,\"showUserDeviceCount\":{\"name\":\"warnAbove\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"2\"},\"feature_enabled\":true,\"featureEnabled\":true},\"deltaApi\":true,\"cacheFeatureSerialization\":true,\"uniqueSdkTracking\":true,\"consumptionModel\":true,\"impactViews\":true,\"disableImpactMetrics\":false,\"flightRecorderSdk\":true,\"flightRecorderAdminEvents\":false,\"flightRecorderFrontend\":{\"name\":\"url\",\"enabled\":true,\"payload\":{\"type\":\"string\",\"value\":\"http://flight-recorder.sandbox.getunleash.io/frontend-events\"},\"feature_enabled\":true,\"featureEnabled\":true},\"regexConstraintOperator\":true,\"ipConstraintOperator\":true,\"userTokenWithClientApiLoggingKillSwitch\":false,\"multiMetricChart\":true,\"logRocketEnabled\":true,\"hubspotChatEnabled\":true,\"learningLab\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":true,\"featureEnabled\":true},\"serviceNowIntegration\":true,\"recordSdkFlavorMetrics\":false,\"secureAccountTokenStorage\":true,\"searchDocsWidget\":true,\"semverBuildMetadata\":false,\"auditEventUserAgent\":true,\"helpMenuRelocationHint\":false,\"githubIntegration\":true,\"slackAppAuthV2\":false,\"redactFeatureLabelInMetrics\":false,\"integrationParamKvpEditor\":true,\"perFlagLifetime\":true,\"payloadSchemas\":true,\"singlePageStrategyForm\":false,\"feedbackModule\":true,\"feedbackModuleDisplaySurvey\":false,\"feedbackModuleSubmitResponses\":true,\"playgroundFeatureEvaluation\":true,\"signals\":true,\"automatedActions\":true,\"killScheduledChangeRequestCache\":false,\"estimateTrafficDataCost\":true,\"streaming\":{\"name\":\"disabled\",\"enabled\":true},\"denyStreamingForNonEdge\":true,\"consumptionModelUI\":true,\"fetchMode\":{\"name\":\"streaming\",\"enabled\":true,\"feature_enabled\":true,\"featureEnabled\":true},\"oidcPkceSupport\":true,\"enterpriseEdgeTokensList\":true,\"impactMetricsFlagPage\":true,\"disableScimAdminGroupGuard\":false,\"elasticEventSync\":true,\"uxTweakSurveys\":true,\"loginHistoryUserAgent\":true,\"remoteMcpHostedClients\":true,\"remoteMcpV2\":true,\"dashboardV2\":true,\"samlIssuerMismatchLogging\":true,\"oidcGroupSyncIdToken\":false,\"changeRequestSubmitRedirect\":true,\"oidcGroupsPresenceLogging\":true},\"billing\":\"subscription\",\"slogan\":\"getunleash.io - All rights reserved\",\"name\":\"Unleash\",\"links\":[{\"value\":\"Documentation\",\"icon\":\"library_books\",\"href\":\"https://docs.getunleash.io/docs\",\"title\":\"User documentation\"},{\"value\":\"GitHub\",\"icon\":\"c_github\",\"href\":\"https://github.com/Unleash/unleash\",\"title\":\"Source code on GitHub\"}],\"oidcConfiguredThroughEnv\":false,\"samlConfiguredThroughEnv\":false,\"version\":\"8.3.1\",\"emailEnabled\":true,\"unleashUrl\":\"https://sandbox.getunleash.io/enterprise\",\"logRocketAppId\":\"1knhci/unleash-sandbox\",\"hubspotPortalId\":\"19521761\",\"baseUriPath\":\"/enterprise\",\"authenticationType\":\"hosted\",\"frontendApiOrigins\":[\"*\"],\"versionInfo\":{\"current\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.3+27529.61b3ce1cc5\"},\"latest\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.3\"},\"isLatest\":true,\"instanceId\":\"902e2e68-ab1d-4e35-9cd0-896618db603d\"},\"prometheusAPIAvailable\":true,\"impactMetrics\":\"full\",\"resourceLimits\":{\"segmentValues\":1000,\"strategySegments\":5,\"signalEndpoints\":5,\"actionSetActions\":10,\"actionSetsPerProject\":5,\"actionSetFilters\":5,\"actionSetFilterValues\":25,\"signalTokensPerEndpoint\":5,\"featureEnvironmentStrategies\":30,\"constraintValues\":1000,\"constraints\":30,\"environments\":50,\"projects\":500,\"apiTokens\":2000,\"segments\":300,\"featureFlags\":50000,\"releaseTemplates\":50,\"readOnlyUsers\":10},\"disablePasswordAuth\":false,\"maintenanceMode\":false,\"feedbackUriPath\":\"https://sandbox.getunleash.io/nuno/feedback\",\"maxSessionsCount\":1,\"sessionKeepAliveIntervalSeconds\":0,\"unleashContext\":{\"properties\":{\"clientId\":\"enterprise\",\"plan\":\"Enterprise\",\"billing\":\"subscription\",\"awsRegion\":\"eu-north-1\",\"version\":\"8.3.3+27529.61b3ce1cc5\",\"releaseSegment\":\"enterprise\"},\"email\":\"user-e8d327@example.com\",\"hashedEmail\":\"e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c\",\"userId\":17},\"storiesPageEnabled\":true}",
+          "body": "{\"environment\":\"Enterprise\",\"flags\":{\"OIDC\":true,\"EEA\":true,\"RE\":true,\"UG\":true,\"SE\":false,\"CO\":true,\"UNLEASH_CLOUD\":true,\"C\":true,\"P\":true,\"anonymiseEventLog\":false,\"enableLicense\":false,\"disableClearSiteDataOnTimeout\":true,\"sessionTimeouts\":false,\"responseTimeWithAppNameKillSwitch\":false,\"maintenanceMode\":false,\"messageBanner\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"strictSchemaValidation\":false,\"personalAccessTokensKillSwitch\":false,\"migrationLock\":true,\"demo\":false,\"onboardingIntroTourAdvancedTopics\":false,\"interactiveDemoKillSwitch\":false,\"filterInvalidClientMetrics\":false,\"disableMetrics\":false,\"celebrateUnleash\":false,\"feedbackPosting\":true,\"encryptEmails\":true,\"extendedUsageMetrics\":{\"name\":\"maxResults\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"3600000\"},\"feature_enabled\":true,\"featureEnabled\":true},\"outdatedSdksBanner\":true,\"feedbackComments\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":false,\"featureEnabled\":false},\"usePromiseTokenCache\":true,\"disableUpdateMaxRevisionId\":false,\"disablePublishUnannouncedEvents\":false,\"responseTimeMetricsFix\":true,\"disableShowContextFieldSelectionValues\":false,\"manyStrategiesPagination\":true,\"enableLegacyVariants\":false,\"extendedMetrics\":true,\"removeUnsafeInlineStyleSrc\":false,\"projectRoleAssignment\":false,\"webhookDomainLogging\":false,\"productivityReportEmail\":true,\"productivityReportUnsubscribers\":false,\"tokenExpiryNotifications\":true,\"showUserDeviceCount\":{\"name\":\"warnAbove\",\"enabled\":true,\"payload\":{\"type\":\"number\",\"value\":\"2\"},\"feature_enabled\":true,\"featureEnabled\":true},\"deltaApi\":true,\"cacheFeatureSerialization\":true,\"uniqueSdkTracking\":true,\"consumptionModel\":true,\"impactViews\":true,\"disableImpactMetrics\":false,\"flightRecorderSdk\":true,\"flightRecorderAdminEvents\":false,\"flightRecorderFrontend\":{\"name\":\"url\",\"enabled\":true,\"payload\":{\"type\":\"string\",\"value\":\"http://flight-recorder.sandbox.getunleash.io/frontend-events\"},\"feature_enabled\":true,\"featureEnabled\":true},\"regexConstraintOperator\":true,\"ipConstraintOperator\":true,\"userTokenWithClientApiLoggingKillSwitch\":false,\"multiMetricChart\":true,\"logRocketEnabled\":true,\"hubspotChatEnabled\":true,\"dashboardOnboardingAI\":false,\"learningLab\":{\"name\":\"disabled\",\"enabled\":false,\"feature_enabled\":true,\"featureEnabled\":true},\"serviceNowIntegration\":true,\"recordSdkFlavorMetrics\":false,\"secureAccountTokenStorage\":true,\"searchDocsWidget\":true,\"semverBuildMetadata\":false,\"auditEventUserAgent\":true,\"helpMenuRelocationHint\":false,\"githubIntegration\":true,\"slackAppAuthV2\":true,\"redactFeatureLabelInMetrics\":true,\"integrationParamKvpEditor\":true,\"perFlagLifetime\":true,\"payloadSchemas\":true,\"singlePageStrategyForm\":false,\"feedbackModule\":true,\"feedbackModuleDisplaySurvey\":false,\"feedbackModuleSubmitResponses\":true,\"playgroundFeatureEvaluation\":true,\"dashboardV2\":true,\"improvedSidebarNavigation\":false,\"signals\":true,\"automatedActions\":true,\"killScheduledChangeRequestCache\":false,\"estimateTrafficDataCost\":true,\"streaming\":{\"name\":\"disabled\",\"enabled\":true},\"denyStreamingForNonEdge\":true,\"consumptionModelUI\":true,\"fetchMode\":{\"name\":\"streaming\",\"enabled\":true,\"feature_enabled\":true,\"featureEnabled\":true},\"oidcPkceSupport\":true,\"enterpriseEdgeTokensList\":true,\"impactMetricsFlagPage\":true,\"disableScimAdminGroupGuard\":false,\"elasticEventSync\":true,\"uxTweakSurveys\":true,\"loginHistoryUserAgent\":true,\"remoteMcpHostedClients\":true,\"flightRecorderMcpRequests\":true,\"remoteMcpV2\":true,\"samlIssuerMismatchLogging\":true,\"oidcGroupSyncIdToken\":false,\"changeRequestSubmitRedirect\":true,\"oidcGroupsPresenceLogging\":true},\"billing\":\"subscription\",\"slogan\":\"getunleash.io - All rights reserved\",\"name\":\"Unleash\",\"links\":[{\"value\":\"Documentation\",\"icon\":\"library_books\",\"href\":\"https://docs.getunleash.io/docs\",\"title\":\"User documentation\"},{\"value\":\"GitHub\",\"icon\":\"c_github\",\"href\":\"https://github.com/Unleash/unleash\",\"title\":\"Source code on GitHub\"}],\"oidcConfiguredThroughEnv\":false,\"samlConfiguredThroughEnv\":false,\"version\":\"8.3.1\",\"emailEnabled\":true,\"unleashUrl\":\"https://sandbox.getunleash.io/enterprise\",\"logRocketAppId\":\"1knhci/unleash-sandbox\",\"hubspotPortalId\":\"19521761\",\"baseUriPath\":\"/enterprise\",\"authenticationType\":\"hosted\",\"frontendApiOrigins\":[\"*\"],\"versionInfo\":{\"current\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.5+27945.2adbd356a2\"},\"latest\":{\"oss\":\"8.3.1\",\"enterprise\":\"8.3.5\"},\"isLatest\":true,\"instanceId\":\"902e2e68-ab1d-4e35-9cd0-896618db603d\"},\"prometheusAPIAvailable\":true,\"impactMetrics\":\"full\",\"resourceLimits\":{\"segmentValues\":1000,\"strategySegments\":5,\"signalEndpoints\":5,\"actionSetActions\":10,\"actionSetsPerProject\":5,\"actionSetFilters\":5,\"actionSetFilterValues\":25,\"signalTokensPerEndpoint\":5,\"featureEnvironmentStrategies\":30,\"constraintValues\":1000,\"constraints\":30,\"environments\":50,\"projects\":500,\"apiTokens\":2000,\"segments\":300,\"featureFlags\":50000,\"releaseTemplates\":50,\"readOnlyUsers\":10},\"disablePasswordAuth\":false,\"maintenanceMode\":false,\"feedbackUriPath\":\"https://sandbox.getunleash.io/nuno/feedback\",\"maxSessionsCount\":3,\"sessionKeepAliveIntervalSeconds\":0,\"unleashContext\":{\"properties\":{\"clientId\":\"enterprise\",\"plan\":\"Enterprise\",\"billing\":\"subscription\",\"awsRegion\":\"eu-north-1\",\"version\":\"8.3.5+27945.2adbd356a2\",\"releaseSegment\":\"enterprise\"},\"email\":\"user-72d1b3@example.com\",\"hashedEmail\":\"72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c\",\"userId\":216},\"storiesPageEnabled\":true}",
           "trailers": {}
         }
       ],
@@ -578,7 +578,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcpInspectedField\",\"description\":\"Customer tier\",\"stickiness\":true,\"sortOrder\":0,\"legalValues\":[{\"value\":\"gold\",\"description\":\"Paying customers\"},{\"value\":\"free\"}],\"createdAt\":\"2026-11-04T08:25:43.698Z\"}",
+          "body": "{\"name\":\"mcpInspectedField\",\"description\":\"Customer tier\",\"stickiness\":true,\"sortOrder\":0,\"legalValues\":[{\"value\":\"gold\",\"description\":\"Paying customers\"},{\"value\":\"free\"}],\"createdAt\":\"2026-11-12T10:40:31.944Z\"}",
           "trailers": {}
         }
       ],
@@ -586,7 +586,7 @@
     }
   },
   {
-    "hash": "uSQcapv31SKBShz9I-47PHWCt2ydmUkjGhQWUzVLuhs",
+    "hash": "qcCfURIiJMcSl1DfoP94r0K86rn1x8R4euA_7Vi5BFc",
     "snapshot": {
       "request": {
         "method": "POST",
@@ -596,17 +596,17 @@
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
-          "content-length": "198",
+          "content-length": "124",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
-        "body": "{\"name\":\"mcp-inspect-context-field\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1}]}"
+        "body": "{\"name\":\"mcp-inspect-context-field\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"]}"
       },
       "responses": [
         {
           "statusCode": 201,
           "headers": {
-            "content-length": "276",
+            "content-length": "188",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "location": "projects/mcp-inspect-context-field",
@@ -618,7 +618,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"mcp-inspect-context-field\",\"name\":\"mcp-inspect-context-field\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1},{\"name\":\"development\",\"requiredApprovals\":1}]}",
+          "body": "{\"id\":\"mcp-inspect-context-field\",\"name\":\"mcp-inspect-context-field\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[]}",
           "trailers": {}
         }
       ],
@@ -658,7 +658,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcpInspectedProjectField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-11-04T08:25:43.848Z\",\"project\":\"mcp-inspect-context-field\"}",
+          "body": "{\"name\":\"mcpInspectedProjectField\",\"description\":null,\"stickiness\":false,\"sortOrder\":0,\"legalValues\":[],\"createdAt\":\"2026-11-12T10:40:32.045Z\",\"project\":\"mcp-inspect-context-field\"}",
           "trailers": {}
         }
       ],
@@ -734,7 +734,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcp-context-field-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-inspect-context-field\",\"stale\":false,\"createdAt\":\"2026-11-04T08:25:44.190Z\",\"impressionData\":false,\"archived\":false}",
+          "body": "{\"name\":\"mcp-context-field-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-inspect-context-field\",\"stale\":false,\"createdAt\":\"2026-11-12T10:40:32.337Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],
@@ -809,7 +809,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"01M6JTM0FBTD0YBH6JY3BTN2ZW\",\"name\":\"flexibleRollout\",\"constraints\":[{\"values\":[\"gold\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"mcpInspectedField\",\"caseInsensitive\":false}],\"parameters\":{\"groupId\":\"mcp-context-field-flag\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"variants\":[],\"segments\":[],\"title\":\"Gold again\",\"disabled\":false,\"sortOrder\":1}",
+          "body": "{\"id\":\"01M77NGJTCRNN636X5SFNXK787\",\"name\":\"flexibleRollout\",\"constraints\":[{\"values\":[\"gold\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"mcpInspectedField\",\"caseInsensitive\":false}],\"parameters\":{\"groupId\":\"mcp-context-field-flag\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"variants\":[],\"segments\":[],\"title\":\"Gold again\",\"disabled\":false,\"sortOrder\":1}",
           "trailers": {}
         }
       ],
@@ -848,44 +848,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"01M6JTM07XMMWWYWBZZEPQ72QG\",\"name\":\"flexibleRollout\",\"constraints\":[{\"values\":[\"gold\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"mcpInspectedField\",\"caseInsensitive\":false}],\"parameters\":{\"groupId\":\"mcp-context-field-flag\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"variants\":[],\"segments\":[],\"title\":\"Gold\",\"disabled\":false,\"sortOrder\":0}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "bbDhOwD-HQxwzj1FtH3DjwR_HAmpRphoUHkvigvakqo",
-    "snapshot": {
-      "request": {
-        "method": "PUT",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-inspect-context-field",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "36",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"name\":\"mcp-inspect-context-field\"}"
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "",
+          "body": "{\"id\":\"01M77NGJPGWRP8T4N9ABZD8WP9\",\"name\":\"flexibleRollout\",\"constraints\":[{\"values\":[\"gold\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"mcpInspectedField\",\"caseInsensitive\":false}],\"parameters\":{\"groupId\":\"mcp-context-field-flag\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"variants\":[],\"segments\":[],\"title\":\"Gold\",\"disabled\":false,\"sortOrder\":0}",
           "trailers": {}
         }
       ],

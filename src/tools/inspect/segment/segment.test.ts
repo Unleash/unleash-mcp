@@ -52,7 +52,7 @@ test('describes a segment with the constraints it stands for and who made it', a
     name: segment,
     description: 'Beta testers',
     constraints: [beta],
-    createdBy: 'user-e8d327@example.com',
+    createdBy: 'user-72d1b3@example.com',
   });
 });
 

@@ -135,7 +135,6 @@ export const createProjectNamed = async (admin: UnleashClient, unleash: UnleashC
       action: 'create',
       name,
       environments: ['development', 'production'],
-      changeRequestEnvironments: [{ name: 'production' }],
     }),
   );
   assert.equal(created.id, name);

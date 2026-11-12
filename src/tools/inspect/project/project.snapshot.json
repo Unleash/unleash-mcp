@@ -101,7 +101,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"stats\":{\"avgTimeToProdCurrentWindow\":0,\"createdCurrentWindow\":0,\"createdPastWindow\":0,\"archivedCurrentWindow\":0,\"archivedPastWindow\":0,\"projectActivityCurrentWindow\":0,\"projectActivityPastWindow\":0,\"projectMembersAddedCurrentWindow\":0},\"name\":\"mcp-inspect-project\",\"description\":null,\"mode\":\"open\",\"featureLimit\":null,\"featureNaming\":{\"pattern\":\"^mcp-[a-z-]+$\",\"example\":\"mcp-flag\",\"description\":\"mcp, dash, lowercase words\"},\"linkTemplates\":[],\"defaultStickiness\":\"default\",\"health\":100,\"technicalDebt\":0,\"favorite\":false,\"updatedAt\":\"2026-11-04T08:25:54.080Z\",\"createdAt\":\"2026-11-04T08:25:54.093Z\",\"onboardingStatus\":{\"status\":\"onboarding-started\"},\"environments\":[{\"environment\":\"development\"},{\"environment\":\"production\"}],\"featureTypeCounts\":[],\"members\":1,\"version\":1}",
+          "body": "{\"stats\":{\"avgTimeToProdCurrentWindow\":0,\"createdCurrentWindow\":0,\"createdPastWindow\":0,\"archivedCurrentWindow\":0,\"archivedPastWindow\":0,\"projectActivityCurrentWindow\":0,\"projectActivityPastWindow\":0,\"projectMembersAddedCurrentWindow\":0},\"name\":\"mcp-inspect-project\",\"description\":null,\"mode\":\"open\",\"featureLimit\":null,\"featureNaming\":{\"pattern\":\"^mcp-[a-z-]+$\",\"example\":\"mcp-flag\",\"description\":\"mcp, dash, lowercase words\"},\"linkTemplates\":[],\"defaultStickiness\":\"default\",\"health\":100,\"technicalDebt\":0,\"favorite\":false,\"updatedAt\":\"2026-11-12T10:40:38.200Z\",\"createdAt\":\"2026-11-12T10:40:38.208Z\",\"onboardingStatus\":{\"status\":\"onboarding-started\"},\"environments\":[{\"environment\":\"development\"},{\"environment\":\"production\"}],\"featureTypeCounts\":[],\"members\":1,\"version\":1}",
           "trailers": {}
         }
       ],
@@ -220,7 +220,7 @@
     }
   },
   {
-    "hash": "7Th-AawGGztqMgwx3mq7YmB3vNw6juTxbrU_IepZV9w",
+    "hash": "YKJJDxprBUC9yKWlUsBt3hoQWetbFaen6clkqgV5ZUo",
     "snapshot": {
       "request": {
         "method": "POST",
@@ -230,17 +230,17 @@
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
-          "content-length": "192",
+          "content-length": "118",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
-        "body": "{\"name\":\"mcp-inspect-project\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1}]}"
+        "body": "{\"name\":\"mcp-inspect-project\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"]}"
       },
       "responses": [
         {
           "statusCode": 201,
           "headers": {
-            "content-length": "264",
+            "content-length": "176",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "location": "projects/mcp-inspect-project",
@@ -252,44 +252,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"mcp-inspect-project\",\"name\":\"mcp-inspect-project\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1},{\"name\":\"development\",\"requiredApprovals\":1}]}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "PpQGuVXEWrjj4nL4lbxP-l8cM3jMnBTd6nG_Xw1FUZY",
-    "snapshot": {
-      "request": {
-        "method": "PUT",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-inspect-project",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "30",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"name\":\"mcp-inspect-project\"}"
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "",
+          "body": "{\"id\":\"mcp-inspect-project\",\"name\":\"mcp-inspect-project\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[]}",
           "trailers": {}
         }
       ],

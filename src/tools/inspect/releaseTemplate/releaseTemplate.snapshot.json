@@ -35,11 +35,11 @@
     }
   },
   {
-    "hash": "SBAxU3jluxPJXhZT3NN4kbXTt9SGlLZSjHoeOAjE6HQ",
+    "hash": "ixpsk-dEE6b-ycJDWR4BEz60VAmwgv9XvMRdCl-L2wY",
     "snapshot": {
       "request": {
         "method": "DELETE",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-inspect-release-template/release-templates/01M6R5HJPC9KZPFJQQRXTN0WW3",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-inspect-release-template/release-templates/01M77NGT2YRPZA03NXAGYXSQQQ",
         "headers": {
           "accept-encoding": "identity",
           "accept": "*/*",
@@ -70,11 +70,11 @@
     }
   },
   {
-    "hash": "WXIICPFzo4c4lWszqmYqGZz7FKDMSkLF0DAd_pq-L8U",
+    "hash": "yqvYdZvSLGs8jzdUYVdEHHpVyXZazepljiuALEnNtd0",
     "snapshot": {
       "request": {
         "method": "DELETE",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M6R5HJJXKE03XBRDJN27R860",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M77NGSYKZ4HT2B56KX3JS3C4",
         "headers": {
           "accept-encoding": "identity",
           "accept": "*/*",
@@ -160,7 +160,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "1693",
+            "content-length": "1874",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -171,13 +171,13 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174}]",
+          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M72P6TDCS9WTYPGGWV0E98DV\",\"name\":\"Variant ordering\",\"createdAt\":\"2026-11-10T12:16:29.091Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":51}]",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "1917",
+            "content-length": "2098",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -188,7 +188,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "[{\"id\":\"01M6R5HJPC9KZPFJQQRXTN0WW3\",\"name\":\"mcp-inspected-project-template\",\"createdAt\":\"2026-11-06T10:12:51.528Z\",\"description\":null,\"project\":\"mcp-inspect-release-template\",\"discriminator\":\"template\",\"createdByUserId\":216},{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174}]",
+          "body": "[{\"id\":\"01M77NGT2YRPZA03NXAGYXSQQQ\",\"name\":\"mcp-inspected-project-template\",\"createdAt\":\"2026-11-12T10:40:40.022Z\",\"description\":null,\"project\":\"mcp-inspect-release-template\",\"discriminator\":\"template\",\"createdByUserId\":216},{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M72P6TDCS9WTYPGGWV0E98DV\",\"name\":\"Variant ordering\",\"createdAt\":\"2026-11-10T12:16:29.091Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":51}]",
           "trailers": {}
         }
       ],
@@ -214,7 +214,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "1693",
+            "content-length": "1874",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -225,13 +225,13 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174}]",
+          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M72P6TDCS9WTYPGGWV0E98DV\",\"name\":\"Variant ordering\",\"createdAt\":\"2026-11-10T12:16:29.091Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":51}]",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "1906",
+            "content-length": "2087",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -242,7 +242,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M6R5HJJXKE03XBRDJN27R860\",\"name\":\"mcp-inspected-template\",\"createdAt\":\"2026-11-06T10:12:51.417Z\",\"description\":\"Beta first, then everyone\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":216}]",
+          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M72P6TDCS9WTYPGGWV0E98DV\",\"name\":\"Variant ordering\",\"createdAt\":\"2026-11-10T12:16:29.091Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":51},{\"id\":\"01M77NGSYKZ4HT2B56KX3JS3C4\",\"name\":\"mcp-inspected-template\",\"createdAt\":\"2026-11-12T10:40:39.879Z\",\"description\":\"Beta first, then everyone\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":216}]",
           "trailers": {}
         }
       ],
@@ -287,11 +287,11 @@
     }
   },
   {
-    "hash": "w1vlNww3LAa1QecdLJvpj2COuEQx8O0X4yI8p_UMfic",
+    "hash": "JI_psg3826fBF0Hwa8MjY4oL80q3S0IzZgy33c_Thw4",
     "snapshot": {
       "request": {
         "method": "GET",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M6R5HJJXKE03XBRDJN27R860",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M77NGSYKZ4HT2B56KX3JS3C4",
         "headers": {
           "accept-encoding": "identity",
           "accept": "*/*",
@@ -316,7 +316,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"01M6R5HJJXKE03XBRDJN27R860\",\"discriminator\":\"template\",\"name\":\"mcp-inspected-template\",\"description\":\"Beta first, then everyone\",\"project\":null,\"createdByUserId\":216,\"createdAt\":\"2026-11-06T10:12:51.417Z\",\"milestones\":[{\"id\":\"01M6R5HJJYK54T3XTAVWM2RVPY\",\"name\":\"Beta\",\"sortOrder\":0,\"strategies\":[{\"id\":\"01M6R5HJK0XZ81CYMM9847H50G\",\"milestoneId\":\"01M6R5HJJYK54T3XTAVWM2RVPY\",\"sortOrder\":0,\"title\":\"Beta testers\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"{{featureName}}\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"variants\":[],\"segments\":[],\"disabled\":false}],\"releasePlanDefinitionId\":\"01M6R5HJJXKE03XBRDJN27R860\",\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"id\":\"01M6R5HJK22S9ZTG1H48JGZHSV\",\"name\":\"Everyone\",\"sortOrder\":1,\"strategies\":[{\"id\":\"01M6R5HJK3Y4SBYXEDTR25H0C7\",\"milestoneId\":\"01M6R5HJK22S9ZTG1H48JGZHSV\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"{{featureName}}\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"releasePlanDefinitionId\":\"01M6R5HJJXKE03XBRDJN27R860\"}],\"archivedAt\":null}",
+          "body": "{\"id\":\"01M77NGSYKZ4HT2B56KX3JS3C4\",\"discriminator\":\"template\",\"name\":\"mcp-inspected-template\",\"description\":\"Beta first, then everyone\",\"project\":null,\"createdByUserId\":216,\"createdAt\":\"2026-11-12T10:40:39.879Z\",\"milestones\":[{\"id\":\"01M77NGSYP4YY71XRG3KRWBNY8\",\"name\":\"Beta\",\"sortOrder\":0,\"strategies\":[{\"id\":\"01M77NGSYZ8BY3PBTJN1R0TS13\",\"milestoneId\":\"01M77NGSYP4YY71XRG3KRWBNY8\",\"sortOrder\":0,\"title\":\"Beta testers\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"{{featureName}}\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"variants\":[],\"segments\":[],\"disabled\":false}],\"releasePlanDefinitionId\":\"01M77NGSYKZ4HT2B56KX3JS3C4\",\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"id\":\"01M77NGSZ2T6DRFWP6YBG7F8Q7\",\"name\":\"Everyone\",\"sortOrder\":1,\"strategies\":[{\"id\":\"01M77NGSZ45HY6YQCP27EB1687\",\"milestoneId\":\"01M77NGSZ2T6DRFWP6YBG7F8Q7\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"{{featureName}}\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"releasePlanDefinitionId\":\"01M77NGSYKZ4HT2B56KX3JS3C4\"}],\"archivedAt\":null}",
           "trailers": {}
         },
         {
@@ -333,7 +333,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"01M6R5HJJXKE03XBRDJN27R860\",\"discriminator\":\"template\",\"name\":\"mcp-inspected-template\",\"description\":\"Beta first, then everyone\",\"project\":null,\"createdByUserId\":216,\"createdAt\":\"2026-11-06T10:12:51.417Z\",\"milestones\":[{\"id\":\"01M6R5HJJYK54T3XTAVWM2RVPY\",\"name\":\"Beta\",\"sortOrder\":0,\"strategies\":[{\"id\":\"01M6R5HJK0XZ81CYMM9847H50G\",\"milestoneId\":\"01M6R5HJJYK54T3XTAVWM2RVPY\",\"sortOrder\":0,\"title\":\"Beta testers\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"{{featureName}}\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"variants\":[],\"segments\":[],\"disabled\":false}],\"releasePlanDefinitionId\":\"01M6R5HJJXKE03XBRDJN27R860\",\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"id\":\"01M6R5HJK22S9ZTG1H48JGZHSV\",\"name\":\"Everyone\",\"sortOrder\":1,\"strategies\":[{\"id\":\"01M6R5HJK3Y4SBYXEDTR25H0C7\",\"milestoneId\":\"01M6R5HJK22S9ZTG1H48JGZHSV\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"{{featureName}}\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"releasePlanDefinitionId\":\"01M6R5HJJXKE03XBRDJN27R860\"}],\"archivedAt\":null}",
+          "body": "{\"id\":\"01M77NGSYKZ4HT2B56KX3JS3C4\",\"discriminator\":\"template\",\"name\":\"mcp-inspected-template\",\"description\":\"Beta first, then everyone\",\"project\":null,\"createdByUserId\":216,\"createdAt\":\"2026-11-12T10:40:39.879Z\",\"milestones\":[{\"id\":\"01M77NGSYP4YY71XRG3KRWBNY8\",\"name\":\"Beta\",\"sortOrder\":0,\"strategies\":[{\"id\":\"01M77NGSYZ8BY3PBTJN1R0TS13\",\"milestoneId\":\"01M77NGSYP4YY71XRG3KRWBNY8\",\"sortOrder\":0,\"title\":\"Beta testers\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"{{featureName}}\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[{\"values\":[\"1\",\"2\"],\"inverted\":false,\"operator\":\"IN\",\"contextName\":\"userId\",\"caseInsensitive\":false}],\"variants\":[],\"segments\":[],\"disabled\":false}],\"releasePlanDefinitionId\":\"01M77NGSYKZ4HT2B56KX3JS3C4\",\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"id\":\"01M77NGSZ2T6DRFWP6YBG7F8Q7\",\"name\":\"Everyone\",\"sortOrder\":1,\"strategies\":[{\"id\":\"01M77NGSZ45HY6YQCP27EB1687\",\"milestoneId\":\"01M77NGSZ2T6DRFWP6YBG7F8Q7\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"{{featureName}}\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"releasePlanDefinitionId\":\"01M77NGSYKZ4HT2B56KX3JS3C4\"}],\"archivedAt\":null}",
           "trailers": {}
         }
       ],
@@ -341,11 +341,11 @@
     }
   },
   {
-    "hash": "iB5Ty2UAWxO31F2CPJJycm7h8LtrRbm-GaPHoGHOh1A",
+    "hash": "bWRT3L8tMXIpVo27z4KznxRK9QVJ70Tw4X-rWdpISdw",
     "snapshot": {
       "request": {
         "method": "GET",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M6R5HJPC9KZPFJQQRXTN0WW3",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M77NGT2YRPZA03NXAGYXSQQQ",
         "headers": {
           "accept-encoding": "identity",
           "accept": "*/*",
@@ -370,7 +370,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"01M6R5HJPC9KZPFJQQRXTN0WW3\",\"discriminator\":\"template\",\"name\":\"mcp-inspected-project-template\",\"description\":null,\"project\":\"mcp-inspect-release-template\",\"createdByUserId\":216,\"createdAt\":\"2026-11-06T10:12:51.528Z\",\"milestones\":[{\"id\":\"01M6R5HJPDH7AJYGYZG62NKF4Y\",\"name\":\"Half\",\"sortOrder\":0,\"strategies\":[{\"id\":\"01M6R5HJPEMCZQCZTVNFR0WQ4P\",\"milestoneId\":\"01M6R5HJPDH7AJYGYZG62NKF4Y\",\"sortOrder\":0,\"title\":\"Half\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"{{featureName}}\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"releasePlanDefinitionId\":\"01M6R5HJPC9KZPFJQQRXTN0WW3\"}],\"archivedAt\":null}",
+          "body": "{\"id\":\"01M77NGT2YRPZA03NXAGYXSQQQ\",\"discriminator\":\"template\",\"name\":\"mcp-inspected-project-template\",\"description\":null,\"project\":\"mcp-inspect-release-template\",\"createdByUserId\":216,\"createdAt\":\"2026-11-12T10:40:40.022Z\",\"milestones\":[{\"id\":\"01M77NGT308R0WYN5Z44XK4M17\",\"name\":\"Half\",\"sortOrder\":0,\"strategies\":[{\"id\":\"01M77NGT32E54SXVMGG5GE4TKF\",\"milestoneId\":\"01M77NGT308R0WYN5Z44XK4M17\",\"sortOrder\":0,\"title\":\"Half\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"groupId\":\"{{featureName}}\",\"rollout\":\"100\",\"stickiness\":\"default\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}],\"releasePlanDefinitionId\":\"01M77NGT2YRPZA03NXAGYXSQQQ\"}],\"archivedAt\":null}",
           "trailers": {}
         }
       ],
@@ -452,7 +452,7 @@
     }
   },
   {
-    "hash": "RRK5xrQFWmnuJteX1wyfN2EJbrt7AZJ1JF17kHYU94g",
+    "hash": "AzHbexGZ_F1goHYPJVIAlUYoCZH_iTzpKsgvaMpE9Hs",
     "snapshot": {
       "request": {
         "method": "POST",
@@ -462,17 +462,17 @@
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
-          "content-length": "201",
+          "content-length": "127",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
-        "body": "{\"name\":\"mcp-inspect-release-template\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1}]}"
+        "body": "{\"name\":\"mcp-inspect-release-template\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"]}"
       },
       "responses": [
         {
           "statusCode": 201,
           "headers": {
-            "content-length": "282",
+            "content-length": "194",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "location": "projects/mcp-inspect-release-template",
@@ -484,7 +484,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"mcp-inspect-release-template\",\"name\":\"mcp-inspect-release-template\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1},{\"name\":\"development\",\"requiredApprovals\":1}]}",
+          "body": "{\"id\":\"mcp-inspect-release-template\",\"name\":\"mcp-inspect-release-template\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[]}",
           "trailers": {}
         }
       ],
@@ -523,7 +523,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"01M6R5HJPC9KZPFJQQRXTN0WW3\",\"name\":\"mcp-inspected-project-template\",\"createdAt\":\"2026-11-06T10:12:51.528Z\",\"description\":null,\"project\":\"mcp-inspect-release-template\",\"discriminator\":\"template\",\"createdByUserId\":216,\"milestones\":[{\"id\":\"01M6R5HJPDH7AJYGYZG62NKF4Y\",\"name\":\"Half\",\"sortOrder\":0,\"releasePlanDefinitionId\":\"01M6R5HJPC9KZPFJQQRXTN0WW3\",\"strategies\":[{\"id\":\"01M6R5HJPEMCZQCZTVNFR0WQ4P\",\"milestoneId\":\"01M6R5HJPDH7AJYGYZG62NKF4Y\",\"sortOrder\":0,\"title\":\"Half\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}]}]}",
+          "body": "{\"id\":\"01M77NGT2YRPZA03NXAGYXSQQQ\",\"name\":\"mcp-inspected-project-template\",\"createdAt\":\"2026-11-12T10:40:40.022Z\",\"description\":null,\"project\":\"mcp-inspect-release-template\",\"discriminator\":\"template\",\"createdByUserId\":216,\"milestones\":[{\"id\":\"01M77NGT308R0WYN5Z44XK4M17\",\"name\":\"Half\",\"sortOrder\":0,\"releasePlanDefinitionId\":\"01M77NGT2YRPZA03NXAGYXSQQQ\",\"strategies\":[{\"id\":\"01M77NGT32E54SXVMGG5GE4TKF\",\"milestoneId\":\"01M77NGT308R0WYN5Z44XK4M17\",\"sortOrder\":0,\"title\":\"Half\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}]}]}",
           "trailers": {}
         }
       ],
@@ -562,44 +562,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"01M6R5HJJXKE03XBRDJN27R860\",\"name\":\"mcp-inspected-template\",\"createdAt\":\"2026-11-06T10:12:51.417Z\",\"description\":\"Beta first, then everyone\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":216,\"milestones\":[{\"id\":\"01M6R5HJJYK54T3XTAVWM2RVPY\",\"name\":\"Beta\",\"sortOrder\":0,\"releasePlanDefinitionId\":\"01M6R5HJJXKE03XBRDJN27R860\",\"strategies\":[{\"id\":\"01M6R5HJK0XZ81CYMM9847H50G\",\"milestoneId\":\"01M6R5HJJYK54T3XTAVWM2RVPY\",\"sortOrder\":0,\"title\":\"Beta testers\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[{\"contextName\":\"userId\",\"operator\":\"IN\",\"values\":[\"1\",\"2\"],\"inverted\":false,\"caseInsensitive\":false}],\"variants\":[],\"segments\":[],\"disabled\":false}],\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"id\":\"01M6R5HJK22S9ZTG1H48JGZHSV\",\"name\":\"Everyone\",\"sortOrder\":1,\"releasePlanDefinitionId\":\"01M6R5HJJXKE03XBRDJN27R860\",\"strategies\":[{\"id\":\"01M6R5HJK3Y4SBYXEDTR25H0C7\",\"milestoneId\":\"01M6R5HJK22S9ZTG1H48JGZHSV\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}]}]}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "JHjzWujTME29v4tpWuuQQnxSmIQhL6APBNOeFZ2Iq1s",
-    "snapshot": {
-      "request": {
-        "method": "PUT",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-inspect-release-template",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "39",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"name\":\"mcp-inspect-release-template\"}"
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "",
+          "body": "{\"id\":\"01M77NGSYKZ4HT2B56KX3JS3C4\",\"name\":\"mcp-inspected-template\",\"createdAt\":\"2026-11-12T10:40:39.879Z\",\"description\":\"Beta first, then everyone\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":216,\"milestones\":[{\"id\":\"01M77NGSYP4YY71XRG3KRWBNY8\",\"name\":\"Beta\",\"sortOrder\":0,\"releasePlanDefinitionId\":\"01M77NGSYKZ4HT2B56KX3JS3C4\",\"strategies\":[{\"id\":\"01M77NGSYZ8BY3PBTJN1R0TS13\",\"milestoneId\":\"01M77NGSYP4YY71XRG3KRWBNY8\",\"sortOrder\":0,\"title\":\"Beta testers\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[{\"contextName\":\"userId\",\"operator\":\"IN\",\"values\":[\"1\",\"2\"],\"inverted\":false,\"caseInsensitive\":false}],\"variants\":[],\"segments\":[],\"disabled\":false}],\"transitionCondition\":{\"type\":\"time\",\"intervalMinutes\":60}},{\"id\":\"01M77NGSZ2T6DRFWP6YBG7F8Q7\",\"name\":\"Everyone\",\"sortOrder\":1,\"releasePlanDefinitionId\":\"01M77NGSYKZ4HT2B56KX3JS3C4\",\"strategies\":[{\"id\":\"01M77NGSZ45HY6YQCP27EB1687\",\"milestoneId\":\"01M77NGSZ2T6DRFWP6YBG7F8Q7\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}]}]}",
           "trailers": {}
         }
       ],

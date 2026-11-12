@@ -136,7 +136,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-completed-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-manage-flag-complete\",\"stale\":false,\"createdAt\":\"2026-11-04T08:22:28.915Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-14T08:22:28.915Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"completed\",\"status\":\"kept\",\"enteredStageAt\":\"2026-11-04T08:22:29.026Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-completed-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-manage-flag-complete\",\"stale\":false,\"createdAt\":\"2026-11-04T08:26:12.842Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-14T08:26:12.842Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"completed\",\"status\":\"kept\",\"enteredStageAt\":\"2026-11-04T08:26:12.989Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         },
         {
@@ -216,7 +216,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "923",
+            "content-length": "941",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -227,7 +227,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"features\":[{\"type\":\"release\",\"description\":null,\"project\":\"mcp-manage-flag-complete\",\"favorite\":false,\"name\":\"mcp-completed-flag\",\"createdAt\":\"2026-11-04T08:22:28.915Z\",\"stale\":false,\"archivedAt\":null,\"impressionData\":false,\"dependencyType\":null,\"environments\":[{\"name\":\"development\",\"enabled\":false,\"type\":\"development\",\"sortOrder\":2,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]},{\"name\":\"production\",\"enabled\":false,\"type\":\"production\",\"sortOrder\":8,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]}],\"segments\":[],\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-04T08:22:29.060Z\"}}],\"total\":1}",
+          "body": "{\"features\":[{\"type\":\"release\",\"description\":null,\"project\":\"mcp-manage-flag-complete\",\"favorite\":false,\"name\":\"mcp-completed-flag\",\"createdAt\":\"2026-11-04T08:26:12.842Z\",\"stale\":false,\"archivedAt\":null,\"impressionData\":false,\"dependencyType\":null,\"environments\":[{\"name\":\"development\",\"enabled\":false,\"type\":\"development\",\"sortOrder\":2,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]},{\"name\":\"production\",\"enabled\":false,\"type\":\"production\",\"sortOrder\":8,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]}],\"segments\":[],\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"lifecycle\":{\"stage\":\"completed\",\"status\":\"kept\",\"enteredStageAt\":\"2026-11-04T08:26:12.989Z\"}}],\"total\":1}",
           "trailers": {}
         }
       ],
@@ -235,7 +235,7 @@
     }
   },
   {
-    "hash": "VeZsnoHeF4ib6SEbkm_vPd4AMmeg9BwgGgRvV3Ox2O0",
+    "hash": "G_ZmMwZyJXIw4cD_luPLqCzkyXx0PAQYD5BSUGRq6vU",
     "snapshot": {
       "request": {
         "method": "POST",
@@ -245,17 +245,17 @@
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
-          "content-length": "197",
+          "content-length": "123",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
-        "body": "{\"name\":\"mcp-manage-flag-complete\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1}]}"
+        "body": "{\"name\":\"mcp-manage-flag-complete\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"]}"
       },
       "responses": [
         {
           "statusCode": 201,
           "headers": {
-            "content-length": "274",
+            "content-length": "186",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "location": "projects/mcp-manage-flag-complete",
@@ -267,7 +267,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"mcp-manage-flag-complete\",\"name\":\"mcp-manage-flag-complete\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1},{\"name\":\"development\",\"requiredApprovals\":1}]}",
+          "body": "{\"id\":\"mcp-manage-flag-complete\",\"name\":\"mcp-manage-flag-complete\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[]}",
           "trailers": {}
         }
       ],
@@ -343,7 +343,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcp-completed-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-manage-flag-complete\",\"stale\":false,\"createdAt\":\"2026-11-04T08:26:12.842Z\",\"impressionData\":false,\"archived\":false}",
+          "body": "{\"name\":\"mcp-completed-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-manage-flag-complete\",\"stale\":false,\"createdAt\":\"2026-11-12T10:40:49.935Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],
@@ -366,43 +366,6 @@
           "user-agent": "node"
         },
         "body": "{\"status\":\"kept\"}"
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "XJjHbqn9McEOuLG7peP5Vkb-BAH_WDebqOqtP3bNPIY",
-    "snapshot": {
-      "request": {
-        "method": "PUT",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-manage-flag-complete",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "35",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"name\":\"mcp-manage-flag-complete\"}"
       },
       "responses": [
         {
