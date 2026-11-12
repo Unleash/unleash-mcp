@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createProject, updateProject } from '../tools/configure/project.ts';
+import { createProject } from '../tools/configure/project.ts';
 import { deleteSegment } from '../tools/configure/segment.ts';
 import { archiveFlag } from '../tools/manageFlag/archive.ts';
 import { defineFlag } from '../tools/manageFlag/define.ts';
@@ -13,7 +13,7 @@ import type { ChangeRequestReader } from '../tools/shared/changeRequest.ts';
 import type { UnleashClient } from './client.ts';
 
 // Setup that recorded tests do as an admin, through the server's own tools; only what no tool does (deleting a project
-// or a template, cancelling a change request, project membership) is done over the API. A test cleans up before, not
+// or a template, cancelling a change request, requiring change requests, project membership) is done over the API. A test cleans up before, not
 // after: what it made stays for a look when something went wrong, and the next recording starts over.
 
 // A refused write fails in setup, with Unleash's answer, and not a few lines later with less to go on.
@@ -140,16 +140,26 @@ export const createProjectNamed = async (admin: UnleashClient, unleash: UnleashC
   );
   assert.equal(created.id, name);
   // An instance can require change requests in every new project's environment: only production keeps them.
-  applied(
-    await updateProject(admin, {
-      kind: 'project',
-      action: 'update',
-      id: name,
-      name,
-      changeRequestEnvironments: [
-        { name: 'development', enabled: false },
-        { name: 'production', enabled: true },
-      ],
-    }),
-  );
+  await setChangeRequests(admin, name, { development: false, production: true });
+};
+
+/**
+ * Turns change requests on or off in each named environment of a project, with one approval where on. Over the API,
+ * since agents can't: approval is a human control, set in the Unleash UI. Environments left out stay as they are.
+ */
+export const setChangeRequests = async (
+  admin: UnleashClient,
+  projectId: string,
+  required: Record<string, boolean>,
+): Promise<void> => {
+  for (const [environment, enabled] of Object.entries(required)) {
+    const configured = await admin.PUT(
+      '/api/admin/projects/{projectId}/environments/{environment}/change-requests/config',
+      {
+        params: { path: { projectId, environment } },
+        body: { changeRequestsEnabled: enabled, ...(enabled ? { requiredApprovals: 1 } : {}) },
+      },
+    );
+    assert(configured.response.ok, `${projectId} ${environment}: ${configured.response.status}`);
+  }
 };
