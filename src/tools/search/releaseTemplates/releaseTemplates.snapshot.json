@@ -35,11 +35,11 @@
     }
   },
   {
-    "hash": "RXuCY2DJdnrLK8OAaD9VDxDRjmTIATgOBqNPw_hadoU",
+    "hash": "Ht1XzKTZR83KqxqrUCvD6NtRF9f04hv4wASIgtaGlJI",
     "snapshot": {
       "request": {
         "method": "DELETE",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-search-release-templates/release-templates/01M6JTP2KVAF1ZSCY05PEYX9PK",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-search-release-templates/release-templates/01M77NHZK3FZPVKBM91R5WAAZC",
         "headers": {
           "accept-encoding": "identity",
           "accept": "*/*",
@@ -70,11 +70,11 @@
     }
   },
   {
-    "hash": "VQN7r8oPHRK5RdceeOUEQrN3comN9DHEvwbJVa05tO0",
+    "hash": "aJyIJo9IjsSEWTMLCnO5S6lP9GAzidvy3e1L5_jwkDw",
     "snapshot": {
       "request": {
         "method": "DELETE",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M6JTP2EPBVG5KS2Y9KC4DZGJ",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M77NHZFXMP562W157DVZNG9E",
         "headers": {
           "accept-encoding": "identity",
           "accept": "*/*",
@@ -105,11 +105,11 @@
     }
   },
   {
-    "hash": "QG_UF4t3L_e1onGOgLYyP3dJc0LA5qy6gv-uxyDfYuY",
+    "hash": "wJNwgY4wB5D1sM69LsR9uEqTPYljsZkpbfwiBZT87ys",
     "snapshot": {
       "request": {
         "method": "DELETE",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M6JTP2R85XG45GYJFPC3KY66",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/01M77NHZP3P663309EHV79GSF6",
         "headers": {
           "accept-encoding": "identity",
           "accept": "*/*",
@@ -195,7 +195,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "1693",
+            "content-length": "1874",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -206,13 +206,13 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174}]",
+          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M72P6TDCS9WTYPGGWV0E98DV\",\"name\":\"Variant ordering\",\"createdAt\":\"2026-11-10T12:16:29.091Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":51}]",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "2103",
+            "content-length": "2286",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -223,13 +223,13 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "[{\"id\":\"01M6JTP2KVAF1ZSCY05PEYX9PK\",\"name\":\"mcp-searched-project-template\",\"createdAt\":\"2026-11-04T08:26:52.407Z\",\"description\":null,\"project\":\"mcp-search-release-templates\",\"discriminator\":\"template\",\"createdByUserId\":17},{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M6JTP2EPBVG5KS2Y9KC4DZGJ\",\"name\":\"mcp-searched-template\",\"createdAt\":\"2026-11-04T08:26:52.242Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":17}]",
+          "body": "[{\"id\":\"01M77NHZK3FZPVKBM91R5WAAZC\",\"name\":\"mcp-searched-project-template\",\"createdAt\":\"2026-11-12T10:41:18.428Z\",\"description\":null,\"project\":\"mcp-search-release-templates\",\"discriminator\":\"template\",\"createdByUserId\":216},{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M72P6TDCS9WTYPGGWV0E98DV\",\"name\":\"Variant ordering\",\"createdAt\":\"2026-11-10T12:16:29.091Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":51},{\"id\":\"01M77NHZFXMP562W157DVZNG9E\",\"name\":\"mcp-searched-template\",\"createdAt\":\"2026-11-12T10:41:18.327Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":216}]",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "1915",
+            "content-length": "2097",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -240,7 +240,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "[{\"id\":\"01M6JTP2KVAF1ZSCY05PEYX9PK\",\"name\":\"mcp-searched-project-template\",\"createdAt\":\"2026-11-04T08:26:52.407Z\",\"description\":null,\"project\":\"mcp-search-release-templates\",\"discriminator\":\"template\",\"createdByUserId\":17},{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174}]",
+          "body": "[{\"id\":\"01M77NHZK3FZPVKBM91R5WAAZC\",\"name\":\"mcp-searched-project-template\",\"createdAt\":\"2026-11-12T10:41:18.428Z\",\"description\":null,\"project\":\"mcp-search-release-templates\",\"discriminator\":\"template\",\"createdByUserId\":216},{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M72P6TDCS9WTYPGGWV0E98DV\",\"name\":\"Variant ordering\",\"createdAt\":\"2026-11-10T12:16:29.091Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":51}]",
           "trailers": {}
         }
       ],
@@ -266,7 +266,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "1693",
+            "content-length": "1874",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -277,13 +277,13 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174}]",
+          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M72P6TDCS9WTYPGGWV0E98DV\",\"name\":\"Variant ordering\",\"createdAt\":\"2026-11-10T12:16:29.091Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":51}]",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "1693",
+            "content-length": "1874",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -294,13 +294,13 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174}]",
+          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M72P6TDCS9WTYPGGWV0E98DV\",\"name\":\"Variant ordering\",\"createdAt\":\"2026-11-10T12:16:29.091Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":51}]",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "1881",
+            "content-length": "2063",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -311,13 +311,13 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M6JTP2EPBVG5KS2Y9KC4DZGJ\",\"name\":\"mcp-searched-template\",\"createdAt\":\"2026-11-04T08:26:52.242Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":17}]",
+          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M72P6TDCS9WTYPGGWV0E98DV\",\"name\":\"Variant ordering\",\"createdAt\":\"2026-11-10T12:16:29.091Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":51},{\"id\":\"01M77NHZFXMP562W157DVZNG9E\",\"name\":\"mcp-searched-template\",\"createdAt\":\"2026-11-12T10:41:18.327Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":216}]",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "1881",
+            "content-length": "2063",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -328,13 +328,13 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M6JTP2EPBVG5KS2Y9KC4DZGJ\",\"name\":\"mcp-searched-template\",\"createdAt\":\"2026-11-04T08:26:52.242Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":17}]",
+          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M72P6TDCS9WTYPGGWV0E98DV\",\"name\":\"Variant ordering\",\"createdAt\":\"2026-11-10T12:16:29.091Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":51},{\"id\":\"01M77NHZFXMP562W157DVZNG9E\",\"name\":\"mcp-searched-template\",\"createdAt\":\"2026-11-12T10:41:18.327Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":216}]",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "1881",
+            "content-length": "2063",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -345,13 +345,13 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M6JTP2EPBVG5KS2Y9KC4DZGJ\",\"name\":\"mcp-searched-template\",\"createdAt\":\"2026-11-04T08:26:52.242Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":17}]",
+          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M72P6TDCS9WTYPGGWV0E98DV\",\"name\":\"Variant ordering\",\"createdAt\":\"2026-11-10T12:16:29.091Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":51},{\"id\":\"01M77NHZFXMP562W157DVZNG9E\",\"name\":\"mcp-searched-template\",\"createdAt\":\"2026-11-12T10:41:18.327Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":216}]",
           "trailers": {}
         },
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "1693",
+            "content-length": "1874",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -362,7 +362,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174}]",
+          "body": "[{\"id\":\"01JFA9JK1B2TX2DSE5FTXA54YH\",\"name\":\"Pro Release\",\"createdAt\":\"2024-12-17T12:30:36.585Z\",\"description\":\"Normal rollout for pro customers\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":31},{\"id\":\"01JFFE0C2J87C3SSWDS6CW898C\",\"name\":\"Gastón test\",\"createdAt\":\"2024-12-19T12:24:14.672Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":29},{\"id\":\"01JQBNVER360J1N0WBQ751529W\",\"name\":\"UK rollout\",\"createdAt\":\"2025-03-27T11:29:59.041Z\",\"description\":\"Standardize your team's approach to rolling out new functionality with release templates. These templates allow you to predefine strategies, or groups of strategies, making it easier to set up new flags and ensure alignment in how rollouts are managed. Customize templates to suit your needs by adding strategies to specific milestones. Each milestone will execute sequentially, streamlining your release process.\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":110},{\"id\":\"01JYBG2WATA1E0E94Y7QQ6ECAK\",\"name\":\"Standard rollout\",\"createdAt\":\"2025-06-22T09:39:03.578Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":112},{\"id\":\"01K6MVD6J8ZDZ7P2ZRZTRXRV5Z\",\"name\":\"Hennings Release plan \",\"createdAt\":\"2025-10-03T10:55:40.605Z\",\"description\":\"Testing release plans and descriptions. This is a really long description that should end sooner, but it doesn't. Lorem ipsum dolor sit amet, consectetur adipiscing elit. \",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01KJANEAW68VX89GY5E94ACW09\",\"name\":\"my template\",\"createdAt\":\"2026-02-25T15:07:23.907Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":174},{\"id\":\"01M72P6TDCS9WTYPGGWV0E98DV\",\"name\":\"Variant ordering\",\"createdAt\":\"2026-11-10T12:16:29.091Z\",\"description\":\"\",\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":51}]",
           "trailers": {}
         }
       ],
@@ -444,7 +444,7 @@
     }
   },
   {
-    "hash": "_lOh2n_juX65gMIWZmFPF_pw4l1gqEo0Z42UmqX2Py4",
+    "hash": "viC0s2WTyLgvIadMP7If3PSbe7neHAyrqDMY0UjC-CU",
     "snapshot": {
       "request": {
         "method": "POST",
@@ -454,17 +454,17 @@
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
-          "content-length": "201",
+          "content-length": "127",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
-        "body": "{\"name\":\"mcp-search-release-templates\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1}]}"
+        "body": "{\"name\":\"mcp-search-release-templates\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"]}"
       },
       "responses": [
         {
           "statusCode": 201,
           "headers": {
-            "content-length": "282",
+            "content-length": "194",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "location": "projects/mcp-search-release-templates",
@@ -476,7 +476,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"mcp-search-release-templates\",\"name\":\"mcp-search-release-templates\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1},{\"name\":\"development\",\"requiredApprovals\":1}]}",
+          "body": "{\"id\":\"mcp-search-release-templates\",\"name\":\"mcp-search-release-templates\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[]}",
           "trailers": {}
         }
       ],
@@ -504,7 +504,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "688",
+            "content-length": "689",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -515,7 +515,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"01M6JTP2KVAF1ZSCY05PEYX9PK\",\"name\":\"mcp-searched-project-template\",\"createdAt\":\"2026-11-04T08:26:52.407Z\",\"description\":null,\"project\":\"mcp-search-release-templates\",\"discriminator\":\"template\",\"createdByUserId\":17,\"milestones\":[{\"id\":\"01M6JTP2KX8NGTBS5NQ5M8V3Y9\",\"name\":\"Everyone\",\"sortOrder\":0,\"releasePlanDefinitionId\":\"01M6JTP2KVAF1ZSCY05PEYX9PK\",\"strategies\":[{\"id\":\"01M6JTP2KYZWB0QS1JB1SM9CAT\",\"milestoneId\":\"01M6JTP2KX8NGTBS5NQ5M8V3Y9\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}]}]}",
+          "body": "{\"id\":\"01M77NHZK3FZPVKBM91R5WAAZC\",\"name\":\"mcp-searched-project-template\",\"createdAt\":\"2026-11-12T10:41:18.428Z\",\"description\":null,\"project\":\"mcp-search-release-templates\",\"discriminator\":\"template\",\"createdByUserId\":216,\"milestones\":[{\"id\":\"01M77NHZK59C5XNQFYQHKW7XZF\",\"name\":\"Everyone\",\"sortOrder\":0,\"releasePlanDefinitionId\":\"01M77NHZK3FZPVKBM91R5WAAZC\",\"strategies\":[{\"id\":\"01M77NHZK7A73MERT8G2FNDE0X\",\"milestoneId\":\"01M77NHZK59C5XNQFYQHKW7XZF\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}]}]}",
           "trailers": {}
         }
       ],
@@ -543,7 +543,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "663",
+            "content-length": "664",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -554,7 +554,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"01M6JTP2R85XG45GYJFPC3KY66\",\"name\":\"mcp-searched-archived-template\",\"createdAt\":\"2026-11-04T08:26:52.549Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":17,\"milestones\":[{\"id\":\"01M6JTP2R95G1XTX8AA4PCC307\",\"name\":\"Everyone\",\"sortOrder\":0,\"releasePlanDefinitionId\":\"01M6JTP2R85XG45GYJFPC3KY66\",\"strategies\":[{\"id\":\"01M6JTP2RAKJEK1D49WA8EBF4D\",\"milestoneId\":\"01M6JTP2R95G1XTX8AA4PCC307\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}]}]}",
+          "body": "{\"id\":\"01M77NHZP3P663309EHV79GSF6\",\"name\":\"mcp-searched-archived-template\",\"createdAt\":\"2026-11-12T10:41:18.524Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":216,\"milestones\":[{\"id\":\"01M77NHZP5ZTR5VE2HMMYMVV9W\",\"name\":\"Everyone\",\"sortOrder\":0,\"releasePlanDefinitionId\":\"01M77NHZP3P663309EHV79GSF6\",\"strategies\":[{\"id\":\"01M77NHZP7WB9TMVRWXZE2AH7Z\",\"milestoneId\":\"01M77NHZP5ZTR5VE2HMMYMVV9W\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}]}]}",
           "trailers": {}
         }
       ],
@@ -582,7 +582,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "654",
+            "content-length": "655",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -593,7 +593,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"01M6JTP2EPBVG5KS2Y9KC4DZGJ\",\"name\":\"mcp-searched-template\",\"createdAt\":\"2026-11-04T08:26:52.242Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":17,\"milestones\":[{\"id\":\"01M6JTP2EQR66JJPDGJE189ET1\",\"name\":\"Everyone\",\"sortOrder\":0,\"releasePlanDefinitionId\":\"01M6JTP2EPBVG5KS2Y9KC4DZGJ\",\"strategies\":[{\"id\":\"01M6JTP2ERFT14RS3XFN3GMBXV\",\"milestoneId\":\"01M6JTP2EQR66JJPDGJE189ET1\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}]}]}",
+          "body": "{\"id\":\"01M77NHZFXMP562W157DVZNG9E\",\"name\":\"mcp-searched-template\",\"createdAt\":\"2026-11-12T10:41:18.327Z\",\"description\":null,\"project\":null,\"discriminator\":\"template\",\"createdByUserId\":216,\"milestones\":[{\"id\":\"01M77NHZFZATZK1RFNB6KR2EP1\",\"name\":\"Everyone\",\"sortOrder\":0,\"releasePlanDefinitionId\":\"01M77NHZFXMP562W157DVZNG9E\",\"strategies\":[{\"id\":\"01M77NHZG15KANBJQNG2SNMVDF\",\"milestoneId\":\"01M77NHZFZATZK1RFNB6KR2EP1\",\"sortOrder\":0,\"title\":\"Everyone\",\"name\":\"flexibleRollout\",\"strategyName\":\"flexibleRollout\",\"parameters\":{\"rollout\":\"100\",\"stickiness\":\"default\",\"groupId\":\"{{featureName}}\"},\"constraints\":[],\"variants\":[],\"segments\":[],\"disabled\":false}]}]}",
           "trailers": {}
         }
       ],
@@ -601,11 +601,11 @@
     }
   },
   {
-    "hash": "jSkiDVh97EX1E0cgokHQ0XlgRW5Hi45Z37_HF473D6U",
+    "hash": "gbLAA0wSvdfPxp8m8-BWqEztxf26tczYBQClzuedcOA",
     "snapshot": {
       "request": {
         "method": "POST",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/archive/01M6JTP2R85XG45GYJFPC3KY66",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/release-plan-templates/archive/01M77NHZP3P663309EHV79GSF6",
         "headers": {
           "accept-encoding": "identity",
           "accept": "*/*",
@@ -615,43 +615,6 @@
           "user-agent": "node"
         },
         "body": ""
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "meDPRdga2KMzBTTibn9-GWisHgXeb7At1UVAIsasf14",
-    "snapshot": {
-      "request": {
-        "method": "PUT",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-search-release-templates",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "39",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"name\":\"mcp-search-release-templates\"}"
       },
       "responses": [
         {

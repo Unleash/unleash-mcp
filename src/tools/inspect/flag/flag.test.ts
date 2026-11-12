@@ -141,8 +141,8 @@ test('describes a flag with its lifecycle, environments, who worked on it, its p
       },
       { name: 'production', state: 'disabled' },
     ],
-    createdBy: 'Mateusz K',
-    collaborators: ['Mateusz K'],
+    createdBy: 'Pere Picó Muntaner',
+    collaborators: ['Pere Picó Muntaner'],
     parent: { state: 'enabled', flag: parent },
     tags: [{ type: 'simple', value: 'mcp-inspect' }],
     links: [{ url: 'https://example.com/mcp-inspect', title: 'Spec' }],
@@ -185,8 +185,8 @@ test('names the flags that depend on a flag and the release plan rolling it out'
       },
       { name: 'production', state: 'disabled' },
     ],
-    createdBy: 'Mateusz K',
-    collaborators: ['Mateusz K'],
+    createdBy: 'Pere Picó Muntaner',
+    collaborators: ['Pere Picó Muntaner'],
     children: [flag],
   });
 });

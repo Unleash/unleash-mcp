@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import { userInfo } from 'node:os';
 import { z } from 'zod';
 import { readConfig } from '../src/config.ts';
-import { createProject, updateProject } from '../src/tools/configure/project.ts';
+import { createProject } from '../src/tools/configure/project.ts';
 import type { components } from '../src/unleash/api.d.ts';
 import { createUnleashClient, type UnleashClient } from '../src/unleash/client.ts';
-import { applied, deleteProject } from '../src/unleash/testSetup.ts';
+import { applied, deleteProject, setChangeRequests } from '../src/unleash/testSetup.ts';
 
 type Feature = components['schemas']['featureSchema'];
 type ProjectFeature = components['schemas']['projectFeatureSchema'];
@@ -41,18 +41,7 @@ export const createEvalProject = async (name: string): Promise<void> => {
   );
   assert.equal(created.id, name);
   // An instance can require change requests in every new project's environment.
-  applied(
-    await updateProject(admin, {
-      kind: 'project',
-      action: 'update',
-      id: name,
-      name,
-      changeRequestEnvironments: [
-        { name: 'development', enabled: false },
-        { name: 'production', enabled: false },
-      ],
-    }),
-  );
+  await setChangeRequests(admin, name, { development: false, production: false });
 };
 
 // What the agent did is read straight from the Admin API, never through the server's own tools, which are what is under test.

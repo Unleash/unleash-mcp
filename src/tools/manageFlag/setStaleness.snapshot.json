@@ -136,7 +136,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-stale-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-manage-flag-set-staleness\",\"stale\":true,\"createdAt\":\"2026-11-04T08:07:40.906Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-14T08:07:40.906Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-04T08:07:40.971Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"}]}}",
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-stale-flag\",\"favorite\":false,\"impressionData\":false,\"description\":null,\"project\":\"mcp-manage-flag-set-staleness\",\"stale\":true,\"createdAt\":\"2026-11-04T08:26:28.161Z\",\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"type\":\"release\",\"archived\":false,\"expectedLifetimeEndsAt\":\"2026-12-14T08:26:28.161Z\",\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-04T08:26:28.301Z\"},\"links\":[],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         },
         {
@@ -227,7 +227,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"features\":[{\"type\":\"release\",\"description\":null,\"project\":\"mcp-manage-flag-set-staleness\",\"favorite\":false,\"name\":\"mcp-stale-flag\",\"createdAt\":\"2026-11-04T08:07:40.906Z\",\"stale\":true,\"archivedAt\":null,\"impressionData\":false,\"dependencyType\":null,\"environments\":[{\"name\":\"development\",\"enabled\":false,\"type\":\"development\",\"sortOrder\":2,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]},{\"name\":\"production\",\"enabled\":false,\"type\":\"production\",\"sortOrder\":8,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]}],\"segments\":[],\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-04T08:07:40.971Z\"}}],\"total\":1}",
+          "body": "{\"features\":[{\"type\":\"release\",\"description\":null,\"project\":\"mcp-manage-flag-set-staleness\",\"favorite\":false,\"name\":\"mcp-stale-flag\",\"createdAt\":\"2026-11-04T08:26:28.161Z\",\"stale\":true,\"archivedAt\":null,\"impressionData\":false,\"dependencyType\":null,\"environments\":[{\"name\":\"development\",\"enabled\":false,\"type\":\"development\",\"sortOrder\":2,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]},{\"name\":\"production\",\"enabled\":false,\"type\":\"production\",\"sortOrder\":8,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]}],\"segments\":[],\"createdBy\":{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"},\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-04T08:26:28.301Z\"}}],\"total\":1}",
           "trailers": {}
         }
       ],
@@ -266,7 +266,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcp-stale-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-manage-flag-set-staleness\",\"stale\":true,\"createdAt\":\"2026-11-04T08:26:28.161Z\",\"impressionData\":false,\"archived\":false}",
+          "body": "{\"name\":\"mcp-stale-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-manage-flag-set-staleness\",\"stale\":true,\"createdAt\":\"2026-11-12T10:40:59.887Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],
@@ -274,7 +274,7 @@
     }
   },
   {
-    "hash": "QdSpbXZSl8rDKzbLDepjLAgMCKfNylaI3VcchN6Qy9c",
+    "hash": "61uJRkmS7eBRlgpaR9hNFie7lVBUII8vUKx6arKCE60",
     "snapshot": {
       "request": {
         "method": "POST",
@@ -284,17 +284,17 @@
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
-          "content-length": "202",
+          "content-length": "128",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
-        "body": "{\"name\":\"mcp-manage-flag-set-staleness\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1}]}"
+        "body": "{\"name\":\"mcp-manage-flag-set-staleness\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"]}"
       },
       "responses": [
         {
           "statusCode": 201,
           "headers": {
-            "content-length": "284",
+            "content-length": "196",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "location": "projects/mcp-manage-flag-set-staleness",
@@ -306,7 +306,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"mcp-manage-flag-set-staleness\",\"name\":\"mcp-manage-flag-set-staleness\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1},{\"name\":\"development\",\"requiredApprovals\":1}]}",
+          "body": "{\"id\":\"mcp-manage-flag-set-staleness\",\"name\":\"mcp-manage-flag-set-staleness\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[]}",
           "trailers": {}
         }
       ],
@@ -382,44 +382,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcp-stale-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-manage-flag-set-staleness\",\"stale\":false,\"createdAt\":\"2026-11-04T08:26:28.161Z\",\"impressionData\":false,\"archived\":false}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "5hBzwHnZSf4PWnzBpfmHu3lUlIMsOS2hGjZWot2OQgs",
-    "snapshot": {
-      "request": {
-        "method": "PUT",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-manage-flag-set-staleness",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "40",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"name\":\"mcp-manage-flag-set-staleness\"}"
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "",
+          "body": "{\"name\":\"mcp-stale-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-manage-flag-set-staleness\",\"stale\":false,\"createdAt\":\"2026-11-12T10:40:59.887Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],

@@ -218,7 +218,7 @@
     }
   },
   {
-    "hash": "Yiu57JzUvcVZjI1hbIh32KMDcr_acXWlwI-H308oSXk",
+    "hash": "Qx_Y4UDUlH2sTdo2L1q79P0KeMehGM4t9PvvyLPk5rY",
     "snapshot": {
       "request": {
         "method": "POST",
@@ -228,17 +228,17 @@
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
-          "content-length": "195",
+          "content-length": "121",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
-        "body": "{\"name\":\"mcp-manage-flag-delete\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1}]}"
+        "body": "{\"name\":\"mcp-manage-flag-delete\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"]}"
       },
       "responses": [
         {
           "statusCode": 201,
           "headers": {
-            "content-length": "270",
+            "content-length": "182",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "location": "projects/mcp-manage-flag-delete",
@@ -250,7 +250,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"mcp-manage-flag-delete\",\"name\":\"mcp-manage-flag-delete\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1},{\"name\":\"development\",\"requiredApprovals\":1}]}",
+          "body": "{\"id\":\"mcp-manage-flag-delete\",\"name\":\"mcp-manage-flag-delete\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[]}",
           "trailers": {}
         }
       ],
@@ -326,44 +326,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcp-deleted-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-manage-flag-delete\",\"stale\":false,\"createdAt\":\"2026-11-04T08:26:17.933Z\",\"impressionData\":false,\"archived\":false}",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
-    "hash": "F9GYgdpfV5UaGq77s4YGef0O6A11BEy3if2uJ3cWEUM",
-    "snapshot": {
-      "request": {
-        "method": "PUT",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-manage-flag-delete",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "33",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"name\":\"mcp-manage-flag-delete\"}"
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "",
+          "body": "{\"name\":\"mcp-deleted-flag\",\"description\":null,\"type\":\"release\",\"project\":\"mcp-manage-flag-delete\",\"stale\":false,\"createdAt\":\"2026-11-12T10:40:53.657Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],

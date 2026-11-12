@@ -70,11 +70,11 @@
     }
   },
   {
-    "hash": "bZ1oP1fQsAXtzLSok2P7X3OzJRGal8huXYWV4a3cg0Q",
+    "hash": "gJVPTRF1yOsiVpf77ZzElq7MvBpVAc8K-Fbo1KpyWXw",
     "snapshot": {
       "request": {
         "method": "DELETE",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-manage-flag-define/features/mcp-defined-flag/link/01M6JTMYHRWD1QYJ7MWZHHN44Q",
+        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-manage-flag-define/features/mcp-defined-flag/link/01M77NH5KTGWTZEGJ35J9G6XMR",
         "headers": {
           "accept-encoding": "identity",
           "accept": "*/*",
@@ -207,7 +207,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-defined-flag\",\"favorite\":false,\"impressionData\":false,\"description\":\"Degrades checkout and payments gracefully\",\"project\":\"mcp-manage-flag-define\",\"stale\":false,\"createdAt\":\"2026-11-04T08:07:21.747Z\",\"createdBy\":{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-04T08:07:21.785Z\"},\"links\":[{\"id\":\"01M6JSJC7GX07NA7G7TTJA7WX1\",\"url\":\"https://example.com/ticket/42\",\"title\":null,\"feature\":\"mcp-defined-flag\"}],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"}]}}",
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-defined-flag\",\"favorite\":false,\"impressionData\":false,\"description\":\"Degrades checkout and payments gracefully\",\"project\":\"mcp-manage-flag-define\",\"stale\":false,\"createdAt\":\"2026-11-04T08:26:15.218Z\",\"createdBy\":{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-04T08:26:15.478Z\"},\"links\":[{\"id\":\"01M6JTMZACHCJ79MT4Y2N8SK6D\",\"url\":\"https://example.com/ticket/42\",\"title\":null,\"feature\":\"mcp-defined-flag\"}],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         },
         {
@@ -230,7 +230,7 @@
         {
           "statusCode": 200,
           "headers": {
-            "content-length": "1363",
+            "content-length": "1456",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "referrer-policy": "no-referrer",
@@ -241,7 +241,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-defined-flag\",\"favorite\":false,\"impressionData\":false,\"description\":\"Degrades checkout gracefully\",\"project\":\"mcp-manage-flag-define\",\"stale\":false,\"createdAt\":\"2026-11-04T08:26:15.218Z\",\"createdBy\":{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[],\"children\":[],\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-04T08:26:15.478Z\"},\"links\":[{\"id\":\"01M6JTMYHRWD1QYJ7MWZHHN44Q\",\"url\":\"https://github.com/Unleash/unleash-mcp/pull/1\",\"title\":\"Pull request\",\"feature\":\"mcp-defined-flag\"}],\"collaborators\":{\"users\":[{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"}]}}",
+          "body": "{\"environments\":[{\"name\":\"development\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"development\",\"sortOrder\":2,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]},{\"name\":\"production\",\"lastSeenAt\":null,\"enabled\":false,\"yes\":0,\"no\":0,\"type\":\"production\",\"sortOrder\":8,\"strategies\":[],\"releasePlans\":[],\"safeguards\":[]}],\"name\":\"mcp-defined-flag\",\"favorite\":false,\"impressionData\":false,\"description\":\"Degrades checkout gracefully\",\"project\":\"mcp-manage-flag-define\",\"stale\":false,\"createdAt\":\"2026-11-12T10:40:51.623Z\",\"createdBy\":{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"},\"type\":\"kill-switch\",\"archived\":false,\"expectedLifetimeEndsAt\":null,\"dependencies\":[],\"children\":[],\"links\":[{\"id\":\"01M77NH5KTGWTZEGJ35J9G6XMR\",\"url\":\"https://github.com/Unleash/unleash-mcp/pull/1\",\"title\":\"Pull request\",\"feature\":\"mcp-defined-flag\"}],\"collaborators\":{\"users\":[{\"id\":216,\"name\":\"Pere Picó Muntaner\",\"imageUrl\":\"https://gravatar.com/avatar/72d1b3f3544de8c3e2af4292591233792a811e523a508ac029aeb3bd1e82277c?s=42&d=retro&r=g\"},{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},{\"id\":17,\"name\":\"Mateusz K\",\"imageUrl\":\"https://gravatar.com/avatar/e8d327dcf41886ecb46697dca53d391aa3aa448b72a63a9dd8382dc32cc1651c?s=42&d=retro&r=g\"}]}}",
           "trailers": {}
         }
       ],
@@ -315,7 +315,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"features\":[{\"type\":\"kill-switch\",\"description\":\"Degrades checkout and payments gracefully\",\"project\":\"mcp-manage-flag-define\",\"favorite\":false,\"name\":\"mcp-defined-flag\",\"createdAt\":\"2026-11-04T08:07:21.747Z\",\"stale\":false,\"archivedAt\":null,\"impressionData\":false,\"dependencyType\":null,\"environments\":[{\"name\":\"development\",\"enabled\":false,\"type\":\"development\",\"sortOrder\":2,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]},{\"name\":\"production\",\"enabled\":false,\"type\":\"production\",\"sortOrder\":8,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]}],\"segments\":[],\"createdBy\":{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-04T08:07:21.785Z\"},\"tags\":[{\"type\":\"simple\",\"color\":\"#FFFFFF\",\"value\":\"mcp-redefined\"}]}],\"total\":1}",
+          "body": "{\"features\":[{\"type\":\"kill-switch\",\"description\":\"Degrades checkout and payments gracefully\",\"project\":\"mcp-manage-flag-define\",\"favorite\":false,\"name\":\"mcp-defined-flag\",\"createdAt\":\"2026-11-04T08:26:15.218Z\",\"stale\":false,\"archivedAt\":null,\"impressionData\":false,\"dependencyType\":null,\"environments\":[{\"name\":\"development\",\"enabled\":false,\"type\":\"development\",\"sortOrder\":2,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]},{\"name\":\"production\",\"enabled\":false,\"type\":\"production\",\"sortOrder\":8,\"variantCount\":0,\"lastSeenAt\":null,\"hasStrategies\":false,\"hasEnabledStrategies\":false,\"yes\":0,\"no\":0,\"changeRequestIds\":[]}],\"segments\":[],\"createdBy\":{\"id\":248,\"name\":\"limited-token\",\"imageUrl\":\"https://gravatar.com/avatar/bbde8d72b38e2bae5b127e234e5e66230d265a7e382c01a553c8e8642805858d?s=42&d=retro&r=g\"},\"lifecycle\":{\"stage\":\"initial\",\"enteredStageAt\":\"2026-11-04T08:26:15.478Z\"},\"tags\":[{\"type\":\"simple\",\"color\":\"#FFFFFF\",\"value\":\"mcp-redefined\"}]}],\"total\":1}",
           "trailers": {}
         }
       ],
@@ -323,7 +323,7 @@
     }
   },
   {
-    "hash": "Bv30c8Dzr2UHLiP6XK8xPncxbn0XAE1SlAomOodg6t8",
+    "hash": "i7htAKGCbSSi5w3v23RKpCLOU2Sm5c4joM7wZvyGxXQ",
     "snapshot": {
       "request": {
         "method": "POST",
@@ -333,17 +333,17 @@
           "accept-encoding": "identity",
           "accept": "*/*",
           "accept-language": "*",
-          "content-length": "195",
+          "content-length": "121",
           "sec-fetch-mode": "cors",
           "user-agent": "node"
         },
-        "body": "{\"name\":\"mcp-manage-flag-define\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1}]}"
+        "body": "{\"name\":\"mcp-manage-flag-define\",\"mode\":\"open\",\"defaultStickiness\":\"default\",\"environments\":[\"development\",\"production\"]}"
       },
       "responses": [
         {
           "statusCode": 201,
           "headers": {
-            "content-length": "270",
+            "content-length": "182",
             "content-security-policy": "frame-ancestors 'none'",
             "content-type": "application/json; charset=utf-8",
             "location": "projects/mcp-manage-flag-define",
@@ -355,7 +355,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"id\":\"mcp-manage-flag-define\",\"name\":\"mcp-manage-flag-define\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[{\"name\":\"production\",\"requiredApprovals\":1},{\"name\":\"development\",\"requiredApprovals\":1}]}",
+          "body": "{\"id\":\"mcp-manage-flag-define\",\"name\":\"mcp-manage-flag-define\",\"defaultStickiness\":\"default\",\"mode\":\"open\",\"environments\":[\"development\",\"production\"],\"changeRequestEnvironments\":[]}",
           "trailers": {}
         }
       ],
@@ -431,7 +431,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcp-defined-flag\",\"description\":\"Degrades checkout gracefully\",\"type\":\"kill-switch\",\"project\":\"mcp-manage-flag-define\",\"stale\":false,\"createdAt\":\"2026-11-04T08:26:15.218Z\",\"impressionData\":false,\"archived\":false}",
+          "body": "{\"name\":\"mcp-defined-flag\",\"description\":\"Degrades checkout gracefully\",\"type\":\"kill-switch\",\"project\":\"mcp-manage-flag-define\",\"stale\":false,\"createdAt\":\"2026-11-12T10:40:51.623Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],
@@ -589,43 +589,6 @@
     }
   },
   {
-    "hash": "a6kVere_p5lPqqEM1tIrpy-tujS7DBNOdM1rdss4-ts",
-    "snapshot": {
-      "request": {
-        "method": "PUT",
-        "url": "https://sandbox.getunleash.io/enterprise/api/admin/projects/mcp-manage-flag-define",
-        "headers": {
-          "content-type": "application/json",
-          "accept-encoding": "identity",
-          "accept": "*/*",
-          "accept-language": "*",
-          "content-length": "33",
-          "sec-fetch-mode": "cors",
-          "user-agent": "node"
-        },
-        "body": "{\"name\":\"mcp-manage-flag-define\"}"
-      },
-      "responses": [
-        {
-          "statusCode": 200,
-          "headers": {
-            "content-security-policy": "frame-ancestors 'none'",
-            "referrer-policy": "no-referrer",
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-download-options": "noopen",
-            "x-frame-options": "DENY",
-            "x-permitted-cross-domain-policies": "none",
-            "transfer-encoding": "chunked"
-          },
-          "body": "",
-          "trailers": {}
-        }
-      ],
-      "callCount": 0
-    }
-  },
-  {
     "hash": "Et2LtxS7Z0a-kbr-Iq8ANgTNb1ZYWGvmOCVOR-B7FHw",
     "snapshot": {
       "request": {
@@ -729,7 +692,7 @@
             "x-frame-options": "DENY",
             "x-permitted-cross-domain-policies": "none"
           },
-          "body": "{\"name\":\"mcp-defined-flag\",\"description\":\"Degrades checkout and payments gracefully\",\"type\":\"kill-switch\",\"project\":\"mcp-manage-flag-define\",\"stale\":false,\"createdAt\":\"2026-11-04T08:26:15.218Z\",\"impressionData\":false,\"archived\":false}",
+          "body": "{\"name\":\"mcp-defined-flag\",\"description\":\"Degrades checkout and payments gracefully\",\"type\":\"kill-switch\",\"project\":\"mcp-manage-flag-define\",\"stale\":false,\"createdAt\":\"2026-11-12T10:40:51.623Z\",\"impressionData\":false,\"archived\":false}",
           "trailers": {}
         }
       ],

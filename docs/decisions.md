@@ -553,3 +553,9 @@ The published package ships JavaScript built by `tsc`: Node won't strip types in
 
 - `inspect` takes a `lifecycle_stages` query that lists the stages a flag can be in. Unleash has no endpoint for them, so as a workaround they are read off `GET /api/admin/lifecycle/count`, which returns a count per stage whether it has flags or not.
 - Only the stage names are returned: the counts are a side effect of the workaround. Rejected: stages with their counts.
+
+## 2026-11-12 — Agents don't set change requests
+
+- `configure` no longer takes change request environments, on project create or update. Approval is a human control: an agent must not weaken it, so people set it in the Unleash UI, and the project descriptions say so. Supersedes the change request parts of "Projects in configure" (2026-10-27) and "Project update in configure" (2026-10-29). Rejected: update only, and asking for confirmation, since agents confirm too readily.
+- Reading and working inside change requests stays: inspect lists pending ones, and release, experiment, kill switch and segment changes still open one where required.
+- Test and eval setup set change requests over the Admin API, as no tool does it any more. Projects are still created through the tool, and every snapshot was re-recorded. Rejected: creating them over the API with the old body to keep the snapshots, which breaks "setup goes through the tools".

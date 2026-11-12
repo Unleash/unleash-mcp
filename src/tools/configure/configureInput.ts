@@ -222,14 +222,6 @@ const projectSettings = {
     ),
 };
 
-const requiredApprovals = z
-  .number()
-  .int()
-  .min(1)
-  .max(10)
-  .optional()
-  .describe('Approvals a change request needs; 1 when left out');
-
 const createProject = z
   .strictObject({
     kind: z.literal('project'),
@@ -242,17 +234,10 @@ const createProject = z
       .describe(
         'Environment names to enable, as a project inspect lists them. Left out enables every one; empty enables none',
       ),
-    changeRequestEnvironments: z
-      .array(
-        z.strictObject({
-          name: z.string().describe('Environment name, as a project inspect lists it'),
-          requiredApprovals,
-        }),
-      )
-      .optional()
-      .describe('Environments whose changes need an approved change request'),
   })
-  .describe('Create a project. Unleash picks its id, which the result answers');
+  .describe(
+    'Create a project. Unleash picks its id, which the result answers. Change requests are set by people in the Unleash UI, not here',
+  );
 
 const updateProject = z
   .strictObject({
@@ -270,19 +255,9 @@ const updateProject = z
       .describe(
         'Every environment the project ends with enabled, as a project inspect lists them; the others are disabled. Empty disables all',
       ),
-    changeRequestEnvironments: z
-      .array(
-        z.strictObject({
-          name: z.string().describe('Environment name, as a project inspect lists it'),
-          enabled: z.boolean().describe('Whether changes there need an approved change request'),
-          requiredApprovals,
-        }),
-      )
-      .optional()
-      .describe('Environments whose change requests to turn on or off; the ones left out stay as they are'),
   })
   .describe(
-    'Change a project; left out settings stay. Disabling an environment takes it off every flag in the project: check and ask before. Stops at the first refused write, keeping the ones before',
+    'Change a project; left out settings stay. Disabling an environment takes it off every flag in the project: check and ask before. Stops at the first refused write, keeping the ones before. Change requests are set by people in the Unleash UI, not here',
   );
 
 const change = z.union([

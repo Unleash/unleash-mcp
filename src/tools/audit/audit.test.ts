@@ -41,12 +41,12 @@ test('lists the changes to a flag since yesterday, most recent first, with who m
   assert.partialDeepStrictEqual(output.changes.slice(0, 2), [
     {
       type: 'feature-environment-enabled',
-      changedBy: 'user-e8d327@example.com',
+      changedBy: 'user-72d1b3@example.com',
       project,
       flag,
       environment: 'development',
     },
-    { type: 'feature-strategy-add', changedBy: 'user-e8d327@example.com', project, flag, environment: 'development' },
+    { type: 'feature-strategy-add', changedBy: 'user-72d1b3@example.com', project, flag, environment: 'development' },
   ]);
   // Turning the environment on and adding its default target were one request, so one group.
   assert(output.changes[0]?.groupId);

@@ -13,7 +13,7 @@ const project = 'mcp-search-flags';
 const first = 'mcp-searched-first';
 const second = 'mcp-searched-second';
 const archived = 'mcp-searched-archived';
-const user = 17;
+const user = 216;
 const segment = 'mcp-searched-flags-segment';
 let segmentId = 0;
 
@@ -60,7 +60,7 @@ test('finds a page of flags by a part of their name, with the total across pages
         name: first,
         project,
         type: 'kill-switch',
-        createdBy: 'Mateusz K',
+        createdBy: 'Pere Picó Muntaner',
         tags: [{ type: 'simple', value: 'mcp-search' }],
         environments: [
           { name: 'development', state: 'disabled' },

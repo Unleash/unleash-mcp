@@ -181,6 +181,36 @@ test('configure tool reports each change', async () => {
   await client.close();
 });
 
+// Approval is a human control, set in the Unleash UI. The stub answers nothing, so a request that went out would show.
+for (const change of [
+  { kind: 'project', action: 'create', name: 'mcp-project', changeRequestEnvironments: [{ name: 'production' }] },
+  {
+    kind: 'project',
+    action: 'update',
+    id: 'mcp-project',
+    name: 'mcp-project',
+    changeRequestEnvironments: [{ name: 'production', enabled: false }],
+  },
+]) {
+  test(`configure refuses to set change requests on a project ${change.action}`, async () => {
+    const { unleash: stubbed } = createStubbedClient();
+    const client = await connectClient(stubbed);
+
+    const result = await client.callTool({ name: 'configure', arguments: { changes: [change] } });
+
+    assert.deepEqual(result, {
+      isError: true,
+      content: [
+        {
+          type: 'text',
+          text: 'MCP error -32602: Input validation error: Invalid arguments for tool configure: Unrecognized key: "changeRequestEnvironments" at changes[0]',
+        },
+      ],
+    });
+    await client.close();
+  });
+}
+
 test('inspect tool returns its results as structured content and as text', async () => {
   const { unleash: stubbed, stub } = createStubbedClient();
   stub
