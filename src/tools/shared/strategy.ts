@@ -54,7 +54,9 @@ const toVariants = (values: Value[], stickiness: string) =>
 export const toUnleashConstraint = (c: Constraint) => ({
   contextName: c.field,
   operator: c.operator,
-  values: c.values,
+  ...(c.operator.startsWith('NUM_') || c.operator.startsWith('DATE_') || c.operator.startsWith('SEMVER_')
+    ? { value: c.values[0] }
+    : { values: c.values }),
   inverted: c.inverted ?? false,
   caseInsensitive: c.caseInsensitive ?? false,
 });
